@@ -1,0 +1,338 @@
+﻿
+
+@model JKViewModels.AccountsPayable.AccountingFeeRebateFullViewModel
+@{
+   
+    ViewBag.Title = "AccountingFeeRebate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+
+<style type="text/css">
+        .clsAmounttd {
+            text-align: right !important;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+            padding-left: 35px;
+            padding-right: 10px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .row {
+            margin: 0;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .custom-form .headerbox {
+            padding: 3px 0px 3px 5px;
+            font-weight: normal;
+        }
+
+        .error {
+            border-color: red;
+        }
+</style>
+}
+
+
+<div id="frm-Process-AccountingFeeRebate" class="panel-body">
+    @using (Html.BeginForm("AccountingFeeRebate", "Accountspayable", "Post"))
+    {
+        @Html.Hidden("periodClosedId")
+
+        <div class="headerbox">
+            <div class="row" style="background-color: #3598DC;color: #fff;">
+                <div class="col-md-12 no-padding">
+                    <div class="alignCenter">
+                        <div class="col-md-4" style="text-align:right;">
+                        </div>
+                        <div class="col-md-4 topheader">
+                            Franchisee Accounting Fee Rebate
+                        </div>
+                        <div class="col-md-4" style="padding-right:5px;">
+                            <div class="col-md-7 pull-right no-padding">
+                                <div style="display:table-cell;padding-right: 5px;text-transform:none">
+                                    Region
+                                </div>
+                                <div style="display:table-cell;width:100%;">
+                                    @if (ViewBag.RegionList != null)
+                                    {
+                                        <select class="form-control input-sm" id="regionlist" multiple="multiple" style="display:none;">
+                                            @foreach (var item in (SelectList)ViewBag.RegionList)
+                                            {
+                                                <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                            }
+                                        </select>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="custom-listbox" id="divfranchiseList" style="margin-top:4px;">
+            <div class="headerbox">
+                <div class="row no-padding">
+                    <div class="col-md-12">
+                        <div class="col-md-1">
+                            <div class="portlet-input input-inline input-small">
+                                <div class="input-icon">
+                                    <select name="CustomerList_length" id="pageSize" aria-controls="CustomerList" class="form-control input-sm input-xsmall input-inline">
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="-1">All</option>
+                                    </select>
+                                </div>
+                                <div id="container">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="input-icon">
+                                <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                                <input id="input_Search" style="width:250px!important" type="text" name="customernumber" autocomplete="off" placeholder="Search" value="" class="form-control input-sm typeahead" />
+                            </div>
+                        </div>
+                     
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tablebox">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover" id="tableAccountingFeeRebate" style="margin-top:0 !important; display: none">
+                    <thead>
+                        <tr>
+                            <th style="width:20px;text-align:center;">
+                                Region
+                            </th>
+                            <th style="width: 50px;text-align:center;">
+                                Franchisee No
+                            </th>
+                            <th style="width: 164px;text-align:center;">
+                                Franchisee Name
+                            </th>
+                            <th style="width: 50px;text-align:center;">
+                                Account Rebate Balance
+                            </th>
+
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.AccountingFeeRebateList)
+                        {
+                            <tr>
+                                <td>@item.RegionName</td>
+                                <td>@item.FranchiseeNo</td>
+                                <td>@item.FranchiseeName</td>
+                                <td>@item.Balance</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <div class="form-group text-center">
+                    <input type="submit" name="btnProcessAccountingFeeRebate" id="btnProcessAccountingFeeRebate" class="btn btn-primary button-next" value="Process"  style="min-width:100px" />
+                </div>
+
+                   
+                </div>
+
+        </div>
+
+        <div class="modal fade in" id="modal_RegionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content" style="border-radius: 8px;">
+                    <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                        <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                            Select Region
+                        </h4>
+                    </div>
+                    <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                        <div class="form-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Select Region</label>
+                                        @if (ViewBag.regionlist != null)
+                                        {
+                                <select class="form-control input-sm" id="selectregionlist">
+                                    <option value="">Select Region</option>
+                                    @foreach (var item in (SelectList)ViewBag.regionlist)
+                                    {
+                                        <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <div class="col-md-12">
+                                <button type="button" name="SaveNew" id="btnRegion" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:0px;">Select Region</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    </div>
+        @section pageplugins{
+
+            @*<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js")" type="text/javascript"></script>*@
+            <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+            <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+            <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+            <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+            <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+            <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+            <script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+            <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+            <script src="~/Scripts/jquery-ui.js" type="text/javascript"></script>
+            <script src="~/Content/admin/assets/Card/dist/jquery.card.js"></script>
+            <script src="@Url.Content("~/Content/admin/assets/global/plugins/wow-alert-master/js/wow-alert.js")"></script>
+        }
+        @section scripts{
+            <script type="text/javascript">
+                var tableAccountingFeeRebate
+                var _periodId = "";
+
+    $(window).load(function () {
+
+        if ('@ViewBag.selectedRegionId' == 0) {
+            $("#modal_RegionModel").modal({ backdrop: 'static' });
+        }
+    });
+
+    jQuery(document).ready(function () {
+
+         _periodId = $('#ddlPeriodId').val();
+        $('#periodClosedId').val(_periodId);
+
+        $("#regionlist").multiselect({
+            includeSelectAllOption: true,
+            selectAllText: 'Select all',
+            buttonWidth: '100%',
+            nonSelectedText: 'Select region..',
+            dropRight: true,
+            numberDisplayed: 2
+
+        });
+
+        $('#ddlPeriodId').change(function () {
+            _periodId = $('#ddlPeriodId').val();
+            $('#periodClosedId').val(_periodId);
+        });
+
+        $("#regionlist").change(function () {
+            if ($("#regionlist").val() != null)
+                refreshAcctFeeRebateTable();
+        });
+
+        $("#btnRegion").click(function () {
+            if ($("#selectregionlist").val() != "") {
+                $("#regionlist option[value='" + $("#selectregionlist").val() + "']").attr("selected", 1);
+                $("#regionlist").multiselect("refresh");
+                refreshTable();
+                $(".close").click();
+            }
+        });
+
+        $("#pageSize").change(function () {
+            setPaging();
+        });
+
+        var ps = $('#pageSize').val();
+        $(function () {
+            $('.inputs').keyup(function (e) {
+                if (e.which === 13) {
+                    var index = $('.inputs').index(this) + 1;
+                    $('.inputs').eq(index).focus();
+                }
+            });
+        });
+
+        $("#input_Search").keyup(function () {
+           
+            var table = $("#tableAccountingFeeRebate").DataTable();
+                table.search($(this).val()).draw();
+        });
+
+
+       // $('#tableAccountingFeeRebate').DataTable();
+
+        tableAccountingFeeRebate = $('#tableAccountingFeeRebate').DataTable({
+            "bServerSide": false,
+            "aLengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            "pageLength": 25, // default records per page
+            "dom": "<'table-responsive't><'bottom'ip><'clear'>"
+            
+        });
+
+       
+        $('#tableAccountingFeeRebate').show();
+
+
+    });
+
+
+    function setPaging() {
+        var z = $("#pageSize").val();
+        var table = $('#tableAccountingFeeRebate').DataTable();
+        if (z > 0) {
+            table.page.len(z).draw();
+        }
+        else if (z == -1) {
+            table.page.len(table.rows().count()).draw();
+        }
+        else {
+            table.page.page.len(25).draw();
+        }
+    }
+
+
+  </script>
+  }

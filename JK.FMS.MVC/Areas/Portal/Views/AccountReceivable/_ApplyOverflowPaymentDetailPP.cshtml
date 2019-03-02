@@ -1,0 +1,1051 @@
+﻿@model JKViewModels.AccountReceivable.OverPaymentCustomerInvoiceViewModel
+
+<link href="~/Content/admin/assets/Card/dist/card.css" rel="stylesheet" />
+<link href="~/Content/admin/assets/global/plugins/bootstrap-sweetalert/sweetalert.css" rel="stylesheet" />
+<link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+
+<style type="text/css">
+    .trim-padding {
+        padding: 3px;
+    }
+
+    #InvoiceList thead > tr > th {
+        font-size: 10px !important;
+        padding: 3px !important;
+        margin-left: 5px;
+        vertical-align: middle;
+    }
+
+    #InvoiceList tbody > tr > td {
+        font-size: 11px !important;
+        padding: 3px !important;
+        margin-left: 5px;
+        vertical-align: middle;
+    }
+
+    #InvoiceList thead > tr > th {
+        vertical-align: middle;
+        text-align: center !important;
+        /*padding-right: 15px!important;*/
+    }
+
+    #InvoiceList tbody > tr > td {
+        padding-top: 5px !important;
+    }
+
+    #InvoiceList thead .sorting:after, #InvoiceList thead .sorting_asc:after {
+        content: none;
+    }
+
+    .headerbox > .row {
+        margin-left: 0px !important;
+        margin-right: 0px !important;
+    }
+
+    .topheader {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFF !important;
+        text-transform: uppercase;
+        margin-top: 3px;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+
+    .alignCenter {
+        text-align: center;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .modal-header:hover {
+        cursor: move;
+    }
+
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+
+    .lbl-p5 {
+        padding: 5px;
+    }
+
+        .lbl-p5.red {
+            color: red;
+        }
+
+        .lbl-p5.green {
+            color: lightgreen;
+        }
+
+    input[type="text"].txtcolon:before {
+        content: ": ";
+    }
+
+    .payment-field {
+        /*width: 80px !important;*/
+    }
+
+    .demo-container {
+        width: 100%;
+        max-width: 350px;
+        margin: 10px auto;
+    }
+
+    form {
+        margin: 30px;
+    }
+
+    .input-185 {
+        width: 185px;
+    }
+
+    .custom-listbox .headerbox {
+        padding: 3px 0px 3px 5px;
+        font-weight: normal;
+    }
+
+    .custom-listbox {
+        margin-top: 4px;
+        margin-bottom: 0px;
+    }
+
+    /*input {
+            width: 200px;
+            margin: 10px auto;
+            display: block;
+        }*/
+    .Amttext {
+        text-align: right;
+    }
+
+    .clsAmounttd {
+        text-align: right !important;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .multiselect-container.dropdown-menu {
+        text-transform: none;
+        font-size: 14px;
+        padding-left: 35px;
+        padding-right: 10px;
+    }
+
+    .no-padding {
+        padding: 0;
+    }
+
+    #modal_RegionModel .modal-content {
+        width: 55% !important;
+        margin-left: 30% !important;
+    }
+
+    .payment-field {
+        width: 110px !important;
+    }
+</style>
+
+<div class="modal fade in" id="modal_ManualPayment" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg" id="Render_ManualPayment">
+        <div class="modal-content" style="border-radius: 8px;width:1120px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Apply Overflow Payment
+                </h4>
+            </div>
+            <form class="form-horizontal" role="form" id="form_applypayment" action="@Url.Action("ApplyOverflowPayment","AccountReceivable","Portal")" method="post" style="margin: 0">
+                @*@Html.HiddenFor(one => one.CustomerDetail.CustomerId, new { id = "hdfCustomerId" })*@
+                <input type="hidden" name="hdMPCallFrom" id="hdMPCallFrom" value="" />
+                <input type="hidden" name="hdfCustomerIdMP" id="hdfCustomerIdMP" value="" />
+                <input type="hidden" name="hdfOPI_OverflowId" id="hdfOPI_OverflowId" value="@Model.OverflowId" />
+
+                <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                    <div class="form-body">
+
+                        <input type="hidden" name="OPI_CustomerId" id="OPI_CustomerId" value="@Model.CustomerId" />
+                        <input type="hidden" name="hdfOPI_InvoiceId" id="hdfOPI_InvoiceId" value="@Model.InvoiceId" />
+                        <input type="hidden" name="hdfOPI_InvoiceNo" id="hdfOPI_InvoiceNo" value="@Model.InvoiceNo" />
+
+
+                        <div class="form-group" style="margin-bottom:0px !important;">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-2">
+                                        Customer No.<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Model.CustomerNo
+                                    </div>
+                                    <div class="col-md-1">
+                                        Address<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Model.Address1
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0px !important;">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-2">
+                                        Customer Name<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Model.CustomerName
+                                    </div>
+                                    <div class="col-md-1">
+
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Model.City, @Model.StateName @Model.PostalCode
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="form-group" style="margin-bottom:0px !important;">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-2">
+                                        Invoice No.<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Model.InvoiceNo
+                                    </div>
+                                    <div class="col-md-1" style="width:95px;padding-right:0px;">
+                                        Invoice Date<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Model.InvoiceDate.ToString("MM/dd/yyyy")
+                                    </div>
+                                    <div class="col-md-1">
+                                        Due Date<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        @(!String.IsNullOrEmpty(Model.DueDate.ToString()) ? DateTime.Parse(Model.DueDate.ToString()).ToString("MM/dd/yyyy") : "")
+                                    </div>
+                                    <div class="col-md-1" style="width:80px">
+                                        Date<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="text" name="paymentDateMP" id="paymentDateMP" value="@DateTime.Today.ToString("MM/dd/yyyy")" class="form-control input-sm date-picker" />
+                                        @*<div class="input-group" data-date-format="mm/dd/yyyy" style="width: 120px;">
+
+                                                <span class="input-group-btn" style="top:2px;">
+                                                    <button class="btn default" type="button">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </button>
+                                                </span>
+                                            </div>*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0px !important;">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-2">
+                                        Description<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-10">
+                                        @Model.InvoiceDescription
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0px !important;">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-2">
+                                        Sub-Total<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-1">
+                                        @String.Format("{0:c}", Model.Subtotal)
+                                    </div>
+                                    <div class="col-md-1" style="text-align: right;">
+                                        Tax<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-1">
+                                        @String.Format("{0:c}", Model.Tax)
+                                    </div>
+                                    <div class="col-md-1" style="text-align: right;">
+                                        Total<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-1">
+                                        @String.Format("{0:c}", Model.Total)
+                                    </div>
+                                    <div class="col-md-2" style="text-align: right;">
+                                        Balance<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="text" name="OPI_IBalanceAmount" id="OPI_IBalanceAmount" style="text-align:right;color:red;" readonly value="@String.Format("{0:c}", Math.Abs(Model.BalanceAmount))" />
+                                        <input type="hidden" name="OPI_IBalanceAmountBAL" id="OPI_IBalanceAmountBAL" value="@Math.Abs(Model.BalanceAmount)" />
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom:0px !important;">
+                            <div class="row">
+                                <div class="col-md-12 pull-right" style="padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;padding: 0px;text-transform: uppercase;text-align: right;vertical-align: middle;margin-top: 10px;">
+                                    <input type="checkbox" onchange="PopulateManualPayment()" id="isOpen" checked />&nbsp;Open&nbsp;&nbsp;
+                                    <input type="checkbox" onchange="PopulateManualPayment()" id="isClose" />&nbsp;Close
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-left:-30px;margin-right:-30px;">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover order-column" style="width:100%;" id="ManualPaymentList">
+                                        <thead>
+                                            <tr>
+                                                <th class="tblInvoice_chk" style="text-align:center; width: 30px">
+                                                    @*<input type="checkbox" id="chkAll" name="chkAll" />*@
+                                                </th>
+                                                <th class="tblInvoice_invoiceNo" style="width:80px;text-align:center;">
+                                                    Invoice No
+                                                </th>
+                                                <th class="tblInvoice_invoiceDate" style="width:80px;text-align:center;">
+                                                    Invoice Date
+                                                </th>
+                                                <th class="tblInvoice_customerNo" style="width:70px;text-align:center;">
+                                                    Customer No.
+                                                </th>
+                                                <th class="tblInvoice_customerName" style="width:180px;text-align:center;">
+                                                    Customer Name
+                                                </th>
+                                                <th class="tblInvoice_invoiceDesc" style="width:220px;text-align:center;">
+                                                    Invoice Desc.
+                                                </th>
+                                                <th class="tblInvoice_invoiceAmt" style="text-align:center;width:60px;">
+                                                    Inv. Amount
+                                                </th>
+                                                <th class="tblInvoice_payment" style="text-align:center;width:60px;">
+                                                    Payment Apply
+                                                </th>
+                                                <th class="tblInvoice_balance" style="text-align:center;width:60px;">
+                                                    Balance
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-8">
+                                    <input type="hidden" name="SaveMethod" id="SaveMethod" />
+                                </div>
+                                <div class="col-md-2">
+                                    @*<button id="btnSaveAndClose" type="button" class="btn green btn-block" onclick="onClickSaveAndCloseMP()">Save & Close</button>*@
+                                </div>
+
+                                <div class="col-md-2">
+                                    <button id="btnSaveAndClose" type="button" class="btn green btn-block" onclick="onClickSaveAndCloseMP()">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade custom-model custom-form custom-form-design" id="modal_applypaymentprompt" tabindex="-1" style="display: none;">
+    <div class="modal-dialog" style="width:500px">
+        <div class="modal-content" style="border-radius: 8px; font-size: 16px">
+            <div class="headerbox">
+                <div class="row">
+                    &nbsp;
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12" style="padding: 20px 100px 40px 100px;">
+                        Do you want to apply partial payment against Invoice No. <span id="lblPromptInvoiceNo">&nbsp;</span>?
+                    </div>
+                    <div class="col-md-12">
+                        <div class="col-md-6"></div>
+                        <div class="col-md-3">
+                            <button id="btnSaveAndClose" type="button" class="btn green btn-block" onclick="onClickYesApplyPayment()">Yes</button>
+                        </div>
+
+                        <div class="col-md-3">
+                            <button id="btnSaveAndNew" type="button" class="btn green btn-block" onclick="onClickNoApplyPayment()">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="div_applypaymentforms"></div>
+<script type="text/javascript">
+
+    var saveAction;
+    var saveInProgress = false;
+    var currentPromptedInvoice = "";
+    var promptedInvoices = [];
+    var isLastPrompt = true;
+
+
+
+    function toggleCustomerCreditAmtField(enabled = null) {
+        console.log(enabled);
+        if (enabled == null)
+            enabled = $("#chkApplyCreditMP").is(":checked");
+        $("input[id='customerCreditAmtMP']").prop("disabled", !enabled);
+        if (enabled == false) {
+            $("input[id='customerCreditAmtMP']").val(0);
+            calculateBalanceMP();
+        } else {
+            calculateBalanceMP();
+        }
+    }
+        function setInvoiceBalance(invPrefix, amt) {
+            $(invPrefix + "balance").val(commaSeparateNumber((amt).toFixed(2)));
+        }
+        function setInvoicePayment(invPrefix, amt) {
+            var txt = '';
+            if (amt > 0)
+                txt = commaSeparateNumber((amt).toFixed(2));
+            $(invPrefix + "totalPayment").val(txt);
+        }
+        function manualPaymentInIt(id) {
+            PopulateManualPayment();
+
+            $('#hdfCustomerIdMP').val(id)
+            //Manual Payment Date Change
+            $("#select_dateRangeMP").change(function () {
+                var value = this.value;
+                setSearchMPTime(value);
+                // refreshTable();
+            });
+            //Manual Payment
+            setSearchMPTime(7);
+
+
+
+
+            $("#slPaymentType").change(function () {
+                if ($(this).val() == "2") {
+                    var data = $(".payment-checkbox")
+                    if (data.length >= 1) {
+                        $('#myModal').modal('show');
+                        $("#txtAmountToBePay").val($("#paymentAmtMP").val().replace(',', ''));
+                    }
+                    else {
+                        alert("You Don't have invoice.");
+                    }
+                }
+                else
+                    $('#myModal').modal('hide');
+
+            });
+
+
+            $('#chkAll').change(function () {
+                if ($(this).is(":checked")) {
+                    $('input[rel="mgglchk"]').prop('checked', true);
+                }
+                else {
+                    $('input[rel="mgglchk"]').prop('checked', false);
+                }
+            });
+
+            $("#chkApplyCreditMP").change(function () {
+                $("input[id='customerCreditAmtMP']").val($("input[id='txtCustomerbalance']").val());
+                toggleCustomerCreditAmtField(this.checked);
+            });
+
+
+            $("#input_SearchMP").keyup(function () {
+
+                var table = $("#ManualPaymentList").DataTable();
+                table.search($(this).val()).draw();
+            });
+        }
+
+
+
+
+        //$("#btnSuccessPopUp").click(function () {
+        //    $("#swtModel").remove();
+
+        //    if (!Mxmarchant) {
+        //        swal({
+        //            title: "Do you want to save CC in your profile?",
+        //            text: "For Future Transaction You will be able to make payment without entering the CC Details.",
+        //            type: "warning",
+        //            showCancelButton: true,
+        //            confirmButtonColor: '#DD6B55',
+        //            confirmButtonText: 'Yes',
+        //            cancelButtonText: "No",
+        //            closeOnConfirm: false,
+        //            closeOnCancel: false
+        //        },
+        //            function (isConfirm) {
+        //                if (isConfirm) {
+
+        //                    CreateProfile();
+        //                    swal(
+        //                        'CC Saved in Profile.',
+        //                        '',
+        //                        'success'
+        //                    )
+        //                }
+        //                else {
+        //                    swal(
+        //                        'Cancelled.',
+        //                        '',
+        //                        'error'
+        //                    )
+        //                }
+        //            });
+        //    }
+
+        //});
+
+        //$("#OPI_IBalanceAmount").change(function () {
+        //    calculateBalanceMP();
+        //});
+
+        function calculateBalanceMP() {
+
+            validateCustomerCreditAmtField();
+            var paymentAmount = parseFloat(removeFormatting($("#OPI_IBalanceAmount").val()));
+            var creditAmount = 0;
+            var allocatedPayments = 0;
+            $("[id$=totalPayment]").each(function () {
+                var amt = parseFloat(removeFormatting($(this).val()));
+                if ($.isNumeric(amt))
+                    allocatedPayments += amt;
+            });
+
+            var balance = paymentAmount + creditAmount - allocatedPayments; // todo: subtract all allocated payments
+
+            //setAmount(paymentAmount);
+            setBalance(balance);
+        }
+        function validateCustomerCreditAmtField() {
+            if ($("#chkApplyCreditMP").is(":checked")) {
+                $("input[id='customerCreditAmtMP']").val(Math.max(Math.max(0, $("input[id='customerCreditAmtMP']").val()), Math.max(0, $("input[id='txtCustomerbalance']").val())).toFixed(2));
+            }
+        }
+        //function setAmount(amt) {
+        //    var txt = '';
+        //    if (amt > 0)
+        //        txt = commaSeparateNumber((amt).toFixed(2));
+        //    $("#OPI_IBalanceAmount").val(amt);
+        //}
+        function setBalance(amt) {
+            //var txt = commaSeparateNumber((amt).toFixed(2));
+            $("#OPI_IBalanceAmountBAL").val(amt);
+        }
+
+        function selectInvoice(inv) {
+
+            var invPrefix = "#" + getInvoicePrefix(inv);
+            var balance = parseFloat(removeFormatting($("#OPI_IBalanceAmountBAL").val()));
+            var invAmount = parseFloat(removeFormatting($(invPrefix + "amount").val()));
+
+            var payment = 0.00;
+            var isChecked = $(invPrefix + "chk").prop("checked");
+
+            if (!isChecked) // currently selected, so deselect
+                setInvoicePayment(invPrefix, 0);
+            else {
+                payment = Math.min(balance, invAmount); // get either the full invoice amount, or what's left in the balance
+                setInvoicePayment(invPrefix, payment);
+            }
+
+            setInvoiceBalance(invPrefix, invAmount - payment);
+            calculateBalanceMP();
+        }
+        var Mxmarchant = false;
+
+        function changeApplypaymentField(invid) {
+            debugger
+            //var inv = getInvoiceIdChunk(this);
+            var invPrefix = "#inv" + invid + "_";
+
+            var invAmount = parseFloat(removeFormatting($('#inv' + invid+"_amount").val()));
+            var paymentAmt = parseFloat($("#inv" + invid+"_totalPayment").val());
+
+            if (!$.isNumeric(paymentAmt))
+                paymentAmt = 0;
+
+            if (paymentAmt > 0) {
+                $(invPrefix + "chk").prop("checked", true);
+            }
+            else {
+                $(invPrefix + "chk").prop("checked", false);
+            }
+
+            setInvoicePayment(invPrefix, paymentAmt);
+            setInvoiceBalance(invPrefix, invAmount - paymentAmt);
+
+            calculateBalanceMP();
+
+        }
+
+        //$(document).on('change', ".payment-apply-field", function () {
+        //    var inv = getInvoiceIdChunk(this);
+        //    var invPrefix = "#" + getInvoicePrefix(inv);
+
+        //    var invAmount = parseFloat(removeFormatting($(invPrefix + "amount").val()));
+        //    var paymentAmt = parseFloat($(this).val());
+
+        //    if (!$.isNumeric(paymentAmt))
+        //        paymentAmt = 0;
+
+        //    if (paymentAmt > 0) {
+        //        $(invPrefix + "chk").prop("checked", true);
+        //    }
+        //    else {
+        //        $(invPrefix + "chk").prop("checked", false);
+        //    }
+
+        //    setInvoicePayment(invPrefix, paymentAmt);
+        //    setInvoiceBalance(invPrefix, invAmount - paymentAmt);
+
+        //    calculateBalance();
+        //});
+
+        function setSearchMPTime(value) {
+
+            value = parseInt(value);
+            $("#select_dateRangeMP").val(value.toString());
+            var custom_enabled = false;
+            var firstDay;
+            var lastDay;
+
+            switch (parseInt(value)) {
+                case 1:
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = moment().endOf('isoWeek').toString();
+                    break;
+                case 2:
+                    //code block
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 3:
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                    break;
+                case 4:
+                    //code block
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 5:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = moment().endOf('quarter').toString();
+                    break;
+                case 6:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 7:
+                    //code block
+                    firstDay = moment().startOf('year').toString();;
+                    lastDay = moment().endOf('year').toString();
+                    break;
+                case 8:
+                    //code block
+                    firstDay = moment().startOf('year').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 9:
+                    //code block
+                    firstDay = moment().add(-1, 'days').toString();
+                    lastDay = moment().add(-1, 'days').toString();
+                    break;
+                case 10:
+                    //code block
+                    firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                    lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                    break;
+                case 11:
+                    //code block
+                    firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                    break;
+                case 12:
+                    //code block
+                    firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                    lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                    break;
+                case 13:
+                    //code block
+                    firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                    lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                    break;
+                case 14:
+                    custom_enabled = true;
+                    //code block
+                    $('#dtpfrom').html(moment(firstDay).format('L'));
+                    $('#dtpto').html(moment(lastDay).format('L'));
+                    break;
+                default:
+                    //code block
+            }
+            $('#dtpfromMP').val(moment(firstDay).format('L'));
+            $('#dtptoMP').val(moment(lastDay).format('L'));
+
+            $(".search-date-field").prop('disabled', !custom_enabled);
+        };
+
+
+
+        function PopulateManualPayment() {
+
+            var OpenClose = '';
+            if ($("#isOpen").is(":checked")) {
+                OpenClose = 'Y';
+            }
+            if ($("#isClose").is(":checked")) {
+                OpenClose = 'N';
+            }
+            if ($("#isOpen").is(":checked") && $("#isClose").is(":checked")) {
+                OpenClose = 'YN';
+            }
+
+            var sURL = '@Url.Action("InvoicesSearchForPaymentResultData", "Customer", new { area = "Portal" })?customerId=' + @Model.CustomerId+'&OpenClose='+OpenClose;
+
+            ManualPaymentList = $('#ManualPaymentList').DataTable({
+                //"bProcessing": true,
+                "bServerSide": false,
+                "bDestroy": true,
+                "sAjaxSource": sURL,
+                "bLengthChange": false, //thought this line could hide the LengthMenu
+                "bInfo": false,
+                "bPaginate": false,
+                "aLengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                "pageLength": 25, // default records per page
+                "dom": '<"top">rt<"bottom"lp><"clear">'
+                //"dom": "<'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'<'table-group-actions pull-right'>>r><'table-responsive't><'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'>>", // datatable layout
+                ,
+                columnDefs: [
+                    {
+                        targets: "tblInvoice_chk",
+                        data: "",
+                        className: "dt-center",
+                        render: function (data, type, row, meta) {
+                            return '<input rel="mgglchk" type="checkbox" style="margin-left: 5px;" id="inv' + row.InvoiceId + '_chk" name="inv' + row.InvoiceId + '_chk"  onchange="paymentcheckboxFun(this)" />';
+                        }
+                    },
+                    {
+                        targets: "tblInvoice_invoiceNo",
+                        data: "InvoiceNo",
+                        render: function (data, type, row, meta) {
+                            var s = '<input type="hidden" id="inv' + row.InvoiceId + '_invoiceNo" value="' + data + '" />';
+                            s += '<input type="hidden" id="inv' + row.InvoiceId + '_hasMultipleItems" value="' + row.HasMultipleLineItems + '" />';
+                            s += '<a  onclick="btnOpenApplyPaymentForm(' + row.InvoiceId + ')">' + data + '</a>';
+                            return s;
+                        }
+                    },
+                    {
+                        targets: "tblInvoice_invoiceDate",
+                        data: "InvoiceDate",
+                        type: "date",
+                        render: function (data, type, row, meta) {
+                            return moment(new Date(parseInt(data.substr(6)))).format("MM/DD/YYYY");
+                        }
+                    },
+                    { targets: "tblInvoice_customerNo", data: "CustomerNo" },
+                    { targets: "tblInvoice_customerName", data: "CustomerName" },
+                    { targets: "tblInvoice_invoiceDesc", data: "Description" },
+                    {
+                        targets: "tblInvoice_invoiceAmt",
+                        data: "Balance",
+                        sClass: "clsAmounttd",
+                        render: function (data, type, row, meta) {
+                            return '<input type="text" id="inv' + row.InvoiceId + '_amount" value="' + parseFloat(data).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '" class="amount-format form-control input-sm payment-field Amttext" readonly="readonly" />';
+                        }
+                    },
+                    {
+                        targets: "tblInvoice_payment",
+                        data: "",
+                        sClass: "clsAmounttd",
+                        render: function (data, type, row, meta) {
+                            return '<input type="text" id="inv' + row.InvoiceId + '_totalPayment" name="inv' + row.InvoiceId + '_totalPayment" class="amount-format form-control input-sm payment-field payment-apply-field Amttext" onchange="changeApplypaymentField(' + row.InvoiceId + ')" />';
+                        }
+                    },
+                    {
+                        targets: "tblInvoice_balance",
+                        data: "Balance",
+                        sClass: "clsAmounttd",
+                        render: function (data, type, row, meta) {
+                            return ' <input type="text" id="inv' + row.InvoiceId + '_balance" name="inv' + row.InvoiceId + '_balance" value="' + parseFloat(data).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '" class="amount-format form-control input-sm payment-field Amttext" readonly="readonly" />';
+                        }
+                    },
+                ]
+            });
+        }
+
+        function openApplyPaymentForm(id) {
+
+            var form = null;
+
+            var existingForm = $("#inv" + id + "_modal_applypaymentform");
+
+            if ($(existingForm).length > 0) // already fetched form, so just display it again
+            {
+                form = existingForm;
+                var inv = getInvoiceIdChunk(form);
+                showApplyPaymentForm(inv);
+            }
+            else // first time loading form, so fetch by ajax
+            {
+                var sURL = '@Url.Action("ApplyManualPaymentForm", "Customer", new { area = "Portal" })?Id=' + id;
+                $.ajax({
+                    type: "GET",
+                    url: sURL,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (data) {
+                        $('#div_applypaymentforms').append(data);
+                        form = $('#div_applypaymentforms').children().last();
+
+                        $(".date-picker").datepicker();
+
+                        var inv = getInvoiceIdChunk(form);
+                        initPaymentForm(inv);
+                        showApplyPaymentForm(inv);
+                    },
+                    error: function () {
+                        alert("Content load failed.");
+                    }
+                });
+            }
+
+
+        };
+
+
+
+
+        function paymentcheckboxFun(item) {
+            debugger;
+            var balance = parseFloat(removeFormatting($("#OPI_IBalanceAmountBAL").val()));
+            if (balance > 0) {
+                var inv = getInvoiceIdChunk(item);
+                selectInvoice(inv);
+            } else {
+                //swal('all amount already applied.')
+                $(item).prop("checked", false);
+                var inv = getInvoiceIdChunk(item);
+                selectInvoice(inv);
+
+            }
+        }
+
+        function removeFormatting(i) {
+            return typeof i === 'string' ?
+                i.replace(/[\$,]/g, '') * 1 :
+                typeof i === 'number' ?
+                i : 0;
+        }
+
+        function getInvoiceIdChunk(elem) {
+            return $(elem).attr("id").split('_')[0];
+        }
+        function getInvoiceFilter(inv) {
+            return "[id^=" + getInvoicePrefix(inv) + "]";
+        }
+        function getInvoicePrefix(inv) {
+            return inv + "_";
+        }
+        function getInvoiceParentFormFilter(inv) {
+            return "#" + getInvoicePrefix(inv) + "modal_applypaymentform ";
+        }
+        function commaSeparateNumber(val) {
+            //if (val != "") {
+            //    val =parseFloat(val).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString()
+
+            //    //while (/(\d+)(\d{3})/.test(val.toString())) {
+            //    //    val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
+            //    //}
+            //}
+            return val;
+        }
+
+        function commaSeparateNumber(val) {
+            if (val != "") {
+                val = parseFloat(val.toString()).toFixed(2);//.replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString()
+
+                //while (/(\d+)(\d{3})/.test(val.toString())) {
+                //    val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
+                //}
+            }
+            return val;
+        }
+
+
+        function onClickSaveAndCloseMP() {
+
+            if (parseFloat($('#OPI_IBalanceAmountBAL').val()) != 0) {
+                swal('Overpayment amount and payment amount need to be equal.');
+                return;
+            }
+            //inv339844_totalPayment
+
+
+            $("#modal_ManualPayment").modal("hide");
+            $("#SaveMethod").val("SaveClose");
+            continueSaveProcessfrm();
+            // go back to customer page?
+        }
+
+        function onClickSaveAndNewMP() {
+            if (parseFloat($('#OPI_IBalanceAmountBAL').val()) != 0) {
+                swal('Overpayment amount and payment amount need to be equal.');
+                return;
+            }
+            $("#modal_ManualPayment").modal("hide");
+            $("#SaveMethod").val("SaveNew");
+            continueSaveProcessfrm();
+            // refresh to allow new payment entry?
+        }
+
+        function continueSaveProcessfrm() {
+
+            saveInProgress = true;
+            isLastPrompt = true;
+            var nextPrompt = "";
+
+            $("[id$=totalPayment]").each(function () {
+
+                if (!isLastPrompt)
+                    return;
+
+                var inv = getInvoiceIdChunk(this);
+                var invId = inv.substr(3);
+
+                if (promptedInvoices.indexOf(invId) == -1) { // invoice not checked yet
+
+                    var invPrefix = getInvoicePrefix(inv);
+
+                    var isChecked = $("#" + invPrefix + "chk").prop("checked");
+                    var newInvBalance = parseFloat($("#" + invPrefix + "balance").val());
+                    var shouldPrompt = $.isNumeric(newInvBalance) && newInvBalance > 0 && isChecked;
+
+                    if (shouldPrompt) { // invoice needs to be prompted
+                        if (nextPrompt != "") {
+                            isLastPrompt = false;
+                            return;
+                        }
+                        else {
+                            nextPrompt = invId;
+                        }
+                    }
+                }
+            });
+
+            if (nextPrompt != "")
+                promptApplyPaymentFormMP(nextPrompt);
+            else
+                finishSaveProcessfrm();
+        }
+
+        function promptApplyPaymentFormMP(invId) {
+            currentPromptedInvoice = invId;
+
+            var inv = "inv" + invId;
+            var invPrefix = getInvoicePrefix(inv);
+
+            var invoiceNo = $("#" + invPrefix + "invoiceNo").val();
+
+            $("#lblPromptInvoiceNo").text(invoiceNo.trim());
+            $("#modal_applypaymentprompt").modal({ backdrop: 'static' });
+        }
+
+        function finishSaveProcessfrm() {
+
+            // disable fields for non-selected invoice to keep them out of the POST
+
+            $(".payment-checkbox").each(function () {
+                if (!$(this).prop("checked")) { // invoice checkbox is not checked, so disable fields
+                    var inv = getInvoiceIdChunk(this);
+                    var invFilter = getInvoiceFilter(inv);
+                    $(invFilter).attr("disabled", "disabled");
+                }
+            });
+
+            $("#form_applypayment").submit();
+        }
+
+        $('#modal_applypaymentprompt').on('hidden.bs.modal', function () {
+            if (saveInProgress) {
+                var invId = currentPromptedInvoice;
+                var inv = "inv" + invId;
+                var invPrefix = getInvoicePrefix(inv);
+                var hasMultipleItems = $("#" + invPrefix + "hasMultipleItems").val() == "true";
+
+                if (hasMultipleItems)
+                    openApplyPaymentForm(currentPromptedInvoice);
+                else
+                    continueToNextInvoice(invId);
+            }
+        });
+        function onClickYesApplyPayment() {
+            $("#modal_applypaymentprompt").modal('hide');
+
+        }
+
+        function onClickNoApplyPayment() {
+            saveInProgress = false;
+            currentPromptedInvoice = "";
+            $("#modal_applypaymentprompt").modal('hide');
+        }
+        function continueToNextInvoice(invId) {
+            var invStr = invId.toString();
+
+            if (saveInProgress) { // in the middle of save process, so continue to next invoice
+
+                if (promptedInvoices.indexOf(invStr) == -1)
+                    promptedInvoices.push(invStr);
+
+                var form = $("#inv" + invStr + "_modal_applypaymentform");
+                $(form).modal('hide');
+
+                setTimeout(continueSaveProcessfrm);
+            }
+        }
+
+</script>

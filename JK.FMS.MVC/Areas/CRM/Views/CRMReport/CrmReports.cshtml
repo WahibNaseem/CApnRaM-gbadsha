@@ -1,0 +1,275 @@
+﻿
+@{
+    ViewBag.Title = "CrmReports";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}<style>
+    tr > td {
+        font-size: 12px !important;
+        padding: 4px !important;
+    }
+
+    /*tr > th {
+        font-size: 11px !important;
+        text-transform: uppercase;
+    }*/
+
+    .row {
+        margin: 0;
+        padding: 3px 0;
+    }
+
+    .right {
+        text-align: right;
+    }
+
+    .personlink {
+        text-align: center;
+    }
+
+    .close {
+        background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+        height: 12px !important;
+        width: 12px !important;
+        margin-top: 0px !important;
+    }
+
+    .page-size {
+        padding-left: 0;
+        padding-right: 0;
+        width: 62px;
+    }
+
+    .topheader {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFF !important;
+        text-transform: uppercase;
+        margin-top: 3px;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+
+    .alignCenter {
+        text-align: center;
+    }
+
+    #NewCustomerList th {
+        vertical-align: middle;
+    }
+
+    .no-padding {
+        padding: 0;
+    }
+
+    .no-margin {
+        margin: 0;
+    }
+
+    .padding-tb1 {
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+
+    .margin-tb1 {
+        margin-top: 1px;
+        margin-bottom: 1px;
+    }
+
+    .custom-listbox .headerbox {
+        padding: 3px 0px 3px 5px;
+    }
+
+    .custom-listbox {
+        margin-top: 4px;
+        margin-bottom: 0px;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .multiselect-container.dropdown-menu {
+        text-transform: none;
+        font-size: 14px;
+        padding-left: 24px;
+    }
+</style>
+
+<div class="custom-listbox" style="margin-top:4px; margin-bottom:3px;">
+    <div class="header">
+        <div class="row" style="background-color: #3598DC;color: #fff;">
+            <div class="col-md-12 no-padding">
+                <div class="alignCenter">
+                    <div class="col-md-12 text-center">
+                        CRM Reports
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tablebox">
+        @*  Row 1  *@
+        <div class="row" style="padding-top: 50px;padding-bottom: 20px;">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-3">
+                        <input type="button" class="btn btn-primary col-md-8" value="Cold Call Statistics" onclick="openColdCallStatisticsReport();" />
+                    </div>
+                    <div class="col-md-3">
+                        <input type="button" class="btn btn-primary  col-md-8" />
+                    </div>
+                    <div class="col-md-3">
+                        <input type="button" class="btn btn-primary  col-md-8" />
+                    </div>
+                    <div class="col-md-3">
+                        <input type="button" class="btn btn-primary  col-md-8" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        @* Row 2 *@
+        <div class="row" style="padding-bottom: 20px;">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-3">
+                        <input type="button" class="btn btn-primary col-md-8" />
+                    </div>
+                    <div class="col-md-3">
+                        <input type="button" class="btn btn-primary  col-md-8" />
+                    </div>
+                    <div class="col-md-3">
+                        <input type="button" class="btn btn-primary  col-md-8" />
+                    </div>
+                    <div class="col-md-3">
+                        <input type="button" class="btn btn-primary  col-md-8" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="modal_coldCallStatistics" class="modal fade custom-model  in" role="dialog" aria-hidden="true" style="padding-top:90px;">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px;margin-bottom: 4px;padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    <span id="title"></span>
+                </h4>
+            </div>
+            <div class="modal-body" id="modalresetRegBody">
+                <div class="row">
+                    <div class="form-horizontal">
+                        <form id="regresetForm" method="post">
+                            <div class="form-body-outer">
+
+                                <div class="form-group col-lg-12">
+                                    <label class="col-sm-4 control-label font-sm">Select Region:</label>
+                                    <div class="col-sm-7">
+                                        @if (ViewBag.regionlist != null)
+                                        {
+                                            <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                                                @foreach (var item in (SelectList)ViewBag.regionlist)
+                                                {
+                                                    <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                                }
+                                            </select>
+                                        }
+
+                                    </div>
+                                </div>                                
+                                <div class="form-group col-lg-12 clsmonthddl">
+                                    <label class="col-sm-4 control-label font-sm">Select Month:</label>
+                                    <div class="col-sm-7">
+                                        @if (ViewBag.periodlist != null)
+                                        {
+                                            <select class="form-control input-sm" id="ddlMonth">
+
+
+                                                @foreach (var item in (SelectList)ViewBag.periodlist)
+                                                {
+                                                    var length = item.Text.Length;
+                                                    if (length == 6)
+                                                    {
+                                                        <option @(item.Selected ? "selected" : "") value="@item.Value">0 @item.Text</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                                    }
+                                                }
+                                            </select>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-11 text-right">
+                    <input type="button" value="Submit" class="btn btn-primary"/>
+                </div>                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+              $("#ddlMonth option").each(function () {
+                $(this).text($(this).text().replace(' ', ''))
+                var splt = $(this).text().split('/');
+                if (parseInt(splt[0]) > @DateTime.Now.Month && parseInt(splt[1]) == @DateTime.Now.Year)
+                    $(this).remove();
+                if (parseInt(splt[0]) == @DateTime.Now.Month && parseInt(splt[1]) == @DateTime.Now.Year) {
+                    $(this).attr("selected", "selected");
+            }
+            });
+        });
+
+          $(function () {
+            $("#regionlist").multiselect({
+                includeSelectAllOption: true,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2
+             });
+
+            @*$("#ddlFromMonth").val('@System.DateTime.Now.Month');
+            $("#ddlFromYear").val('@System.DateTime.Now.Year');*@
+
+            @*$("#ddlToMonth").val('@System.DateTime.Now.AddMonths(1).Month');*@
+            @*$("#ddlToYear").val('@System.DateTime.Now.Year');*@
+
+        });
+
+        function openColdCallStatisticsReport() {
+            $('#modal_coldCallStatistics').modal('show');
+        }
+    </script>
+
+}
+

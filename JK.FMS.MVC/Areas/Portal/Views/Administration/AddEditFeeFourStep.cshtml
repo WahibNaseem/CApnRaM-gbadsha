@@ -1,0 +1,239 @@
+﻿@model JKViewModels.Franchisee.FeesViewModel
+@{
+    ViewBag.Title = "AddEditFee";
+    Layout = null;
+}
+<div class="modal-dialog" style="max-width:400px">
+    @using (Html.BeginForm("AddEditFranchiseeFeeList", "Administration", FormMethod.Post, new { @id = "form-add-franchiseefeelist", @role = "form" }))
+    {
+
+        @Html.HiddenFor(one => one.FranchiseeId)
+        @Html.HiddenFor(one => one.FranchiseeFeeId)
+        @Html.HiddenFor(one => one.FeeId)
+        @Html.HiddenFor(one => one.Amount)
+
+        <div class="modal-content" style="border-radius: 8px;">
+
+            <div class="modal-header headerbox list" style="padding:0px!important;">
+                @*<button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>*@
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">Add Franchisee Fee</h4>
+            </div>
+            <div class="modal-body" style="padding: 15px 15px 15px 35px;">
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group col-md-4">
+                            <label id="lblFranchiseeFeeName" for="FranchiseeFeeName">Fee Name</label>
+                        </div>
+                        <div class="form-group col-md-7">
+                            @Html.DropDownList("FranchiseeFeeList", null, "Select Fee", htmlAttributes: new { @class = "form-control input-sm", @id = "FeesId" })
+                        </div>
+                        @*<div class="form-group col-md-4">
+                                @Html.LabelFor(m => m.Name)
+                            </div>
+                            <div class="form-group col-md-7">
+
+
+                                @Html.TextBoxFor(o => o.Name, new { @class = "form-control input-sm", required = "required" })
+
+                            </div>*@
+                        <div class="form-group col-md-4">
+                            <label id="lblAmount" for="Amount">Amount</label>
+                        </div>
+                        <div class="form-group col-md-7">
+                            <input type="text" id="txtAmount" class="form-control input-sm" />
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label id="lblAmount" for="Amount">Active</label>
+                        </div>
+                        <div class="form-group col-md-7">
+                            @if (Model.IsActive == false)
+                            {
+                                <input type="checkbox" id="chkIsActive" name="IsActive" class="i-check"  />
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="chkIsActive" name="IsActive" class="i-check" checked="checked" />
+                            }
+                            @*@Html.CheckBoxFor(one => (one.IsActive != null ? one.IsActive.Value:false) , new { @class = "i-check", @checked = "true" })*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding-right: 40px;">
+                <button id="btnSave" type="button" class="btn btn-primary">Save </button>
+                <button type="button" class="btn btn-primary button-next pull-right" id="btnEditFeeCancel" style="margin-right:5px;" onclick="ClickEditFeeCancel()">
+                    Cancel                    
+                </button>
+
+                @*<button type="button" id="btnDelete" class="btn btn-primary">Delete </button>*@
+            </div>
+
+
+        </div>
+
+            <!-- /.modal-content -->
+
+
+    }
+</div>
+
+<script type="text/javascript">
+
+    // Controll data
+    $('#btnSave').click(function () {
+       
+        var Id = $("#FranchiseeFeeId").val();
+        var FeesId = $("#FeesId").val();
+        var FranchiseeId = $("#BusinessInfo_FranchiseeId").val();
+
+        var AmountValue = $("#txtAmount").val();
+        AmountValue = AmountValue.toString().replace("%", "");
+        var AmountValue1 = parseFloat(AmountValue)
+        $("#Amount").val(AmountValue1);
+
+        var IsActive = false;
+        if ($("#chkIsActive").is(":checked")) {
+            IsActive = true;
+        }
+
+        var isvalid = true;
+        if (FranchiseeId == "" || FranchiseeId == null || FranchiseeId == "0"){if (isvalid == true) { isvalid = false; }}
+        if (FeesId == '') { $('#FeesId').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#FeesId').css('border-color', ''); }
+        if ($('#txtAmount').val() == '') { $('#txtAmount').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtAmount').css('border-color', ''); }
+
+        if (isvalid == true) {
+            $.ajax({
+                url: '@Url.Action("SaveFeeDetails", "Administration", "Portal")&FranchiseeId=' + FranchiseeId + '&FeeId=' + Id + '&FeesId=' + FeesId + '&Amount=' + $("#Amount").val() + '&IsActive=' + IsActive,
+                success: function (res) {
+                    $('#modalEditFeeData').modal("hide");                    
+                    $('#modalEditMinFeedata').modal("hide");
+                    LoadFranchiseeFeeList(FranchiseeId);
+                },
+                error: function () {
+                }
+            });
+        }
+       
+        @*var url = '@Url.Action("SaveFeeDetails", "Administration", new { area="Portal" })';*@
+        //$.ajax({
+        //    type: "GET",
+        //    url: "/Portal/Administration/SaveFeeDetails",
+        //    data: { FeeId: FeeId, FeesId: FeesId, Amount: $("#Amount").val(), IsActive: IsActive },
+        //    success: function (result) {
+        //        window.location.reload();
+        //    },
+        //    error: function (result) {
+        //        //window.location.reload();
+        //    }
+
+        //});
+
+    });
+     
+
+    @*$('#btnDelete').click(function () {
+        var url = '@Url.Action("DeleteFranchiseeFeeList", "Administration", new { area="Portal" })';
+        url = url + "?Id=" + @Model.FranchiseeFeeListId;
+        $.ajax({
+
+            type: "POST",
+            url: url,
+            data: $("#form-add-franchiseefeelist").serialize(),
+            success: function (result) {
+                window.location.reload();
+            },
+            error: function (result) {
+                window.location.reload();
+            }
+
+        });
+    });*@
+    $(document).ready(function () {
+        maskCurrency1("txtAmount");
+
+        var valFranchiseeFeeListId = $("#FranchiseeFeeListId").val();
+        if (valFranchiseeFeeListId == "0") {
+            $('#btnDelete').hide();
+
+        }
+        $("#txtAmount").val($("#Amount").val());
+        var amount = $("#txtAmount").val();
+        if (amount % 1 == 0) {
+            amount = parseInt(amount, 10);
+            $("#txtAmount").val(amount);
+        }
+        var drdseleceted = $("#FeeRateTypeList").val();
+        if (drdseleceted == 1) {
+            //$('#txtAmount').inputmask("mask", {
+            //    "mask": "99.99%"
+
+            //});
+            $("#lblAmount").empty();
+            $("#lblAmount").append("Percentage");
+        }
+        else {
+            //$('#txtAmount').inputmask("mask", {
+            //    "mask": "99.99"
+            //});
+            $("#lblAmount").empty();
+            $("#lblAmount").append("Amount");
+
+        }
+
+    });
+
+    function maskCurrency1(id) {
+        $('#' + id).inputmask("currency", {
+            alias: 'currency',
+            prefix: '',
+            digits: 2,
+            autoUnmask: true,
+            removeMaskOnSubmit: true,
+            unmaskAsNumber: true,
+            allowPlus: false,
+            allowMinus: false,
+            autoGroup: true,
+            groupSeparator: ",",
+        });
+    }
+
+    $("#FeeRateTypeList").change(function () {
+
+        var seleceted = $(this).val();
+        if (seleceted == 1) {
+            //$('#txtAmount').inputmask("mask", {
+            //    "mask": "99.99%"
+
+            //});
+            $("#lblAmount").empty();
+            $("#lblAmount").append("Percentage");
+        }
+        else {
+            //$('#txtAmount').inputmask("mask", {
+            //    "mask": "99.99"
+            //});
+            $("#lblAmount").empty();
+            $("#lblAmount").append("Amount");
+
+        }
+
+
+
+    });
+    function validateServiceForm() {
+        if ($('#FeeRateTypeList').val() == '') { $('#FeeRateTypeList').css('border-color', 'red'); } else { $('#FeeRateTypeList').css('border-color', ''); }
+
+    }
+    function ClickEditFeeCancel() {
+        $('#modalEditFeeData').modal("hide");
+        $('#modalEditMinFeedata').modal("hide");
+        
+    }
+
+
+</script>
+
+
+
+

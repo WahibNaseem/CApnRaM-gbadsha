@@ -1,0 +1,299 @@
+﻿@model JKApi.Service.AccountPayable.FranchiseeReportFinalizedDetailsViewModel
+
+@using System.Globalization;
+@{
+    var request = HttpContext.Current.Request;
+    var _siteUrl = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Authority);
+
+    string imgpath = _siteUrl + "/Content/admin/assets/layouts/layout2/img/lg_jklogo.jpg";
+ 
+}
+<div id="page_1" style="padding-left:15px;">
+    <table class="header" style="margin-bottom:0px;">
+        <tr>
+            <td width="25%">
+                <img src="@imgpath" style="height: 60px" />
+            </td>
+
+            <td width="50%">
+                <P style="text-align: center;font-size:11px;margin:0px !important" >
+                    FRANCHISEE REPORT<br />
+                    @Model.Report.RegionName.ToUpper()<br />
+                    BUSINESS FOR THE MONTH OF @Model.MonthYearDisplay.ToUpper()
+                </P>
+            </td>
+
+            <td width="25%">
+                <P style="font-size:12px;padding-left:50px;">
+                    Date: @DateTime.Now.ToShortDateString()<br />
+                    Time: @DateTime.Now.ToString("HH:mm:ss")
+                </P>
+            </td>
+        </tr>
+    </table>
+
+    <table class="header" style="margin-bottom:0px;">
+        <tr>
+            <td width="20%">
+                <P style="font-size:11px;margin:0px !important">
+                    Franchisee Code:<br/>
+                    @Html.DisplayFor(o => o.Report.FranchiseeNo)
+                </P>
+            </td>
+
+            <td width="40%">
+                <P style="font-size:11px;margin:0px !important">
+                    Name:<br />
+                    @Html.DisplayFor(o => o.Report.FranchiseeName)<br />
+                    @Model.Report.FranchiseeAddress1<br />
+                    @Model.Report.FranchiseeAddress2
+                </P>
+            </td>
+
+            <td width="40%">
+                <P style="font-size:11px;margin:0px !important">
+                    &nbsp;<br/>
+                    Plan Type: @Model.Report.FranchiseeContractPlanType<br />
+                    Sign Date: @(Model.Report.FranchiseeContractSignDate != null ? ((DateTime)Model.Report.FranchiseeContractSignDate).ToShortDateString() : "")
+                </P>
+            </td>
+        </tr>
+    </table>
+
+    
+    <div style="width: 80%">
+        <table class="price-list">
+            <tr>
+                <td colspan="2" class="list-header">
+                    <p style="font-size:14px;">FRANCHISEE REVENUES:</p>
+                </td>
+                <td class="price2">&nbsp;</td>
+            </tr>
+            <tr><td class="padtop" style="height:7px !important;"></td></tr>
+            @foreach (var service in Model.DetailsByService)
+            {
+
+                if (service.CreatedBy == -1) /*History data*/
+                {
+                    if (service.ServiceTypeListId != 57)  /*57 = Tax Credit*/
+                    {
+                        <tr>
+                            <td class="text" style="font-size:12px;">@service.ServiceType</td>
+                            <td class="price1" style="font-size:12px;">@Model.NumberDisplay(service.Details.Sum(o => o.Subtotal))</td>
+                            <td class="price2" style="font-size:12px;">&nbsp;</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    if (service.ServiceTypeListId != 57)  /*57 = Tax Credit*/
+                    {
+                        <tr>
+                            <td class="text" style="font-size:12px;">@service.ServiceTypeGroupListName</td>
+                            <td class="price1" style="font-size:12px;">@Model.NumberDisplay(service.Details.Sum(o => o.Subtotal))</td>
+                            <td class="price2" style="font-size:12px;">&nbsp;</td>
+                        </tr>
+                    }
+
+                }
+            }
+            <tr class="new-subsection">
+                <td class="text" style="font-size:12px;">TOTAL REVENUE</td>
+                <td class="price1" style="font-size:12px;">&nbsp;</td>
+                <td class="price2" style="font-size:12px;">@Model.NumberDisplay(Model.Report.TotalRevenue)</td>
+            </tr>
+            <tr class="new-subsection">
+                <td class="text" style="font-size:12px;">Client Sales Tax</td>
+                <td class="price1" style="font-size:12px;">@Model.NumberDisplay(Model.Report.TotalTax)</td>
+                <td class="price2" style="font-size:12px;">&nbsp;</td>
+            </tr>
+            <tr class="new-subsection">
+                <td class="text" style="font-size:12px;">Total Customer Invoice</td>
+                <td class="price1" style="font-size:12px;">@Model.NumberDisplay(Model.Report.TotalRevenue + Model.Report.TotalTax)</td>
+                <td class="price2" style="font-size:12px;">&nbsp;</td>
+            </tr>
+            <tr><td class="padtop" style="height:7px !important;"></td></tr>
+            <tr>
+                <td colspan="2" class="list-header">
+                    <p style="font-size:14px;">FRANCHISEE DEDUCTIONS:</p>
+                </td>
+                <td class="price2">&nbsp;</td>
+            </tr>
+            <tr><td class="padtop" style="height:7px !important;"></td></tr>
+
+            @{decimal totalChargeback = 0.00m; }
+            @{bool hasChargeback = false;}
+            @foreach (var service in Model.Deductions)
+            {
+                /*8-16-18 - do nto include chargeback in the deductions. This has beenmoved to the bottom of the report*/
+                if (service.ServiceTypeGroupListId == 12)
+                {
+                    totalChargeback = service.Total;
+                    hasChargeback = true;
+                }
+                else
+                {
+                    if (service.ServiceTypeGroupListId != 1)
+                    {
+                        <tr class="new-subsection">
+                            <td class="text" style="font-size:12px;">@service.GroupName </td>
+                            <td class="price1" style="font-size:12px;">@Model.NumberDisplay(service.Deductions.Sum(o => o.Total))</td>
+                            <td class="price2" style="font-size:12px;">&nbsp;</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        var minRoyalty = Model.Deductions.Where(m => m.ServiceTypeListId == 73).FirstOrDefault();
+
+                        if (minRoyalty != null)
+                        {
+                            if (service.ServiceTypeListId == 17 || service.ServiceTypeListId == 73)
+                            {
+                                <tr class="new-subsection">
+                                    <td class="text" style="font-size:11px;width:20px;">&nbsp;&nbsp;&nbsp;@service.ServiceType</td>
+
+                                    <td class="price3" style="font-size:11px;width:20px;">@Model.NumberDisplay(service.Deductions.Sum(o => o.Total))</td>
+                                    <td class="price2" style="font-size:12px;">&nbsp;&nbsp;&nbsp;</td>
+
+                                </tr>
+                            }
+                            else
+                            {
+
+                                <tr class="new-subsection">
+                                    <td class="text" style="font-size:12px;">@service.ServiceType</td>
+                                    <td class="price1" style="font-size:12px;">@Model.NumberDisplay(service.Deductions.Sum(o => o.Total))</td>
+                                    <td class="price2" style="font-size:12px;">&nbsp;</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr class="new-subsection">
+                                <td class="text" style="font-size:12px;">@service.ServiceType</td>
+                                <td class="price1" style="font-size:12px;">@Model.NumberDisplay(service.Deductions.Sum(o => o.Total))</td>
+                                <td class="price2" style="font-size:12px;">&nbsp;</td>
+                            </tr>
+
+                        }
+                    }
+
+
+                }
+            }
+            @if (hasChargeback)
+            {
+                <tr class="new-subsection">
+                    <td class="text" style="font-size:12px;">Total Deductions</td>
+                    <td class="price1" style="font-size:12px;">&nbsp;</td>
+                    <td class="price2" style="font-size:12px;">@Model.NumberDisplay(Model.Report.TotalDeductions - totalChargeback)</td>
+                </tr>
+
+
+                <tr><td class="padtop" style="height:7px !important;"></td></tr>
+                <tr>
+                    <td colspan="2" class="list-header">
+                        <p style="font-size:14px;">DUE TO FRANCHISEE BEFORE CHARGEBACK: </p>
+                    </td>
+
+                    <td class="price2" style="font-size:12px;">@Model.NumberDisplay(Model.Report.TotalRevenue - (Model.Report.TotalDeductions - totalChargeback))</td>
+
+                </tr>
+
+                foreach (var service in Model.Deductions)
+                {
+
+                    if (service.ServiceTypeGroupListId == 12)
+                    {
+                        <tr class="new-subsection">
+                            <td class="text" style="font-size:12px;">&nbsp;</td>
+                            <td class="text" style="font-size:12px;">&nbsp;</td>
+                            <td class="text" style="font-size:12px;">&nbsp;</td>
+                        </tr>
+                        <tr class="new-subsection">
+                            <td class="text" style="font-size:12px;">@service.GroupName </td>
+                            <td class="price1" style="font-size:12px;">@Model.NumberDisplay(service.Deductions.Sum(o => o.Total))</td>
+                            <td class="price2" style="font-size:12px;">&nbsp;</td>
+                        </tr>
+                    }
+                }
+
+            }
+            else
+            {
+                <tr class="new-subsection">
+                    <td class="text" style="font-size:12px;">Total Deductions</td>
+                    <td class="price1" style="font-size:12px;">&nbsp;</td>
+                    <td class="price2" style="font-size:12px;">@Model.NumberDisplay(Model.Report.TotalDeductions)</td>
+                </tr>
+            }
+
+
+
+            <tr><td class="padtop" style="height:7px !important;"></td></tr>
+            <tr>
+                <td colspan="2" class="list-header">
+                    <p style="font-size:14px;">DUE TO FRANCHISEE: </p>
+                </td>
+                <td class="price2" style="font-size:12px;">@Model.NumberDisplay(Model.Report.TotalPayment)</td>
+            </tr>
+
+
+        </table>
+        @*<p>&nbsp;</p>*@
+        @*<p>&nbsp;</p>*@
+        @*<p>&nbsp;</p>*@
+        <p>&nbsp;</p>
+        @if (Model.Report.AccountingFeeRebateAmount != 0 || Model.Report.AccountingFeeRebateBalance != 0)
+        {
+            <table class="check-table">
+                <tr class="new-subsection">
+                    <td class="text1" style="font-size:12px;">Date Paid</td>
+                    <td class="line line1">&nbsp;</td>
+                    <td class="text2" style="font-size:12px;">Check #</td>
+                    <td class="line line2">&nbsp;</td>
+                    <td class="text3" style="font-size:12px;">Amount</td>
+                    <td class="line line3">&nbsp;</td>
+                </tr>
+                <tr><td>&nbsp;</td></tr>
+                <tr class="new-subsection">
+                    <td class="text1" style="font-size:12px;">Notes</td>
+                    <td class="line" colspan="5">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td class="line" colspan="5">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td class="line" colspan="5">&nbsp;</td>
+                </tr>
+                <tr><td>&nbsp;</td></tr>
+                <tr class="new-subsection">
+                    <td style="font-size:12px;" colspan="2">Accounting Fee Rebate</td>
+                </tr>
+                <tr><td>&nbsp;</td></tr>
+                <tr class="new-subsection">
+
+                    <td style="font-size:12px;text-align:right" colspan="2">Current Month:</td>
+                    <td class="price2" style="font-size:12px;">@Model.NumberDisplay(Model.Report.AccountingFeeRebateAmount)</td>
+                    <td style="font-size:12px;text-align:right" colspan="2">Rebate Balance:</td>
+                    <td class="price2" style="font-size:12px;">@Model.NumberDisplay(Model.Report.AccountingFeeRebateBalance)</td>
+                </tr>
+                <tr><td>&nbsp;</td></tr>
+                <tr><td>&nbsp;</td></tr>
+            </table>
+        }
+        <!--<p>&nbsp;</p><p>&nbsp;</p>
+        <TABLE cellpadding=0 cellspacing=0 class="t1">
+            <TR>
+                <TD class="tr19 td58"><P class="p0 ft1">Accounting Fee Rebate</P></TD>
+                <TD class="tr19 td59"><P class="p0 ft0">&nbsp;</P></TD>
+            </TR>
+            <TR>
+                <TD class="tr0 td58"><P class="p21 ft1">Current Month: XXXXX</P></TD>
+                <TD class="tr0 td59"><P class="p0 ft1">Rebate Balance: XXXXX</P></TD>
+            </TR>
+        </TABLE>-->
+    </div>
+</div>

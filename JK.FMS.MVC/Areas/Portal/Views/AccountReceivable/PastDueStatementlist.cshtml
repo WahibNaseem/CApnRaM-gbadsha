@@ -1,0 +1,775 @@
+﻿
+@model IEnumerable<JKViewModels.AccountReceivable.PastDueViewModel>
+@{
+    ViewBag.Title = "Past Due Statement list";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var regionIds = ViewBag.RegionIds;
+    decimal firstTotal = 0;
+    decimal secondTotal = 0;
+    decimal thirdTotal = 0;
+    decimal fourTotal = 0;
+    decimal fiveTotal = 0;
+}
+
+@section styles{
+    <link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" />
+    <style type="text/css">
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        tr > th {
+            font-size: 10px !important;
+            padding: 4px !important;
+            text-transform: uppercase;
+        }
+
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+            font-weight: normal;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        #modal_RegionModel .modal-content {
+            width: 55% !important;
+            margin-left: 30% !important;
+        }
+
+        .table td, .table th {
+            font-size: 11px !important;
+        }
+
+        .pull-left {
+            /*float:right !important;*/
+            padding-top: 7px;
+        }
+
+        .pull-right {
+            float: left !important;
+            padding-left: 15px !important;
+            padding-top: 7px;
+        }
+
+        .input-small {
+            width: 220px !important;
+            margin-left: -37px !important;
+        }
+
+        #modal_invoicedetail .pull-right {
+            float: right !important;
+        }
+    </style>
+}
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-1">
+                    <a class="btn btn-primary col-md-12" id="btnBack" href="/Portal/AccountReceivable/PastDue">Back</a>
+                </div>
+                <div class="col-md-2" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    CREATE CUSTOMER PAST DUE STATEMENT
+                </div>
+                <div class="col-md-3">
+                    <input type="hidden" id="reportDate" value="@ViewBag.ReportDate" />
+                    <input type="hidden" id="monthsToInclude" value="@ViewBag.MonthsToInclude" />
+                    <input type="button" class="btn btn-primary pull-right" id="btnPrintStatement" value="Print" style="margin-left:10px;margin-right:15px !important" />
+                    <input type="button" class="btn btn-primary pull-right" id="btnEmail" value="Email" onclick="DetailInvoiceListSendEmail_valid()" />
+
+                </div>
+                <div class="col-md-2" style="padding-right:5px;">
+                    <div>
+                        <div style="display:table-cell;padding-right: 5px;">
+                            Region
+                        </div>
+                        <div style="display:table-cell;width:100%;">
+                            @if (ViewBag.RegionList != null)
+                            {
+                                <select class="form-control input-sm" id="regionlist" multiple="multiple">
+                                    @{
+                                        var lstregion = ((string)ViewBag.RegionIds).Split(',');
+                                        foreach (var item in (SelectList)ViewBag.RegionList)
+                                        {
+                                            if (lstregion != null)
+                                            {
+                                                foreach (var rid in lstregion)
+                                                {
+                                                    if (item.Value == rid)
+                                                    {
+                                                        <option selected value="@item.Value">@item.Text</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@item.Value">@item.Text</option>
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.Value">@item.Text</option>
+                                            }
+                                            @*
+                                                <option @(item.Value= =region.ToString() ? "selected" : "" )
+                                                        value="@item.Value">
+                                                    @item.Text
+                                                </option>*@
+                                        }
+
+                                    }
+                                </select>
+                                        }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="custom-listbox">
+    @*<div class="headerbox">
+            <div class="row no-padding">
+                <div class="col-md-1 page-size">
+                    <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                        <option value="-1">All</option>
+                        <option value="100" selected>100</option>
+                        <option value="50">50</option>
+                        <option value="25">25</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <div class="input-icon">
+                        <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                        <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search..." value="" class="form-control input-sm typeahead" />
+                    </div>
+                </div>
+                <div class="col-md-8"></div>
+                <div class="col-md-4 pull-right" style="padding-right:5px;">
+                </div>
+            </div>
+        </div>*@
+    <div class="tablebox">
+        @*<div class="row">
+                <div class="col-md-1">
+                    <a class="btn btn-primary col-md-12" id="btnBack" href="/Portal/AccountReceivable/PastDue">Back</a>
+                </div>
+                <div class="col-md-3">
+                    <div class="input-icon" style="margin-top:4;margin-left:-10px;">
+                        <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                        <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search..." value="" class="form-control input-sm typeahead" />
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <input type="hidden" id="reportDate" value="@ViewBag.ReportDate" />
+                    <input type="hidden" id="monthsToInclude" value="@ViewBag.MonthsToInclude" />
+                    <input type="button" class="btn btn-primary pull-right" id="btnPrint" value="Print" />
+                </div>
+                <div class="col-md-1">
+                    <input type="button" class="btn btn-primary pull-right" id="btnEmail" value="Email" />
+                </div>
+                <div class="col-md-2"></div>
+            </div>*@
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered order-column" id="CustomerList" style="margin-top:0 !important;">
+                <thead>
+                    <tr style="background:#95a5a6;color:white;">
+                        <th style="text-align:center;"><input type="checkbox" id="selectAllInvoice" /></th>
+                        <th style="text-align:center;">Region</th>
+                        <th style="text-align:center;">Customer No</th>
+                        <th style="text-align:center;">Customer Name</th>
+                        <th style="text-align:center;">1-30</th>
+                        <th style="text-align:center;">31-60</th>
+                        <th style="text-align:center;">61-90</th>
+                        <th style="text-align:center;">+90</th>
+                        <th style="text-align:center;">Total Past Due</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var unique_customer_ids = Model.Select(s => s.CustomerId).Distinct().ToList();
+                        foreach (var customer_id in unique_customer_ids)
+                        {
+                            var entries = Model.Where(s => s.CustomerId == customer_id).ToList();
+
+                            if (entries.Count() != 0)
+                            {
+                                var first_item = entries.First();
+
+                                decimal oneMoTotal = 0;
+                                decimal twoMoTotal = 0;
+                                decimal threeMoTotal = 0;
+                                decimal fourMoTotal = 0;
+                                decimal fiveMoTotal = 0;
+
+                                foreach (var item in entries)
+                                {
+                                    oneMoTotal += Convert.ToDecimal(item.FirstSegment);
+                                    twoMoTotal += Convert.ToDecimal(item.SecondSegment);
+                                    threeMoTotal += Convert.ToDecimal(item.ThirdSegment);
+                                    fourMoTotal += Convert.ToDecimal(item.FourthSegment);
+                                    fiveMoTotal += (Convert.ToDecimal(item.FirstSegment)+ Convert.ToDecimal(item.SecondSegment)+ Convert.ToDecimal(item.ThirdSegment) + Convert.ToDecimal(item.FourthSegment));
+
+                                }
+
+                                firstTotal = firstTotal + oneMoTotal;
+                                secondTotal = secondTotal + twoMoTotal;
+                                thirdTotal = thirdTotal + threeMoTotal;
+                                fourTotal = fourTotal + fourMoTotal;
+                                fiveTotal = fiveTotal + fiveMoTotal;
+
+
+                                <tr>
+                                    <td style="text-align:center;"> <input type="checkbox" class="invoiceSelect chkitem" value="@first_item.CustomerId" id="@first_item.InvoiceId" /></td>
+                                    <td>@first_item.RegionName</td>
+                                    <td style="text-align:center;"><a onclick="showEditCustomerInfo(@first_item.CustomerId)"> @first_item.CustomerNo</a></td>
+                                    <td>
+                                        @first_item.CustomerName
+                                    </td>
+                                    <td style="text-align:right;">
+                                        <span style="text-align:right">@string.Format("{0:C}", oneMoTotal)</span>
+                                    </td>
+                                    <td style="text-align:right;">
+                                        <span style="text-align:right">@string.Format("{0:C}", twoMoTotal)</span>
+                                    </td>
+                                    <td style="text-align:right;">
+                                        <span style="text-align:right">@string.Format("{0:C}", threeMoTotal)</span>
+                                    </td>
+                                    <td style="text-align:right;">
+                                        <span style="text-align:right">@string.Format("{0:C}", fourMoTotal)</span>
+                                    </td>
+                                    <td style="text-align:right;">
+                                        <span style="text-align:right">@string.Format("{0:C}", oneMoTotal + twoMoTotal + threeMoTotal + fourMoTotal)</span>
+                                    </td>
+                                    <td style="text-align:center;">
+                                        <a onclick="ViewPastDueDetailsPopup(@first_item.CustomerId)">View</a>
+                                    </td>
+                                </tr>
+
+                            }
+                        } }
+                </tbody>
+                <tfoot>
+                    @if (ViewBag.RegionWiseTotal != null)
+                    {
+                        <tr>
+                        @foreach (var item in ViewBag.RegionWiseTotal)
+                        {
+                            <tr style="background:#95a5a6;color:white;">
+                                <td colspan="4" style="text-align:center;"><strong>Total: @item.RegionName</strong> </td>
+                                <td style="text-align:right;"><strong><span style="float: right">@string.Format("{0:C}", item.FirstTotal) </span> </strong> </td>
+                                <td style="text-align:right;"><strong><span style="float: right">@string.Format("{0:C}", item.SecondTotal)</span> </strong> </td>
+                                <td style="text-align:right;"><strong><span style="float: right">@string.Format("{0:C}", item.ThirdTotal) </span> </strong> </td>
+                                <td style="text-align:right;"><strong><span style="float: right">@string.Format("{0:C}", item.FourthTotal)  </span> </strong> </td>
+                                <td style="text-align:right;"><strong><span style="float: right">@string.Format("{0:C}", (item.FirstTotal + item.SecondTotal + item.ThirdTotal + item.FourthTotal)) </span> </strong> </td>
+                                <td style="text-align:right;"></td>
+                            </tr>
+                        }
+                    </tr>
+
+                    }
+                    <tr style="background:#95a5a6;color:white;">
+                        <td colspan="4" style="text-align:center;"><strong>Total:</strong> </td>
+                        <td style="text-align:right;"><strong><span style="float: right">@string.Format("{0:C}", firstTotal) </span> </strong> </td>
+                        <td style="text-align:right;"><strong><span style="float: right">@string.Format("{0:C}", secondTotal)</span> </strong> </td>
+                        <td style="text-align:right;"><strong><span style="float: right">@string.Format("{0:C}", thirdTotal) </span> </strong> </td>
+                        <td style="text-align:right;"><strong><span style="float: right">@string.Format("{0:C}", fourTotal)  </span> </strong> </td>
+                        <td style="text-align:right;"><strong><span style="float: right">@string.Format("{0:C}", fiveTotal) </span> </strong> </td>
+                        <td style="text-align:right;"></td>
+                    </tr>
+                </tfoot>
+
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="form-horizontal" id="form_FranchiseeBillingDetail"></div>
+<div class="form-horizontal" id="invoicedetail_form"></div>
+<form class="form-horizontal" action="" id="form_Billingsetting" method="POST">
+    @*<div class="modal fade custom-model custom-form-design" id="ModalEditCustomerInfo" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog" style="width:869px" id="RenderEditCustomerInfoPopup">
+            </div>
+        </div>*@
+</form>
+
+<div class="modal fade custom-model custom-form-design" id="ModalPastDueStatementDetails" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:800px">
+        <div class="modal-content" style="border-radius: 8px;" id="RenderPastDueStatementDetails">
+        </div>
+    </div>
+</div>
+
+<div class="modal fade custom-model custom-form-design" id="modal_invoicedetailEmail" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:600px">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Email
+                </h4>
+            </div>
+
+
+            <div class="modal-body" style="padding: 0px 30px 15px 30px;">
+                <div class="row">
+                    <label class="control-label col-md-2">From</label>
+                    <div class="col-md-10">
+                        <input type="text" id="invdetail_txtfromemail" name="invdetail_txtfromemail" class="form-control input-sm" value="" />
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="control-label col-md-2">To</label>
+                    <div class="col-md-10">
+                        <input type="text" id="invdetail_txttoemail" name="invdetail_txttoemail" class="form-control input-sm" value="@(ViewBag.CustBillingEmail != null ? ViewBag.CustBillingEmail :string.Empty )" />
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="control-label col-md-2">CC</label>
+                    <div class="col-md-10">
+                        <input type="text" id="invdetail_txtccemail" name="invdetail_txtccemail" class="form-control input-sm" value="" />
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="control-label col-md-2">Subject</label>
+                    <div class="col-md-10">
+                        <input type="text" id="invdetail_txtsubjectemail" name="invdetail_txtsubjectemail" class="form-control input-sm" value="Past Due Statements" />
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="control-label col-md-2">Email Body</label>
+                    <div class="col-md-10">
+                        <textarea rows="5" id="invdetail_txtemailbodyemail" name="invdetail_txtemailbodyemail" class="form-control input-sm"></textarea>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <label class="control-label col-md-2">Email Body</label>
+                    <div class="col-md-10">
+                        <span>
+                            To open the attached pdf, You need the free Adobe Reader software which can be here <a javascript:void(0);>Adobe</a>
+                        </span>
+                        <hr />
+                        <p>
+                            This email is intended for the party listed in the 'Sold To' field of the attached invoice. Delivery of this email to anyone other than the party to which is was intended is unintentional. In the event this email was misdirected to a party other that the intended party, please notify the sender destroy this email.
+                        </p>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-7"></div>
+                    <div class="col-md-5">
+                        <button type="button" id="invdetail_btnsendemail" class="btn btn-primary button-next pull-right" onclick="invdetail_sendemail()">Send&nbsp;<i class="fa fa-floppy-o"></i></button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="form-horizontal" id="form_invoicedetail"></div>
+
+<iframe src="" style="display:none;" id="iframe_statementpastdue" name="iframe_statementpastdue"></iframe>
+
+@Scripts.Render("~/bundles/modernizr")
+@Scripts.Render("~/bundles/corePlugins")
+@Scripts.Render("~/bundles/mainLayout")
+
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js")" type="text/javascript"></script>
+<script type="text/javascript">
+    var dtable;
+
+    function getUrl() {
+        var regionIds = $('#regionlist').val();
+        var reportDate = $('#ReportDate').val();
+        var monthsToInclude = $('#monthsToInclude').val();
+        return '@Url.Action("PastDueStatementlist", "AccountReceivable", new { area = "Portal" })?reportDate=' + reportDate + '&monthsToInclude=' + monthsToInclude + '&regionIds=' + regionIds;
+    }
+
+
+    $(document).ready(function () {
+
+        $("#selectAllInvoice").click(function () {
+            if (this.checked) {
+                $(".invoiceSelect").prop('checked', true);
+            } else {
+                $(".invoiceSelect").prop('checked', false);
+            }
+        });
+        $("#CustomerList").DataTable({
+            "paging": true,
+            "pageLength": 50,
+            "ordering": false,
+            "info": false,
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "dom": '<"pull-right"l><"pull-left"f>tip'
+        });
+        //$(document).on('init.dt', function (e, settings) {
+        //    var api = new $.fn.dataTable.Api(settings);
+        //    if ($(api.table().node()).attr('id') == 'CustomerList') {
+        //        setPaging();
+        //    }
+        //});
+
+        $("#input_Search").keyup(function () {
+            var table = $("#CustomerList").DataTable({
+
+                "paging": false,
+                "ordering": false,
+                "info": false,
+                "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+            });
+            //table.search($(this).val()).draw();
+
+            table.fnFilter($(this).val());
+
+        });
+
+        //$("#pageSize").change(function () {
+        //    setPaging();
+        //});
+        $("#regionlist").multiselect({
+            includeSelectAllOption: true,
+            selectAllText: 'Select all',
+            buttonWidth: '100%',
+            nonSelectedText: 'Select region..',
+            dropRight: true,
+            numberDisplayed: 3
+        });
+
+        $("#regionlist").change(function () {
+            var regionIds = $('#regionlist').val();
+            var reportDate = $('#reportDate').val();
+            var monthsToInclude = $('#monthsToInclude').val();
+
+            window.location.replace(getUrl());
+        });
+
+        //$('.modal-dialog').draggable();
+
+        $('#btnPrintStatement').click(function () {
+            var Ids = $('.chkitem:checked').map(function () {
+                return this.value;
+            }).get().join(',');
+
+            if (Ids != null && Ids != "") {
+                PrintCustomerPastdueStatement('@Url.Action("PastDueStatementDetailsPrint", "AccountReceivable", new { area = "Portal" })?customerIds=' + Ids + '&reportDate=' + '@ViewBag.ReportDate');
+            }
+            else {
+                alert("Please select at least one checkbox");
+            }
+        });
+
+    });
+
+
+    function setPaging() {
+        var z = $("#pageSize").val();
+        var table = $("#CustomerList").DataTable();
+        if (z > 0) {
+            table.page.len(z).draw();
+        }
+        else if (z == -1) {
+            table.page.len(table.rows().count()).draw();
+        }
+        else {
+            table.page.page.len(25).draw();
+        }
+    }
+
+    function formatCurrency(total, dollar) {
+        dollar = (dollar == true ? true : false);
+        var neg = false;
+        if (total < 0) {
+            neg = true;
+            total = Math.abs(total);
+        }
+        return (neg ? "-" : '') + (dollar ? "$" : "") + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+    }
+    function showEditCustomerInfo(Id) {
+
+        var sURL = '@Url.Action("PendingApprovalListEditCustomerPopup", "Customer", new { area = "Portal" })?id=' + Id;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#form_Billingsetting').html(data);
+                $("#ModalEditCustomerInfo").modal({ backdrop: 'static' });
+                $(".input-group-btn").click(function () {
+                    $(this).prev().trigger("focus");
+                    $(this).prev().trigger("focus");
+                });
+                $(".date-picker").datepicker();
+                $(".edit").attr("disabled", "disabled");
+                $(".edit").attr("readonly", "readonly");
+
+                $("#btnSave").prop("disabled", "false");
+                $("#btnSave").prop("readonly", "true");
+                $("#btnCancel").prop("disabled", "false");
+                $("#btnCancel").prop("readonly", "true");
+                $("#btnSave").hide();
+                $("#btnCancel").hide();
+
+                $(".editmain1").attr("disabled", "disabled");
+                $(".editmain1").attr("readonly", "readonly");
+                $(".editmain").attr("disabled", "disabled");
+                $(".editmain").attr("readonly", "readonly");
+
+                $(".editbill1").attr("disabled", "disabled");
+                $(".editbill1").attr("readonly", "readonly");
+                $(".editbill").attr("disabled", "disabled");
+                $(".editbill").attr("readonly", "readonly");
+
+                //$(".EditBtn").show(); //edit disable
+                $(".EditBtn").hide();
+                $(".SaveBtn").hide();
+                $(".CancelBtn").hide();
+
+
+            },
+            error: function () {
+                alert("Content load failed.");
+            }
+        });
+
+    }
+    function ViewPastDueDetailsPopup(CustomerId) {
+        var sURL = '@Url.Action("PastDueStatementDetailsPopup", "AccountReceivable", new { area = "Portal" })?Id=' + CustomerId + '&reportDate=' + '@ViewBag.ReportDate';
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#RenderPastDueStatementDetails').html(data);
+                $("#ModalPastDueStatementDetails").modal({ backdrop: 'static' });
+            },
+            error: function () {
+                alert("Content load failed.");
+            }
+        });
+    }
+    var Islist = 0;
+
+    function DetailInvoiceListSendEmail_valid() {
+        var CustIds = $('.chkitem:checked').map(function () {
+            return this.value;
+        }).get().join(',');
+
+        if (CustIds != "") {
+            DetailInvoiceListSendEmail(0);
+        }
+        else {
+            alert("Please select at least one checkbox");
+        }
+    }
+
+
+    function DetailInvoiceListSendEmail(Id) {
+        if (Id == 0) {
+            Islist = 1
+        }
+        else {
+            Islist = 0;
+        }
+        var sURL = '@Url.Action("GetEmailsforSendEmail", "AccountReceivable", new { area = "Portal" })?CustomerId=' + Id;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                var obj = $.parseJSON(data);
+                console.log(obj);
+                $("#invdetail_txtfromemail").val(obj.FromEmail);
+                $("#invdetail_txtccemail").val(obj.CCEmail);
+                $("#modal_invoicedetailEmail").modal('show');
+                if (Id == 0) {
+                    $("#invdetail_txttoemail").val("");
+                }
+                else {
+                    $("#invdetail_txttoemail").val($("#hdnCustBillingEmail").val());
+                }
+            },
+            error: function () {
+                alert("Content load failed.");
+            }
+        });
+    }
+
+    function invdetail_sendemail() {
+
+        var txFromEmail = $("#invdetail_txtfromemail").val();
+        var txToEmail = $("#invdetail_txttoemail").val();
+        var txCCEmail = $("#invdetail_txtccemail").val();
+        var txSubjectEmail = $("#invdetail_txtsubjectemail").val();
+        var txBodyEmail = $("#invdetail_txtemailbodyemail").val();
+        var CustomerId = ""
+        if (Islist == 1) {
+            var selIds = $('.chkitem:checked').map(function () {
+                return this.value;
+            }).get().join(',');
+
+            if (selIds != null && selIds != "") {
+                CustomerId = selIds;
+            }
+        }
+        else {
+            CustomerId = $("#hdnCustomerId").val();
+        }
+        if (CustomerId != "") {
+
+            var sURL = '@Url.Action("PastDueStatementSendEmailPopup", "AccountReceivable", new { area = "Portal" })?customerIds=' + CustomerId + '&FromEmail=' + txFromEmail + '&ToEmail=' + txToEmail + '&CCEmail=' + txCCEmail + '&SubjectEmail=' + txSubjectEmail + '&BodyEmail=' + txBodyEmail + '&reportDate=' + $("#hdnReportDate").val();
+            $.ajax({
+                type: "GET",
+                url: encodeURI(sURL),
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    console.log(data);
+                    $("#modal_invoicedetailEmail").modal('hide');
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+            $("#invdetail_txtfromemail").val('');
+            $("#invdetail_txttoemail").val('');
+            $("#invdetail_txtccemail").val('');
+            $("#invdetail_txtsubjectemail").val('');
+            $("#invdetail_txtemailbodyemail").val('');
+            $("#modal_invoicedetailEmail").modal('hide');
+        }
+        else {
+            alert("Please select at least one checkbox");
+        }
+    }
+    function PrintCustomerPastdueStatement(data) {
+
+        var afterPrint = function () {
+        }
+
+        var sURL = data;
+        $('#iframe_statementpastdue').attr('src', document.location.origin + sURL);
+        $('#iframe_statementpastdue').load(function () {
+
+            // for ie and firefox
+            window.onafterprint = afterPrint();
+
+            // for chrome
+            if (window.matchMedia) {
+                var mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function (mql) {
+                    if (mql.matches) {
+                    } else {
+                        afterPrint();
+                    }
+                });
+            }
+
+            frames['iframe_statementpastdue'].print();
+        });
+
+    }
+
+    /* Invoice Detail  */
+    function btnOpenInvoiceDetail(id) {
+
+        var sURL = '@Url.Action("InvoiceDetail", "AccountReceivable", new { area = "Portal" })?Id=' + id;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#form_invoicedetail').html(data);
+                $("#modal_invoicedetail").modal({ backdrop: 'static' });
+            },
+            error: function () {
+                alert("Content load failed.");
+            }
+        });
+    }
+
+</script>

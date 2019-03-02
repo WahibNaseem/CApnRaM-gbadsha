@@ -1,0 +1,828 @@
+﻿@model JKViewModels.Inspection.InspectionFormModel
+@{
+    ViewBag.Title = "InspectionForm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/admin/assets/global/plugins/icheck/skins/minimal/_all.css" rel="stylesheet" />
+@section styles{
+    <link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+    <style type="text/css">
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        #ui-datepicker-div {
+            z-index: 99999 !important;
+        }
+    </style>
+
+}
+@using (Html.BeginForm("InspectionFormSave", "CustomerService", FormMethod.Post, new { @id = "form_wizard_1", @role = "form", @class = "form form-horizontal" }))
+{
+    @Html.HiddenFor(one => one.AccountTypeListId);
+    @Html.HiddenFor(one => one.ServiceTypeListId);
+    @Html.HiddenFor(one => one.FormName);
+    @Html.HiddenFor(one => one.Description);
+    @Html.HiddenFor(one => one.PassPoints);
+    @Html.HiddenFor(one => one.FailPoints);
+    @Html.HiddenFor(one => one.NeedImprovementPoints);
+    @Html.HiddenFor(one => one.ScorePercent);
+    @Html.HiddenFor(one => one.SignatureUrl);
+    @Html.HiddenFor(one => one.JobId);
+    @Html.HiddenFor(one => one.CustomerId);
+    @Html.HiddenFor(one => one.FranchiseeId);
+    @Html.HiddenFor(one => one.RegionId);
+    @Html.HiddenFor(one => one.FormName);
+    @Html.HiddenFor(one => one.InspectionStatusId);
+    @Html.HiddenFor(one => one.CallDate);
+    @Html.HiddenFor(one => one.RecordedDate);
+    @Html.HiddenFor(one => one.UploadedDate);
+    @Html.HiddenFor(one => one.IsCompleted);
+    @Html.HiddenFor(one => one.InspectedBy);
+    @Html.HiddenFor(one => one.InspectorId);
+    @Html.HiddenFor(one => one.IsEnable);
+    @Html.HiddenFor(one => one.IsDelete);
+    @Html.HiddenFor(one => one.InspectionFormId);
+    @*@Html.HiddenFor(one => one.Sections);*@
+    <input type="text" name="FormTemplateId" value="@Model.InspectionFormId" id="FormTemplateId" style="visibility:hidden" />
+
+    <input type="hidden" value="@Model.CustomerId" id="hdnCustomerId" />
+    <div class="custom-form portlet light">
+        <div class="headerbox">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12 text-center" style="font-size:13px;">
+                            <b>Customer Inspection Form</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="portlet-body form form-horizontal">
+
+            <div class="form-body">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-2 control-label" style="padding-top: 0px;"><b>Account:</b></div>
+                            @if (ViewBag.CustomerDetail != null)
+                            {
+                                if (ViewBag.CustomerDetail.CustomerName != null)
+                                {
+                                    <div class="col-md-4" style="padding-top: 1px;">@ViewBag.CustomerDetail.CustomerName</div>
+                                }
+                            }
+
+                            <div class="col-md-2 control-label" style="padding-top: 0px;"><b>Contact:</b></div>
+
+                            @if (ViewBag.CustomerDetail != null)
+                            {
+                                if (ViewBag.CustomerDetail.ContactName != null)
+                                {
+                                    <div class="col-md-3" style="padding-top: 1px;">@ViewBag.CustomerDetail.ContactName</div>
+                                }
+                            }
+                            <div class="col-md-1">
+                                <input type="button" style="width: 127%;" class="btn btn-primary" value="Export PDF" onclick="ExportToPDF()" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-2 control-label" style="padding-top: 0px;"><b>Address:</b></div>
+                            @if (ViewBag.CustomerDetail != null)
+                            {
+                                if (ViewBag.CustomerDetail.Address != null)
+                                {
+                                    <div class="col-md-4" style="padding-top: 1px;">@ViewBag.CustomerDetail.Address</div>
+                                }
+                            }
+                            <div class="col-md-2 control-label" style="padding-top: 0px;"><b>Phone:</b></div>
+                            @if (ViewBag.CustomerDetail != null)
+                            {
+                                if (ViewBag.CustomerDetail.Phone != null)
+                                {
+                                    <div class="col-md-3" style="padding-top: 1px;">@ViewBag.CustomerDetail.Phone</div>
+                                }
+                            }
+                            <div class="col-md-1" style="padding-top: 4px;">
+                                <input type="button" style="width: 127%;" class="btn btn-primary" value="Add Area" onclick="AddAreaModel()" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-2 control-label" style="padding-top: 0px;"></div>
+                            @if (ViewBag.CustomerDetail != null)
+                            {
+                                if (ViewBag.CustomerDetail.Address2 != null)
+                                {
+                                    <div class="col-md-4" style="padding-top: 1px;">@ViewBag.CustomerDetail.Address2</div>
+                                }
+                            }
+                            <div class="col-md-2 control-label" style="padding-top: 0px;"><b>Acct Type:</b></div>
+                            <div class="col-md-4" style="padding-top: 1px;">@Model.AccountType</div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-2 control-label" style="padding-top: 0px;"><b>Franchisee:</b></div>
+                            <div class="col-md-4" style="padding-top: 1px;">@Model.FranchiseeName</div>
+                            <div class="col-md-2 control-label" style="padding-top: 0px;"></div>
+                            <div class="col-md-4" style="padding-top: 1px;"></div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-2 control-label" style="padding-top: 0px;"><b>Frequency:</b></div>
+                            <div class="col-md-9" style="padding-top: 1px;">
+                                <span>@Model.CleanTimes</span> Per W <span>
+                                    (Mon
+                                    @if (Model.Mon == true)
+                                    {
+                                        <input type="checkbox" value="Active" id="chkIsMon" style="padding-right: 7px;" checked />
+
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" value="Active" id="chkIsMon" style="padding-right: 7px;" />
+
+                                    }
+                                </span>
+                                <span>
+                                    Tue
+                                    @if (Model.Tue == true)
+                                    {
+                                        <input type="checkbox" value="Active" id="chkIsTue" style="padding-right: 7px;" checked />
+
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" value="Active" id="chkIsTue" style="padding-right: 7px;" />
+
+                                    }
+                                </span>
+                                <span>
+                                    Wed
+                                    @if (Model.Wed == true)
+                                    {
+                                        <input type="checkbox" value="Active" id="chkIsWed" style="padding-right: 7px;" checked />
+
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" value="Active" id="chkIsWed" style="padding-right: 7px;" />
+
+                                    }
+                                </span>
+                                <span>
+                                    Thu
+                                    @if (Model.Thu == true)
+                                    {
+                                        <input type="checkbox" value="Active" id="chkIsThu" style="padding-right: 7px;" checked />
+
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" value="Active" id="chkIsThu" style="padding-right: 7px;" />
+
+                                    }
+                                </span>
+                                <span>
+                                    Fri
+                                    @if (Model.Fri == true)
+                                    {
+                                        <input type="checkbox" value="Active" id="chkIsFri" style="padding-right: 7px;" checked />
+
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" value="Active" id="chkIsFri" style="padding-right: 7px;" />
+
+                                    }
+                                </span>
+                                <span>
+                                    Sat
+                                    @if (Model.Sat == true)
+                                    {
+                                        <input type="checkbox" value="Active" id="chkIsSat" style="padding-right: 7px;" checked />
+
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" value="Active" id="chkIsSat" style="padding-right: 7px;" />
+
+                                    }
+                                </span>
+                                <span>
+                                    Sun
+                                    @if (Model.Sun == true)
+                                    {
+                                        <input type="checkbox" value="Active" id="chkIsSun" style="padding-right: 7px;" checked />
+
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" value="Active" id="chkIsSun" style="padding-right: 7px;" />
+
+                                    })
+                                </span>
+                            </div>
+                            <div class="col-md-1" style="padding-top: 1px;">
+                                <button type="submit" class="btn btn-primary" id="btnSaveInsp" style="width: 127%;" onclick="btnSaveInspclick();">Save Inspection</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.Sections.Count() > 0)
+                {
+                    for (int i = 0; i < Model.Sections.Count; i++)
+                    {
+                        <div class="form-group" style="background: black;color: white;padding-bottom: 5px;padding-top: 5px;">
+                            <div class="col-md-12">
+                                <a href="javascript:void(0);" class="sectionName sectionName_@Model.Sections[i].InspectionFormSectionId" onclick='BtnDeleteSection(@Model.Sections[i].InspectionFormSectionId)' style="float: left;"><i class="fa fa-trash" style="padding-right:5px;color: cyan;"></i></a>
+                                <span>@Html.DisplayFor(modelItem => Model.Sections[i].SectionName)</span>
+                                <input type="button" class="btn btn-custom btn btn-primary addsection" style="float: right;padding-top: 0px;padding-bottom:0px;margin-top: -1px;" onclick="OpenAddAreaItem(@Model.Sections[i].InspectionFormSectionId)" value="Add Item" id="btn_@Model.Sections[i].InspectionFormSectionId" />
+                                <button type="button" class="btn btn-primary" id="btnEdit_@Model.Sections[i].InspectionFormSectionId" style="float: right;padding-top: 0px;padding-bottom:0px;margin-top: -1px;" onclick="EditSaveSection(@Model.Sections[i].InspectionFormSectionId);">Edit</button>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12" style="margin-top:-7px;">
+                                @if (Model.Sections[i].Items.Count() > 0)
+                                {
+                                    int border = 1;
+                                    for (int j = 0; j < Model.Sections[i].Items.Count; j++)
+                                    {
+                                        if (Model.Sections[i].Items[j].FormItemType == JKViewModels.FormItemType.FormItemTypeInspection)
+                                        {
+                                            var data = Json.Decode(Model.Sections[i].Items[j].FormItemValue);
+                                            <div class="col-md-2" style="padding-top: 6px;">
+                                                <a href='javascript:void(0);' class="sectionItem sectionItem_@Model.Sections[i].InspectionFormSectionId" onclick='BtnDeletesectionItem(@Model.Sections[i].Items[j].InspectionFormItemId)' style=""><i class='fa fa-trash'></i></a>
+                                                <span style="padding-top: 7px;">
+                                                    @data["Label"]
+                                                </span>
+                                            </div>
+                                            <input type="hidden" value="@Model.Sections[i].Items[j].InspectionFormItemId" class="SectionItemlist_@Model.Sections[i].InspectionFormSectionId" id="" />
+                                            <div class="col-md-3">
+                                                <div class="input-group">
+                                                    <div class="icheck-inline">
+                                                        <label class="">
+                                                            <input type="radio" name="@Model.Sections[i].Items[j].InspectionFormItemId" value="1" class="icheck disableControl disableControl_@Model.Sections[i].InspectionFormSectionId" id="chkPass" style="position: absolute; opacity: 0;"> Pass
+                                                        </label>
+                                                        <label class="">
+                                                            <input type="radio" name="@Model.Sections[i].Items[j].InspectionFormItemId" value="2" class="icheck disableControl disableControl_@Model.Sections[i].InspectionFormSectionId" id="chkFail" style="position: absolute; opacity: 0;"> Fail
+                                                        </label>
+                                                        <label class="">
+                                                            <input type="radio" name="@Model.Sections[i].Items[j].InspectionFormItemId" value="3" class="icheck disableControl disableControl_@Model.Sections[i].InspectionFormSectionId" id="chkImprovment" style="position: absolute; opacity: 0;"> Need Improvment
+                                                        </label>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            if (border % 2 != 0)
+                                            {
+                                                <div class="col-md-1" style="border-right-style: solid;border-right-color: red !important;height: 31px;padding-left: 0px;">
+                                                    <input type="text" class="form-control input-sm disableControl disableControl_@Model.Sections[i].InspectionFormSectionId" name="txtNI_@Model.Sections[i].Items[j].InspectionFormItemId" id="txtNI_@Model.Sections[i].Items[j].InspectionFormItemId" style="width: 60px;" />
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="col-md-1" style="padding-left: 0px;">
+                                                    <input type="text" class="form-control input-sm disableControl disableControl_@Model.Sections[i].InspectionFormSectionId" name="txtNI_@Model.Sections[i].Items[j].InspectionFormItemId" id="txtNI_@Model.Sections[i].Items[j].InspectionFormItemId" style="width: 60px;" />
+                                                </div>
+                                            }
+                                        }
+                                        border += 1;
+                                    }
+                                }
+                            </div>
+                        </div>
+                    }
+                    @*<div class="form-group" style="background: black;color: white;padding-bottom: 5px;padding-top: 5px;">
+                            <div class="col-md-3">
+                                <span>Overall</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-6" style="margin-top:-7px;">
+                                <div class="col-md-12" style="padding-bottom: 12px;"></div>
+                                <div class="col-md-8">
+                                    <b>Total Point Possible</b>
+                                </div>
+                                <div class="col-md-4">
+                                    <span></span>
+                                </div>
+                                <div class="col-md-8">
+                                    <b>Total Pass Point</b>
+                                </div>
+                                <div class="col-md-4">
+                                    <span>@Model.PassPoints</span>
+                                </div>
+                                <div class="col-md-8">
+                                    <b>Need Improvement Points</b>
+                                </div>
+                                <div class="col-md-4">
+                                    <span>@Model.NeedImprovementPoints</span>
+                                </div>
+                                <div class="col-md-8">
+                                    <b>Total Failed Point</b>
+                                </div>
+                                <div class="col-md-4">
+                                    <span>@Model.FailPoints</span>
+                                </div>
+                                <div class="col-md-8">
+                                    <b>Percent Score</b>
+                                </div>
+                                <div class="col-md-4">
+                                    <span>@Model.ScorePercent</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6" style="margin-top:-7px;">
+                                <div class="col-md-12">
+                                    <b>Scoring</b>
+                                </div>
+                                <div class="col-md-12">
+                                    <span>100% - 95% = Excellent</span>
+                                </div>
+                                <div class="col-md-12">
+                                    <span>94% - 90% = Good</span>
+                                </div>
+                                <div class="col-md-12">
+                                    <span>89% - 86% = Fail</span>
+                                </div>
+                                <div class="col-md-12">
+                                    <span>85% - 81% = Poor</span>
+                                </div>
+                                <div class="col-md-12">
+                                    <span>80% or Less 93% = Fail</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" style="background: black;color: white;padding-bottom: 5px;padding-top: 5px;">
+                            <div class="col-md-12">
+                                <span>Customer Signature: <a href=""></a></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-5" style="margin-top:5px;"></div>
+                            <div class="col-md-7" style="margin-top:5px;">
+                                <img src="@Model.SignatureUrl" style="width: 200px;">
+                            </div>
+                        </div>*@
+                }
+
+            </div>
+
+
+
+        </div>
+    </div>
+
+    <div class="modal fade in" id="modal_AddItemModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+        <div class="modal-dialog">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                        Add Item
+                    </h4>
+                </div>
+                <input type="text" name="AreaId" id="AreaId" style="visibility:hidden" />
+                <div class="modal-body" style="padding-top: 1px;margin-top: -5px;">
+                    <div class="form-body">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label class="control-label col-md-3" style="text-align: right;padding: 5px;margin-bottom:5px;font-weight:bold;">Itam:</label>
+                                    <div class="col-md-6">
+                                        @if (ViewBag.TempAreaIteam != null)
+                                        {
+                                            <select class="form-control input-sm" id="TempAreaIteam">
+                                                <option value="-1">Select Item</option>
+                                                @foreach (var item in (SelectList)ViewBag.TempAreaIteam)
+                                                {
+                                                    <option value="@item.Value">@item.Text</option>
+                                                }
+                                            </select>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-8">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="button" class="btn btn-custom btn btn-primary col-md-12" id="btnAddItem" onclick="AddItem()" value="Add" />
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="button" id="btnCancelAddModal" onclick="AddItemCancel()" class="btn btn-custom btn btn-primary" value="Cancel" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade in" id="modal_AddAreaModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+        <div class="modal-dialog">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                        Add Area
+                    </h4>
+                </div>
+                <input type="text" name="AreaId" id="AreaId" style="visibility:hidden" />
+                <div class="modal-body" style="padding-top: 1px;margin-top: -5px;">
+                    <div class="form-body">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label class="control-label col-md-3" style="text-align: right;padding: 5px;margin-bottom:5px;font-weight:bold;">Area:</label>
+                                    <div class="col-md-6">
+                                        @if (ViewBag.AreaList != null)
+                                        {
+                                            <select class="form-control input-sm" id="TempArealist">
+                                                <option value="-1">Select</option>
+                                                @foreach (var item in (SelectList)ViewBag.AreaList)
+                                                {
+                                                    <option value="@item.Value">@item.Text</option>
+                                                }
+                                            </select>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-8">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="button" class="btn btn-custom btn btn-primary col-md-12" onclick="AddArea()" id="btnAddItem" value="Add" />
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="button" id="btnCancelAddModal" onclick="AddAreaCancel()" class="btn btn-custom btn btn-primary" value="Cancel" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<div class="form-horizontal" id="form_ShowImage"></div>
+<div class="form-horizontal" id="form_Inspection"></div>
+<div class="form-horizontal" id="form_InspectionItems"></div>
+
+@section pageplugins{
+    @if (Request.IsSecureConnection)
+    {
+        <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    }
+    else
+    {
+        <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    }
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/chosen.css")" />
+    <script src="@Url.Content("~/Scripts/chosen.jquery.min.js")" type="text/javascript"></script>
+    <script src="~/Scripts/jquery.uniform.min.js"></script>
+    <script src="~/Content/admin/assets/global/plugins/icheck/icheck.min.js"></script>
+}
+
+@section scripts{
+    <script>
+        jQuery(document).ready(function () {
+            $(".addsection").hide();
+            $(".sectionName").hide();
+            $(".sectionItem").hide();
+            $(".disableControl").attr("disabled", "disabled");
+            $(".disableControl").attr("readonly", "readonly");
+        });
+
+        // Prevent the form to be submitted on ENTER
+        $('#form_wizard_1').submit(function (e) {
+            e.preventDefault();
+        });
+
+        function btnSaveInspclick() {
+                $('#form_wizard_1')[0].submit();
+        }
+
+
+        function EditSaveSection(Id) {
+            if ($("#btnEdit_" + Id).text() == 'Edit') {
+                $("#btn_" + Id).show();
+                $(".sectionName_" + Id).show();
+                $(".sectionItem_" + Id).show();
+                $(".disableControl_" + Id).removeAttr("disabled").removeAttr("readonly");
+                $("#btnEdit_" + Id).text("Save");
+            }
+            else {
+                $("#btn_" + Id).hide();
+                $(".sectionName_" + Id).hide();
+                $(".sectionItem_" + Id).hide();
+                $(".disableControl_" + Id).attr("disabled", "disabled");
+                $(".disableControl_" + Id).attr("readonly", "readonly");
+                $("#btnEdit_" + Id).text("Edit");
+
+                jQuery('.SectionItemlist_' + Id).each(function () {
+                    var itemid = this.value;
+                    var statsid = $("input[name=" + itemid + "]:checked").val();
+                    var sURL = '@Url.Action("InspectionFormItemUpdate", "CustomerService", new { area = "Portal" })?inspectionFormItemId=' + itemid + '&inspectionFormSectionId=' + Id + '&status=' + statsid
+                    $.ajax({
+                    type: "GET",
+                    url: sURL,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (data) {
+                      
+                    $.blockUI();
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+               });
+                });
+
+                swal({
+                    title: "",
+                    text: "Section saved!",
+                    type: "success",
+                    confirmButtonClass: "btn-confirmr",
+                    confirmButtonText: "Ok"
+
+                },
+                    function (isConfirm) {
+
+                    }
+                );
+
+            }
+        }
+
+        @*function ProcessInspection(Id)
+        {
+             $.blockUI();
+            var CustomerId = $("#hdnCustomerId").val();
+            var sURL = '@Url.Action("ProcessInspectionForm", "CustomerService", new { area = "Portal" })?Id=' + Id + '&CustId=' + CustomerId;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_Inspection').html(data);
+                    $("#modal_ShowInspection").modal({ backdrop: 'static' });
+                    $('.modal-dialog').draggable();
+
+                    $.unblockUI();
+                },
+                error: function () {
+                    $.unblockUI();
+                    alert("Content load failed.");
+                }
+            });
+        }*@
+
+        //function btnInspectionClose() {
+        //    $("#modal_ShowInspection").modal("hide");
+        //}
+
+        function btnClose() {
+            $("#modal_ShowImage").modal("hide");
+        }
+
+        function btnCloseInspectionItems() {
+            $("#modal_ShowInspectionItems").modal("hide");
+        }
+
+        function openDialog(Id) {
+            $.blockUI();
+
+            var sURL = '@Url.Action("GetImageLoad", "Administration", new { area = "Portal" })?id=' + Id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_ShowImage').html(data);
+                    $("#modal_ShowImage").modal({ backdrop: 'static' });
+                    $('.modal-dialog').draggable();
+
+                    $.unblockUI();
+                },
+                error: function () {
+                    $.unblockUI();
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+        function ExportToPDF()
+        {
+            window.location.href = '@Url.Action("InspectionFormExportToPDF", "CustomerService", new { area = "Portal" })?Id=@ViewBag.Id&CustId=@ViewBag.CustId';
+        }
+
+        function BtnDeleteSection(AreaId) {
+             //var tempId = $('#FormTemplateId').val();
+             var sURL = '@Url.Action("DeleteInspectionSection", "CustomerService", new { area = "Portal" })?secId=' + AreaId
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                      swal({
+                                    title: "",
+                                    text: "Section Deleted!",
+                                    type: "success",
+                                    confirmButtonClass: "btn-confirmr",
+                                    confirmButtonText: "Ok"
+
+                                },
+                                    function (isConfirm) {
+                                        window.location.href = '@Url.Action("InspectionForm", "CustomerService", new { area = "Portal"})?id=@ViewBag.Id&CustId=@ViewBag.CustId';
+                                    }
+                               );
+                    $.blockUI();
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+        function BtnDeletesectionItem(ItemId) {
+             //var tempId = $('#FormInspectionId').val();
+             //var CustId = $('#hdnCustomerId').val();
+            var sURL = '@Url.Action("DeleteInspectionSectionItem", "CustomerService", new { area = "Portal" })?ItemId=' + ItemId
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    swal({
+                                    title: "",
+                                    text: "Section Item Deleted!",
+                                    type: "success",
+                                    confirmButtonClass: "btn-confirmr",
+                                    confirmButtonText: "Ok"
+
+                                },
+                                    function (isConfirm) {
+                                        window.location.href = '@Url.Action("InspectionForm", "CustomerService", new { area = "Portal"})?id=@ViewBag.Id&CustId=@ViewBag.CustId';
+                                    }
+                               );
+                    $.blockUI();
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+        function OpenAddAreaItem(Id) {
+            $("#modal_AddItemModel").modal('show');
+            $("#AreaId").val(Id);
+        }
+
+        function AddAreaModel() {
+            $("#modal_AddAreaModel").modal('show');
+        }
+
+
+
+         function AddArea() {
+            var tempId = $('#FormTemplateId').val();
+            var TempName = $("#TempArealist option:selected").text();
+            var Id = $("#TempArealist").val();
+            var sURL = '@Url.Action("InspectionFormSectionAdd", "CustomerService", new { area = "Portal" })?id=' + Id + '&InsId=' + tempId;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    swal({
+                                    title: "",
+                                    text: "Section Added!",
+                                    type: "success",
+                                    confirmButtonClass: "btn-confirmr",
+                                    confirmButtonText: "Ok"
+
+                                },
+                                    function (isConfirm) {
+                                        window.location.href = '@Url.Action("InspectionForm", "CustomerService", new { area = "Portal"})?id=@ViewBag.Id&CustId=@ViewBag.CustId';
+                                    }
+                               );
+
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+         function AddItem() {
+            var Id = $("#AreaId").val();
+            var ItemId = $('#TempAreaIteam').val();
+            var tempId = $('#FormTemplateId').val();
+            var sURL = '@Url.Action("InspectionFormItemtoSection", "CustomerService", new { area = "Portal" })?_TemplateAreaId=' + Id + '&_TemplateAreaItemId=' + ItemId ;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $("#modal_AddItemModel").modal('hide');
+                     swal({
+                                    title: "",
+                                    text: "Section Item Added!",
+                                    type: "success",
+                                    confirmButtonClass: "btn-confirmr",
+                                    confirmButtonText: "Ok"
+
+                                },
+                                    function (isConfirm) {
+                                        window.location.href = '@Url.Action("InspectionForm", "CustomerService", new { area = "Portal"})?id=@ViewBag.Id&CustId=@ViewBag.CustId';
+                                    }
+                               );
+                    $.blockUI();
+
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+        }
+
+        function AddAreaCancel() {
+            $("#modal_AddAreaModel").modal('hide');
+        }
+
+        function AddItemCancel() {
+            $("#modal_AddItemModel").modal('hide');
+        }
+    </script>
+}

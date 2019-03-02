@@ -1,0 +1,122 @@
+﻿@model List<JKViewModels.Customer.ServiceCallListViewModel>
+
+
+<table class="table table-striped table-bordered order-column" id="ServiceCallbackList" style="margin-top:0 !important;font-size:12px !important;">
+    <thead>
+    </thead>
+    <tbody>
+        @{
+            var unique_FollowUpIds = Model.Select(s => s.FollowUpId).Distinct().ToList();
+
+
+            List<JKViewModels.Customer.SearchCustomerListId> ListData = new List<JKViewModels.Customer.SearchCustomerListId>();
+            int j = 1;
+
+            foreach (var FollowUpId in unique_FollowUpIds)
+            {
+                if (FollowUpId != 0)
+                {
+                    var entries = Model.Where(s => s.FollowUpId == FollowUpId).ToList();
+                    if (entries != null && entries.Count() > 0)
+                    {
+                        <tr>
+                            <td colspan="9">
+                                <div class="col-md-12" style="margin-left:-25px;font-size:12px;">
+                                    <div class="col-md-10">
+                                        <b>@entries.FirstOrDefault().FollowUpBy</b>
+                                    </div>
+                                    <div class="col-md-2" style="text-align:right;">
+                                        <b>Call Backs Pending: @entries.Count</b>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:12px;text-align:center;background-color:#95A5A6 !important;padding:5px !important;color:#FFF;width:80px;">
+                                Date To Call
+                            </td>
+                            <td style="font-size:12px;text-align:center;background-color:#95A5A6 !important;padding:5px !important;color:#FFF;width:70px;">
+                                Customer No
+                            </td>
+                            <td style="font-size:12px;text-align:center;background-color:#95A5A6 !important;padding:5px !important;color:#FFF;width:220px;">
+                                Customer Name
+                            </td>
+                            <td style="font-size:12px;text-align:center;background-color:#95A5A6 !important;padding:5px !important;color:#FFF;width:120px;">
+                                Contact
+                            </td>
+                            <td style="font-size:12px;text-align:center;background-color:#95A5A6 !important;padding:5px !important;color:#FFF;width:90px;">
+                                Phone
+                            </td>
+                            <td style="font-size:12px;text-align:center;background-color:#95A5A6 !important;padding:5px !important;color:#FFF;width:90px;">
+                                Call Type
+                            </td>
+                            <td style="font-size:12px;text-align:center;background-color:#95A5A6 !important;padding:5px !important;color:#FFF;width:90px;">
+                                Monthly Billing
+                            </td>
+                            <td style="font-size:12px;text-align:center;background-color:#95A5A6 !important;padding:5px !important;color:#FFF;width:200px;">
+                                Comments
+                            </td>
+                            <td style="font-size:12px;text-align:center;background-color:#95A5A6 !important;padding:5px !important;color:#FFF;width:90px;">
+                                Created By
+                            </td>  
+                            <td style="font-size:12px;text-align:center;background-color:#95A5A6 !important;padding:5px !important;color:#FFF;width:40px;">
+                                Action
+                            </td>
+                        </tr>
+
+                        foreach (var item in entries)
+                        {
+                            JKViewModels.Customer.SearchCustomerListId itm = new JKViewModels.Customer.SearchCustomerListId();
+                            itm.Id = j;
+                            itm.CustomerId = item.CustomerId;
+                            itm.CustomerNo = item.CustomerNo;
+                            itm.CustomerName = item.CustomerName;
+                            //itm.ContractAmount = item.Amount;
+                            //itm.FranchiseeNo = item.FranchiseeNo;
+                            //itm.FranchiseeName = item.FranchiseeName;
+                            ListData.Add(itm);
+                            j = j + 1;
+
+                            <tr relcusn="@Html.DisplayFor(modelItem => item.CustomerNo) @Html.DisplayFor(modelItem => item.CustomerName)">
+                                <td style="padding:5px; text-align:center;font-size:12px;">
+                                    @(item.CallDate != null ? Convert.ToDateTime(item.CallDate).ToString("MM/dd/yyyy") : string.Empty)
+                                    @*@{
+                                        string strTime = string.Empty;
+                                        if (item.CallTime != null && item.CallTime != "")
+                                        {
+                                            strTime = DateTime.Parse(item.CallTime).ToString("HH:mm:ss");
+                                        }
+                                        <text>&nbsp;&nbsp;@strTime</text>
+                                    }*@
+                                </td>
+                                <td style="padding:5px; text-align:center;font-size:12px;">
+                                    <a href ="@Url.Action("SearchCustomerDetails", "CustomerService", new { area = "Portal" ,CustID= item.CustomerId, stflt = "67" })" >@Html.DisplayFor(modelItem => item.CustomerNo)</a>
+                                @*<a onclick="showEditCustomerInfo(@item.CustomerId)">@Html.DisplayFor(modelItem => item.CustomerNo)</a>*@
+
+                                </td>
+                                <td style="padding:5px;text-align:center;font-size:12px;">@item.CustomerName</td>
+                                <td style="padding:5px; text-align:center;font-size:12px;">@item.ContactName </td>
+                                <td style="padding:5px; text-align:center;font-size:12px;">@(item.Phone != "" ? string.Format("{0:(###) ###-####}", Convert.ToDecimal(item.Phone.Trim().Replace(" ", "").Replace("-", "").Replace(")", "").Replace("(", ""))) : string.Empty)</td>
+                                <td style="padding:5px; text-align:center;font-size:12px;">@item.ServiceLogTypeListName</td>
+                                <td style="padding:5px; text-align:center;font-size:12px;">@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Convert.ToDecimal(item.MonthlyBilling))</td>
+                                <td style="padding:5px; text-align:justify;font-size:12px;">@item.Comments </td>
+                                <td style="padding:5px; text-align:center;font-size:12px;">@item.CreatedByName</td>
+                                <td style="padding:5px; text-align:center;font-size:12px;">
+                                    @*<a onclick="ClickServiceCallLogDetailsPopup(@item.CustomerId,@item.ServiceCallLogId)">view</a>*@       
+                                    <div class="btn-group dropdown">
+                                        <a target='_blank' dropdown-toggle' data-toggle='dropdown'><i class="fa fa-hand-o-right" aria-hidden="true"></i></a>
+                                        <ul class='dropdown-menu pull-right'>
+                                            <li><a href="#" onclick="ClickServiceCallLogDetailsPopup(@item.CustomerId,@item.ServiceCallLogId)"><i class="fa fa-plus"></i> view </a></li>
+                                            <li><a href="#" onclick="ClickServiceCallLogDetailsUpdatePopup(@item.CustomerId,@item.ServiceCallLogId)"><i class="fa fa-plus"></i> update </a></li>
+                                        </ul>
+                                    </div>                             
+                                </td>
+                            </tr>
+                            }
+                        }
+                    }
+                }
+                Session["SearchCustomerIds"] = ListData;
+        }         
+    </tbody>
+</table>

@@ -1,0 +1,385 @@
+﻿@*@model JKViewModels.Customer.FullCustomerViewModel*@
+
+@{
+    ViewBag.Title = "Customer Transactions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+    <style type="text/css">
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .row {
+            margin: 0;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .custom-form .headerbox {
+            padding: 3px 0px 3px 5px;
+            font-weight: normal;
+        }
+    </style>
+}
+@*@using (Html.BeginForm("ProcessBillRun", "Customer", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        List<SelectListItem> billMonthsList = (List<SelectListItem>)ViewBag.billMonthsList;
+        List<SelectListItem> billYearList = (List<SelectListItem>)ViewBag.billYearList;*@
+
+<div class="custom-form portlet light">
+    <div class="headerbox">
+        <div class="row" style="background-color: #3598DC;color: #fff;">
+            <div class="col-md-12 no-padding">
+                <div class="alignCenter">
+                    <div class="col-md-4" style="text-align:right;">
+                    </div>
+                    <div class="col-md-4 topheader">
+                        Bill Run
+                    </div>
+                    <div class="col-md-4" style="padding-right:5px;">
+                        <div class="col-md-7 pull-right no-padding">
+                            <div style="display:table-cell;padding-right: 5px;text-transform:none;">
+                                Region
+                            </div>
+                            <div style="display:table-cell;width:100%;">
+                                @if (ViewBag.regionlist != null)
+                                {
+                                    <select class="form-control input-sm" id="regionlist" multiple="multiple" style="display:none;">
+                                        @foreach (var item in (SelectList)ViewBag.regionlist)
+                                        {
+                                            <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="portlet-body form">
+        <form class="form-horizontal" role="form" method="post">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-5 no-padding">
+                                Bill Month/Year
+                            </label>
+                            <div class="col-md-7 inline-block ">
+                                @Html.DropDownList("billMonthsList", null, "Select", new { @class = "form-control input-sm", style = "width: 115px;float: left;margin-right: 8px;", required = "required", @id = "billMonthsList", onchange = "ddlOnChangeMonthYear()" })
+                                @*@Html.DropDownList("billYearList", null, "Select", new { @class = "form-control input-sm", style = "width: 85px;float: left;", required = "required", @id = "billYearList", onchange = "ddlOnChangeMonthYear()" })*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="form-actions">
+
+                <div class="col-md-12">
+                    <div class="col-md-5"></div>
+                    <div class="col-md-3">
+
+                        <button type="button" id="btnGenerateBillRun" class="btn btn-primary button-next" onclick="GenerateBillRun()" style="margin-right:0px; display:none;">Generate</button>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="custom-listbox" id="Invoices-info" style="display:none;max-width: 400px;margin: 0px auto;">
+    <div class="headerbox">
+        INVOICES
+    </div>
+    <div class="tablebox">
+        <table class="table table-striped table-bordered table-hover order-column" id="franchiseList">
+            <div id="trBatchNumber" style="display:none">
+                <tr class="odd gradeX">
+                    <td style="text-align:left">
+                        Batch Number
+                        <input type="hidden" id="hdfBatchIds" value="" />
+                    </td>
+                    <td align="right">
+                        <label id="spnBatchNumber"></label>
+                    </td>
+                </tr>
+            </div>
+            <tr class="odd gradeX">
+                <td style="text-align:left">
+                    Total Invoices Created
+                </td>
+                <td align="right">
+                    <label id="spnTotalInvoiceCount"></label>
+                </td>
+            </tr>
+            <tr class="odd gradeX">
+                <td style="text-align:left">
+                    Total Monthly Billing
+                </td>
+                <td align="right">
+                    <label id="spnTotalInvoiceAmount"></label>
+                </td>
+            </tr>
+            <tr class="odd gradeX">
+                <td style="text-align:left">
+                    Created
+                </td>
+                <td align="right">
+                    <label id="spnInvoiceCreatedOn"></label>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+    <div class="form-group" style="margin: 7px 7px;">
+        <div class="col-md-12">
+            <button type="button" class="btn btn-primary button-next pull-right" onclick="GoToInvoiceList()" style="margin-right:0px;padding: 3px 12px;font-size: 13px;margin-bottom: 8px;width:82px">Continue</button>
+            <button type="button" class="btn btn-primary button-next pull-right" onclick="UndoBillRun()" style="margin-right:10px;padding: 3px 12px;font-size: 13px;margin-bottom: 8px;width:82px">Undo</button>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+</div>
+
+<div class="modal fade bs-modal-sm in" id="model_showalreadygeratebill" aria-hidden="true">
+    <div class="modal-dialog modal-sm" style="width:300px;">
+        <div class="modal-content">
+            <div class="modal-header" style="padding-top: 7px;padding-bottom: 7px;background: #3598DC !important;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title" style="font-weight: bold;color:white;font-size: 12px;">Warning</h4>
+            </div>
+            <div class="modal-body" id="mdlAppendemail_body" style="padding: 0;">
+                <div class="col-md-12" style="text-align:center;"> <h5>This billing period already generated bill run</h5></div>
+                <div class="modal-footer" id="childmodal_modalview_footer">
+                    &nbsp;
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("#regionlist").multiselect({
+                includeSelectAllOption: true,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2
+            });
+        });
+
+
+        function ddlOnChangeMonthYear() {
+            $.blockUI()
+            var _monthYear = $("#billMonthsList option:selected").text().split("-");
+            
+            if (_monthYear[0] != 'Select') {
+
+                var _monthVal = _monthYear[0];
+                var _yearVal = _monthYear[1];
+                var _selectedRegionId = $('#regionlist').val();
+
+                if (_selectedRegionId == null || _monthVal == null || _yearVal == null) {
+                    return false;
+                }
+                else {
+                    $("#regionlist").removeClass("error");
+                }
+
+                if (_monthVal != '' && _yearVal != '') {
+                    document.getElementById('Invoices-info').style.display = 'none';
+                    document.getElementById('trBatchNumber').style.display = 'none';
+
+                    var sURL = '@Url.Action("BillRunDetailData", "AccountReceivable", new { area = "Portal" })?month=' + _monthVal + '&year=' + _yearVal + '&batchid=' + 0 + '&selectedRegionId=' + _selectedRegionId
+                    $.ajax(
+                    {
+                        type: "GET", //HTTP GET Method
+                        url: sURL,
+                        success: function (res) {
+                            if (!res.PeriodClose) {
+                                document.getElementById('btnGenerateBillRun').style.display = 'none';
+                                if (res.data.TotalInvoiceCount >0) {
+                                    document.getElementById('spnTotalInvoiceCount').innerHTML = res.data.TotalInvoiceCount;
+                                    document.getElementById('spnTotalInvoiceAmount').innerHTML = res.data.TotalInvoiceAmount;
+                                    document.getElementById('spnInvoiceCreatedOn').innerHTML = res.data.InvoiceCreatedOn;
+                                    document.getElementById('spnBatchNumber').innerHTML = res.data.BatchNumber;
+                                    $('#hdfBatchIds').val(res.data.BatchIds);
+                                    document.getElementById('Invoices-info').style.display = 'block';
+                                }
+                                else {
+                                    document.getElementById('btnGenerateBillRun').style.display = 'block';
+                                }
+                                $.unblockUI()
+                            } else {
+                                 document.getElementById('btnGenerateBillRun').style.display = 'block';
+                            }
+                        },
+                        error: function (err) {
+                            alert('failure');
+                            $.unblockUI();
+                        },
+                    });
+                }
+                else {
+                    document.getElementById('Invoices-info').style.display = 'none';
+                    document.getElementById('trBatchNumber').style.display = 'none';
+                }
+            } else {
+                document.getElementById('btnGenerateBillRun').style.display = 'none';
+                $.unblockUI();
+            }
+        }
+
+
+        function UndoBillRun() {
+     
+            var _monthYear = $("#billMonthsList option:selected").text().split("-");
+
+            var _monthVal = _monthYear[0];
+            var _yearVal = _monthYear[1];
+
+            var _selectedRegionId = $('#regionlist').val();
+
+            if (_selectedRegionId == null || _monthVal == null || _yearVal == null) {
+                return false;
+            }
+            else {
+                $("#regionlist").removeClass("error");
+            }
+
+            //var _monthVal = $('#billMonthsList').val();
+            //var _yearVal = $('#billYearList').val();
+
+            var _batchid = $('#hdfBatchIds').val();
+
+            var _IsCPIIncrease = $('#billYearList').checked ? true : false;
+            var sURL = '@Url.Action("UndoInvoiceBillRun", "AccountReceivable", new { area = "Portal" })?batchid=' + _batchid + '&month=' + _monthVal + '&year=' + _yearVal + '&selectedRegionId=' + _selectedRegionId;
+            $.ajax(
+              {
+                  type: "GET", //HTTP GET Method
+                  url: sURL,
+                  success: function (res) {
+                      ddlOnChangeMonthYear();
+                  },
+                  error: function (err) {
+                      alert('failure');
+                  },
+              });
+
+        }
+
+
+        function GenerateBillRun() {
+
+            var _monthYear = $("#billMonthsList option:selected").text().split("-");
+
+            var _monthVal = _monthYear[0];
+            var _yearVal = _monthYear[1];
+
+            var _selectedRegionId = $('#regionlist').val();
+
+            if (_selectedRegionId == null || _monthVal == null || _yearVal == null) {
+                return false;
+            }
+            else {
+                $("#regionlist").removeClass("error");
+            }
+
+            //var _monthVal = $('#billMonthsList').val();
+            //var _yearVal = $('#billYearList').val();
+
+
+            var _IsCPIIncrease = $('#billYearList').checked ? true : false;
+            var sURL = '@Url.Action("GenerateInvoiceBillRun", "AccountReceivable", new { area = "Portal" })?month=' + _monthVal + '&year=' + _yearVal + '&selectedRegionId=' + _selectedRegionId
+            $.ajax(
+              {
+                  type: "GET", //HTTP GET Method
+                  url: sURL,
+                  success: function (res) {
+                      if (res.TotalInvoiceCount > 0) {
+                          document.getElementById('spnTotalInvoiceCount').innerHTML = res.TotalInvoiceCount;
+                          document.getElementById('spnTotalInvoiceAmount').innerHTML = res.TotalInvoiceAmount;
+                          document.getElementById('spnInvoiceCreatedOn').innerHTML = res.InvoiceCreatedOn;
+                          document.getElementById('spnBatchNumber').innerHTML = res.BatchNumber;
+                          $('#hdfBatchIds').val(res.BatchIds);
+                          document.getElementById('Invoices-info').style.display = 'block';
+                          document.getElementById('trBatchNumber').style.display = 'block';
+                          document.getElementById('btnGenerateBillRun').style.display = 'none';
+                      }
+                  },
+                  error: function (err) {
+                      alert('failure');
+                  },
+              });
+
+        }
+        function GoToInvoiceList() {
+
+            //var _monthVal = $('#billMonthsList').val();
+            //var _yearVal = $('#billYearList').val();
+
+            var _monthYear = $("#billMonthsList option:selected").text().split("-");
+
+            var _monthVal = _monthYear[0];
+            var _yearVal = _monthYear[1];
+
+            var _IsCPIIncrease = $('#billYearList').checked ? true : false;
+            var sURL = '@Url.Action("InvoiceList", "AccountReceivable", new { area = "Portal" })?month=' + _monthVal + '&year=' + _yearVal;
+            window.location.href = sURL;
+
+
+        }
+
+
+
+
+    </script>
+}
+
+
+
+

@@ -1,0 +1,465 @@
+﻿@model JKViewModels.Franchise.FranchiseeChargebackCreditViewModel
+@section styles{
+    <style type="text/css">
+        .pad-right {
+            padding-right: 0px !important;
+        }
+
+        #divNewTransaction .input-sm {
+            padding: 3px 3px !important;
+        }
+    </style>
+}
+
+<form action="@Url.Action("FranchiseeChargeBackCreditSave", "AccountsPayable", new { area = "Portal" })" method="post" id="form_FranchiseeChargebackCredit">
+    <div class="form form-horizontal" id="divNewTransaction">
+        <div class="custom-form portlet light">
+            <div class="headerbox">
+                <div class="row">
+                    <div class="col-md-12">
+                        Chargeback Credit Transaction
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: -12px !important;margin-right: 12px !important;"></button>
+                </div>
+            </div>
+            <div class="portlet-body form">
+                <div class="form-body">
+                    @Html.HiddenFor(o => o.FranchiseeChargebackCreditId)
+                    @Html.HiddenFor(o => o.FranchiseeId, new { @class = "form-control input-sm date-picker", required = "required", id = "hdfFranchiseeId" })
+                    @Html.HiddenFor(o => o.RegionId, new { @class = "form-control input-sm date-picker", required = "required", id = "hdfCBCRegionId" })
+                    @Html.HiddenFor(o => o.InvoiceId, new { @class = "form-control input-sm date-picker", required = "required", id = "hdfCBCInvoiceId" })
+                    @Html.HiddenFor(o => o.BillingPayId, new { @class = "form-control input-sm date-picker", required = "required", id = "hdfCBCBillingPayId" })
+                    @Html.HiddenFor(o => o.ChargebackId, new { @class = "form-control input-sm date-picker", required = "required", id = "hdfCBCChargebackId" })
+                    @Html.HiddenFor(o => o.ChargebackAmount, new { @class = "form-control input-sm date-picker", required = "required", id = "hdfCBCChargebackAmount" })
+                    @Html.HiddenFor(o => o.ApplyAmount, new { @class = "form-control input-sm date-picker", required = "required", id = "hdfCBCApplyAmount" })
+                    <input type="hidden" name="hdfSaveClose" id="hdfSaveClose" value="" />
+                    <div class="form-group" id="divSearchbox">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-offset-2 col-md-2 control-label">
+                                    <label>Transaction For</label>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="ui-widget">
+                                        <div class="input-icon right input-sm">
+                                            <i class="icon-magnifier" style="margin-top: 1px; margin-right: 28px;"></i>
+                                            <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search Franchisee Name or Number" value="" class="form-control input-sm typeahead" style="margin-top: -5px;margin-left: -22px;" />
+
+
+                                        </div>
+                                        <div id="container">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="error-franchise-select"></div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="form-group" style="border:1px solid #999999;">
+                        <div class="form-group">
+                            <div class="col-md-2 control-label" style="padding-top: 0px;">
+                                Franchisee No.:
+                            </div>
+                            <div class="col-md-3">
+                                <span id="spnFranchiseeNumber"></span>
+                            </div>
+                            <div class="col-md-offset-1 col-md-2 control-label" style="padding-top: 0px;">
+                                Address:
+                            </div>
+                            <div class="col-md-4">
+                                <span id="spnFranchiseeAddress"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <div class="col-md-2 control-label" style="padding-top: 0px;">
+                                Franchisee Name:
+                            </div>
+                            <div class="col-md-3">
+                                <span id="spnFranchiseeName"></span>
+                            </div>
+                            <div class="col-md-offset-3 col-md-4">
+                                <span id="spnFranchiseeCityStatePincode"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="border:1px solid #3598dc;padding-left: 0px;padding-right: 0px;">
+                        <div class="form-group">
+                            <div class="col-md-2 control-label pad-right" style="padding-right: 0px;">
+                                Date:
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(o => o.TransactionDate, new { @class = "form-control input-sm date-picker", required = "required", @placeholder = "mm/dd/yyyy" })
+                            </div>
+                            <div class="col-md-2 control-label pad-right" style="padding-right: 0px;">
+                                Invoice No<span style="color:red">*</span>:
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(o => o.InvoiceNo, new { @id = "CBC_InvoiceNo", @class = "form-control input-sm", required = "required" })
+                            </div>
+                        </div>
+
+
+
+                        <div class="form-group">
+                            <div class="col-md-2 control-label pad-right" style="padding-right: 0px;">
+                                Type:
+                            </div>
+                            <div class="col-md-3">
+                                @Html.DropDownListFor(model => model.ServiceTypeListId, (SelectList)ViewBag.ServiceTypeList, "Select", new { @class = "form-control input-sm" })
+                            </div>                        
+                            <div class="col-md-1 control-label pad-right" style="padding-right: 0px;">
+                                Reason:
+                            </div>
+                            <div class="col-md-3">
+                                @Html.DropDownListFor(model => model.FranchiseeManualTrxCreditReasonListId, (SelectList)ViewBag.ReasonList, "Select", new { @class = "form-control input-sm", @id = "select_ReasonList", required = "required" })                              
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2 control-label pad-right" style="padding-right: 0px;">
+                                Description<span style="color:red">*</span>:
+                            </div>
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(o => o.Description, new { @class = "form-control input-sm", required = "required" })
+                            </div>
+                        </div>
+                        <div class="form-group">                        
+                            <div class="col-md-2 control-label pad-right" style="padding-right: 0px;">
+                                Amount<span style="color:red">*</span>:
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(o => o.Amount, new { @class = "form-control input-sm", required = "required", onchange = "CalculateAmount()", maxlength = 12 })
+                            </div>                           
+                            <div class="col-md-2 control-label pad-right" style="padding-right: 0px;">
+                                C/B Fees Credit:
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(o => o.Fee, new { @class = "form-control input-sm", required = "required", @readonly = "readonly" })
+                            </div>
+                            <div class="col-md-2 control-label pad-right" style="padding-right: 0px;">
+                                C/B Credit Amount:
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(o => o.Total, new { @class = "form-control input-sm", required = "required", @readonly = "readonly" })
+                            </div>
+
+                        </div>
+                        <hr style="margin-bottom: 0px;" />
+                        <div class="form-group">
+                            <div class="col-md-8"></div>
+                            <div class="col-md-2">
+                                <input type="button" class="col-md-12 btn btn-primary button-next" value="Save & New" id="btnFCSaveNew" name="SaveNew" />
+                            </div>
+                            <div class="col-md-2">
+                                <input type="button" class="col-md-12 btn btn-primary button-next" value="Save & Close" id="btnFCSaveClose" name="SaveClose" />
+                                <input type="button" class="col-md-12 btn btn-primary button-next" style="display:none;" value="Save & Close" id="btnFCSaveClosePP" name="SaveClosePP" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+
+
+<script>
+
+    var CBC_franchiseeFee = [];
+     function applyAutoSeacrh() {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetAllFranchisees", "Franchise", new { area = "Portal" })',
+                data: {},
+                success: function (data) {
+                    var typeaheadSource = [];
+                    $.each(data, function (key, value) {
+                        typeaheadSource.push({ id: value.FranchiseeId, name: value.FranchiseeNo + ' ' + value.Name })
+                    });
+
+                    $('#input_Search').typeahead({
+                        source: typeaheadSource,
+                        updater: function (item) {
+                            $.ajax({
+                                type: "GET",
+                                url: '@Url.Action("GetFranchiseeComleteDetail", "AccountsPayable", new { area = "Portal" })?FranchiseeId=' + item.id,
+                                success: function (res) {
+                                    $('#hdfFranchiseeId').val(res.detail.FranchiseeId);
+                                    $('#spnFranchiseeNumber').html(res.detail.FranchiseeNo);
+                                    $('#spnFranchiseeName').html(res.detail.Name);
+                                    $('#spnFranchiseeAddress').html(res.detail.Address1);
+                                    $('#spnFranchiseeCityStatePincode').html(res.detail.City + ', ' + res.detail.StateName + ' ' + res.detail.PostalCode);
+
+                                   
+                                    CalculateAmount();
+                                }
+                            });
+
+                            return item;
+                        }
+                    }).focus();
+                }
+            });
+        }
+
+        function initFMT() {
+            applyAutoSeacrh();
+        $(".input-group-btn").click(function () {
+            $(this).prev().trigger("focus");
+            $(this).prev().trigger("focus");
+        });
+
+        $('#CBC_InvoiceNo').change(function () {
+                if($('#hdfFranchiseeId').val() == ''){
+                    swal("Please select franchsee.");
+                    $(this).val('')
+            }
+           
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetBillingPayInfoFromInvoiceNo", "AccountsPayable", new { area = "Portal" })?InvoiceNo=' + $(this).val() + '&FranchiseeId=' + $('#hdfFranchiseeId').val(),
+                success: function (res) {
+                    console.log(res);
+                    if (res.InvoiceId == -1) {
+                        $('#CBC_InvoiceNo').val('');
+                        swal("No cCB found assocoate with invoice, please enter correct invoice");
+                    } else {
+                        CBC_franchiseeFee = res.lstFranchiseeFee;
+                        $('#hdfCBCInvoiceId').val(res.InvoiceId);
+                        $('#hdfCBCBillingPayId').val(res.BillingPayId);
+                        $('#hdfCBCChargebackId').val(res.ChargebackId);
+                        $('#hdfCBCChargebackAmount').val(res.ChargebackAmount);
+                        $('#hdfCBCApplyAmount').val(res.ApplyAmount);
+                        $('#hdfCBCRegionId').val(res.RegionId);
+
+                        if ($('#ServiceTypeListId').val() == 53) {
+                            $('#Amount').val($('#hdfCBCApplyAmount').val());
+                            $('#Amount').trigger("change");
+                        }
+
+                    }
+                }
+            });
+
+        });
+
+        $("#ServiceTypeListId").change(function () {
+            var value = this.value;
+            
+            if (this.value == 53) {
+                $('#Amount').val($('#hdfCBCApplyAmount').val());
+                $('#Amount').trigger("change");
+            }
+            CalculateAmount();
+        });
+
+
+        if (parseInt($('#FranchiseeManualTransactionTempId').val()) > 0) {            
+            $("#StartDate").datepicker({ autoclose: true, dateFormat: 'mm/dd/yy' });
+            $("#TransactionDate").datepicker({ autoclose: true, dateFormat: 'mm/dd/yy' });
+
+        } else {
+
+            $("#TransactionDate").datepicker("setDate", new Date());
+        }
+        //$(".date-picker").datepicker("option", "dateFormat", "mm/dd/yy" );
+
+        var month = parseInt('@JKApi.Core.Common.ClaimView.Instance.GetCLAIM_PeriodAccess().Where(x=>x.PeriodId== JKApi.Core.Common.ClaimView.Instance.GetCLAIM_SELECTED_PERIOD_ID()).FirstOrDefault().Month');
+        var year = parseInt('@JKApi.Core.Common.ClaimView.Instance.GetCLAIM_PeriodAccess().Where(x=>x.PeriodId== JKApi.Core.Common.ClaimView.Instance.GetCLAIM_SELECTED_PERIOD_ID()).FirstOrDefault().Year');
+        $('.date-picker').datepicker("option", {
+            minDate: new Date(year, month - 1, 1),
+            maxDate: new Date(year, month, 0),
+            dateFormat: "mm/dd/yy"
+        });
+
+        applyMaskCurrency($("#Amount"));
+        applyMaskCurrency($("#Total"));
+        applyMaskCurrency($("#Fee"));
+        }
+
+    $("#ServiceTypeListId").change(function () {
+        var value = this.value;
+        if (this.value == 18) {
+            $("#divRecVL").show();
+        }
+        else {
+            $("#divRecVL").hide();
+        }
+        CalculateAmount();
+    });
+
+        function cleanform() {
+            $("#ServiceTypeListId").val('');
+            $("#Description").val('');
+            $("#Amount").val('');
+            $("#Total").val('');
+            $("#Fee").val('');
+        }
+
+        function CalculateAmount() {
+            var tempAmount = $("#Amount").val() == '' ? 0 : parseFloat($("#Amount").val());
+            var tempFee = $("#Fee");
+            var tempTotal = $("#Total");
+            var taxAMT = 0.00;
+            for (var i = 0; CBC_franchiseeFee.length > i; i++) {
+                if (CBC_franchiseeFee[i].FeeRateType == 1) {
+                    taxAMT = taxAMT + (tempAmount * CBC_franchiseeFee[i].Amount / 100);
+                } else {
+                    taxAMT = taxAMT + CBC_franchiseeFee[i].Amount;
+                }
+            }
+            tempFee.val(taxAMT);
+            tempTotal.val(parseFloat(tempAmount) - parseFloat(tempFee.val()));
+        };
+
+
+        function OnlyNumber(id) {
+            $(id).keydown(function (event) {
+                if (event.shiftKey == true) { event.preventDefault(); }
+                if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105) || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46) { }
+                else { event.preventDefault(); }
+            });
+        }
+        function applyMaskCurrency(id) {
+            $(id).inputmask("currency", {
+                alias: 'currency',
+                prefix: '$ ',
+                digits: 2,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                unmaskAsNumber: true,
+                allowPlus: false,
+                allowMinus: false,
+                autoGroup: true,
+                groupSeparator: ",",
+            });
+        }
+
+    $("#btnFCSaveNew").click(function (e) {
+            e.preventDefault();
+            var isValid = ValidateFranchiseTransaction($(this).attr('name'));
+
+            if (isValid) {
+                $('#hdfSaveClose').val($(this).attr('name'));
+                $("#form_FranchiseeChargebackCredit").submit();
+            }
+
+        });
+
+        $("#btnFCSaveClose").click(function (e) {
+            e.preventDefault();
+            var isValid = ValidateFranchiseTransaction($(this).attr('name'));
+
+            if (isValid) {
+                $('#hdfSaveClose').val($(this).attr('name'));
+                $("#form_FranchiseeChargebackCredit").submit();
+            }
+
+        });
+
+    $("#btnFCSaveClosePP").click(function (e) {
+            e.preventDefault();
+
+            var isValid = ValidateFranchiseTransaction($(this).attr('name'));
+
+            if (isValid) {
+                $('#hdfSaveClose').val($(this).attr('name'));
+                $("#form_FranchiseeChargebackCredit").submit();
+
+
+            }
+
+
+    });
+
+
+
+
+
+        /* Validate Franchise Manual Transaction */
+
+        function ValidateFranchiseTransaction(a) {
+
+            var isValid = true;
+            /* Type */
+            if ($("#ServiceTypeListId").val().trim() == "") {
+                $("#ServiceTypeListId").css('border-color', 'red');
+                $(window).scrollTop(10);
+                if (isValid) {
+                    isValid = false;
+                }
+            }
+            else {
+                $("#ServiceTypeListId").css('border-color', '');
+            }
+
+            /* Description */
+            if ($("#Description").val().trim() == "") {
+                $("#Description").css('border-color', 'red');
+                $(window).scrollTop(10);
+                if (isValid) {
+                    isValid = false;
+                }
+            }
+            else {
+                $("#Description").css('border-color', '');
+            }
+
+            /* InvoiceNo */
+            if ($("#CBC_InvoiceNo").val().trim() == "") {
+                $("#CBC_InvoiceNo").css('border-color', 'red');
+                $(window).scrollTop(10);
+                if (isValid) {
+                    isValid = false;
+                }
+            }
+            else {
+                $("#CBC_InvoiceNo").css('border-color', '');
+            }
+
+            /* Item Amount */
+            if ($("#Amount").val() <= 0) {
+                $("#Amount").css('border-color', 'red');
+                $(window).scrollTop(10);
+                if (isValid) {
+                    isValid = false;
+                }
+            }
+            else {
+                $("#Amount").css('border-color', '');
+            }
+
+            if ($("#Amount").val() <= 0) {
+                $("#Amount").css('border-color', 'red');
+                $(window).scrollTop(10);
+                if (isValid) {
+                    isValid = false;
+                }
+            }
+            else {
+                if (parseFloat($("#Amount").val()) > parseFloat($("#hdfCBCApplyAmount").val())) {
+                    $("#Amount").css('border-color', 'red');
+                    $(window).scrollTop(10);
+                    if (isValid) {
+                        isValid = false;
+                    }
+                    swal('Avalible Chargeback Credit Amount is $' + parseFloat($("#hdfCBCApplyAmount").val()).toFixed(2) + '. Please enter amount less or equal.');
+                }
+                $("#Amount").css('border-color', '');
+            }
+
+            return isValid;           
+        }
+
+</script>

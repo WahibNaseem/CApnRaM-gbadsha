@@ -1,0 +1,166 @@
+﻿@model JKViewModels.CRM.CRMFvPresentationViewModel
+
+<div class="modal-header modal-custom-header" id="dvdetail_modalview_header">
+    <button type="button" class="close modal-close-button" data-dismiss="modal" aria-hidden="true"></button>
+    <h4 class="modal-title">FV Presentation</h4>
+</div>
+<div class="modal-body" id="fvdetail_modalview_body">
+    <div class="row">
+        <form action="#" id="form_fvschedulestagedetail" class="form-horizontal">
+            <div class="form-body">
+                @Html.Hidden("AccountDetailId", "", new { @id = "accountdetailid" })
+                <!-- Measure Contact Person -->
+                <div class="form-group">
+                    <label for="select_stagestatus" class="control-label col-md-4">Measure Contact Person<span class="required">*</span>:</label>
+                    <div class="col-md-4">
+                        <input id="input_measurecontactpersonmodal" name="name" type="text" data-required="1" class="form-control input-sm clsmeasurecontact" value="@Model.MeasureContactPerson" disabled="disabled" />
+                    </div>
+                    <div class="col-md-2" style="padding-left:0px;width:130px;display:none;">
+                        <input type="checkbox" id="chkSameContact" class="clssamecontact" /> Same as Contact
+                    </div>
+                </div>
+                <!-- Measure facility(sq.ft)-->
+                <div class="form-group">
+                    <label for="select_providertype" class="control-label col-md-4">Measure facility(sq.ft)<span class="required">*</span>:</label>
+                    <div class="col-md-4">
+                        <input id="input_measurefacilitymodal" name="name" type="text" data-required="1" class="form-control input-sm" value="@Model.MeasureFacility" disabled="disabled" />
+                    </div>
+                </div>
+                <!-- # of Floor-->
+                <div class="form-group">
+                    <label for="select_numberoffloor" class="control-label col-md-4"># of Floor<span class="required">*</span>:</label>
+                    <div class="col-md-4">
+                        <input id="input_numoffloorsmodal" name="number" type="text" data-required="1" class="form-control input-sm" value="@Model.NumberOfFloors" disabled="disabled" />
+                    </div>
+                </div>
+
+                <!-- Budget Amount-->
+                <div class="form-group">
+                    <label for="select_stagestatus" class="control-label col-md-4">Budget Amount<span class="required">*</span>:</label>
+                    <div class="col-md-4">
+                        <input id="input_budgetmodal" name="number" type="text" data-required="1" class="form-control input-sm" value="@string.Format("{0:c}", Model.BudgetAmount)" disabled="disabled" />
+                    </div>
+                </div>
+
+                <!--Billing  Frequency-->
+                <div class="form-group" style="display:none;">
+                    <label for="select_frequency" class="control-label col-md-4">Billing Frequency<span class="required">*</span>:</label>
+                    <div class="col-md-4">
+                        <select id="select_frequencymodal" class="form-control input-sm">
+                            <option value="1">Monthly</option>
+                            <option value="2">Quarterly</option>
+                            <option value="3">Yearly</option>
+                            <option value="4">Variable</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <!-- Service Type-->
+                <div class="form-group">
+                    <label for="select_servicetype" class="control-label col-md-4">Service Type<span class="required">*</span>:</label>
+                    <div class="col-md-4">
+                        @Html.DropDownList("servicetype", (SelectList)ViewBag.ServiceTypeListModel, "Select", new { @class = "form-control input-sm", @name = "options2", @id = "select_servicetypemodal", @disabled = "disabled" })
+                    </div>
+                </div>
+
+                <!-- Service Level-->
+                <div class="form-group">
+                    <label for="select_servicelevel" class="control-label col-md-4">Service Level<span class="required">*</span>:</label>
+                    <div class="col-md-4">
+                        <select id="select_servicelevelmodal" class="form-control input-sm" name="options2" disabled="disabled">
+                            <option value="1" @(Model.ServiceLevel == 1 ? "selected=selected":string.Empty)>Good</option>
+                            <option value="3" @(Model.ServiceLevel == 3 ? "selected=selected":string.Empty)>Better</option>
+                            <option value="2" @(Model.ServiceLevel == 2 ? "selected=selected":string.Empty)>Best</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!--Clean Times-->
+                <div class="form-group">
+                    <label for="input_cleantimes" class="control-label col-md-4"># of Clean Times<span class="required">*</span>:</label>
+                    <div class="col-md-4">
+                        <input id="input_cleantimesmodal" name="number" type="text" data-required="1" class="form-control input-sm" value="@Model.CleanTime" disabled="disabled" />
+                    </div>
+                </div>
+
+
+                <!-- Clean Frequency-->
+                <div class="form-group">
+                    <label for="select_cleanfrequency" class="control-label col-md-4">Clean Frequency<span class="required">*</span>:</label>
+                    <div class="col-md-4">
+                        <select id="select_cleanfrequencymodal" class="form-control input-sm" name="options2" disabled="disabled">
+                            <option value="1" @(Model.CleanFrequency == 1 ? "selected=selected":string.Empty)>Week</option>
+                            <option value="2" @(Model.CleanFrequency == 2 ? "selected=selected":string.Empty)>Month</option>
+                            <option value="3" @(Model.CleanFrequency == 3 ? "selected=selected":string.Empty)>Quarter</option>
+                            <option value="4" @(Model.CleanFrequency == 4 ? "selected=selected":string.Empty)>Year</option>
+                            <option value="5" @(Model.CleanFrequency == 5 ? "selected=selected" : string.Empty)>Variable</option>
+                            <option value="6" @(Model.CleanFrequency == 6 ? "selected=selected" : string.Empty)>One Time Clean</option>
+                            <option value="6" @(Model.CleanFrequency == 7 ? "selected=selected" : string.Empty)>Weekend</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Cleaning Day-->
+                <div class="form-group" style="margin-top:4px;">
+                    <label for="select_cleaningday" class="control-label col-md-4">Cleaning Day<span class="required">*</span>:</label>
+                    <div class="col-md-10" id="schedulefv">
+                        <label class="check-inline" style="margin-top: 6px;">
+                            <input type="checkbox" name="service" value="1" class="i-checks" disabled="disabled" id="Mon" @(Model.Mon ==true ?"checked=checked":string.Empty)  />
+                            <span>Mon</span>
+                        </label>
+
+                        <label class="check-inline" style="margin-top: 6px;">
+                            <input type="checkbox" name="service" value="2" class="i-checks" disabled="disabled" id="Tue"  @(Model.Tue ==true ?"checked=checked":string.Empty)/>
+                            <span>Tue</span>
+                        </label>
+
+                        <label class="check-inline" style="margin-top: 6px;">
+                            <input type="checkbox" name="service" value="3" class="i-checks" disabled="disabled" id="Wed" @(Model.Wed == true ?"checked=checked":string.Empty)/>
+                            <span>Wed</span>
+                        </label>
+
+                        <label class="check-inline" style="margin-top: 6px;">
+                            <input type="checkbox" name="service" value="4" class="i-checks" disabled="disabled" id="Thu" @(Model.Thu == true ?"checked=checked":string.Empty)/>
+                            <span>Thu</span>
+                        </label>
+
+                        <label class="check-inline" style="margin-top: 6px;">
+                            <input type="checkbox" name="service" value="5" class="i-checks" disabled="disabled" id="Fri"  @(Model.Fri == true ?"checked=checked":string.Empty)/>
+                            <span>Fri</span>
+                        </label>
+
+                        <label class="check-inline" style="margin-top: 6px;">
+                            <input type="checkbox" name="service" value="6" class="i-checks" disabled="disabled" id="Sat" @(Model.Sat == true ?"checked=checked":string.Empty)/>
+                            <span>Sat</span>
+                        </label>
+                        <label class="check-inline" style="margin-top: 6px;">
+                            <input type="checkbox" name="service" value="7" class="i-checks" disabled="disabled" id="Sun" @(Model.Sun == true ?"checked=checked":string.Empty) />
+                            <span>Sun</span>
+                        </label>
+                        <label class="check-inline" style="margin-top: 6px;">
+                            <input type="checkbox" name="service" value="7" class="i-checks" disabled="disabled" id="Sun" @(Model.Weekend == true ? "checked=checked" : string.Empty) />
+                            <span>Weekend</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Note -->
+                <div class="form-group">
+                    <label for="select_stagestatus" class="control-label col-md-4">Note<span class="required"></span>:</label>
+                    <div class="col-md-6">
+                        <textarea name="note" id="text_fvpresentationmodal" class="form-control autosizeme" rows = "6", style = "font-size: 11px" disabled = "disabled">@Model.Note</textarea>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#select_servicetypemodal").val(@Model.ServiceTypeListId); 
+    })
+
+</script>
+

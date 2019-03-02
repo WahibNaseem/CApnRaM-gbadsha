@@ -1,0 +1,62 @@
+﻿@{
+    ViewBag.Title = "FranchiseeReport";
+    Layout = "~/Areas/Portal/Views/Shared/_LayoutEmpty.cshtml";
+}
+
+@model List<JKApi.Service.AccountPayable.FranchiseeReportDetailsViewModel>
+
+@section styles{
+    <link rel="stylesheet" href="~/Content/FranchiseeReport.css" />
+}
+
+@if (ViewBag.IsPrintView == true)
+{
+    <div class="print-container no-print">
+        <input type="button" class="print-button" value="Create PDF" onclick="createPDF()" />
+        <input type="button" class="print-button" value="Back to Portal" onclick="backToPortal()" />
+    </div>
+}
+
+@foreach (var vm in Model)
+{
+    @Html.Partial("_PartialFranchiseeReportSummary", vm)
+
+    if (vm.DetailsByTransaction.Count > 0)
+    {
+        <P class="page-divider" />
+
+        @Html.Partial("_PartialFranchiseeReportTransactions", vm)
+    }
+
+    if (vm.DetailsByService.Count > 0)
+    {
+        <P class="page-divider" />
+
+        @Html.Partial("_PartialFranchiseeReportServices", vm)
+    }
+
+    foreach (var service in vm.Deductions)
+    {
+        if (service.DisplaySubReport)
+        {
+            <P class="page-divider" />
+
+            @Html.Partial("_PartialFranchiseeReportDeductions", vm, new ViewDataDictionary(ViewData) { { "Service", service } })
+        }
+    }
+
+    <P class="page-divider page-divider-last" />
+}
+
+@section scripts{
+    <script>
+        <!--
+        function createPDF() {
+            window.open('@Url.Action("FranchiseeReportExportToPDF", "AccountsPayable", new { area = "Portal" })?ids=@(Request.QueryString["ids"])', '_blank');
+        }
+        function backToPortal() {
+            window.location.href = '@Url.Action("FranchiseePay", "AccountsPayable", new { area = "Portal" })';
+        }
+        -->
+    </script>
+}

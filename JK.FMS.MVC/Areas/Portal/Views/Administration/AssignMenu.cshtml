@@ -1,0 +1,319 @@
+﻿@using JKViewModels
+
+@{
+
+    ViewBag.Title = "Role Based Menu Access";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    //bool isWriteAccess = Convert.ToBoolean(Session["IsWriteAccess"]);
+}
+@model AssignMenuModel
+<link href="@Url.Content("~/Content/jquery.treeview.css")" rel="stylesheet" />
+@*<script src="~/Scripts/jquery-3.2.1.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>*@
+
+@using (Ajax.BeginForm("AssignMenu", "Administration", null, new AjaxOptions { OnBegin = "beginRequest", OnSuccess = "success", OnComplete = "endRequest" }, new { @id = "frmAssignMenu" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet box blue recruitmentpage ">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="marL7px">@ViewBag.Title</span>
+                    </div>
+                </div>
+                <ul class="page-breadcrumb breadcrumb paddB20">
+                    <li> <i class="fa fa-home"></i> <a href="~/Home/Index"> Home </a> <i class="fa fa-angle-right"></i> </li>
+                    <li>@ViewBag.Title</li>
+                </ul>
+                <div class="portlet-body">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-3">
+                            <div class="floating-label">
+                                @Html.DropDownListFor(m => m.RoleId, (ViewBag.RoleList != null ? (SelectList)ViewBag.RoleList : null), new { id = "ddlRole", @class = "" })
+                                <label class="mandatory control-label">Role</label>
+                                <div id="lblValidmsgRole" class="vaidationMessage field-validation-error" style="Color:Red;display:none;">View Role</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="AssignMenuList" class="row margin-top-20" style="display:none;">
+                        <div class="col-md-12">
+                            @Html.Partial("_AssignMenuList", Model)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="abc-buttons text-center">
+
+                                <input id="btnDisableSave" type="button" class="btn btn-primary disabled" value="Save" />
+
+                                <input id="btnCancel" type="button" class="btn btn-sm btn-primary" value="Cancel">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/chosen.jquery.min.js"></script>
+    <script src="~/Scripts/jquery.cokie.min.js"></script>
+    <script src="@Url.Content("~/Scripts/jquery.treeview.js")"></script>
+
+
+    <script type="text/javascript" language="javascript">
+        $().ready(function () {
+            //beginRequest();
+            setTimeout(function () { $("#AssignMenuList").show(); GetRoleNameBasedMenu($("#ddlRole").val()); }, 500);
+            if ('@Model.Message' != "" && '@Model.MessageType' != "") {
+                showMessagePopup("divMessage", '@Model.MessageType', '@Model.Message');
+            }
+            $('#lstCategory').chosen();
+            $("#lstSubCategory").chosen();
+
+            $("#lstCategory option[value='0']").addClass("selectall");
+            $("#lstCategory option:not([value='0'])").addClass("category");
+
+            //$("select, input[type='checkbox'], input[type='radio']").uniform();
+
+            $("#treeView").treeview({
+                animated: "fast",
+                collapsed: true,
+                persist: "cookie",
+                prerendered: true,
+                persist: "location"
+            });
+            //$(".expandable-hitarea").click();
+            $("#ddlRole").change(function () {
+                var role;
+                if ($("#ddlRole").val() == "") {
+                    role = 0;
+                    $("#lblValidmsgRole").show();
+                }
+                else {
+                    role = $("#ddlRole").val();
+                    $("#lblValidmsgRole").hide();
+
+                }
+                GetRoleNameBasedMenu(role);
+            });
+
+
+            $("#btnCancel").click(function () {
+                cancel();
+            });
+
+            $("#ddlRole").focus();
+
+            $("#chkAllRead").click(function () {
+                $(".chkParentRead").each(function () {
+                    var menuId = $(this).attr("data-MenuId");
+                    $("#li_" + menuId).find(".chkParentRead").prop("checked", $("#chkAllRead").is(":checked"));
+                    $("select, input[type='checkbox'], input[type='radio']").uniform();
+                    $("#hdnIsChanged_" + menuId).val(true);
+                    UpdateChildCheckBox(menuId, $("#chkAllRead").is(":checked"), 'Read');
+                });
+
+                if ($("#chkAllRead").is(":checked") == false) {
+                    $("#chkAllWrite").prop("checked", false);
+                    $(".chkParentWrite").each(function () {
+                        var menuId = $(this).attr("data-MenuId");
+                        $("#li_" + menuId).find(".chkParentWrite").prop("checked", false);
+                        $("select, input[type='checkbox'], input[type='radio']").uniform();
+                        $("#hdnIsChanged_" + menuId).val(true);
+                        UpdateChildCheckBox(menuId, false, 'Write');
+                    });
+                }
+
+            });
+
+
+            $("#chkAllWrite").click(function () {
+                $(".chkParentWrite").each(function () {
+                    var menuId = $(this).attr("data-MenuId");
+                    $("#li_" + menuId).find(".chkParentWrite").prop("checked", $("#chkAllWrite").is(":checked"));
+                    $("select, input[type='checkbox'], input[type='radio']").uniform();
+                    $("#hdnIsChanged_" + menuId).val(true);
+                    UpdateChildCheckBox(menuId, $("#chkAllWrite").is(":checked"), 'Write');
+                });
+                if ($("#chkAllWrite").is(":checked") == true) {
+                    $("#chkAllRead").prop("checked", true);
+                    $(".chkParentRead").each(function () {
+                        var menuId = $(this).attr("data-MenuId");
+                        $("#li_" + menuId).find(".chkParentRead").prop("checked", true);
+                        $("select, input[type='checkbox'], input[type='radio']").uniform();
+                        $("#hdnIsChanged_" + menuId).val(true);
+                        UpdateChildCheckBox(menuId, true, 'Read');
+                    });
+                }
+
+
+            });
+
+            $(".chkParentRead").click(function () {
+                var menuId = $(this).attr("data-MenuId");
+                $("#hdnIsChanged_" + menuId).val(true);
+                UpdateChildCheckBox(menuId, $(this).is(":checked"), 'Read');
+                allChecked("chkAllRead");
+                if ($(this).is(":checked") == false) {
+                    $("#chkIsWriteAccess_" + menuId).prop("checked", false);
+                    UpdateChildCheckBox(menuId, false, "Write");
+                    allChecked("chkAllWrite");
+                }
+            });
+
+            $(".chkchildWrite").click(function () {
+                var menuId = $(this).attr("data-MenuId");
+                $("#hdnIsChanged_" + menuId).val(true);
+                var parentMenuId = $(this).attr("data-parentmenuid");
+                $("#hdnIsChanged_" + parentMenuId).val(true);
+                UpdateChildCheckBox(menuId, $(this).is(":checked"), 'Write');
+                UpdateParentCheckbox(parentMenuId, 'Write');
+                allChecked("chkAllWrite");
+                if ($(this).is(":checked") == true) {
+                    $("#chkIsReadAccess_" + menuId).prop('checked', true);
+                    UpdateChildCheckBox(menuId, true, 'Read');
+                    UpdateParentCheckbox(parentMenuId, 'Read');
+                    allChecked("chkAllRead");
+                }
+
+
+            });
+
+            $(".chkParentWrite").click(function () {
+                var menuId = $(this).attr("data-MenuId");
+                $("#hdnIsChanged_" + menuId).val(true);
+                UpdateChildCheckBox(menuId, $(this).is(":checked"), 'Write');
+                allChecked("chkAllWrite");
+                if ($(this).is(":checked") == true) {
+                    $("#chkIsReadAccess_" + menuId).prop("checked", true);
+                    UpdateChildCheckBox(menuId, true, "Read");
+                    allChecked("chkAllRead");
+                }
+            });
+
+            $(".chkchildRead").click(function () {
+                var menuId = $(this).attr("data-MenuId");
+                $("#hdnIsChanged_" + menuId).val(true);
+                var parentMenuId = $(this).attr("data-parentmenuid");
+                $("#hdnIsChanged_" + parentMenuId).val(true);
+                UpdateChildCheckBox(menuId, $(this).is(":checked"), 'Read');
+                UpdateParentCheckbox(parentMenuId, 'Read');
+                allChecked("chkAllRead");
+                if ($(this).is(":checked") == false) {
+                    $("#chkIsWriteAccess_" + menuId).prop('checked', false);
+                    UpdateChildCheckBox(menuId, false, 'Write');
+                    UpdateParentCheckbox(parentMenuId, 'Write');
+                    allChecked("chkAllWrite");
+                }
+            });
+
+        });
+
+        function GetRoleNameBasedMenu(value) {
+            //UncheckAll Nodes If you want check then call checkAll
+            // G('tree1').checkboxTree('uncheckAll');
+
+            if (value == "") return;
+            //beginRequest();
+            $.ajax({
+                async: false,
+                traditional: true,
+                cache: false,
+                type: "POST",
+                url: '@Url.Action("GetRoleBasedAssignedMenu", "Administration")',
+                data: JSON.stringify({ roleid: value }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data != null && data.length > 0) {
+
+                        for (var i = 0; i < data.length; i++) {
+
+                            $("#chkIsReadAccess_" + data[i].MenuId).prop('checked', data[i].IsReadAccess);
+                            $("#chkIsWriteAccess_" + data[i].MenuId).prop('checked', data[i].IsWriteAccess);
+                            $.uniform.update("input");
+                        }
+                    }
+                    allChecked("chkAllRead");
+                    allChecked("chkAllWrite");
+                    $.uniform.update("input");
+                    //endRequest();
+                },
+                error: function (jqXHR, exception) {
+                    //endRequest();
+                    if (jqXHR.status != 403) {
+                        //alert(exception);
+                    }
+                }
+            });
+        }
+
+        function cancel() {
+            window.location.href = "/Home/Index";
+        }
+
+
+        function success(result) {
+
+            if (result != null && result.message != "") {
+                window.location.href = "/Administration/AssignMenu";
+                //endRequest();
+            }
+
+        }
+
+        function getcheckedchkBox() {
+            var values = "";
+
+            $("input[type='checkbox']").each(function () {
+                if (this.checked) values += this.value + ",";
+            });
+
+            if (values.length > 0) values = values.slice(0, -1);
+            return values;
+        }
+
+        function UpdateParentCheckbox(menuId, accessType) {
+            var pId;
+            var currentCheckBoxId = '';
+            if (menuId != 0) {
+                currentCheckBoxId = "#chkIs" + accessType + "Access_" + menuId;
+                if ($("#li_" + menuId).find(".chkchild" + accessType + ":checked:not('" + currentCheckBoxId + "')").length > 0) {
+                    $("#chkIs" + accessType + "Access_" + menuId).prop("checked", true);
+                }
+                else {
+                    $("#chkIs" + accessType + "Access_" + menuId).prop("checked", false);
+                }
+                pid = $("#chkIs" + accessType + "Access_" + menuId).attr("data-parentmenuid");
+
+
+                $("select, input[type='checkbox'], input[type='radio']").uniform();
+                UpdateParentCheckbox(pid, accessType);
+            }
+        }
+        function UpdateChildCheckBox(menuId, flag, accessType) {
+            $("#li_" + menuId).find(".chkchild" + accessType).prop("checked", flag);
+            $("select, input[type='checkbox'], input[type='radio']").uniform();
+            $("#li_" + menuId).find(".chkchild" + accessType).each(function () {
+                var menuId = $(this).attr("data-MenuId");
+                $("#hdnIsChanged_" + menuId).val(true);
+            });
+        }
+
+
+        function allChecked(allId) {
+            if ($("." + allId + ":checked").length == $("." + allId).length) {
+                $("#" + allId).prop("checked", true);
+            } else {
+                $("#" + allId).prop("checked", false);
+            }
+            $("select, input[type='checkbox'], input[type='radio']").uniform();
+        }
+
+    </script>
+}

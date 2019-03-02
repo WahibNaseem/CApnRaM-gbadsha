@@ -1,0 +1,429 @@
+﻿
+@model IEnumerable<JKViewModels.Customer.CustomerServiceScheduleDataModel>
+@{
+    DateTime startDate = (DateTime)ViewBag.StartDate;
+    DateTime endDate = (DateTime)ViewBag.EndDate;
+    DateTime todayDate = DateTime.Now.Date;
+
+    var daysToAdd = (int)ViewBag.DaysToAdd;
+    var customerId = (int)ViewBag.CustomerId;
+    var isMonthly = (bool)ViewBag.IsMonthly;
+    var statusListId = (int)ViewBag.StatusListId;
+    var callBackAction = ViewBag.CallBackAction;
+    var callBackController = ViewBag.CallBackController;
+    var passId = ViewBag.PassId;
+    var passIdValueOne=ViewBag.PassIdValueOne;
+    var passIdTwo=ViewBag.PassIdTwo;
+    var passIdValueTwo=ViewBag.PassIdValueTwo;
+
+    var purposeType = ViewBag.PurposeType as IEnumerable<JKViewModels.Customer.CRM_PurposeTypeModel>;
+
+    var users = Model.Select(o => o.UserId).Distinct().ToList();
+    var userCount = users.Count();
+    var customer = Model.FirstOrDefault();
+    var customerName = customer != null ? customer.CustomerName : "";
+
+    DateTime prevDate = new DateTime();
+    DateTime nextDate = new DateTime();
+
+    if (!isMonthly)
+    {
+        prevDate = startDate.AddDays(-1);
+        nextDate = endDate.AddDays(1);
+    }
+    else
+    {
+        prevDate = startDate.AddMonths(-1);
+        nextDate = startDate.AddMonths(1);
+    }
+
+}
+<style type="text/css">
+    .divScrollable {
+        height: 800px;
+        overflow-x: hidden;
+        overflow-y: scroll;
+    }
+</style>
+
+<div class="modal-content modal-custom-content">
+    <div class="modal-header headerbox list" style="padding:0px!important;text-align:center; border-bottom: none;">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+        <h4 class="modal-title" style="margin-top: 0px; align-content:center; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+            <label style=""> &nbsp;&nbsp; @customerName &nbsp;&nbsp;</label>
+        </h4>
+    </div>
+    <div class="modal-body" style="padding-left:0px; padding-right:0px;">
+        <div class="row">
+            <div class="col-lg-12" style="max-height:50px; margin-top:-35px; margin-bottom:10px;">
+                <input type="hidden" id="daysToAdd" value="@daysToAdd" />
+                <input type="hidden" id="customerId" value="@customerId" />
+                <input type="hidden" id="callBackAction" value="@callBackAction" />
+                <input type="hidden" id="callBackController" value="@callBackController" />
+                <input type="hidden" id="passId" value="@passId" />
+                <input type="hidden" id="passIdValueOne" value="@passIdValueOne" />
+                <input type="hidden" id="passIdTwo" value="@passIdTwo" />
+                <input type="hidden" id="passIdValueTwo" value="@passIdValueTwo" />
+                <input type="hidden" id="statusListId" value="@statusListId" />
+
+                <input type="checkbox" class="hidden" id="isMonthly" name="isMonthly" checked="@isMonthly" />
+                <div class="col-lg-6 pull-left">
+                    <ul class="pager">
+                        <li class="previous"><button class="btn btn-primary" id="btnWeekly">Weekly</button></li>
+                        <li class="next"><button class="btn btn-primary" id="btnMonthly">Monthly</button></li>
+                    </ul>
+                </div>
+                <div class="col-lg-6 pull-right">
+                    <ul class="pager">
+                        <li class="previous"><button class="btn btn-primary" id="btnPrevious" value="@prevDate"><i class="fa fa-arrow-left"></i> Previous</button></li>
+                        <li class="next"><button class="btn btn-primary" id="btnNext" value="@nextDate">Next<i class="fa fa-arrow-right"></i></button></li>
+                    </ul>
+                </div>
+            </div>
+
+
+            <div class="col-md-12">
+                <div class="portlet ligh">
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @foreach (var item in purposeType)
+                            {
+                                <div class="col-lg-3">
+                                    <label style="margin-bottom:-5px !important; width:15px;height:15px;display:inline-block;position:relative;background-color:@item.ColorCode;"></label>
+                                    <label style="">@item.Name</label>
+                                </div>
+                            }
+
+                        </div>
+                        <div class="col-lg-12 divScrollable">
+
+                            @{
+
+                                DateTime StartDate = startDate.Date;
+                                DateTime EndDate = endDate.Date;
+
+                            }
+                            @if (userCount > 0)
+                            {
+                                for (int i = 0; i < userCount; i++)
+                                {
+                                    var userId = users[i];
+                                    var userDetail = Model.Where(o => o.UserId == userId);
+                                    var userDetailsFirstRow = userDetail.FirstOrDefault();
+
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-3 col-sm-3" style="margin-right:-25px;">
+                                            <table class="table table-responsive table-striped table-bordered order-column" style="margin-top:0 !important;font-size:12px !important;">
+                                                <thead>
+                                                    <tr><td colspan="2" style="font-size:12px;text-align:center;background-color:#95A5A6 !important;padding:5px !important;color:#FFF;width:10px;">&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;</td></tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td style="padding:5px; vertical-align : middle; text-align:center; font-size:12px;height:25px;width:120px;" rowspan="14"><b> @userDetailsFirstRow.UserName</b></td>
+                                                    </tr>
+                                                    @{
+                                                        var startTime1 = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, 8, 0, 0);
+                                                        var endTime1 = startTime1.AddHours(12);
+                                                        while (startTime1 <= endTime1)
+                                                        {
+                                                            <tr>
+                                                                <td style="padding:5px; vertical-align : middle; text-align:center; font-size:12px;height:25px;width:80px;">@startTime1.ToShortTimeString()</td>
+                                                            </tr>
+                                                            startTime1 = startTime1.AddHours(1);
+                                                        }
+                                                    }
+
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="col-lg-9 col-md-9 col-sm-9">
+                                            <div class="table table-responsive">
+                                                <table class="table table-responsive table-striped table-bordered order-column" style="margin-top:0 !important;font-size:12px !important;">
+                                                    <thead>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            @{
+                                                                for (DateTime date = StartDate; date.Date <= EndDate.Date; date = date.AddDays(1))
+                                                                {
+                                                                    if (date.Date != todayDate.Date)
+                                                                    {
+                                                                        <td style="font-size:12px;text-align:center;background-color:#95A5A6 !important;padding:5px !important;color:#FFF;width:10px;">
+                                                                            @date.Month/@date.Day <br />
+                                                                            @date.Date.DayOfWeek.ToString().Substring(0, 3)
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td style="font-size:12px;text-align:center;background-color:#95A5A6 !important; padding:5px !important;color:#FFF;width:10px;">
+                                                                            <b style="color:red;">
+                                                                                @date.Month/@date.Day <br />
+                                                                                @date.Date.DayOfWeek.ToString().Substring(0, 3)
+                                                                            </b>
+                                                                        </td>
+                                                                    }
+
+
+                                                                }
+                                                            }
+                                                        </tr>
+                                                        @{
+                                                            var startTime = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, 8, 0, 0);
+                                                            var endTime = startTime.AddHours(12);
+                                                            var compareTime = new DateTime();
+                                                            var colorCode = string.Empty;
+
+                                                            while (startTime <= endTime)
+                                                            {
+                                                                <tr style="height:25px !important;">
+                                                                    @*<td style="padding:5px; text-align:center; font-size:12px;height:25px;min-width:80px;">@startTime.ToShortTimeString()</td>*@
+                                                                    @for (DateTime date = StartDate; date.Date <= EndDate.Date; date = date.AddDays(1))
+                                                                    {
+                                                                        compareTime = new DateTime(date.Year, date.Month, date.Day, startTime.Hour, startTime.Minute, startTime.Second);
+                                                                        var hasData = userDetail.Where(o => o.StartDate <= compareTime && o.EndDate >= compareTime);
+
+                                                                        var IsAllDay = false;
+                                                                        if (hasData.Any())
+                                                                        {
+                                                                            var dt = hasData.FirstOrDefault(o => o.IsAllDay == true);
+                                                                            var purposeId = hasData.FirstOrDefault().PurposeId;
+
+                                                                            var cCode = purposeType.FirstOrDefault(o => o.CRM_PurposeTypeId == purposeId);
+                                                                            if (cCode != null)
+                                                                            {
+                                                                                colorCode = cCode.ColorCode;
+                                                                            }
+
+                                                                            if (dt != null)
+                                                                            {
+                                                                                IsAllDay = dt.IsAllDay;
+                                                                            }
+                                                                        }
+
+                                                                        if (IsAllDay)
+                                                                        {
+                                                                            IsAllDay = false;
+                                                                            <td class="tblCell" className="@userDetailsFirstRow.ClassId" dateTime="@compareTime.Date" style="padding:5px; background-color:@colorCode; text-align:center; font-size:12px;height:25px;">&nbsp;</td>
+                                                                        }
+                                                                        else if (hasData.Any())
+                                                                        {
+                                                                            <td class="tblCell" className="@userDetailsFirstRow.ClassId" dateTime="@compareTime.Date" style="padding:5px; background-color:@colorCode; text-align:center; font-size:12px;height:25px;">&nbsp;</td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td class="tblCell" className="@userDetailsFirstRow.ClassId" dateTime="@compareTime.Date" style="padding:5px; text-align:center;font-size:12px;height:25px;">&nbsp;</td>
+                                                                        }
+
+
+                                                                    }
+                                                                </tr>
+                                                                startTime = startTime.AddHours(1);
+                                                            }
+
+                                                        }
+
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+
+                                                                <div class="row">
+                                                                    <div class="col-lg-12 col-md-12 col-sm-12" style="text-align:center;">
+                                                                        <table class="table table-responsive table-striped table-bordered order-column" style="margin-top:0 !important;font-size:12px !important;">
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td style="width:100%; padding:5px; vertical-align : middle; text-align:center; font-size:12px;"><b> No person assigned yet!</b></td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            }
+
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary pull-right" id="btnScheduleModalClose"><i class="fa fa-close"></i> Close</button>
+    </div>
+</div>
+
+
+<script>
+
+    $('#btnScheduleModalClose').click(function () {
+        $('#modal_CustomerServiceSchedulePopup').modal('hide');
+    });
+
+    $('.tblCell').click(function () {
+        var customerId = $(this).attr("className");
+        var dateTime = $(this).attr("dateTime");
+        var callBackAction = $('#callBackAction').val();
+        var callBackController = $('#callBackController').val();
+        var passId = $('#passId').val();
+        var statusListId = $('#statusListId').val();
+        var passIdValueOne = $('#passIdValueOne').val();
+        var passIdTwo = $('#passIdTwo').val();
+        var passIdValueTwo = $('#passIdValueTwo').val();
+        
+        if (customerId > 0) {
+            var sURL = '@Url.Action("AddCRMSchedule", "Customer", new { area = "Portal" })' + "?customerId=" + customerId + "&dateTime=" + dateTime + "&callBackAction=" + callBackAction + "&callBackController=" + callBackController + "&passId=" + passId + "&statusListId=" + statusListId + '&passIdValueOne=' + passIdValueOne + '&passIdTwo=' + passIdTwo + '&passIdValueTwo=' + passIdValueTwo;
+            window.location.replace(sURL);
+        }
+    });
+
+    $('#btnMonthly').click(function () {
+        $('#isMonthly').attr('checked', true);
+        $("#modal_CustomerInspectionFormPopup").trigger("reset");
+        var dayToAdd = 0;
+        var customerId = $('#customerId').val();
+        var regionId = '0';
+        var userId = 0;
+        var isMonthly = true;
+        var startDate = $(this).val();
+        var callBackAction = $('#callBackAction').val();
+        var callBackController = $('#callBackController').val();
+        var passId = $('#passId').val();
+        var statusListId = $('#statusListId').val();
+        var passIdValueOne = $('#passIdValueOne').val();
+        var passIdTwo = $('#passIdTwo').val();
+        var passIdValueTwo = $('#passIdValueTwo').val();
+
+        var sURL = '@Url.Action("CustomerServiceSchedulePopup", "Customer", new { area = "Portal" })' + "?customerId=" + customerId + "&regionId=" + regionId + "&isMonthly=" + isMonthly + "&dayToAdd=" + dayToAdd + "&userId=" + userId + "&startDate=" + startDate + "&callBackAction=" + callBackAction + "&callBackController=" + callBackController + "&passId=" + passId + "&statusListId=" + statusListId + '&passIdValueOne=' + passIdValueOne + '&passIdTwo=' + passIdTwo + '&passIdValueTwo=' + passIdValueTwo;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#Render_CustomerServiceSchedule').html(data);
+                $("#modal_CustomerServiceSchedulePopup").modal({ backdrop: 'static' });
+            },
+            error: function () {
+                alert("Error occured!!")
+            }
+        });
+    });
+    $('#btnWeekly').click(function () {
+        $('#isMonthly').attr('checked', false);
+        $("#modal_CustomerInspectionFormPopup").trigger("reset");
+        var dayToAdd = 0;
+        var customerId = $('#customerId').val();
+        var regionId = '0';
+        var userId = 0;
+        var isMonthly = false;
+        var startDate = null;
+        var callBackAction = $('#callBackAction').val();
+        var callBackController = $('#callBackController').val();
+        var passId = $('#passId').val();
+        var statusListId = $('#statusListId').val();
+        var passIdValueOne = $('#passIdValueOne').val();
+        var passIdTwo = $('#passIdTwo').val();
+        var passIdValueTwo = $('#passIdValueTwo').val();
+
+        var sURL = '@Url.Action("CustomerServiceSchedulePopup", "Customer", new { area = "Portal" })' + "?customerId=" + customerId + "&regionId=" + regionId + "&isMonthly=" + isMonthly + "&dayToAdd=" + dayToAdd + "&userId=" + userId + "&startDate=" + startDate + "&callBackAction=" + callBackAction + "&callBackController=" + callBackController + "&passId=" + passId + "&statusListId=" + statusListId + '&passIdValueOne=' + passIdValueOne + '&passIdTwo=' + passIdTwo + '&passIdValueTwo=' + passIdValueTwo;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#Render_CustomerServiceSchedule').html(data);
+                $("#modal_CustomerServiceSchedulePopup").modal({ backdrop: 'static' });
+            },
+            error: function () {
+                alert("Error occured!!")
+            }
+        });
+    });
+
+
+    $('#btnNext').click(function () {
+        $("#modal_CustomerInspectionFormPopup").trigger("reset");
+
+        var dayToAdd = 0; // $('#dayToAdd').val();
+        var customerId = $('#customerId').val();
+        var regionId = '0';
+        var userId = 0;
+        var isMonthly = $('#isMonthly').is(':checked');
+        var startDate = $(this).val();
+        var callBackAction = $('#callBackAction').val();
+        var callBackController = $('#callBackController').val();
+
+        var passId = $('#passId').val();
+        var statusListId = $('#statusListId').val();
+        var passIdValueOne = $('#passIdValueOne').val();
+        var passIdTwo = $('#passIdTwo').val();
+        var passIdValueTwo = $('#passIdValueTwo').val();
+
+        var sURL = '@Url.Action("CustomerServiceSchedulePopup", "Customer", new { area = "Portal" })' + "?customerId=" + customerId + "&regionId=" + regionId + "&isMonthly=" + isMonthly + "&dayToAdd=" + dayToAdd + "&userId=" + userId + "&startDate=" + startDate + "&callBackAction=" + callBackAction + "&callBackController=" + callBackController + "&passId=" + passId + "&statusListId=" + statusListId + '&passIdValueOne=' + passIdValueOne + '&passIdTwo=' + passIdTwo + '&passIdValueTwo=' + passIdValueTwo;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#Render_CustomerServiceSchedule').html(data);
+                $("#modal_CustomerServiceSchedulePopup").modal({ backdrop: 'static' });
+            },
+            error: function () {
+                alert("Error occured!!")
+            }
+        });
+    });
+
+
+    $('#btnPrevious').click(function () {
+        $("#modal_CustomerInspectionFormPopup").trigger("reset");
+        var dayToAdd = 0; // $('#dayToAdd').val();
+        var customerId = $('#customerId').val();
+        var regionId = '0';
+        var userId = 0;
+        var isMonthly = $('#isMonthly').is(':checked');
+        var startDate = $(this).val();
+        var callBackAction = $('#callBackAction').val();
+        var callBackController = $('#callBackController').val();
+
+        var passId = $('#passId').val();
+        var statusListId = $('#statusListId').val();
+        var passIdValueOne = $('#passIdValueOne').val();
+        var passIdTwo = $('#passIdTwo').val();
+        var passIdValueTwo = $('#passIdValueTwo').val();
+
+        var sURL = '@Url.Action("CustomerServiceSchedulePopup", "Customer", new { area = "Portal" })' + "?customerId=" + customerId + "&regionId=" + regionId + "&isMonthly=" + isMonthly + "&dayToAdd=" + dayToAdd + "&userId=" + userId + "&startDate=" + startDate + "&callBackAction=" + callBackAction + "&callBackController=" + callBackController + "&passId=" + passId + "&statusListId=" + statusListId + '&passIdValueOne=' + passIdValueOne + '&passIdTwo=' + passIdTwo + '&passIdValueTwo=' + passIdValueTwo;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#Render_CustomerServiceSchedule').html(data);
+                $("#modal_CustomerServiceSchedulePopup").modal({ backdrop: 'static' });
+            },
+            error: function () {
+                alert("Error occured!!")
+            }
+        });
+    });
+
+
+
+
+</script>

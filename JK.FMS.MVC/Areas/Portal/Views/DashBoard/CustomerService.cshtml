@@ -1,0 +1,556 @@
+﻿@using MvcBreadCrumbs
+@model JKViewModels.DashboardViewModel
+@using JKApi.Core.Common
+@{
+    ClaimView _ClaimView = ClaimView.Instance;
+    var Username = _ClaimView.GetCLAIM_PERSON_INFORMATION().FirstName;
+
+    List<JKViewModels.RoleAccessModel> ParentMenus = null;
+    List<JKViewModels.RoleAccessModel> AllMenus = null;
+
+    var userViewModel = (JKViewModels.UserViewModel)_ClaimView.GetCLAIM_PERSON_INFORMATION();
+    if (userViewModel != null && userViewModel.RoleAccesss != null)
+    {
+        int ParentMenuId = userViewModel.RoleAccesss.Where(x => x.PageName == ViewBag?.HMenu && x.IsViewAccess == true).FirstOrDefault().MenuId;
+        AllMenus = userViewModel.RoleAccesss;
+        ParentMenus = userViewModel.RoleAccesss.Where(x => x.ParentMenuId == ParentMenuId && x.IsViewAccess == true).OrderBy(x => x.MenuOrder).ToList();
+    }
+
+}
+@{
+    ViewBag.Title = "CustomerService";
+    Layout = null;
+}
+<link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+<style>
+    .customcol {
+        width: 50px;
+        height: 100%;
+    }
+
+    .rotateRow {
+        border: 1px solid #e8d3d3;
+        border-left: 0px solid #808080;
+        background: white;
+        margin-left: 0px;
+        margin-right: 0px;
+        margin-bottom: 12px;
+    }
+
+    .rotateObj {
+        position: relative;
+        float: left;
+    }
+
+        .rotateObj h2 {
+            font-size: 14px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+            .rotateObj h2 span {
+                padding-top: 26px;
+                display: inline-block;
+                position: absolute;
+                left: -32px;
+                -webkit-transform: rotate(-90deg);
+                transform: rotate(-90deg);
+            }
+
+
+    .icon-Title {
+        color: #208baa !important;
+    }
+
+    .panel-title-fd {
+        color: #e4681c;
+        font-weight: 600;
+        font-size: 13px;
+        margin: 0;
+    }
+
+    .panel-heading-fd {
+        background: #39b1cc;
+        background: -moz-linear-gradient(top, #f2f3f4 0%, #d7dbdd 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f2f3f4), color-stop(100%, #d7dbdd));
+        background: -webkit-linear-gradient(top, #f2f3f4 0%, #d7dbdd 100%);
+        background: -o-linear-gradient(top, #f2f3f4 0%, #d7dbdd 100%);
+        background: -ms-linear-gradient(top, #f2f3f4 0%, #d7dbdd 100%);
+        background: linear-gradient(to bottom, #f2f3f4 0%, #d7dbdd 100%);
+        color: #ffffff;
+        padding: 5px 17px 8px;
+    }
+
+    .panel-body.border {
+        border: 1px solid #e9ecef !important;
+    }
+
+    .panel-body.border-secondary {
+        border-color: #868e96 !important;
+    }
+
+    .quicklinks .padding0 {
+        padding: 0;
+    }
+
+    .quicklinks .item-count > h3 {
+        font-weight: 700;
+        font-size: 19px;
+        text-align: right;
+        margin-top: 9px;
+    }
+
+    .quicklinks .media-heading > a {
+        color: #000;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .quicklinks .media-body {
+        color: #999;
+    }
+
+    .amcharts-chart-div, .amChartsLegend.amcharts-legend-div, .amcharts-chart-div {
+        margin-left: 0%;
+    }
+
+    .itemDiv::-webkit-scrollbar {
+        width: 3px;
+        height: 2px;
+    }
+
+
+    .itemDiv::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+
+    .itemDiv.itemDiv::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+
+
+    .itemDiv::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    .amcharts-pie-slice {
+        transform: scale(1);
+        transform-origin: 50% 50%;
+        transition-duration: 0.3s;
+        transition: all .3s ease-out;
+        -webkit-transition: all .3s ease-out;
+        -moz-transition: all .3s ease-out;
+        -o-transition: all .3s ease-out;
+        cursor: pointer;
+        box-shadow: 0 0 30px 0 #000;
+    }
+
+        .amcharts-pie-slice:hover {
+            transform: scale(1.1);
+            filter: url(#shadow);
+        }
+
+    .hideTitle {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12 {
+        padding: 0px 2px 0px 2px;
+    }
+
+        .col-lg-2:after, .col-lg-3:after, .col-lg-4:after, .col-lg-5:after, .col-lg-6:after, .col-lg-7:after, .col-lg-8:after, .col-lg-9:after, .col-lg-10:after, .col-lg-11:after, .col-lg-12:after {
+            content: none !important;
+        }
+
+    .row {
+        padding: 0px 0px 0px 0px;
+    }
+
+        .row:before {
+            content: none;
+        }
+
+    .dashboard-stat:before, .dashboard-stat:after {
+        content: none !important;
+    }
+
+    #PaymentDetailsChartPopUp1 {
+        width: 100%;
+        height: 10000px;
+    }
+
+    #TopRevenueWiseCustomerdiv {
+        width: 100%;
+        height: 600px;
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-lg-9 col-md-8" style="padding-left:12px;">
+        @*Customer Service Dashboard Section for Customer*@
+        <div class="row rotateRow">
+            <div class="col-md-12 divHeight dashboardMenu" style="padding-left: 0px;">
+                <div class="col-md-1 customcol" style="background: #6f6fe6;">
+                    <div class="rotateObj" style="position: unset;">
+                        <h2 style="padding-top: 40px;"><span style="padding-top: 32px;">Service Call</span></h2>
+                    </div>
+                </div>
+                <div class="col-md-11 col-sm-10 dbtopPad" style="">
+
+                    <div class="col-md-3 col-sm-2  col-xs-3 text-center">
+                        <a href="@Url.Action("SearchCustomer","CustomerService", new { area = "Portal" })" class="icon-Title">
+                            <img src="/Content/admin/assets/layouts/layout2/img/svg/Search.png" style="height: 32px;margin-bottom:4px;"><br />
+                            <span class="title" style="font-size:14px;">Search Customer</span>
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-sm-2 col-xs-3 text-center">
+                        <a href="@Url.Action("CustomerServices", "Customer", new { area = "Portal" })" class="icon-Title">
+                            <img src="/Content/admin/assets/layouts/layout2/img/svg/CreateInvoice.png" style="height: 32px;margin-bottom:4px;"><br />
+                            <span class="title" style="font-size:14px;">Service Call List</span>
+                        </a>
+                    </div>
+
+                    <div class="col-md-3 col-sm-2 col-xs-3 text-center">
+                        <a href="@Url.Action("CustomerServiceCallList", "Customer", new { area = "Portal" })" class="icon-Title">
+                            <img src="/Content/admin/assets/layouts/layout2/img/svg/act.png" style="height: 32px;margin-bottom:4px;"><br />
+                            <span class="title" style="font-size:14px;">Log Service Call</span>
+                        </a>
+                    </div>
+
+                    <div class="col-md-3 col-sm-2 col-xs-3 text-center">
+                        <a href="JavaScript:Void()" class="icon-Title">
+                            <img src="/Content/admin/assets/layouts/layout2/img/svg/pendingList.png" style="height: 32px;margin-bottom:4px;"><br />
+                            <span class="title" style="font-size:14px;">Franchisee</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row rotateRow">
+            <div class="col-md-12 divHeight dashboardMenu" style="padding-left: 0px;">
+                <div class="col-md-1 customcol" style="background:  #d4ce20;">
+                    <div class="rotateObj" style="position: unset;">
+                        <h2 style="padding-top: 40px;"><span style="padding-left: 12px;padding-top: 32px;">Customer</span></h2>
+                    </div>
+                </div>
+                <div class="col-md-11 col-sm-10 dbtopPad" style="">
+
+                    <div class="col-md-3 col-sm-2  col-xs-3 text-center">
+                        <a href="@Url.Action("CustomerCancellationPending", "CustomerService", new { area = "Portal" })" class="icon-Title">
+                            <img src="/Content/admin/assets/layouts/layout2/img/svg/Search.png" style="height: 32px;margin-bottom:4px;"><br />
+                            <span class="title" style="font-size:14px;">Cancellation Pending</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row rotateRow">
+            <div class="col-md-12 divHeight divHeight dashboardMenu" style="padding-left: 0px;">
+                <div class="col-md-1 customcol" style="background: #ff6868;">
+                    <div class="rotateObj" style="position: unset;">
+                        <h2 style="padding-top: 40px;"><span style="padding-left: 29px;left: -38px;">Inspection History</span></h2>
+                    </div>
+                </div>
+                <div class="col-md-11 dbtopPad" style="">
+                    <div class="col-md-3 text-center">
+
+                    </div>
+
+                    <div class="col-md-3 text-center">
+
+                    </div>
+
+                    <div class="col-md-3 text-center">
+
+                    </div>
+
+                    <div class="col-md-3 text-center">
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        @*Customer Service Dashboard Section for Reports*@
+        <div class="row rotateRow">
+            <div class="col-md-12 divHeight dashboardMenu" style="padding-left: 0px;">
+                <div class="col-md-1 customcol" style="background: #7cbfbc;">
+                    <div class="rotateObj" style="position: unset;">
+                        <h2 style="padding-top: 40px;"><span style="padding-left: 29px;">Reports</span></h2>
+                    </div>
+                </div>
+                <div class="col-md-11 dbtopPad" style="">
+                    <div class="col-md-3 text-center">
+
+                    </div>
+
+                    <div class="col-md-3 text-center">
+
+                    </div>
+
+                    <div class="col-md-3 text-center">
+
+                    </div>
+
+                    <div class="col-md-3 text-center">
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-lg-3 col-md-4 col-xs-12 col-sm-12" style="padding-left: 0px;">
+        <div class="col-md-12 col-xs-12 col-sm-12">
+            <div class="portlet quickportlet bordered panel-bottom">
+                <div class="portlet-title tabbable-line" style="background-color: #a3efd9;padding-left: 5px;padding-top:0px;">
+                    <div class="caption">
+                        <i class="icon-social-twitter font-dark hide"></i>
+                        <span class="caption-subject font-dark bold uppercase">Customer Services Quick Actions</span>
+                    </div>
+                </div>
+
+                <div class="portlet-body">
+                    <div class="tab-content" style="height:427px;">
+
+                        <div class="panel panel-default quicklinks" style="margin-bottom: 0px;">
+                            <div class="panel-heading-fd">
+                                <h3 class="panel-title-fd">Customer Transactions Pending Approval</h3>
+                            </div>
+
+                            <div class="panel-body border border-light" style="padding:17px;">
+                                <div class="media col-xs-12 padding0">
+                                    <div class="col-xs-1 padding0">
+                                        <a class="pull-left" href="javascript:void(0)">
+                                            @*<img class="media-object" data-src="holder.js/35x35" alt="35x35" src="" style="width:24px;height:24px; margin-top: 4px">*@
+                                            <img class="media-object" data-src="holder.js/35x35" alt="35x35" src="/Content/admin/assets/pages/img/QuickLinksIcon/Customer_Account.jpg" style="width:24px;height:24px;margin-top: 4px">
+                                        </a>
+                                    </div>
+                                    <div class="col-xs-9">
+                                        <div class="media-body">
+                                            <h4 class="media-heading">
+                                                <a href="/Portal/Customer/PendingApprovalList/4">New Customer Accounts</a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-2 padding0 item-count">
+                                        <h3>@Model.CustomerServiceQuickActionModel.NewAccountCount</h3>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel-body border border-light" style="padding:17px;">
+                                <div class="media col-xs-12 padding0">
+                                    <div class="col-xs-1 padding0">
+                                        <a class="pull-left" href="javascript:void(0)">
+                                            @*<img class="media-object" data-src="holder.js/35x35" alt="35x35" src="" style="width:24px;height:24px; margin-top: 4px">*@
+
+                                            <img class="media-object" data-src="holder.js/35x35" alt="35x35" src="~/Content/admin/assets/layouts/layout2/img/svg/microphone.svg" style="width:24px;height:24px;margin-top: 4px">
+
+                                        </a>
+                                    </div>
+                                    <div class="col-xs-9">
+                                        <div class="media-body">
+                                            <h4 class="media-heading">
+                                                <a href="/Portal/Customer/ServiceCallBackList">Call backs</a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-2 padding0 item-count">
+                                        <h3>@Model.CustomerServiceQuickActionModel.CallBackCount</h3>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="panel-body border border-light" style="padding:17px;">
+                                <div class="media col-xs-12 padding0">
+                                    <div class="col-xs-1 padding0">
+                                        <a class="pull-left" href="javascript:void(0)">
+                                            @*<img class="media-object" data-src="holder.js/35x35" alt="35x35" src="" style="width:24px;height:24px; margin-top: 4px">*@
+
+                                            <img class="media-object" data-src="holder.js/35x35" alt="35x35" src="~/Content/admin/assets/layouts/layout2/img/svg/Business.png" style="width:24px;height:24px;margin-top: 4px">
+
+                                        </a>
+                                    </div>
+                                    <div class="col-xs-9">
+                                        <div class="media-body">
+                                            <h4 class="media-heading">
+                                                <a href="">Complaints</a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-2 padding0 item-count">
+                                        <h3>@Model.CustomerServiceQuickActionModel.ComplaintCount</h3>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel-body border border-light" style="padding:17px;">
+                                <div class="media col-xs-12 padding0">
+                                    <div class="col-xs-1 padding0">
+                                        <a class="pull-left" href="javascript:void(0)">
+                                            @*<img class="media-object" data-src="holder.js/35x35" alt="35x35" src="" style="width:24px;height:24px; margin-top: 4px">*@
+
+                                            <img class="media-object" data-src="holder.js/35x35" alt="35x35" src="/Content/admin/assets/layouts/layout2/img/svg/pendingList.png" style="width:24px;height:24px;margin-top: 4px">
+
+                                        </a>
+                                    </div>
+                                    <div class="col-xs-9">
+                                        <div class="media-body">
+                                            <h4 class="media-heading">
+                                                <a href="/Portal/CustomerService/CustomerCancellationPending">Pending Cancellation</a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-2 padding0 item-count">
+                                        <h3>@Model.CustomerServiceQuickActionModel.PendingCancellationCount</h3>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel-body border border-light" style="padding:17px;">
+                                <div class="media col-xs-12 padding0">
+                                    <div class="col-xs-1 padding0">
+                                        <a class="pull-left" href="javascript:void(0)">
+                                            @*<img class="media-object" data-src="holder.js/35x35" alt="35x35" src="" style="width:24px;height:24px; margin-top: 4px">*@
+
+                                            <img class="media-object" data-src="holder.js/35x35" alt="35x35" src="~/Content/admin/assets/layouts/layout2/img/svg/send.svg" style="width:24px;height:24px;margin-top: 4px">
+
+                                        </a>
+                                    </div>
+                                    <div class="col-xs-9">
+                                        <div class="media-body">
+                                            <h4 class="media-heading">
+                                                <a href="">Pending Transfer</a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-2 padding0 item-count">
+                                        <h3>@Model.CustomerServiceQuickActionModel.TransferCount</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body border border-light" style="padding:17px;">
+                                <div class="media col-xs-12 padding0">
+                                    <div class="col-xs-1 padding0">
+                                        <a class="pull-left" href="javascript:void(0)">
+                                            @*<img class="media-object" data-src="holder.js/35x35" alt="35x35" src="" style="width:24px;height:24px; margin-top: 4px">*@
+
+                                            <img class="media-object" data-src="holder.js/35x35" alt="35x35" src="~/Content/admin/assets/layouts/layout2/img/svg/exit-1.svg" style="width:24px;height:24px;margin-top: 4px">
+
+                                        </a>
+                                    </div>
+                                    <div class="col-xs-9">
+                                        <div class="media-body">
+                                            <h4 class="media-heading">
+                                                <a href="">Failed Inspection</a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-2 padding0 item-count">
+                                        <h3>@Model.CustomerServiceQuickActionModel.FailedInspectionCount</h3>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="panel panel-default quicklinks" style="margin-bottom: 12px;">
+                            <div class="panel-heading-fd">
+                                <h3 class="panel-title-fd">Franchisee Transactions Pending Approval</h3>
+                            </div>
+
+                            <div class="panel-body border border-light" style="padding:17px;">
+                                <div class="media col-xs-12 padding0">
+                                    <div class="col-xs-1 padding0">
+                                        <a class="pull-left" href="javascript:void(0)">
+                                            @*<img class="media-object" data-src="holder.js/35x35" alt="35x35" src="" style="width:24px;height:24px; margin-top: 4px">*@
+                                            <img class="media-object" data-src="holder.js/35x35" alt="35x35" src="/Content/admin/assets/pages/img/QuickLinksIcon/Customer_Account.jpg" style="width:24px;height:24px;margin-top: 4px">
+                                        </a>
+                                    </div>
+                                    <div class="col-xs-9">
+                                        <div class="media-body">
+                                            <h4 class="media-heading">
+                                                <a href="">New Franchisee Account</a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-2 padding0 item-count">
+                                        <h3>5</h3>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel-body border border-light" style="padding:17px;">
+                                <div class="media col-xs-12 padding0">
+                                    <div class="col-xs-1 padding0">
+                                        <a class="pull-left" href="javascript:void(0)">
+                                            @*<img class="media-object" data-src="holder.js/35x35" alt="35x35" src="" style="width:24px;height:24px; margin-top: 4px">*@
+
+                                            <img class="media-object" data-src="holder.js/35x35" alt="35x35" src="~/Content/admin/assets/layouts/layout2/img/svg/CreateInvoice.png" style="width:24px;height:24px;margin-top: 4px">
+
+                                        </a>
+                                    </div>
+                                    <div class="col-xs-9">
+                                        <div class="media-body">
+                                            <h4 class="media-heading">
+                                                <a href="">Transaction Pending</a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-2 padding0 item-count">
+                                        <h3>0</h3>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="panel-body border border-light" style="padding:17px;">
+                                <div class="media col-xs-12 padding0">
+                                    <div class="col-xs-1 padding0">
+                                        <a class="pull-left" href="javascript:void(0)">
+                                            @*<img class="media-object" data-src="holder.js/35x35" alt="35x35" src="" style="width:24px;height:24px; margin-top: 4px">*@
+
+                                            <img class="media-object" data-src="holder.js/35x35" alt="35x35" src="~/Content/admin/assets/layouts/layout2/img/svg/pendingList.png" style="width:24px;height:24px;margin-top: 4px">
+
+                                        </a>
+                                    </div>
+                                    <div class="col-xs-9">
+                                        <div class="media-body">
+                                            <h4 class="media-heading">
+                                                <a href="">Maintenance Pending</a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-2 padding0 item-count">
+                                        <h3>0</h3>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- END Portlet PORTLET-->
+
+<div class="clearfix"></div>
+<!-- END DASHBOARD STATS 1-->

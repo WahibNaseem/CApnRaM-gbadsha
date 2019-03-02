@@ -1,0 +1,262 @@
+﻿@model JKApi.Service.AccountPayable.FranchiseeReportDetailsViewModel
+
+@using System.Globalization;
+
+<DIV id="page_4" style="padding-left:15px;">
+
+    <table class="header" style="margin:0px !important; padding:0px;">
+        <tr>
+            <td width="25%">
+                &nbsp;
+            </td>
+
+            <td width="50%">
+                <p style="text-align:center;font-size:11px;margin:0px !important;">
+                    <br />
+                    @Model.Report.RegionName.ToUpper()<br />
+                    BUSINESS FOR THE MONTH OF @Model.MonthYearDisplay.ToUpper()
+                </p>
+            </td>
+
+            <td width="25%">
+                <p style="font-size:12px;padding-left:50px;margin:0px !important;">
+                    Date: @DateTime.Now.ToShortDateString()<br />
+                    Time: @DateTime.Now.ToString("HH:mm:ss")
+                </p>
+            </td>
+        </tr>
+    </table>
+
+    <table class="header" style="margin:0px !important;padding:0px;">
+        <tr>
+            <td width="20%">
+                <P style="font-size:11px;margin:0px !important;">
+                    Franchisee Code:<br />
+                    @Html.DisplayFor(o => o.Report.FranchiseeNo)
+                </P>
+            </td>
+            <td width="80%">
+                <P style="font-size:11px;margin:0px !important;">
+                    Name:<br />
+                    @Html.DisplayFor(o => o.Report.FranchiseeName)
+                </P>
+            </td>
+        </tr>
+    </table>
+
+    <table class="price-list" style="margin-top:0px;">
+        <tr class="title-row">
+            @if (ViewBag.Service.ServiceTypeGroupListId != 1)
+            {
+                <td colspan="6">@ViewBag.Service.GroupName</td>
+            }
+            else
+            {
+                <td colspan="6">@ViewBag.Service.ServiceType</td>
+            }
+        </tr>
+
+        @if (ViewBag.Service.ServiceTypeGroupListId == 7)
+        {
+
+            <tr class="header-row">
+                <td>Customer No</td>
+                <td>Name</td>
+                <td>Description</td>
+                <td style="width:40px">Payment No</td>
+                <td class="price3">Total</td>
+            </tr>
+
+            foreach (var line in ViewBag.Service.Deductions)
+            {
+                <tr>
+                    <td>@line.CustomerNo</td>
+                    <td>@line.CustomerName</td>
+                    <td>@line.Description</td>
+                    <td style="width:40px">@Model.PaymentNumberDisplay(line)</td>
+                    <td class="price3">@Model.NumberDisplay(line.Total)</td>
+                </tr>
+            }
+
+            <tr class="footer-row">
+                <td colspan="4" class="col1">Total - @ViewBag.Service.ServiceType </td>
+                <td class="price3">@Model.NumberDisplay(ViewBag.Service.Total)</td>
+            </tr>
+        }
+
+        else if (ViewBag.Service.ServiceTypeListId == 18) /*18 = Franchisee Supplies*/
+        {
+
+            <tr class="header-row">
+                <td colspan="12" class="col1">Description</td>
+                <td>ReSell</td>
+                <td class="price1">Amount</td>
+                <td class="price2">Tax</td>
+                <td class="price3">Total</td>
+            </tr>
+
+            foreach (var line in ViewBag.Service.Deductions)
+            {
+                <tr>
+                    <td colspan="12" class="col1">@line.Description</td>
+                    <td>@((line.ReSell == 1) ? "Y" : "N")</td>
+                    <td class="price1">@Model.NumberDisplay(line.Subtotal)</td>
+                    <td class="price2">@Model.NumberDisplay(line.Tax)</td>
+                    <td class="price3">@Model.NumberDisplay(line.Total)</td>
+                </tr>
+            }
+
+            <tr class="footer-row">
+                <td colspan="12" class="col1">Total - @ViewBag.Service.ServiceType </td>
+                <td></td>
+                <td class="price1">@Model.NumberDisplay(ViewBag.Service.Subtotal)</td>
+                <td class="price2">@Model.NumberDisplay(ViewBag.Service.Tax)</td>
+                <td class="price3">@Model.NumberDisplay(ViewBag.Service.Total)</td>
+            </tr>
+        }
+        else if (ViewBag.Service.ServiceTypeListId == 11) /*11 = Lease Payment*/
+        {
+
+            <tr class="header-row">
+                <td colspan="2">Lease No</td>
+                <td>Lease Date</td>
+                <td style="width:140px">Description</td>
+                <td style="width:75px">Payment No</td>
+                <td class="price3">SubTotal</td>
+                <td class="price3">Tax</td>
+                <td class="price3">Total</td>
+            </tr>
+
+            foreach (var line in ViewBag.Service.Deductions)
+            {
+                <tr>
+                    <td colspan="2">@line.LeaseNo</td>
+                    <td>@line.LeaseDate.ToShortDateString()</td>
+                    <td>@line.Description</td>
+                    @if (line.DisplayLeaseMessage)
+                    {
+                        <td style="width:40px">*@line.CurrentPaymentNo</td>
+                    }
+                    else
+                    {
+                        <td style="width:40px">@line.CurrentPaymentNo</td>
+
+                    }
+
+                    @*<td style="width:40px">@Model.PaymentNumberDisplay(line.CurrentPaymentNo)</td>*@
+                    <td class="price3">@Model.NumberDisplay(line.Subtotal)</td>
+                    <td class="price3">@Model.NumberDisplay(line.Tax)</td>
+                    <td class="price3">@Model.NumberDisplay(line.Total)</td>
+                </tr>
+            }
+
+            <tr class="footer-row">
+                <td colspan="3" class="col1">Total - @ViewBag.Service.ServiceType </td>
+                <td class="price3" colspan="3">@Model.NumberDisplay(ViewBag.Service.Subtotal)</td>
+                <td class="price3">@Model.NumberDisplay(ViewBag.Service.Tax)</td>
+                <td class="price3">@Model.NumberDisplay(ViewBag.Service.Total)</td>
+
+            </tr>
+
+            if (ViewBag.Service.DisplayLeaseMessage)
+            {
+                <tr>
+                    <td colspan="8">*(An Asterisk) Preceding the description indicates that the purchase payment for that piece of equipment is due next month.</td>
+
+                </tr>
+
+            }
+        }
+        //else if (ViewBag.Service.ServiceTypeListId == 3) /*3 = Chargeback*/
+        else if (ViewBag.Service.ServiceTypeGroupListId == 12) /*12 = Chargeback group*/
+        {
+
+            <tr class="header-row">
+                <td>Customer No</td>
+                <td style="text-align:left;" colspan="3">Name</td>
+                <td style="text-align:left;" colspan="5">Invoice</td>
+                <td></td>
+                @*<td colspan="2">Description</td>*@
+                <td class="price3">Total</td>
+            </tr>
+
+            foreach (var line in ViewBag.Service.Deductions)
+            {
+                <tr>
+                    <td>@line.CustomerNo</td>
+                    <td style="text-align:left;" colspan="3">@line.CustomerName</td>
+                    <td style="text-align:left;" colspan="5">@line.InvoiceNo</td>
+                    <td></td>
+                    @*<td colspan="2">@line.Description</td>*@
+                    @*<td></td>
+                        <td class="price1"></td>
+                        <td class="price2"></td>*@
+                    <td class="price3">@Model.NumberDisplay(line.Total)</td>
+                </tr>
+            }
+
+            <tr class="footer-row">
+                <td colspan="3" class="col1">Total - @ViewBag.Service.ServiceType </td>
+                <td></td>
+                <td colspan="6"></td>
+                <td class="price3">@Model.NumberDisplay(ViewBag.Service.Total)</td>
+            </tr>
+        }
+        else if (ViewBag.Service.ServiceTypeGroupListId != 1 && ViewBag.Service.DisplaySubReport) /*Franchisee Transactions are grouped */
+        {
+            <tr class="header-row">
+                <td colspan="1">Type</td>
+                <td colspan="5">Description</td>
+                <td class="price1">Amount</td>
+                <td class="price2">Tax</td>
+                <td class="price3">Total</td>
+            </tr>
+
+            foreach (var line in ViewBag.Service.Deductions)
+            {
+                <tr>
+                    <td colspan="1" class="col1">@line.ServiceType</td>
+                    <td colspan="5" class="col2">@line.Description</td>
+                    <td class="price1">@Model.NumberDisplay(line.Subtotal)</td>
+                    <td class="price2">@Model.NumberDisplay(line.Tax)</td>
+                    <td class="price3">@Model.NumberDisplay(line.Total)</td>
+                </tr>
+            }
+
+            <tr class="footer-row">
+                <td colspan="6" class="col1">Total - @ViewBag.Service.GroupName</td>
+                <td class="price1">@Model.NumberDisplay(ViewBag.Service.Subtotal)</td>
+                <td class="price2">@Model.NumberDisplay(ViewBag.Service.Tax)</td>
+                <td class="price3">@Model.NumberDisplay(ViewBag.Service.Total)</td>
+            </tr>
+        }
+        else if (ViewBag.Service.ServiceTypeGroupListId == 1 && ViewBag.Service.DisplaySubReport) /*Fran Trx does not have a group - 1 = No Group*/
+        {
+            <tr class="header-row">
+                <td colspan="6">Description</td>
+                <td class="price1">Amount</td>
+                <td class="price2">Tax</td>
+                <td class="price3">Total</td>
+            </tr>
+
+            foreach (var line in ViewBag.Service.Deductions)
+            {
+                <tr>
+                    <td colspan="6" class="col1">@line.Description</td>
+                    <td class="price1">@Model.NumberDisplay(line.Subtotal)</td>
+                    <td class="price2">@Model.NumberDisplay(line.Tax)</td>
+                    <td class="price3">@Model.NumberDisplay(line.Total)</td>
+                </tr>
+            }
+
+            <tr class="footer-row">
+                <td colspan="6" class="col1">Total - @ViewBag.Service.ServiceType </td>
+                <td class="price1">@Model.NumberDisplay(ViewBag.Service.Subtotal)</td>
+                <td class="price2">@Model.NumberDisplay(ViewBag.Service.Tax)</td>
+                <td class="price3">@Model.NumberDisplay(ViewBag.Service.Total)</td>
+            </tr>
+        }
+
+    </table>
+
+</DIV>

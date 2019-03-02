@@ -1,0 +1,251 @@
+﻿@{
+    ViewBag.Title = "Commission Compensation Schedule";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <style>
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .page-size {
+            padding-left: 0;
+            padding-right: 0;
+            width: 62px;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        #CustomerList th {
+            vertical-align: middle;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .no-margin {
+            margin: 0;
+        }
+
+        .padding-tb1 {
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        .margin-tb1 {
+            margin-top: 1px;
+            margin-bottom: 1px;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .contract {
+            text-align: right;
+        }
+
+        .tablebox .table-responsive {
+            min-height: 600px;
+        }
+
+        #AdditionalBonusScheduleList tbody th, #AdditionalBonusScheduleList tbody td {
+            padding: 8px 10px !important;
+        }
+
+        #AdditionalBonusScheduleList thead th {
+            font-size: 11px !important;
+            padding: 8px 10px !important;
+        }
+    </style>
+}
+
+@*<div class="headerbox">
+        <div class="row" style="background-color: #3598DC;color: #fff;">
+            <div class="col-md-12 no-padding">
+                <div class="alignCenter">
+                    <div class="col-md-4" style="text-align:right;">
+                    </div>
+                    <div class="col-md-4 topheader">
+                        Compensation Schedule
+                    </div>
+                    <div class="col-md-4" style="padding-right:5px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+<div id="renderScheduleCommissions"></div>
+
+@section pageplugins{
+
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+}
+@section scripts{
+    <script type="text/javascript"> 
+        BindReviewCurrentList();
+        function BindReviewCurrentList() {
+             $.ajax({
+                    type: "GET",
+                 url: '@Url.Action("PartialListScheduledCommissionReview", "Commission", new { area = "Portal" })',
+                    data: {},
+                 success: function (data) {
+                     
+                        $('#renderScheduleCommissions').html(data);
+                    }
+            });
+        }
+        function GenerateCommissionCurrentList() {
+
+            swal({
+                title: "",
+                text: "Generating detail can only be done once a month!\n Do you wish to generate commission detail at this time?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes",
+                cancelButtonText: "No",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            type: "GET",
+                            url: '@Url.Action("GenerateCommissionCurrentList", "Commission", new { area = "Portal" })',
+                            data: {},
+                            success: function (data) {
+                                swal("Commission of this month generate complete.", {
+                                    type: "success"
+                                });
+                                BindReviewCurrentList();
+                            }
+                        });
+                    }
+                });
+        }
+       
+         
+
+        function BindGenerateCurrentList() {
+
+
+                        $.ajax({
+                            type: "GET",
+                            url: '@Url.Action("PartialListScheduledCommissionGenerate", "Commission", new { area = "Portal" })',
+                            data: {},
+                            success: function (data) {
+
+                                $('#renderScheduleCommissions').html(data);
+                            }
+                        });
+
+
+        }
+
+
+
+
+
+        function maskCurrency(id) {
+            $('#' + id).inputmask("currency", {
+                alias: 'currency',
+                prefix: '$ ',
+                digits: 2,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                unmaskAsNumber: true,
+                allowPlus: false,
+                allowMinus: false,
+                autoGroup: true,
+                groupSeparator: ",",
+            });
+        }
+        function maskPercentage(id) {
+            $('#' + id).inputmask("numeric", {
+                radixPoint: ".",
+                groupSeparator: ",",
+                autoGroup: true,
+                suffix: " %",
+                rightAlign: true,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                clearMaskOnLostFocus: false,
+                oncleared: function () { self.Value(''); }
+            });
+        }
+        function applyMaskNumber(id) {
+            $(id).inputmask("numeric", {
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                oncleared: function () { self.Value(''); }
+            });
+        }
+
+    </script>
+
+
+}
+

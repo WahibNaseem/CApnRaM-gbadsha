@@ -1,0 +1,43 @@
+﻿@model JKViewModels.Franchise.FranchiseeTransactionViewModel
+@{
+    ViewBag.Title = "FranchiseeChargeback";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section styles{}
+@*@Html.Partial("_PartialChargeBackCredit", Model);*@
+<div id="divFranchiseeChargebackCredit"></div>
+@section pageplugins{}
+@section scripts{
+    <script type="text/javascript">
+
+
+        $(document).ready(function () {
+            OpenChargebackCreditPopup()
+        });
+
+         function OpenChargebackCreditPopup() {
+
+            var sURL = '@Url.Action("PartialChargeBackCredit", "AccountsPayable", new { area = "Portal" })';
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#divFranchiseeChargebackCredit').html(data);
+                    initFMT();
+                    $("#modal_FranchiseeChargebackCredit").modal({ backdrop: 'static' });
+
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+            //$("#modal_CustomerContractPopup").modal({ backdrop: 'static' });
+        }
+    </script>
+
+}
+
+

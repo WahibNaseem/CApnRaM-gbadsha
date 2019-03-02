@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+    @RenderSection("Head", required: false)
+
+    @Html.Partial("_HeadView")
+
+    @RenderSection("styles", required: false)
+
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/Printjs/print.min.css")" rel="stylesheet" type="text/css" />
+    @*<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.61.0-2013.06.06/jquery.blockUI.min.js"></script>*@
+
+</head>
+
+<body class="page-header-fixed">
+
+    @Html.Partial("~/Views/Shared/Layout/_HeaderView.cshtml")
+    <div class="container">
+        <!-- BEGIN CONTAINER -->
+        <div class="page-container">
+            @Html.Partial("~/Views/Shared/Layout/_SideBarView.cshtml")
+            @*@Html.Partial("_SideBarView")*@
+            <!-- BEGIN CONTENT -->
+            <div class="page-content-wrapper">
+                <!-- BEGIN CONTENT BODY -->
+                <div class="page-content">
+
+                    @Html.Partial("_ContentView")
+                    @RenderBody()
+                </div>
+                <!-- END CONTENT BODY -->
+            </div>
+            <!-- END CONTENT -->
+
+        </div>
+        @Html.Partial("_FooterView")
+    </div>
+    
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/corePlugins")
+
+    @Scripts.Render("~/bundles/mainLayout")
+    @Scripts.Render("~/bundles/mainLayout2")
+    @Scripts.Render("~/bundles/mainLayout3")
+    @Scripts.Render("~/bundles/mainLayout4")
+
+
+    @RenderSection("pageplugins", required: false)
+
+    @RenderSection("scripts", required: false)
+    <script src="@Url.Content("~/Scripts/common.js?v=" + System.Configuration.ConfigurationManager.AppSettings["jsVersion"])"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            //Catch all anchor click event and store it's URL to local storage.
+            $(document).on('click', 'a', function () {
+                var attr = $(this).attr('href');
+                if (attr) {
+                    if (attr.indexOf("#") != 0) {
+                        //Check storage supported or not
+                        if (typeof (Storage) !== "undefined") {
+                            if (attr.indexOf("LogOff") >= 0 || attr.indexOf("Region") >= 0) {
+                                // Destroy local storage.
+                                localStorage.clear();
+                            } else {
+                                localStorage.setItem("lastVisitedUrl", attr);
+
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+    </script>
+
+    <script type="text/javascript">
+
+        function HNavigation(PageName, TopId, url) {
+            
+            alert("Ok navigated");
+            $('.start').removeClass('active');
+
+            $("#li_" + PageName).addClass("active");
+
+            $("#li_" + TopId).addClass('open');
+            $("#li_" + TopId).addClass('active');
+
+            //$("#ContentLoad").html('<div style="vertical-align:middle;text-align:center;width:100%;height:100%"><img src="/Images/loadingIcon.gif" /></div>');
+            $("#ContentLoad").html('<div>Loading......</div>');
+            $("#ContentLoad").load("/Home/HView?MenuName=" + PageName);
+
+
+            window.history.pushState('obj', 'Janiking | ' + TopId, url);
+            //window.location.hash = url;
+            //return false;
+        }
+
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            // Initialize numeric spinner input boxes
+            //$(".numeric-spinner").spinedit();
+            // Initialize modal dialog
+            // attach modal-container bootstrap attributes to links with .modal-link class.
+            // when a link is clicked with these attributes, bootstrap will display the href content in a modal dialog.
+            $('body').on('click', '.modal-link', function (e) {
+                e.preventDefault();
+                $(this).attr('data-target', '#modal-container');
+                $(this).attr('data-toggle', 'modal');
+            });
+            // Attach listener to .modal-close-btn's so that when the button is pressed the modal dialog disappears
+            $('body').on('click', '.modal-close-btn', function () {
+                $('#modal-container').modal('hide');
+            });
+            //clear modal cache, so that new content can be loaded
+            $('#modal-container').on('hidden.bs.modal', function () {
+                $(this).removeData('bs.modal');
+            });
+            $('#CancelModal').on('click', function () {
+                return false;
+            });
+
+        });   
+       
+    </script>
+</body>
+</html>

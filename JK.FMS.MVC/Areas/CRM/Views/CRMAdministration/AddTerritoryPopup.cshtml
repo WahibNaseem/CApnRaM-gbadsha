@@ -1,0 +1,79 @@
+﻿@model JKViewModels.CRM.AddTerritoryPopupModel
+
+<div class="modal fade" id="AddTerritoryPopup" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" style="width:455px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="cancelAddZipCodePopup();"></button>
+                <h4 class="modal-title">Add New Territory</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-body">
+                        <div id="diverrmsg" style="color:red;display:none;padding-left:27px;font-size:13px;"></div>
+                        @*<div class="col-md-12">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Territory:</label>
+                                        @Html.DropDownListFor(x => x.TerritoryId, new SelectList(Model.TerritoryList, "Id", "Name", Model.TerritoryId), "Select", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>*@
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Name:</label>
+                                    @Html.TextBoxFor(x => x.Name, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="cancelTerritoryPopup();">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="addTerritoryPopupSubmit();">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+     function cancelTerritoryPopup() {
+     $("#AddTerritoryPopup").modal("hide");
+ }
+
+ function addTerritoryPopupSubmit() {
+     var isvalid = true;
+     $("#diverrmsg").hide();
+     if ($('#Name').val().trim() == '') {
+         $('#Name').css('border-color', 'red');
+         if (isvalid == true) {
+             isvalid = false;
+         }
+     } else {
+         $('#Name').css('border-color', '');
+     }
+
+     if (isvalid == true) {
+         var array = {};
+         array.Name = $('#Name').val().trim();
+         $.ajax({
+             url: "/CRM/CRMAdministration/AddTerritory",
+             type: "POST",
+             contentType: "application/json; charset=utf-8",
+             data: JSON.stringify(array),
+             success: function(result) {
+                 if (result == "Failed") {
+                     $("#diverrmsg").html("Territory already exist with this region so please contact to administrator.");
+                     $("#diverrmsg").show();
+                     $('#Name').css('border-color', 'red');
+                 } else {
+                     $("#AddTerritoryPopup").modal("hide");
+                     location.reload();
+                 }
+             }
+         });
+     }
+ }
+</script>
+

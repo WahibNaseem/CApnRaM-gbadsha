@@ -1,0 +1,112 @@
+﻿@model List<JKViewModels.AccountReceivable.ARLogListFinalViewModel>
+<!DOCTYPE html>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+    <title></title>
+</head>
+<body>
+    <table cellpadding="5" style="font-size:9.5px" >
+        <tr><td align="center" class="t2col1"></td></tr>
+
+        @foreach (var o in Model.ToList())
+        {
+            <tr>
+                <td>
+                    <table class="tabborder" style="border:1px solid #000000;width:100%">
+                        <thead>
+                            <tr style="background-color: #aeb1b3;color: white;">
+                                <th class="t2col1" style="text-align:center;width:80px;">
+                                    Region Name
+                                </th>
+                                <th class="t2col1" style="text-align:center;width:100px;">
+                                    Customer No
+                                </th>
+                                <th style="text-align:center;">
+                                    Customer Name
+                                </th>
+                                <th class="t2col1" style="text-align:center;width:80px;">
+                                    Invoice No
+                                </th>
+                                <th class="t2col1" style="text-align:center;width:100px;">
+                                    Invoice Amount
+                                </th>
+                                <th class="t2col1" style="text-align:center;width:110px;">
+                                    Payment Amount
+                                </th>
+                                <th class="t2col1" style="text-align:center;width:110px;">
+                                    Invoice Balance
+                                </th>
+                                <th class="t2col1" style="text-align:center;width:100px;">
+                                    Check No
+                                </th>
+                                <th class="t2col1" style="text-align:center;width:110px;">
+                                    Check Amount
+                                </th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                             @{ 
+                                                var chkNoTemp = "";
+                                                var tCheckAmount = 0.0m;
+                                            }
+                            @foreach (var item in o.ARLogs)
+                            {
+                                <tr>
+                                    <td class="t2col1" style="text-align:center;">@item.RegionName</td>
+                                    <td class="t2col1" style="text-align:center;">@item.CustomerNo</td>
+                                    <td class="t2col1" style="text-align:left;">@item.CustomerName</td>
+                                    <td class="t2col1" style="text-align:center;">@item.InvoiceNo</td>
+                                    <td class="t2col1" style="text-align:right;">@String.Format("{0:c}", item.InvoiceAmount)</td>
+                                    <td class="t2col1" style="text-align:right;">@String.Format("{0:c}", item.PaymentAmount)</td>
+                                    <td class="t2col1" style="text-align:right;">@String.Format("{0:c}", item.InvoiceBalance)</td>
+                                    <td class="t2col1" style="text-align:center;">@item.CheckNumber</td>
+                                    @*<td class="t2col1" style="text-align:right;">@String.Format("{0:c}", item.CheckAmount)</td>*@
+                                     @if (chkNoTemp != item.CheckNumber)
+                                        { 
+                                            <td class="t2col1" style="text-align:right;">@String.Format("{0:c}", item.CheckAmount)</td>
+                                            chkNoTemp = item.CheckNumber;
+                                            tCheckAmount = tCheckAmount + item.CheckAmount;
+                                        }
+                                        else
+                                        {
+                                            <td style="text-align:right;"></td>
+                                        }
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3"></td>
+                                <td class="t2col1" style="text-align:right;">Total</td>
+                                <td class="t2col1" style="text-align:right;">@String.Format("{0:c}", o.ARLogs.ToList().Sum(j => j.InvoiceAmount))</td>
+                                <td class="t2col1" style="text-align:right;">@String.Format("{0:c}", o.ARLogs.ToList().Sum(j => j.PaymentAmount))</td>
+                                <td class="t2col1" style="text-align:right;">@String.Format("{0:c}", o.ARLogs.ToList().Sum(j => j.InvoiceBalance))</td>
+                                <td class="t2col1" style="text-align:right;"></td>
+                                @*<td class="t2col1" style="text-align:right;">@String.Format("{0:c}", (o.ARLogs.ToList().Select(s => new { s.CheckNumber, s.CheckAmount }).Distinct().Sum(j => j.CheckAmount)))</td>*@
+                                <td style="text-align:right;">@String.Format("{0:c}", tCheckAmount)@*@String.Format("{0:c}",(o.ARLogs.ToList().Select(s =>new{ s.CheckNumber,s.CheckAmount}).Distinct().Sum(j=>j.CheckAmount)))*@</td>
+                            </tr>
+                            <tr>
+                                <td class="t2col6" colspan="7"></td>
+                                <td class="t2col1" style="text-align:right;">Total Deposit</td>
+                                @*<td class="t2col1" style="text-align:right;">@String.Format("{0:c}", o.TotalDeposit)</td>*@
+                                <td class="t2col1" style="text-align:right;">@String.Format("{0:c}", tCheckAmount)@*@String.Format("{0:c}", o.TotalDeposit)*@</td>
+                            </tr>
+
+                        </tfoot>
+                    </table>
+
+
+
+                </td>
+            </tr>
+        }
+
+
+
+
+    </table>
+
+    
+</body>
+</html>

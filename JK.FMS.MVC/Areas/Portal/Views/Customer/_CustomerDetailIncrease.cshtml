@@ -1,0 +1,2674 @@
+﻿@model JKViewModels.Customer.CommonCustomerIncreaseDecreaseDetailViewModel
+<style type="text/css">
+    .input-sm.pp {
+        margin-top: 0;
+        margin-bottom: 0;
+        text-align: right;
+        padding: 3px;
+        border-radius: 0;
+    }
+
+    .has-error {
+        border-color: red;
+    }
+
+    #frm_CustomerDetailIncrease .input-sm {
+        padding: 3px;
+    }
+</style>
+@using (Html.BeginForm("CustomerDetailIncrease", "Customer", FormMethod.Post, new { @id = "frm_CustomerDetailIncrease", @role = "form", @class = "form form-horizontal toppadding", @style = "margin: 0px;" }))
+{
+    <div class="modal fade custom-model custom-form-design" id="modal_IncreaseDecrease" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" style="width:1120px">
+            <div class="modal-content" style="border-radius: 8px;" id="RenderIncreaseDecreaseDetails">
+
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                        Contract Increase/Decrease
+                    </h4>
+                </div>
+                <div class="custom-form portlet light" id="">
+                    <div class="portlet-body">
+
+                        @Html.HiddenFor(one => one.CustomerIncreaseDecreaseDetail.ContractId)
+                        @Html.HiddenFor(one => one.CustomerIncreaseDecreaseDetail.CustomerId)
+                        @Html.HiddenFor(one => one.CustomerIncreaseDecreaseDetail.StatusListId, new { Value = 4 })
+                        <input id="CustomerIncreaseDecreaseDetail_ContractDetailCount" name="CustomerIncreaseDecreaseDetail_ContractDetailCount" type="hidden" value="@Model.lstContractDetail.Count" />
+                        <input id="CustomerIncreaseDecreaseDetail_FranchiseeDistributionCount" name="CustomerIncreaseDecreaseDetail_FranchiseeDistributionCount" type="hidden" value="@Model.lstFranchiseeDistribution.Count" />
+                        <input id="CustomerIncreaseDecreaseDetail_FindersFeeCount" name="CustomerIncreaseDecreaseDetail_FindersFeeCount" type="hidden" value="@Model.lstFindersFee.Count" />
+
+
+
+                        @Html.HiddenFor(one => one.CustomerIncreaseDecreaseDetail.MaintenanceTypeListId)
+                        <input id="CustomerIncreaseDecreaseDetail_CCTotalAmount" type="hidden" value="@Model.CustomerIncreaseDecreaseDetail.TotalAmount" />
+
+
+                        <div class="row" style="padding-bottom: 20px">
+                            <div class="col-md-12">
+                                <div class="col-md-5"></div>
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <div class="icheck-inline">
+                                            @Html.RadioButton("MaintenanceTypeListId", "4", new { @id = "CustomerIncreaseDecreaseDetail_Increase", @checked = "checked" })<b> INCREASE</b>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            @Html.RadioButton("MaintenanceTypeListId", "5", new { @id = "CustomerIncreaseDecreaseDetail_Decrease" })<b> DECREASE</b>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4"></div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-1 control-label">Type</div>
+                                <div class="col-md-1">
+                                    <select id="CustomerIncreaseDecreaseDetail_Type" name="CustomerIncreaseDecreaseDetail_Type" class="form-control input-sm" onchange="CustomerIncreaseDecreaseDetail_TypeOnChange(this)">
+                                        <option value="1">Contract</option>
+                                        <option value="2">CPI</option>
+                                        <option value="3">Others</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-1 control-label">
+                                    Reason:
+                                </div>
+                                <div class="col-md-4">
+                                    @Html.TextBoxFor(o => o.CustomerIncreaseDecreaseDetail.Reason, new { @class = "form-control input-sm", @id = "CustomerIncreaseDecreaseDetail_Reason" })
+                                </div>
+                                <div class="col-md-1 control-label">
+                                    Effective Date:
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="input-group date" data-date-format="mm/dd/yyyy">
+                                        @Html.TextBoxFor(o => o.CustomerIncreaseDecreaseDetail.EffectiveDate, "{0:MM/dd/yyyy}", new { @class = "form-control input-sm date-picker", @style = "text-align:right;", @id = "CustomerIncreaseDecreaseDetail_EffectiveDate" })
+
+                                        <span class="input-group-btn cal-btn">
+                                            <button class="btn default cal-btn" style="margin: 0px;" type="button">
+                                                <i class="fa fa-calendar"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-1"></div>
+                            </div>
+                        </div>
+                        <hr />
+                        <h4 class="block" style="margin-top:-23px">Customer Contract</h4>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="control-label col-md-2" style="font-weight:600;">
+                                    Customer No.
+                                </label>
+                                <div class="col-md-4">
+                                    <label class="control-label col-md-4" style="width:auto;">
+                                        @Html.DisplayFor(o => o.CustomerIncreaseDecreaseDetail.CustomerNo)
+                                    </label>
+                                </div>
+                                <div class="col-md-1 col-md-offset-1">
+                                    <label class="control-label" style="font-weight:600;padding-left:15px;">
+                                        Address
+                                    </label>
+                                </div>
+                                <div class="col-md-4">
+                                    <label style="width:auto;">
+                                        @Html.DisplayFor(o => o.CustomerIncreaseDecreaseDetail.C_Address),<br />
+                                        @Html.DisplayFor(o => o.CustomerIncreaseDecreaseDetail.C_City), @Html.DisplayFor(o => o.CustomerIncreaseDecreaseDetail.C_StateName) @Html.DisplayFor(o => o.CustomerIncreaseDecreaseDetail.C_PostalCode)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="control-label col-md-2" style="font-weight:600;">
+                                    Customer Name
+                                </label>
+                                <div class="col-md-4">
+                                    <label class="control-label col-md-4" style="width:auto;">
+                                        @Html.DisplayFor(o => o.CustomerIncreaseDecreaseDetail.CustomerName)
+                                    </label>
+                                </div>
+                                <div class="col-md-1 col-md-offset-1">
+                                    <label class="control-label" style="font-weight:600;">
+                                    </label>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="control-label" style="width:auto;">
+                                        @*@Html.Raw(ViewBag.Address2)*@
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <hr style="margin-top: 2px;margin-bottom: 1px;" />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3">
+                                PO Number
+                            </label>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(o => o.CustomerIncreaseDecreaseDetail.PONumber, new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        <div class="form-group" style="display:none;">
+                            <label class="control-label col-md-3">
+                                Agreement Used
+                            </label>
+                            <div class="col-md-2" style="padding-top: 7px;">
+                                <label class="mt-checkbox">
+                                    @Html.CheckBoxFor(o => o.CustomerIncreaseDecreaseDetail.Qualified, new { @class = "i-checks", @checked = "true" }) Qualified
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">
+                                Account Type
+                            </label>
+                            <div class="col-md-3">
+                                @*@Html.DropDownList("AccountTypeList", null, new { @class = "form-control input-sm", required = "required" })*@
+                                @Html.DropDownListFor(one => one.CustomerIncreaseDecreaseDetail.AccountTypeListId, (SelectList)ViewBag.AccountTypeList, new { @class = "form-control input-sm", required = "required" })
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3">
+                                Sign Date
+                            </label>
+                            <div class="col-md-2">
+
+                                <div class="input-group date" data-date-format="mm/dd/yyyy">
+                                    <input type="text" value="@String.Format(" {0:MM/dd/yyyy}", Model.CustomerIncreaseDecreaseDetail.SignDate)"
+                                           name="CustomerIncreaseDecreaseDetail.SignDate" class="form-control input-sm" style="text-align:right;" readonly />
+                                    @*@Html.TextBoxFor(one => one.CustomerIncreaseDecreaseDetail.StartDate, new { @class = "form-control input-sm date-picker", @readonly = "readonly" })*@
+                                    <span class="input-group-btn cal-btn">
+                                        <button class="btn default cal-btn" type="button">
+                                            <i class="fa fa-calendar"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <label class="control-label col-md-3">
+                                Start Date
+                            </label>
+                            <div class="col-md-2">
+
+                                <div class="input-group date" data-date-format="mm/dd/yyyy">
+                                    <input type="text" value="@String.Format(" {0:MM/dd/yyyy}", Model.CustomerIncreaseDecreaseDetail.StartDate)" name="CustomerIncreaseDecreaseDetail.StartDate" class="form-control input-sm" style="text-align:right;" readonly />
+                                    @*@Html.TextBoxFor(one => one.CustomerIncreaseDecreaseDetail.StartDate, new { @class = "form-control input-sm date-picker", @readonly = "readonly" })*@
+                                    <span class="input-group-btn cal-btn">
+                                        <button class="btn default cal-btn" type="button">
+                                            <i class="fa fa-calendar"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">
+                                Term Months
+                            </label>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(one => one.CustomerIncreaseDecreaseDetail.ContractTermMonth, new { @class = "form-control input-sm", style = "width: 35px;float:left;" })<span style="float:left;padding:7px 4px;"></span>
+                            </div>
+
+                            <label class="control-label col-md-3">
+                                Expiration Date
+                            </label>
+                            <div class="col-md-2">
+                                <div class="input-group">
+                                    <div class="input-group date" data-date-format="mm/dd/yyyy">
+                                        <input type="text" value="@String.Format(" {0:MM/dd/yyyy}", Model.CustomerIncreaseDecreaseDetail.StartDate)" name="CustomerIncreaseDecreaseDetail.ExpirationDate"
+                                               class="form-control input-sm" style="text-align:right;" readonly />
+                                        <span class="input-group-btn cal-btn">
+                                            <button class="btn default cal-btn" type="button">
+                                                <i class="fa fa-calendar"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                    @*@Html.TextBoxFor(one => one.CustomerIncreaseDecreaseDetail.ExpirationDate, new { @class = "form-control input-sm" })*@
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">
+                                Amount
+                            </label>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(one => one.CustomerIncreaseDecreaseDetail.OTotalAmount, new { @class = "form-control input-sm", style = "text-align:right;", @readonly = "readonly" })
+                            </div>
+                            <label class="control-label col-md-3">
+                                New Amount
+                            </label>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(one => one.CustomerIncreaseDecreaseDetail.TotalAmount, new { @class = "form-control input-sm", style = "text-align:right;" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">
+                                Description
+                            </label>
+                            <div class="col-md-7">
+                                @Html.TextAreaFor(one => one.CustomerIncreaseDecreaseDetail.ContractDescription, new { @class = "form-control input-sm", @cols = "35", @rows = "3" })
+                            </div>
+                        </div>
+
+                        <h4 class="block">Contract Detail</h4>
+                        <div id="tblCIDContractDescriptionData">
+                            <input type="hidden" id="CID_lstContractDetailCount" value="@Model.lstContractDetail.Count" />
+                            @if (Model != null && Model.lstContractDetail != null)
+                            {
+                                <div class="portlet box">
+                                    <div class="portlet-body flip-scroll">
+                                        <table class="table table-bordered table-striped table-condensed flip-content" id="generalCustomerList">
+                                            <thead class="flip-content">
+                                                <tr>
+                                                    <th width="10%">Line No </th>
+                                                    <th width="20%">Type</th>
+                                                    <th width="20%">Description</th>
+                                                    <th width="10%">Amount</th>
+                                                    <th width="10%" style="text-align:center">CPI</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for (int k = 0; k < Model.lstContractDetail.Count; k++)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <input type="hidden" id="@("lstContractDetail_base_"+k+"__Amount")" value="@Model.lstContractDetail[k].Amount" />
+                                                            @Html.DisplayFor(o => o.lstContractDetail[k].LineNumber)
+                                                        </td>
+                                                        <td>@Html.DisplayFor(o => o.lstContractDetail[k].ServiceTypeName)</td>
+                                                        <td>@Html.DisplayFor(o => o.lstContractDetail[k].Description)</td>
+                                                        <td style="text-align:right;"> @string.Format("{0:c}", Model.lstContractDetail[k].Amount)  </td>
+                                                        <td style="text-align:center">@Html.DisplayFor(o => o.lstContractDetail[k].CPIIncrease)</td>
+                                                    </tr>
+                                                }
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="form-actions">
+                            <div class="col-md-12" style="padding-right: 28px;">
+
+                                <div class="col-md-12">
+                                    <button type="button" class="btn btn-primary  pull-right" id="btnContinues" onclick="AddContractDetailDescriptionModal(@Model.lstContractDetail[0].ContractDetailId,0)" style="margin-left: 10px;">
+                                        CONTINUE
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <input id="Customercustomermanualinvoice_CRInvoiceIds" name="Customercustomermanualinvoice_CRInvoiceIds" type="hidden" value="" />
+
+    <input id="Customercustomermanualinvoice_InvoiceId" name="Customercustomermanualinvoice_InvoiceId" type="hidden" value="" />
+    <input id="CustomerDistributionDetail_FeeString" name="CustomerDistributionDetail_FeeString" type="hidden" value="" />
+    <input id="FranchiseeDistributionDetail_String" name="FranchiseeDistributionDetail_String" type="hidden" value="" />
+
+    for (int i = 0; i < Model.lstContractDetail.Count; i++)
+    {
+        <div class="modal fade custom-model custom-form-design" id="@("modalDataCusContractPopup" + Model.lstContractDetail[i].ContractDetailId)" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog">
+
+
+
+                @Html.HiddenFor(one => one.lstContractDetail[i].ContractDetailId)
+                @Html.HiddenFor(one => one.lstContractDetail[i].ContractId)
+                @Html.HiddenFor(one => one.lstContractDetail[i].LineNumber)
+
+                <div class="modal-content" style="border-radius: 8px;">
+                    <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                        <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                            Customer Contract Detail
+                        </h4>
+                    </div>
+                    <div class="modal-body" style="padding: 0px 30px 15px 30px;">
+                        <div class="form-group">
+
+
+                            <div class="col-md-12">
+                                <span style="color:red;" id="@("spnIDContractDetailerrMsg"+i)"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+
+
+                            <div class="col-md-12">
+                                <label class="control-label col-md-4 text-right">
+                                    Service Type<span class="required"> * </span>
+                                </label>
+                                <div class="col-md-4">
+                                    @Html.DropDownListFor(one => one.lstContractDetail[i].ServiceTypeListId, new SelectList(ViewBag.ServiceTypeListModelRaw, "ServiceTypeListId", "Name", Model.lstContractDetail[i].ServiceTypeListId), "Select", new { @class = "form-control input-sm", required = "required" })
+                                </div>
+                                <div class="col-md-4"></div>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+
+                            <div class="col-md-12">
+                                <label class="control-label col-md-4 text-right">
+                                    Billing Frequency
+                                </label>
+                                <div class="col-md-4">
+                                    @Html.DropDownListFor(one => one.lstContractDetail[i].BillingFrequencyListId, (SelectList)ViewBag.FrequencyListModel, null, new { @class = "form-control input-sm", required = "required" })
+                                </div>
+                                <div class="col-md-4"></div>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <label class="control-label col-md-4 text-right">
+                                Square Footage
+                            </label>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(one => one.lstContractDetail[i].SquareFootage, new { @class = "form-control input-sm" })
+                                @Html.ValidationMessageFor(one => one.lstContractDetail[i].SquareFootage, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-4"></div>
+
+                        </div>
+                        <div class="form-group">
+
+                            <label class="control-label col-md-4">
+                                Amount <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(one => one.lstContractDetail[i].OAmount, new { @class = "form-control input-sm", @readonly = "readonly", @id = "lstContractDetail_" + i + "__OAmount", @style = "text-align:right" })
+                            </div>
+                            <div class="col-md-4"></div>
+
+                        </div>
+                        <div class="form-group">
+
+                            <label class="control-label col-md-4">
+                                New Amount <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(one => one.lstContractDetail[i].Amount, new { @class = "form-control input-sm" })
+                                @Html.ValidationMessageFor(one => one.lstContractDetail[i].Amount, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-4"></div>
+
+                        </div>
+                        <div class="form-group">
+
+                            <label class="control-label col-md-4">
+                                Start Time
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-group timepicker timepicker-default">
+                                    <input type="hidden" value="@Convert.ToDateTime(Model.lstContractDetail[i].StartTime).ToShortTimeString()" id="hdnStartTime" />
+                                    @Html.TextBoxFor(one => one.lstContractDetail[i].StartTime, new { @class = "form-control input-sm timepicker timepicker-default" })
+
+                                    <span class="input-group-btn cal-btn">
+                                        <button class="btn default cal-btn" type="button">
+                                            <i class="fa fa-clock-o"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4"></div>
+
+                        </div>
+                        <div class="form-group">
+
+                            <label class="control-label col-md-4">
+                                End Time
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-group timepicker timepicker-default">
+                                    @Html.TextBoxFor(one => one.lstContractDetail[i].EndTime, new { @class = "form-control input-sm timepicker timepicker-default" })
+                                    <span class="input-group-btn cal-btn">
+                                        <button class="btn default cal-btn" type="button">
+                                            <i class="fa fa-clock-o"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4"></div>
+
+                        </div>
+                        <div class="form-group">
+
+                            <label class="control-label col-md-4 text-right">
+                                Clean Times <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-1">
+                                @Html.TextBoxFor(one => one.lstContractDetail[i].CleanTimes, new { @class = "form-control input-sm", required = "required" })
+                                @Html.ValidationMessageFor(one => one.lstContractDetail[i].CleanTimes, "", new { @class = "text-danger" })
+                            </div>
+
+
+
+                            <label class="control-label col-md-3 text-right">
+                                Clean Frequency <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-2">
+                                @Html.DropDownListFor(one => one.lstContractDetail[i].CleanFrequencyListId, (SelectList)ViewBag.CleanFrequencyListModel, null, new { @class = "form-control input-sm", required = "required" })
+                                @Html.ValidationMessageFor(one => one.lstContractDetail[i].BillingFrequencyListId, "", new { @class = "text-danger" })
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="row" id="@(" divweek" + Model.lstContractDetail[i].ContractDetailId)">
+                                <div class="col-md-2"></div>
+                                <label class="checkbox-inline">
+                                    @Html.CheckBoxFor(one => one.lstContractDetail[i].Mon, new { @class = "i-checks", @checked = "true" }) Mon
+                                    <span></span>
+                                </label>
+                                <label class="checkbox-inline">
+                                    @Html.CheckBoxFor(one => one.lstContractDetail[i].Tues, new { @class = "i-checks", @checked = "true" }) Tue
+                                    <span></span>
+                                </label>
+                                <label class="checkbox-inline">
+                                    @Html.CheckBoxFor(one => one.lstContractDetail[i].Wed, new { @class = "i-checks", @checked = "true" }) Wed
+                                    <span></span>
+                                </label>
+                                <label class="checkbox-inline">
+                                    @Html.CheckBoxFor(one => one.lstContractDetail[i].Thur, new { @class = "i-checks", @checked = "true" }) Thu
+                                    <span></span>
+                                </label>
+                                <label class="checkbox-inline">
+                                    @Html.CheckBoxFor(one => one.lstContractDetail[i].Fri, new { @class = "i-checks", @checked = "true" }) Fri
+                                    <span></span>
+                                </label>
+                                <label class="checkbox-inline">
+                                    @Html.CheckBoxFor(one => one.lstContractDetail[i].Sat, new { @class = "i-checks", @checked = "true" }) Sat
+                                    <span></span>
+                                </label>
+                                <label class="checkbox-inline">
+                                    @Html.CheckBoxFor(one => one.lstContractDetail[i].Sun, new { @class = "i-checks", @checked = "true" }) Sun
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+
+                            <div class="col-md-1">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="mt-checkbox">
+                                    @Html.CheckBoxFor(one => one.lstContractDetail[i].CPIIncrease, new { @class = "i-checks", @checked = "true" }) CPI Increase
+                                    <span></span>
+                                </label>
+                            </div>
+
+
+                            <div class="col-md-4">
+                                <label class="mt-checkbox">
+                                    @Html.CheckBoxFor(one => one.lstContractDetail[i].SeparateInvoice, new { @class = "i-checks input-sm", @checked = "true" }) Separate Invoice
+                                    <span></span>
+                                </label>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <div class="control-label col-md-4 text-right">
+                                Description
+                            </div>
+                            <div class="col-md-6">
+                                @Html.TextAreaFor(one => one.lstContractDetail[i].Description, new { @class = "form-control input-sm" })
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <div class="control-label col-md-4 text-right">
+                                Note
+                            </div>
+                            <div class="col-md-6">
+                                <textarea class="form-control input-sm" rows="3"></textarea>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <div class="col-md-5"></div>
+                            <div class="col-md-5">
+                                @if (i == Model.lstContractDetail.Count - 1)
+                                {
+                                    <button type="button" class="btn btn-primary pull-right" id="btnSubmitDetail" onclick="IncreaseDistribution(@Model.lstContractDetail[i].ContractDetailId,@i)">
+                                        CONTINUE
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-primary  pull-right" onclick="AddContractDetailDescriptionModal(@Model.lstContractDetail[i + 1].ContractDetailId,@(i+1))" style="margin-left: 10px;">
+                                        CONTINUE
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+
+            </div>
+        </div>
+    }
+
+
+    <div class="modal fade custom-model custom-form-design" id="modal_CIDFranchiseeDistribution" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" style="width:952px">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                        Franchisee Distribution
+                    </h4>
+                </div>
+                <div class="modal-body" style="padding: 0px;    ">
+                    <section>
+                        <div class="row">
+                            <div style="max-width: 98%;margin: 0px auto;">
+                                <div class="custom-form portlet light">
+                                    <div class="portlet-body form">
+                                        <div class="form-body-outer" style="padding: 0px;">
+                                            <div style="width: 100%; margin: 0em auto;">
+                                                <div class="tab-content">
+                                                    <div class="tab-pane active">
+                                                        <div class="form-group">
+                                                            <div class="col-md-6">
+                                                                <b>Customer Name: @Html.DisplayFor(o => o.CustomerIncreaseDecreaseDetail.CustomerName)</b>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <b>Customer No: @Html.DisplayFor(o => o.CustomerIncreaseDecreaseDetail.CustomerNo)</b>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <b>Effective Date: <span id="spnDistEffectiveDate"> @String.Format("{0:MM/dd/yyyy}", Model.CustomerIncreaseDecreaseDetail.EffectiveDate)</span></b>
+                                                            </div>
+                                                        </div>
+                                                        <hr style="margin-top: 1px;margin-bottom: 1px;" />
+                                                        <div style="margin-bottom: 20px;">
+
+                                                            <div class="table-responsive">
+                                                                <table class="table">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th style="width:90px;text-align:center;">
+                                                                                PO No.
+                                                                            </th>
+                                                                            <th style="width:140px;text-align:center;">
+                                                                                Account Type
+                                                                            </th>
+                                                                            <th style="width:30px;text-align:center;">
+                                                                                Term (m)
+                                                                            </th>
+                                                                            <th style="text-align:center;width:50px;">
+                                                                                Start Date
+                                                                            </th>
+                                                                            <th style="text-align:center;width:30px;">
+                                                                                Expiration Date
+                                                                            </th>
+                                                                            <th style="text-align:center;width:30px;">
+                                                                                Total Amount
+                                                                            </th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td style="width:20px;text-align:center;">
+                                                                                @Html.DisplayFor(one => one.CustomerIncreaseDecreaseDetail.PONumber)
+                                                                            </td>
+                                                                            <td style="text-align:center;width:140px;">
+                                                                                @Html.DisplayFor(one => one.CustomerIncreaseDecreaseDetail.AccountTypeName)
+                                                                            </td>
+                                                                            <td style="text-align:center;width:30px;">
+                                                                                @Html.DisplayFor(one => one.CustomerIncreaseDecreaseDetail.ContractTermMonth)
+                                                                            </td>
+                                                                            <td style="text-align:center;width:50px;">
+                                                                                @String.Format("{0:MM/dd/yyyy}", Model.CustomerIncreaseDecreaseDetail.StartDate)
+                                                                            </td>
+                                                                            <td style="text-align:center;width:30px;">
+                                                                                <span id="DFCustomerIncreaseDecreaseDetail_ContractExpirationDate">@String.Format("{0:MM/dd/yyyy}", Model.CustomerIncreaseDecreaseDetail.ExpirationDate)</span>
+                                                                            </td>
+                                                                            <td style="text-align:center;width:30px;">
+                                                                                <span id="DFCustomerIncreaseDecreaseDetail_ContractTotalAmount">@String.Format("{0:c}", Model.CustomerIncreaseDecreaseDetail.TotalAmount)</span>
+
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td colspan="7">
+                                                                                <div class="table-responsive">
+                                                                                    <table class="table table-striped table-bordered table-hover order-column">
+                                                                                        <thead>
+                                                                                            <tr>
+                                                                                                <th style="width:20px;text-align:center;">
+                                                                                                    Contract Detail Line
+                                                                                                </th>
+                                                                                                <th style="width:242px;text-align:center;">
+                                                                                                    Service Description
+                                                                                                </th>
+                                                                                                <th style="width:30px;text-align:center;">
+                                                                                                    Amount
+                                                                                                </th>
+                                                                                                <th style="width:30px;text-align:center;">
+                                                                                                    Frequency
+                                                                                                </th>
+                                                                                                <th style="width:30px;text-align:center;">
+                                                                                                    Schedule
+                                                                                                </th>
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                            @{
+                                                                                                int r = 0;
+                                                                                                foreach (var item in Model.lstContractDetail)
+                                                                                                {
+                                                                                                    r += 1;
+                                                                                                    <tr>
+                                                                                                        <td style="width:20px;text-align:center;">@item.LineNumber</td>
+                                                                                                        <td style="text-align:center;width:242px;">@item.ServiceTypeName</td>
+                                                                                                        <td style="text-align:center;width:30px;">
+                                                                                                            <span id="@(" DFCustomerIncreaseDecreaseDetail_ContractDetailAmount" + item.ContractDetailId)" class="cls_@r">@String.Format("{0:c}", item.Amount)</span>
+                                                                                                        </td>
+                                                                                                        <td style="text-align:center;width:30px;">@item.CleanFrequencyListName</td>
+                                                                                                        <td style="text-align:center;width:30px;">
+                                                                                                            <a href="javascript:void(0);" onclick="@(" CIDFranchiseeservice(" + item.Mon.ToString().ToLower() + "," + item.Tues.ToString().ToLower() + "," + item.Wed.ToString().ToLower() + "," + item.Thur.ToString().ToLower() + "," + item.Fri.ToString().ToLower() + "," + item.Sat.ToString().ToLower() + "," + item.Sun.ToString().ToLower() + ")" )">View</a>
+                                                                                                        </td>
+                                                                                                    </tr>
+                                                                                                }
+                                                                                            }
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+
+                                                        </div>
+                                                        <hr />
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <table class="col-md-12" style="border:1px solid #e8e8e8">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th style="width:130px;padding:3px;margin: 0px;">Contract Detail Line</th>
+                                                                                <th style="width:170px;padding:3px;margin: 0px;text-align:center;">Franchisee No.</th>
+                                                                                <th style="width:300px;padding:3px;text-align:center;">Franchisee Name</th>
+                                                                                <th style="width:150px;padding:3px;">Distribution Amount</th>
+                                                                                <th style="width:25px;padding:3px;">Distribution Fees</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+
+                                                                            @for (int j = 0; j < Model.lstFranchiseeDistribution.Count; j++)
+                                                                            {
+                                                                                <tr>
+                                                                                    <td style="text-align:center">
+                                                                                        @Html.HiddenFor(o => o.lstFranchiseeDistribution[j].DistributionId)
+                                                                                        @Html.HiddenFor(o => o.lstFranchiseeDistribution[j].CustomerId)
+                                                                                        @Html.HiddenFor(o => o.lstFranchiseeDistribution[j].FranchiseeId)
+                                                                                        @Html.HiddenFor(o => o.lstFranchiseeDistribution[j].ContractDetailId)
+                                                                                        @Html.HiddenFor(o => o.lstFranchiseeDistribution[j].DPercentage)
+                                                                                        @Html.DisplayFor(o => o.lstFranchiseeDistribution[j].DetailLineNumber)
+                                                                                    </td>
+                                                                                    <td style="text-align:center;">@Html.DisplayFor(o => o.lstFranchiseeDistribution[j].FranchiseeNo)</td>
+                                                                                    <td style="white-space:pre-line;text-align:center;">@Html.DisplayFor(o => o.lstFranchiseeDistribution[j].FranchiseeName)</td>
+                                                                                    <td>@Html.TextBoxFor(o => o.lstFranchiseeDistribution[j].Amount)</td>
+                                                                                    <td style="text-align:center">
+                                                                                        <a href="#" onclick="Distributionfee(@Model.lstFranchiseeDistribution[j].FranchiseeId,@Model.lstFranchiseeDistribution[j].ContractDetailId,@Model.lstFranchiseeDistribution[j].DistributionId,@Model.lstFranchiseeDistribution[j].DetailLineNumber)">View/Edit</a>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            }
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-actions">
+                                                <div class="col-md-12" style="padding-right: 28px;">
+                                                    @if (@Model.lstFindersFee.Count > 0)
+                                                    {
+                                                        <button type="button" class="btn btn-primary col-md-2 pull-right" id="btnSaveDistributionIncrease" onclick="ShowAddNEwFeeFinder(@Model.lstFindersFee[0].FindersFeeId)" style="margin-left: 10px; ">
+                                                            CONTINUE
+                                                            <i class="fa fa-check"></i>
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button type="submit" class="btn btn-primary col-md-2 pull-right" style="margin-left: 10px; ">
+                                                            Submit
+                                                            <i class="fa fa-check"></i>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </section>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade custom-model custom-form-design" id="CIDmodal_service" tabindex="-1" role="basic" aria-hidden="true" style="display: none;margin-top: 100px;">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                        Contract Detail Service
+                    </h4>
+                </div>
+                <div class="modal-body" style="padding: 0px">
+                    <div class="row">
+                        <div style="max-width: 98%;margin: 0px auto;">
+                            <div class="custom-form portlet light">
+                                <div class="portlet-body form">
+                                    <div class="form-body-outer" style="padding: 0px;">
+                                        <div style="overflow:auto;width: 100%; margin: 0em auto;">
+                                            <div class="form-group">
+                                                <label class="control-label col-md-4">
+                                                </label>
+                                                <div class="col-md-3">
+                                                    <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                        <input type="checkbox" id="cid_chkScheduleMonday" class="i-checks editcheck">Monday
+                                                        <span></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-4">
+                                                </label>
+                                                <div class="col-md-3">
+                                                    <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                        <input type="checkbox" id="cid_chkScheduleTuesday" class="i-checks editcheck">Tuesday
+                                                        <span></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-4">
+                                                </label>
+                                                <div class="col-md-3">
+                                                    <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                        <input type="checkbox" id="cid_chkScheduleWednesday" class="i-checks editcheck">Wednesday
+                                                        <span></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-4">
+                                                </label>
+                                                <div class="col-md-3">
+                                                    <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                        <input type="checkbox" id="cid_chkScheduleThursday" class="i-checks editcheck">Thursday
+                                                        <span></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-4">
+                                                </label>
+                                                <div class="col-md-3">
+                                                    <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                        <input type="checkbox" id="cid_chkScheduleFriday" class="i-checks editcheck">Friday
+                                                        <span></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-4">
+                                                </label>
+                                                <div class="col-md-3">
+                                                    <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                        <input type="checkbox" id="cid_chkScheduleSaturday" class="i-checks editcheck">Saturday
+                                                        <span></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-4">
+                                                </label>
+                                                <div class="col-md-3">
+                                                    <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                        <input type="checkbox" id="cid_chkScheduleSunday" class="i-checks editcheck">Sunday
+                                                        <span></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input id="CustomerIncreaseDecreaseDetail_FindersFeeAdjustmentCount" name="CustomerIncreaseDecreaseDetail_FindersFeeAdjustmentCount" type="hidden" value="@Model.lstFindersFeeAdjustment.Count" />
+
+    for (int p = 0; p < Model.lstFindersFee.Count; p++)
+    {
+        <div class="modal fade in" id="@("modal_FeeFinderdetailResult" + Model.lstFindersFee[p].FindersFeeId)" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content" style="border-radius: 8px;">
+                    <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                        <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                            Finders Fee
+
+                            @Html.HiddenFor(one => one.lstFindersFee[p].FindersFeeId)
+                            @Html.HiddenFor(one => one.lstFindersFee[p].FranchiseeId)
+                            @Html.HiddenFor(one => one.lstFindersFee[p].CustomerId)
+                        </h4>
+                    </div>
+                    <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                        <div class="form-body" style="padding-top: 0px;">
+                            <div class="form-group">
+                                <div class="row" style="padding-bottom: 0px;">
+                                    <div class="col-md-12">
+                                        <div class="col-md-3 control-label" style="padding-top: 0px;">
+                                            <span><b>Franchisee No<span style="color:#000000;">&nbsp;:</span></b></span>
+                                        </div>
+                                        <div class="col-md-2" style="padding-left:0px;">
+                                            <span><b>@Model.lstFindersFee[p].FranchiseeNo</b></span>
+                                        </div>
+                                        <div class="col-md-2">
+                                        </div>
+                                        <div class="col-md-2 control-label" style="padding-top: 0px;">
+                                            <span><b>Customer No<span style="color:#000000;">&nbsp;:</span></b></span>
+                                        </div>
+                                        <div class="col-md-3" style="padding-left:0px;">
+                                            <span><b>@Model.CustomerIncreaseDecreaseDetail.CustomerNo</b></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 0px;padding-bottom: 0px;">
+                                    <div class="col-md-12">
+                                        <div class="col-md-3 control-label" style="padding-top: 0px;">
+                                        </div>
+                                        <div class="col-md-3" style="padding-left: 0px;">
+                                            <span>@Model.lstFindersFee[p].FranchiseeName <br />@Model.lstFindersFee[p].F_Address<br />@Model.lstFindersFee[p].F_City, @Model.lstFindersFee[p].F_StateName @Model.lstFindersFee[p].F_PostalCode</span>
+                                        </div>
+                                        <div class="col-md-1">
+                                        </div>
+                                        <div class="col-md-2 control-label">
+                                        </div>
+                                        <div class="col-md-3" style="padding-left:0px;">
+                                            <span>@Model.CustomerIncreaseDecreaseDetail.CustomerName <br />@Model.CustomerIncreaseDecreaseDetail.C_Address<br />@Model.CustomerIncreaseDecreaseDetail.C_City, @Model.CustomerIncreaseDecreaseDetail.C_StateName @Model.CustomerIncreaseDecreaseDetail.C_PostalCode</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row" style="padding-top: 0px;padding-bottom: 0px;">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-10 text-left" style="background: #99a2a2;color: #fff;font-size: 16px;">
+                                        Finder Fee Information
+                                    </div>
+                                    <div class="col-md-1"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-2 control-label" style="padding-left: 0px;padding-right: 0px;">
+                                            Start Date<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.TextBoxFor(one => one.lstFindersFee[p].StartDate, "{0:MM/dd/yyyy}", new { @class = "form-control input-sm  edit-txtbx date-picker " })
+                                            @*@Html.TextBoxFor(one => one.CustomerIncreaseDecreaseDetail.EffectiveDate, "{0:MM/dd/yyyy}", new { @class = "form-control input-sm  edit-txtbx date-picker " })*@
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="col-md-2 control-label">
+                                            Description<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-9">
+                                            @Html.TextBoxFor(one => one.lstFindersFee[p].Description, new { @class = "form-control input-sm  edit-txtbx" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row" style="padding-top: 0px;padding-bottom: 0px;">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-10 text-left" style="background: #99a2a2;color: #fff;font-size: 16px;">
+                                        Finder Fee Calculation Information
+                                    </div>
+                                    <div class="col-md-1"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-2 control-label">
+                                            Adjustment:<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-9">
+
+                                            <table class="table table-striped table-bordered table-hover order-column" id="tblNewFindersFeeAdjustment">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center" style="width:150px;">
+                                                            Type
+                                                        </th>
+                                                        <th class="text-center">
+                                                            Description
+                                                        </th>
+                                                        <th class="text-center" style="width:100px;">
+                                                            Amount
+                                                        </th>
+                                                        <th class="text-center" style="width:60px;">
+                                                            Action
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @for (int b = 0; b < Model.lstFindersFeeAdjustment.Where(o => o.FindersFeeId == Model.lstFindersFee[p].FindersFeeId).ToList().Count; b++)
+                                                    {
+                                                        <tr rel="@("trFindersFeeAdjustment_" + b)">
+                                                            <td>
+                                                                @Html.HiddenFor(m => m.lstFindersFeeAdjustment[b].FindersFeeAdjustmentId)
+                                                                @Html.HiddenFor(m => m.lstFindersFeeAdjustment[b].FranchiseeId)
+                                                                @Html.HiddenFor(m => m.lstFindersFeeAdjustment[b].FindersFeeId)
+
+
+
+                                                                @Html.DropDownListFor(Model => Model.lstFindersFeeAdjustment[b].FindersFeeAdjustmentTypeListId, (SelectList)ViewBag.FindersFeeAdjustmentTypeList,
+                                                                Model.lstFindersFeeAdjustment[b].FindersFeeAdjustmentTypeListName,
+                                                                new { @class = "form-control input-sm", @style = "width:100%;", @readonly = "readonly" })
+                                                            </td>
+                                                            <td>@Html.TextBoxFor(o => o.lstFindersFeeAdjustment[b].Description, new { @class = "form-control input-sm", @style = "width:100%;", @readonly = "readonly" })</td>
+                                                            <td>@Html.TextBoxFor(o => o.lstFindersFeeAdjustment[b].Amount, new { @class = "form-control input-sm", @style = "width:100px;", @readonly = "readonly", @id = "txtFindersFeeAdjustment_" + Model.lstFindersFeeAdjustment[b].FindersFeeId + "_" + b + "_Amount" })</td>
+                                                            <td>
+                                                                <a style="font-size: 16px;padding: 3px;color: mediumvioletred;"
+                                                                   href="javascript:void(0)"
+                                                                   onclick="RemoveFindersFeeAdjustmentRow('@("trFindersFeeAdjustment_"+b)','@("txtFindersFeeAdjustment_"+Model.lstFindersFeeAdjustment[b].FindersFeeId+"_"+b+"_Amount")')">
+                                                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="col-md-1 control-label">
+                                            <a href="javascript:void(0);" onclick="AppendNewFinderAdjestment(@Model.lstFindersFee[p].FindersFeeId,0)">+ Add</a>
+                                        </div>
+                                        <div class="col-md-2 control-label" style="padding-left: 0px;">
+                                            Calculation Method<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.DropDownListFor(m => m.lstFindersFee[p].FindersFeeTypeListId,
+                 new SelectList((System.Collections.IEnumerable)@ViewBag.FindersFeeTypeListRaw, "FindersFeeTypeListId", "Name", Model.lstFindersFee[p].FindersFeeTypeListId)
+                 , "Select", new { @class = "form-control input-sm edit-txtbx", onchange = "FindersFee_FindersFeeTypeListId_Onchange(" + p + ")", @readonly = "readonly" })
+
+                                        </div>
+                                        <div class="col-md-3 control-label">
+                                            Total Adjustments<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.TextBoxFor(one => one.lstFindersFee[p].TotalAdjustmentAmount, new { @class = "form-control input-sm edit-txtbx txamt", @readonly = "readonly" })
+                                        </div>
+                                        <div class="col-md-1 control-label" style="display:none;">
+                                            Factor<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-1" style="display:none;">
+                                            @Html.TextBoxFor(one => one.lstFindersFee[p].Factor, new { @class = "form-control input-sm", @style = "padding: 3px;" })
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="col-md-1 control-label">
+
+                                        </div>
+                                        <div class="col-md-2 control-label" style="padding-left: 0px;">
+                                            Monthly Billing<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.TextBoxFor(one => one.lstFindersFee[p].ContractBillingAmount, new { @class = "form-control input-sm edit-txtbx txamt", onchange = "CalculateFindersFee(" + p + ")" })
+                                        </div>
+                                        <div class="col-md-3 control-label">
+                                            Multi-Tenant 100% Occupancy<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.TextBoxFor(one => one.lstFindersFee[p].MultiTenantOccupancyAmount, new { @class = "form-control input-sm", onchange = "CalculateFindersFee(" + p + ")" })
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="col-md-1 control-label"></div>
+                                        <div class="col-md-2 control-label">
+                                            Payable On<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.TextBoxFor(one => one.lstFindersFee[p].PayableOnAmount, new { @class = "form-control input-sm edit-txtbx txamt", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="col-md-1 control-label"></div>
+                                        <div class="col-md-2 control-label">
+                                            DownPayment Percent<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.TextBoxFor(one => one.lstFindersFee[p].DownPayPercentage, new { @class = "form-control input-sm edit-txtbx", onchange = "CalculateFindersFee(" + p + ")" })
+                                        </div>
+                                        <div class="col-md-3 control-label" style="padding-left: 0px;">
+                                            Down Pymnt Amount<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.TextBoxFor(one => one.lstFindersFee[p].DownPaymentAmount, new { @class = "form-control input-sm edit-txtbx txamt", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="col-md-3 control-label">
+                                            Monthly Payment Percentage<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.TextBoxFor(one => one.lstFindersFee[p].MonthlyPaymentPercentage, new { @class = "form-control input-sm edit-txtbx txamt", onchange = "CalculateFindersFee(" + p + ")" })
+                                        </div>
+                                        <div class="col-md-3 control-label" style="padding-right: 0px">
+                                            Monthly Payment Amount<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.TextBoxFor(one => one.lstFindersFee[p].MonthlyPaymentAmount, new { @class = "form-control input-sm edit-txtbx txamt", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" style="display:none;">
+                                        <div class="col-md-1 control-label"></div>
+                                        <div class="col-md-2 control-label">
+                                            Interest Percent<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.TextBoxFor(one => one.lstFindersFee[p].Interest, new { @class = "form-control input-sm  edit-txtbx txamt", @readonly = "readonly", @value = "0" })
+                                        </div>
+                                        <div class="col-md-3 control-label">
+                                            Interest Amount<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.TextBoxFor(one => one.lstFindersFee[p].Interest, new { @class = "form-control input-sm  edit-txtbx txamt", @readonly = "readonly", @value = "0" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="col-md-1 control-label"></div>
+                                        <div class="col-md-2 control-label" style="padding-left: 0px;">
+                                            Number of Payments<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.TextBoxFor(one => one.lstFindersFee[p].TotalNumOfpayments, new { @class = "form-control input-sm edit-txtbx", onchange = "CalculateFindersFee(" + p + ")" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="col-md-1 control-label"></div>
+                                        <div class="col-md-2 control-label">
+                                            Amount Financed<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.TextBoxFor(one => one.lstFindersFee[p].FinancedAmount, new { @class = "form-control input-sm edit-txtbx txamt", @readonly = "readonly" })
+                                        </div>
+                                        <div class="col-md-6" style="padding-right: 0px">
+                                            <label class="mt-checkbox mt-checkbox-outline">
+                                                @Html.CheckBoxFor(one => one.lstFindersFee[p].IncludeDownPayInFirstPay)Include First Payment in down payment
+                                                <span></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="col-md-1 control-label"></div>
+                                        <div class="col-md-2 control-label">
+                                            Total FF<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.TextBoxFor(one => one.lstFindersFee[p].TotalAmount, new { @class = "form-control input-sm edit-txtbx txamt", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="col-md-1 control-label"></div>
+                                        <div class="col-md-2 control-label">
+                                            Note<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            @Html.TextBoxFor(one => one.lstFindersFee[p].Notes, new { @class = "form-control input-sm edit-txtbx" })
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <div class="col-md-12" style="padding-right: 28px;">
+                            <button type="button" class="btn btn-primary col-md-2 pull-right INDESubmit" style="margin-left: 10px;" onclick="SubmitCustomerINDE()">
+                                Submit
+                                <i class="fa fa-check"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary col-md-2 pull-right INDESkipFF" style="margin-left: 10px;display:none;" onclick="SubmitCustomerINDESkip()">
+                                Skip
+                                <i class="fa fa-check"></i>
+                            </button>
+                            @*<input type="button" id="SubmitFC_onClick" value="Submit" class="btn btn-primary col-md-2 pull-right" style="margin-left: 10px; " />*@
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    }
+
+    <div id="form_decreaseCredit"></div>
+
+}
+@*MANUAL INVOICE Modal *@
+<div id="form_modal_customermanualinvoiceInDe"></div>
+
+<div class="modal fade custom-model custom-form-design" id="modal_Distribution" tabindex="-1" role="basic" aria-hidden="true" style="display: none;margin-top: 100px;">
+    <div class="modal-dialog modal-sm" style="width: 400px;">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Fee
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px">
+                <div style="max-width: 98%;margin: 0px auto;">
+                    <div class="custom-form portlet light">
+                        <div class="portlet-body form">
+                            <input type="hidden" name="hdfDestributionFee_FranchiseeId" id="hdfDestributionFee_FranchiseeId" value="" />
+                            <input type="hidden" name="hdfDestributionFee_ContractDetailId" id="hdfDestributionFee_ContractDetailId" value="" />
+                            <input type="hidden" name="hdfDestributionFee_DestributionId" id="hdfDestributionFee_DestributionId" value="" />
+                            <input type="hidden" name="hdfDestributionFee_Linenumber" id="hdfDestributionFee_Linenumber" value="" />
+                            <div class="form-body-outer" style="padding: 0px;">
+                                <div style="overflow:auto;width: 100%; margin: 0em auto;">
+                                    <div class="form-group">
+                                        <table class="table table-striped table-bordered table-hover order-column" id="feelist">
+                                            <thead>
+                                                <tr style="background-color: #e8e8e8;font-weight: bold;">
+                                                    <td>
+                                                        Fee Name
+                                                    </td>
+                                                    <td>
+                                                        Type
+                                                    </td>
+                                                    <td style="width:50px;">
+                                                        Amount
+                                                    </td>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+
+                                    </div>
+                                    <div class="form-group">
+                                        <a href="#" id="btnTransDistributionFeeAddLink" onclick="TransFranchiseeserviceAddDestribution()">Include Another Fee</a>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="button" id="btnTransDistributionFeeSave" name="btnTransDistributionFeeSave" onclick="btnTransDistributionFeeSaveOnClick()" value="Save" class="btn btn-primary input-sm pull-right" />
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    </div>
+</div>
+
+<div class="modal fade custom-model custom-form-design" id="modal_AddDistribution" tabindex="-1" role="basic" aria-hidden="true" style="display: none;margin-top: 100px;">
+    <div class="modal-dialog modal-sm" style="width: 400px;">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Fee
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px">
+                <div style="max-width: 98%;margin: 0px auto;">
+                    <div class="custom-form portlet light">
+                        <div class="portlet-body form">
+
+                            <div class="form-body-outer" style="padding: 0px;">
+                                <div style="overflow:auto;width: 100%; margin: 0em auto;">
+                                    <div class="form-group">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered table-hover order-column" id="feeListAdd">
+                                                <thead>
+                                                    <tr style="background-color: #e8e8e8;font-weight: bold;">
+                                                        <td></td>
+                                                        <td>
+                                                            Fee Name
+                                                        </td>
+                                                        <td>
+                                                            Type
+                                                        </td>
+                                                        <td style="width:50px;">
+                                                            Amount
+                                                        </td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="button" name="btnAddDistributionFeeSave" onclick="btnAddDistributionFeeSaveOnClick()" value="Add" class="btn btn-primary input-sm pull-right" />
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.date-picker').datepicker({ autoclose: true });
+        $('.date-picker').attr("placeholder", "mm/dd/yyyy");
+        $('#btnContractDetailSave').click(function () {
+
+            var isvalid = true;
+
+            if ($('#Contract_PurchaseOrderNo').val() == '') { $('#Contract_PurchaseOrderNo').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_PurchaseOrderNo').css('border-color', ''); }
+            if ($('#AccountTypeList').val() == '') { $('#AccountTypeList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#AccountTypeList').css('border-color', ''); }
+
+            if ($('#Contract_SignDate').val() == '') { $('#Contract_SignDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_SignDate').css('border-color', ''); }
+            if ($('#Contract_StartDate').val() == '') { $('#Contract_StartDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_StartDate').css('border-color', ''); }
+
+            //if ($('#Contract_ContractTermListId').val() == '') { $('#Contract_ContractTermListId').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_ContractTermListId').css('border-color', ''); }
+            if ($('#Contract_ContractTermMonth').val() == '') { $('#Contract_ContractTermMonth').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_ContractTermMonth').css('border-color', ''); }
+            if ($('#Contract_ExpirationDate').val() == '') { $('#Contract_ExpirationDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_ExpirationDate').css('border-color', ''); }
+
+            if ($('#Contract_Amount').val() == '') { $('#Contract_Amount').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_Amount').css('border-color', ''); }
+            if ($('#Contract_AmountSubjectToFee').val() == '') { $('#Contract_AmountSubjectToFee').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_AmountSubjectToFee').css('border-color', ''); }
+
+            if ($('#Contract_StatusDate').val() == '') { $('#Contract_StatusDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_StatusDate').css('border-color', ''); }
+            if ($('#Contract_ResumeDate').val() == '') { $('#Contract_ResumeDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_ResumeDate').css('border-color', ''); }
+            if ($('#Contract_AmountSubjectToFee').val() == '') { $('#Contract_AmountSubjectToFee').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_AmountSubjectToFee').css('border-color', ''); }
+
+            if (isvalid == true) {
+                $("#SaveCustomerContractform_wizard_1").submit();
+            }
+        });
+    });
+
+    function ShowAddNEwFeeFinder(id) {
+
+
+        if ($('#CustomerIncreaseDecreaseDetail_Increase').is(':checked')) {
+            $("#tblNewFindersFeeAdjustment tbody").html('');
+            $("#lstFindersFee_0__TotalAdjustmentAmount").val(0);
+        }
+
+        $.blockUI();
+        if (FindersFeeAdjustmentRowCount == 0)
+            $("#lstFindersFee_0__TotalAdjustmentAmount").val(0);
+
+        $('#lstFindersFee_0__StartDate').val($('#CustomerIncreaseDecreaseDetail_EffectiveDate').val());
+
+
+        if (!$('#CustomerIncreaseDecreaseDetail_Decrease').is(':checked')) {
+            $("#lstFindersFee_0__ContractBillingAmount").val(parseFloat($("#lstContractDetail_0__Amount").val()) - parseFloat($("#lstContractDetail_0__OAmount").val()));
+        } else {
+            $("#lstFindersFee_0__ContractBillingAmount").val(parseFloat($("#lstContractDetail_0__Amount").val()));
+        }
+
+
+
+        _ContractBillingAmount = $("#lstFindersFee_0__ContractBillingAmount").val() != '' ? $("#lstFindersFee_0__ContractBillingAmount").val() : 0;
+        _TotalAdjustmentAmount = $("#lstFindersFee_0__TotalAdjustmentAmount").val() != '' ? $("#lstFindersFee_0__TotalAdjustmentAmount").val() : 0;
+
+        $("#lstFindersFee_0__PayableOnAmount").val(_ContractBillingAmount - _TotalAdjustmentAmount);
+
+
+        var i = 0;
+        var _FindersFeeTypeListId = $("#lstFindersFee_" + i + "__FindersFeeTypeListId").val();
+
+
+        $.each(_FFSchedule, function (index, item) {
+            if (item.FindersFeeTypeListId == parseInt(_FindersFeeTypeListId)) {
+                var _Payable = parseFloat($("#lstFindersFee_" + i + "__PayableOnAmount").val())
+
+
+
+                if (_FindersFeeTypeListId = 1 && parseFloat($("#lstContractDetail_0__OAmount").val()) < _Payable && (_Payable >= item.StartAmount && _Payable <= item.EndAmount)) {
+
+                    $("#lstFindersFee_" + i + "__Factor").val(item.Factor);
+                    $("#lstFindersFee_" + i + "__DownPayPercentage").val(item.DownPayPercentage);
+                    $("#lstFindersFee_" + i + "__DownPaymentAmount").val((item.DownPayPercentage * _Payable / 100).toFixed(2));
+                    $("#lstFindersFee_" + i + "__MonthlyPaymentPercentage").val(item.MonthlyPercentage);
+                    $("#lstFindersFee_" + i + "__MonthlyPaymentAmount").val((item.MonthlyPercentage * _Payable / 100).toFixed(2));
+
+                    $("#lstFindersFee_" + i + "__TotalNumOfpayments").val(item.NumOfPayments);
+
+                    $("#lstFindersFee_" + i + "__FinancedAmount").val((item.MonthlyPercentage * _Payable / 100) * item.NumOfPayments);
+                    $("#lstFindersFee_" + i + "__TotalAmount").val(((item.DownPayPercentage * _Payable / 100) + ((item.MonthlyPercentage * _Payable / 100) * item.NumOfPayments)).toFixed(2));
+
+                    maskCurrency('lstFindersFee_' + i + '__DownPaymentAmount');
+                    maskCurrency('lstFindersFee_' + i + '__MonthlyPaymentAmount');
+                    maskCurrency('lstFindersFee_' + i + '__FinancedAmount');
+                    maskCurrency('lstFindersFee_' + i + '__TotalAmount');
+
+                    maskPercentage('lstFindersFee_' + i + '__DownPayPercentage');
+                    maskPercentage('lstFindersFee_' + i + '__MonthlyPaymentPercentage');
+
+                    maskCurrency('lstFindersFee_' + i + '__MultiTenantOccupancyAmount');
+
+                }
+                else if (_Payable >= item.StartAmount && _Payable <= item.EndAmount) {
+                    $("#lstFindersFee_" + i + "__Factor").val(item.Factor);
+                    $("#lstFindersFee_" + i + "__DownPayPercentage").val(item.DownPayPercentage);
+                    $("#lstFindersFee_" + i + "__DownPaymentAmount").val((item.DownPayPercentage * _Payable / 100).toFixed(2));
+                    $("#lstFindersFee_" + i + "__MonthlyPaymentPercentage").val(item.MonthlyPercentage);
+                    $("#lstFindersFee_" + i + "__MonthlyPaymentAmount").val((item.MonthlyPercentage * _Payable / 100).toFixed(2));
+                    $("#lstFindersFee_" + i + "__TotalNumOfpayments").val(item.NumOfPayments);
+
+                    $("#lstFindersFee_" + i + "__FinancedAmount").val((item.MonthlyPercentage * _Payable / 100) * item.NumOfPayments);
+                    $("#lstFindersFee_" + i + "__TotalAmount").val(((item.DownPayPercentage * _Payable / 100) + ((item.MonthlyPercentage * _Payable / 100) * item.NumOfPayments)).toFixed(2));
+
+                    maskCurrency('lstFindersFee_' + i + '__DownPaymentAmount');
+                    maskCurrency('lstFindersFee_' + i + '__MonthlyPaymentAmount');
+                    maskCurrency('lstFindersFee_' + i + '__FinancedAmount');
+                    maskCurrency('lstFindersFee_' + i + '__TotalAmount');
+
+                    maskPercentage('lstFindersFee_' + i + '__DownPayPercentage');
+                    maskPercentage('lstFindersFee_' + i + '__MonthlyPaymentPercentage');
+                    maskCurrency('lstFindersFee_' + i + '__MultiTenantOccupancyAmount');
+
+                    $("#lstFindersFee_" + i + "__TotalNumOfpayments").val(item.NumOfPayments);
+                }
+            }
+        });
+
+
+
+
+        if (id == 0) {
+            _FindersFeeTypeListId = 1;
+            $("#lstFindersFee_" + i + "__FindersFeeTypeListId").val(1);
+            $("#lstFindersFee_" + i + "__Description").val('FINDER\'S FEE ON CONTRACT BILLING');
+
+
+        }
+        $("#lstFindersFee_" + i + "__FindersFeeTypeListId").trigger('change');
+        CalculateFindersFee(0);
+
+        $("#modal_FeeFinderdetailResult" + id).modal({ backdrop: 'static' });
+        $.unblockUI();
+    }
+
+    function CIDFranchiseeservice(mo, tu, we, th, fr, sa, su) {
+
+        $("#cid_chkScheduleMonday").prop('checked', false);
+        $("#cid_chkScheduleTuesday").prop('checked', false);
+        $("#cid_chkScheduleWednesday").prop('checked', false);
+        $("#cid_chkScheduleThursday").prop('checked', false);
+        $("#cid_chkScheduleFriday").prop('checked', false);
+        $("#cid_chkScheduleSaturday").prop('checked', false);
+        $("#cid_chkScheduleSunday").prop('checked', false);
+
+
+
+        $("#cid_chkScheduleMonday").prop('checked', mo);
+
+        $("#cid_chkScheduleTuesday").prop('checked', tu);
+
+        $("#cid_chkScheduleWednesday").prop('checked', we);
+
+        $("#cid_chkScheduleThursday").prop('checked', th);
+
+        $("#cid_chkScheduleFriday").prop('checked', fr);
+
+        $("#cid_chkScheduleSaturday").prop('checked', sa);
+
+        $("#cid_chkScheduleSunday").prop('checked', su);
+
+        $("#CIDmodal_service").modal({ backdrop: 'static' });
+    }
+    var _MaintenanceTypeListId = 0;
+
+    function IDValidateStepFirst() {
+
+        var retVal = true;
+        if ($('#CustomerIncreaseDecreaseDetail_StatusReasonListId').val() == '') {
+            $('#CustomerIncreaseDecreaseDetail_StatusReasonListId').addClass("has-error");
+            retVal = false;
+        }
+        else {
+            $('#CID_ddlTransferStatus').removeClass("has-error");
+        }
+
+        if ($('#CustomerIncreaseDecreaseDetail_Reason').val() == '') {
+            $('#CustomerIncreaseDecreaseDetail_Reason').addClass("has-error");
+            retVal = false;
+        } else {
+            $('#CustomerIncreaseDecreaseDetail_Reason').removeClass("has-error");
+        }
+
+        if ($('#CustomerIncreaseDecreaseDetail_EffectiveDate').val() == '') {
+            $('#CustomerIncreaseDecreaseDetail_EffectiveDate').addClass("has-error");
+            retVal = false;
+        } else {
+            $('#CustomerIncreaseDecreaseDetail_EffectiveDate').removeClass("has-error");
+        }
+
+        if (!$('#CustomerIncreaseDecreaseDetail_Increase').is(':checked') && !$('#CustomerIncreaseDecreaseDetail_Decrease').is(':checked')) {
+            $('#CustomerIncreaseDecreaseDetail_Increase').addClass("has-error");
+            $('#CustomerIncreaseDecreaseDetail_Decrease').addClass("has-error");
+            retVal = false;
+        } else {
+            $('#CustomerIncreaseDecreaseDetail_Increase').removeClass("has-error");
+            $('#CustomerIncreaseDecreaseDetail_Decrease').removeClass("has-error");
+        }
+
+        if ($('#CustomerIncreaseDecreaseDetail_TotalAmount').val().toString().trim() != '') {
+            if (_MaintenanceTypeListId == 4 && (parseFloat($('#CustomerIncreaseDecreaseDetail_CCTotalAmount').val()) > parseFloat($('#CustomerIncreaseDecreaseDetail_TotalAmount').val()))) {
+                $('#CustomerIncreaseDecreaseDetail_TotalAmount').addClass("has-error");
+                retVal = false;
+            } else if (_MaintenanceTypeListId == 5 && (parseFloat($('#CustomerIncreaseDecreaseDetail_CCTotalAmount').val()) < parseFloat($('#CustomerIncreaseDecreaseDetail_TotalAmount').val()))) {
+                $('#CustomerIncreaseDecreaseDetail_TotalAmount').addClass("has-error");
+            } else {
+                $('#CustomerIncreaseDecreaseDetail_TotalAmount').removeClass("has-error");
+            }
+        }
+        else {
+            $('#CustomerIncreaseDecreaseDetail_TotalAmount').removeClass("has-error");
+        }
+
+
+        var ___OTotalAmount = parseFloat($('#CustomerIncreaseDecreaseDetail_OTotalAmount').val() != '' ? $('#CustomerIncreaseDecreaseDetail_OTotalAmount').val() : '0');
+        var ___TotalAmount = parseFloat($('#CustomerIncreaseDecreaseDetail_TotalAmount').val() != "" ? $('#CustomerIncreaseDecreaseDetail_TotalAmount').val() : '0');
+
+        if ($('#CustomerIncreaseDecreaseDetail_Increase').is(':checked')) {
+            if (___OTotalAmount >= ___TotalAmount) {
+                $('#CustomerIncreaseDecreaseDetail_TotalAmount').addClass("has-error");
+                retVal = false;
+            } else {
+                $('#CustomerIncreaseDecreaseDetail_TotalAmount').removeClass("has-error");
+            }
+        }
+        else {
+            if (___OTotalAmount <= ___TotalAmount) {
+                $('#CustomerIncreaseDecreaseDetail_TotalAmount').addClass("has-error");
+                retVal = false;
+            } else {
+                $('#CustomerIncreaseDecreaseDetail_TotalAmount').removeClass("has-error");
+            }
+        }
+
+        return retVal;
+    }
+
+
+    function IDValidateStepCD(ln) {
+
+        var retVal = true;
+
+        //for (var i = 0; i > parseInt($('#CustomerIncreaseDecreaseDetail_ContractDetailCount').val()); i++) {
+        //    $('#lstContractDetail_' + i + '__Amount')
+        //    $('#lstContractDetail_' + i + '__SquareFootage')
+        //}
+
+        $('#spnIDContractDetailerrMsg' + ln).html('');
+
+        if (parseInt($('#CustomerIncreaseDecreaseDetail_ContractDetailCount').val()) == 1) {
+            if ($('#lstContractDetail_' + ln + '__Amount').val().toString().trim() != '') {
+                if (parseFloat($('#lstContractDetail_' + ln + '__Amount').val()) != parseFloat($('#CustomerIncreaseDecreaseDetail_TotalAmount').val())) {
+                    $('#lstContractDetail_' + ln + '__Amount').addClass("has-error");
+                    $('#spnIDContractDetailerrMsg' + ln).html('New amount will be same of contract detail much equal amount.')
+                    retVal = false;
+                } else {
+                    $('#lstContractDetail_' + ln + '__Amount').removeClass("has-error");
+
+                }
+            }
+            else {
+                $('#lstContractDetail_' + ln + '__Amount').removeClass("has-error");
+            }
+
+        } else if (parseInt($('#CustomerIncreaseDecreaseDetail_ContractDetailCount').val()) > 1) {
+
+            var newamt = 0;
+            for (var jk = 0; jk < parseInt($('#CustomerIncreaseDecreaseDetail_ContractDetailCount').val()); jk++) {
+                newamt = newamt + parseFloat($('#lstContractDetail_' + jk + '__Amount').val())
+            }
+            var amt = parseFloat($("#CustomerIncreaseDecreaseDetail_TotalAmount").val());
+
+            if (newamt != amt) {
+                $('#lstContractDetail_' + ln + '__Amount').addClass("has-error");
+                $('#spnIDContractDetailerrMsg' + ln).html('New amount will be same of contract detail much equal amount.')
+                retVal = false;
+            }
+            else {
+                $('#spnIDContractDetailerrMsg' + ln).html('')
+                $('#lstContractDetail_' + ln + '__Amount').removeClass("has-error");
+            }
+        }
+
+        ////
+
+        //if ($('#CustomerIncreaseDecreaseDetail_StatusReasonListId').val() == '') {
+        //    $('#CustomerIncreaseDecreaseDetail_StatusReasonListId').addClass("has-error");
+        //    retVal = false;
+        //}
+        //else {
+        //    $('#CID_ddlTransferStatus').removeClass("has-error");
+        //}
+
+        //if ($('#CustomerIncreaseDecreaseDetail_EffectiveDate').val() == '') {
+        //    $('#CustomerIncreaseDecreaseDetail_EffectiveDate').addClass("has-error");
+        //    retVal = false;
+        //} else {
+        //    $('#CustomerIncreaseDecreaseDetail_EffectiveDate').removeClass("has-error");
+        //}
+
+        //if (!$('#CustomerIncreaseDecreaseDetail_Increase').is(':checked') && !$('#CustomerIncreaseDecreaseDetail_Decrease').is(':checked')) {
+        //    $('#CustomerIncreaseDecreaseDetail_Increase').addClass("has-error");
+        //    $('#CustomerIncreaseDecreaseDetail_Decrease').addClass("has-error");
+        //    retVal = false;
+        //} else {
+        //    $('#CustomerIncreaseDecreaseDetail_Increase').removeClass("has-error");
+        //    $('#CustomerIncreaseDecreaseDetail_Decrease').removeClass("has-error");
+        //}
+
+        //if ($('#CustomerIncreaseDecreaseDetail_TotalAmount').val().toString().trim() != '') {
+        //    if (_MaintenanceTypeListId == 4 && (parseFloat($('#CustomerIncreaseDecreaseDetail_CCTotalAmount').val()) > parseFloat($('#CustomerIncreaseDecreaseDetail_TotalAmount').val()))) {
+        //        $('#CustomerIncreaseDecreaseDetail_TotalAmount').addClass("has-error");
+        //        retVal = false;
+        //    } else if (_MaintenanceTypeListId == 5 && (parseFloat($('#CustomerIncreaseDecreaseDetail_CCTotalAmount').val()) < parseFloat($('#CustomerIncreaseDecreaseDetail_TotalAmount').val()))) {
+        //        $('#CustomerIncreaseDecreaseDetail_TotalAmount').addClass("has-error");
+        //    } else {
+        //        $('#CustomerIncreaseDecreaseDetail_TotalAmount').removeClass("has-error");
+        //    }
+        //}
+        //else {
+        //    $('#CustomerIncreaseDecreaseDetail_TotalAmount').removeClass("has-error");
+        //}
+
+
+
+
+
+        return retVal;
+    }
+
+
+
+    $(function () {
+        window.AddContractDetailDescriptionModal = function (ContractDetailId, i) {
+            debugger;
+            $.blockUI();
+            var itemCDCount = parseInt($('#CID_lstContractDetailCount').val().toString());
+
+            var ___OTotalAmount = parseFloat($('#CustomerIncreaseDecreaseDetail_OTotalAmount').val() != '' ? $('#CustomerIncreaseDecreaseDetail_OTotalAmount').val() : '0');
+            var ___TotalAmount = parseFloat($('#CustomerIncreaseDecreaseDetail_TotalAmount').val() != "" ? $('#CustomerIncreaseDecreaseDetail_TotalAmount').val() : '0');
+            var ___newDeffAmount = parseFloat(((___OTotalAmount - ___TotalAmount) / itemCDCount).toFixed(2));
+
+            if ($('#CustomerIncreaseDecreaseDetail_Increase').is(':checked')) {
+                _MaintenanceTypeListId = 4;
+                $('#CustomerIncreaseDecreaseDetail_MaintenanceTypeListId').val(4);
+            }
+            else {
+                _MaintenanceTypeListId = 5;
+                $('#CustomerIncreaseDecreaseDetail_MaintenanceTypeListId').val(5);
+            }
+            if (!IDValidateStepFirst()) {
+
+                $.unblockUI();
+                return;
+            }
+
+
+
+
+
+
+            var Totamt = ___TotalAmount;//parseFloat($('#CustomerIncreaseDecreaseDetail_TotalAmount').val());
+            $('#lstContractDetail_' + i + '__Amount').val(parseFloat($('#lstContractDetail_base_' + i + '__Amount').val()) - (___newDeffAmount))
+            var newamt1 = parseFloat($('#lstContractDetail_'+i+'__Amount').val());
+            var remainamt = parseFloat(((Totamt - newamt1)).toFixed(2));
+
+            if (i == (itemCDCount-1) && i!=0) {
+                var newamtO = 0;
+                for (var jk1 = 0; jk1 < i; jk1++) {
+                    newamtO = newamtO + parseFloat($('#lstContractDetail_' + jk1 + '__Amount').val())
+                }
+                remainamt = parseFloat(((Totamt - newamtO)).toFixed(2));
+                $('#lstContractDetail_' + i + '__Amount').val(remainamt)
+            }
+
+
+            $("#lstContractDetail_"+(i+1)+"__Amount").val(remainamt);
+
+            var ContractId = 0;
+            if ($('#CustomerIncreaseDecreaseDetail_ContractId').val() != "") {
+                ContractId = $('#CustomerIncreaseDecreaseDetail_ContractId').val();
+            }
+            if ($('#CustomerIncreaseDecreaseDetail_ContractId').val() != 0) {
+                ContractId = $('#CustomerIncreaseDecreaseDetail_ContractId').val();
+            }
+            else {
+                alert('Save Customer Contract First, Before add Contract Detail!');
+                //swal(
+                //    'Oops...',
+                //    'Save Customer Contract First, Before add Contract Detail!',
+                //    'warning'
+                //)
+            }
+
+
+            $('#lstContractDetail_' + i + '__StartTime').timepicker({ timeFormat: 'h:mm:ss p' });
+            $('#lstContractDetail_' + i + '__EndTime').timepicker({ timeFormat: 'h:mm:ss p' });
+
+            $('#lstContractDetail_' + i + '__CleanFrequencyListId').on('change', function () {
+                if (this.value == '1') {
+                    $('#lstContractDetail_' + i + '__Mon').removeAttr('checked');
+                    $('#lstContractDetail_' + i + '__Tues').removeAttr('checked');
+                    $('#lstContractDetail_' + i + '__Wed').removeAttr('checked');
+                    $('#lstContractDetail_' + i + '__Thur').removeAttr('checked');
+                    $('#lstContractDetail_' + i + '__Fri').removeAttr('checked');
+                    $('#lstContractDetail_' + i + '__Sat').removeAttr('checked');
+                    $('#lstContractDetail_' + i + '__Sun').removeAttr('checked');
+                    $("#divweek" + ContractDetailId).show();
+                }
+                else {
+                    $("#divweek" + ContractDetailId).hide();
+                }
+            });
+            var newamt = 0;
+            for (var jk = 0; jk < itemCDCount; jk++) {
+                newamt = newamt + parseFloat($('#lstContractDetail_' + jk+'__Amount').val())
+            }
+
+            //var newamt = parseFloat($('#lstContractDetail_0__Amount').val());
+            var amt = parseFloat($("#CustomerIncreaseDecreaseDetail_TotalAmount").val());
+
+            if (newamt !=amt) {
+                $('#lstContractDetail_' + (i - 1) + '__Amount').addClass("has-error");
+            }
+            else {
+                $('#lstContractDetail_' + (i - 1) + '__Amount').removeClass("has-error");
+                if (ContractId > 0 && ContractDetailId > 0) {
+                    $('#modalDataCusContractPopup' + ContractDetailId).modal({ backdrop: 'static' });
+                }
+                else if (ContractId > 0) {
+                    $('#modalDataCusContractPopup' + ContractDetailId).modal({ backdrop: 'static' });
+                }
+            }
+            //if (_MaintenanceTypeListId == 4) {
+            //    if (newamt > amt) {
+            //        $('#lstContractDetail_'+(i-1)+'__Amount').addClass("has-error");
+            //    }
+            //    else {
+            //        $('#lstContractDetail_' + (i - 1) +'__Amount').removeClass("has-error");
+            //        if (ContractId > 0 && ContractDetailId > 0) {
+            //            $('#modalDataCusContractPopup' + ContractDetailId).modal({ backdrop: 'static' });
+            //        }
+            //        else if (ContractId > 0) {
+            //            $('#modalDataCusContractPopup' + ContractDetailId).modal({ backdrop: 'static' });
+            //        }
+            //    }
+
+
+            //}
+            //else {
+            //    if (newamt < amt) {
+            //        $('#lstContractDetail_' + (i - 1) +'__Amount').addClass("has-error");
+            //    }
+            //    else {
+            //        $('#lstContractDetail_' + (i - 1) +'__Amount').removeClass("has-error");
+            //        if (ContractId > 0 && ContractDetailId > 0) {
+            //            $('#modalDataCusContractPopup' + ContractDetailId).modal({ backdrop: 'static' });
+            //        }
+            //        else if (ContractId > 0) {
+            //            $('#modalDataCusContractPopup' + ContractDetailId).modal({ backdrop: 'static' });
+            //        }
+            //    }
+
+
+            //}
+            var __ContractDetailCount = parseInt($('#CustomerIncreaseDecreaseDetail_ContractDetailCount').val());
+            var __FranchiseeDistributionCount = parseInt($('#CustomerIncreaseDecreaseDetail_FranchiseeDistributionCount').val());
+
+            if (__ContractDetailCount == 1) {
+                $('#lstContractDetail_0__Amount').val($('#CustomerIncreaseDecreaseDetail_TotalAmount').val());
+
+            }
+            if (__FranchiseeDistributionCount == 1) {
+                $('#lstFranchiseeDistribution_0__Amount').val($('#CustomerIncreaseDecreaseDetail_TotalAmount').val());
+
+            }
+
+            $('#DFCustomerIncreaseDecreaseDetail_ContractExpirationDate').text($('#CustomerIncreaseDecreaseDetail_ExpirationDate').val());
+            $('#DFCustomerIncreaseDecreaseDetail_ContractTotalAmount').text($('#CustomerIncreaseDecreaseDetail_TotalAmount').val());
+
+            maskCurrency('DFCustomerIncreaseDecreaseDetail_ContractTotalAmount')
+
+
+
+
+            $.unblockUI();
+        }
+    });
+
+    function IncreaseDistribution(cdId, ln) {
+        $.blockUI();
+        if (!IDValidateStepCD(ln)) {
+
+            $.unblockUI();
+            return;
+        }
+
+        $('#spnDistEffectiveDate').html($('#CustomerIncreaseDecreaseDetail_EffectiveDate').val());
+
+        $('#DFCustomerIncreaseDecreaseDetail_ContractDetailAmount' + cdId).val($('#lstContractDetail_' + ln + '__Amount').val());
+        maskCurrency('DFCustomerIncreaseDecreaseDetail_ContractDetailAmount' + cdId);
+
+        $(".cls_1").html(formatCurrency(parseFloat($('#lstContractDetail_0__Amount').val()),true));
+        $(".cls_2").html(formatCurrency(parseFloat($('#lstContractDetail_1__Amount').val()),true));
+
+        var totamt= parseFloat(parseFloat($('#lstContractDetail_0__Amount').val()) + parseFloat($('#lstContractDetail_1__Amount').val()));
+        var amt = parseFloat($("#CustomerIncreaseDecreaseDetail_TotalAmount").val());
+
+        //if(totamt != parseFloat($("#CustomerIncreaseDecreaseDetail_TotalAmount").val()))
+        //{
+        //    $('#lstContractDetail_1__Amount').addClass("has-error");
+        //}
+        //else{
+        //    $('#lstContractDetail_1__Amount').removeClass("has-error");
+        //}
+        $('#modal_CIDFranchiseeDistribution').modal({ backdrop: 'static' });
+        $.unblockUI();
+    }
+
+    function RemoveContractDetail(ContractDetailId, ContractId) {
+        $.blockUI({
+            baseZ: 99999,
+            message: '<center><img height: src="/Images/loading_icon.gif" /><h3> <b>Processing....</br> Please wait! and do not refresh page.</b></h3></center>',
+            css: { backgroundColor: 'rgb{0,0,0}', border: '0', color: '#fff', "z-index": 99999 }
+        });
+        $.ajax({
+            type: "post",
+            url: '@Url.Action("RemoveContractDetail", "Customer")',
+            ajaxasync: true,
+            data: { ContractDetailId: ContractDetailId, ContarctId: ContractId },
+            success: function (response) {
+                loadOwners(response.id);
+
+                $.unblockUI();
+            },
+            error: function (data) {
+                $.unblockUI();
+            }
+        })
+        $.unblockUI();
+    }
+
+
+    function loadOwners(id) {
+        $.blockUI({
+            baseZ: 99999,
+            message: '<center><img height: src="/Images/loading_icon.gif" /><h3> <b>Processing....</br> Please wait! and do not refresh page.</b></h3></center>',
+            css: { backgroundColor: 'rgb{0,0,0}', border: '0', color: '#fff', "z-index": 99999 }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetContractDetail", "Customer", new { @area = "Portal" })?id=' + id,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                $('#tblContractDescriptionData').html(response);
+                $.unblockUI();
+            },
+            error: function (xhr, textStatus, error) {
+                if (typeof console == "object") {
+
+                    $('#tblContractDescriptionData').html(xhr.responseText);
+                    console.log(xhr.status + "," + xhr.responseText + "," + textStatus + "," + error);
+                }
+                $.unblockUI();
+            }
+        });
+        $.unblockUI();
+    }
+
+    $("#CustomerIncreaseDecreaseDetail_ContractTermMonth").change(function () {
+
+        var monthadd = $("#CustomerIncreaseDecreaseDetail_ContractTermMonth").val();
+        var startdate = $("#CustomerIncreaseDecreaseDetail_StartDate").val();
+        var contractstartdate = new Date(startdate);
+
+        if (monthadd == "")
+            monthadd = 0;
+
+        contractstartdate.setMonth(contractstartdate.getMonth() + parseInt(monthadd));
+        var c = (contractstartdate.getMonth() + 1) + '/' + contractstartdate.getDate() + '/' + contractstartdate.getFullYear()
+        $("#CustomerIncreaseDecreaseDetail_ExpirationDate").val(c);
+
+    });
+
+    $("#CustomerIncreaseDecreaseDetail_OptionType").change(function () {
+
+        var monthadd = $("#CustomerIncreaseDecreaseDetail_OptionType").val();
+
+
+    });
+
+    var FindersFeeAdjustmentRowCount = $("#CustomerIncreaseDecreaseDetail_FindersFeeAdjustmentCount").val();
+    function AppendNewFinderAdjestment(ffID, i) {
+        FindersFeeAdjustmentRowCount++;
+        var rFFA = "";
+        $.ajax({
+            type: "GET",
+            /**/
+            url: '@Url.Action("GetFindersFeeAdjustmentList", "Customer", new { @area = "Portal" })',
+            /**/
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+
+                rFFA += '<tr rel="trFindersFeeAdjustment_' + FindersFeeAdjustmentRowCount + '"><td><select id="txtFindersFeeAdjustment_' + ffID + '_' + FindersFeeAdjustmentRowCount + '_Adjustment" name="txtFindersFeeAdjustment_' + ffID + '_' + FindersFeeAdjustmentRowCount + '_Adjustment" class="form-control input-sm">';
+                rFFA += "<option value=" + 0 + ">" + "Select" + "</option>";
+                for (var k = 0; k < response.length; k++) {
+                    rFFA += "<option value=" + response[k].Value + ">" + $.trim(response[k].Text) + "</option>";
+                }
+                rFFA += '</select>';
+
+                rFFA += '<td><input type="text" id="txtFindersFeeAdjustment_' + ffID + '_' + FindersFeeAdjustmentRowCount + '_Description" name="txtFindersFeeAdjustment_' + ffID + '_' + FindersFeeAdjustmentRowCount + '_Description" value="" class="form-control input-sm" /></td>';
+                rFFA += '<td><input type="text" id="txtFindersFeeAdjustment_' + ffID + '_' + FindersFeeAdjustmentRowCount + '_Amount" name="txtFindersFeeAdjustment_' + ffID + '_' + FindersFeeAdjustmentRowCount + '_Amount" value="" class="form-control input-sm"/></td>';
+                //rFFA += '<td style="text-align:center;"><a style="font-size: 16px;padding: 3px;color: mediumvioletred;" href="#" onclick="RemoveFindersFeeAdjustmentRow(\'trFindersFeeAdjustment_' + ffID + '\')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>';
+                rFFA += '<td style="text-align:center;"><a style="font-size: 16px;padding: 3px;color: mediumvioletred;" href="#" onclick="RemoveFindersFeeAdjustmentRow(\'trFindersFeeAdjustment_' + FindersFeeAdjustmentRowCount + '\',\'txtFindersFeeAdjustment_' + ffID + '_' + FindersFeeAdjustmentRowCount + '_Amount\')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>';
+                rFFA += '</tr>';
+
+                $('#tblNewFindersFeeAdjustment').append(rFFA);
+
+                maskCurrency('txtFindersFeeAdjustment_' + ffID + '_' + FindersFeeAdjustmentRowCount + '_Amount');
+
+                $('#txtFindersFeeAdjustment_' + ffID + '_' + FindersFeeAdjustmentRowCount + '_Amount').change(function () {
+
+                    var amt = 0.00;
+                    for (var j = 1; j <= FindersFeeAdjustmentRowCount; j++) {
+                        if ($.trim($('#txtFindersFeeAdjustment_' + ffID + '_' + j + '_Amount').val()) != '')
+                            amt += parseFloat($('#txtFindersFeeAdjustment_' + ffID + '_' + j + '_Amount').val());
+                    }
+                    $("#lstFindersFee_" + i + "__TotalAdjustmentAmount").val(amt);
+
+                    var _ContractBillingAmount = $("#lstFindersFee_" + i + "__ContractBillingAmount").val() != '' ? $("#lstFindersFee_" + i + "__ContractBillingAmount").val() : 0;
+
+
+                    $("#lstFindersFee_" + i + "__PayableOnAmount").val(_ContractBillingAmount - amt);
+                    CalculateFindersFee(0);
+                });
+            }
+        });
+        $("#CustomerIncreaseDecreaseDetail_FindersFeeAdjustmentCount").val(FindersFeeAdjustmentRowCount);
+    }
+
+    function RemoveFindersFeeAdjustmentRow(item, ii) {
+        console.log(ii)
+        var removeAMT = $('#' + ii).val();
+        CalculateFindersFee(0,-parseFloat(removeAMT))
+        $('tr[rel=' + item + ']').remove()
+    }
+
+
+    var _FFSchedule = [];
+    GetFindersFeeScheduleList();
+    function GetFindersFeeScheduleList() {
+        $.ajax({
+            type: "get",
+            /**/
+            url: '@Url.Action("GetFindersFeeScheduleList", "Franchise", new { area = "Portal" })',
+            /**/
+            success: function (response) {
+                _FFSchedule = response;
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
+
+    function FindersFee_FindersFeeTypeListId_Onchange(i) {
+        var _FindersFeeTypeListId = $("#lstFindersFee_" + i + "__FindersFeeTypeListId").val();
+
+        $('#lstFindersFee_' + i + '__MultiTenantOccupancyAmount').prop('readonly', true);
+        if ($('#lstFindersFee_' + i + '__FindersFeeTypeListId').val() == 2 || $('#lstFindersFee_' + i + '__FindersFeeTypeListId').val() == 7) {
+            $('#lstFindersFee_' + i + '__MultiTenantOccupancyAmount').prop('readonly', false);
+        }
+
+        $.each(_FFSchedule, function (index, item) {
+            if (item.FindersFeeTypeListId == parseInt(_FindersFeeTypeListId)) {
+                var _Payable = parseFloat($("#lstFindersFee_" + i + "__PayableOnAmount").val())
+
+                if (_Payable >= item.StartAmount && _Payable <= item.EndAmount) {
+                    $("#lstFindersFee_" + i + "__Factor").val(item.Factor);
+                    $("#lstFindersFee_" + i + "__DownPayPercentage").val(item.DownPayPercentage);
+                    $("#lstFindersFee_" + i + "__DownPaymentAmount").val((item.DownPayPercentage * _Payable / 100).toFixed(2));
+                    $("#lstFindersFee_" + i + "__MonthlyPaymentPercentage").val(item.MonthlyPercentage);
+                    $("#lstFindersFee_" + i + "__MonthlyPaymentAmount").val((item.MonthlyPercentage * _Payable / 100).toFixed(2));
+                    $("#lstFindersFee_" + i + "__TotalNumOfpayments").val(item.NumOfPayments);
+
+                    $("#lstFindersFee_" + i + "__FinancedAmount").val((item.MonthlyPercentage * _Payable / 100) * item.NumOfPayments);
+                    $("#lstFindersFee_" + i + "__TotalAmount").val(((item.DownPayPercentage * _Payable / 100) + ((item.MonthlyPercentage * _Payable / 100) * item.NumOfPayments)).toFixed(2));
+
+                    maskCurrency('lstFindersFee_' + i + '__DownPaymentAmount');
+                    maskCurrency('lstFindersFee_' + i + '__MonthlyPaymentAmount');
+                    maskCurrency('lstFindersFee_' + i + '__FinancedAmount');
+                    maskCurrency('lstFindersFee_' + i + '__TotalAmount');
+
+                    maskPercentage('lstFindersFee_' + i + '__DownPayPercentage');
+                    maskPercentage('lstFindersFee_' + i + '__MonthlyPaymentPercentage');
+                    maskCurrency('lstFindersFee_' + i + '__MultiTenantOccupancyAmount');
+
+                }
+            }
+        });
+        CalculateFindersFee(i);
+    }
+
+
+    function CalculateFindersFee(i, totalAdjustment) {
+        debugger;
+
+        if (totalAdjustment != '' && totalAdjustment != 0 && totalAdjustment != null) {
+            var adjustment = $("#lstFindersFee_" + i + "__TotalAdjustmentAmount").val() != '' ? $("#lstFindersFee_" + i + "__TotalAdjustmentAmount").val() : 0;
+            $("#lstFindersFee_" + i + "__TotalAdjustmentAmount").val(parseFloat(totalAdjustment) + parseFloat(adjustment));
+
+            _Factor = $("#lstFindersFee_" + i + "__Factor").val();
+            _ContractBillingAmount = $("#lstFindersFee_" + i + "__ContractBillingAmount").val() != '' ? $("#lstFindersFee_" + i + "__ContractBillingAmount").val() : 0;
+            _TotalAdjustmentAmount = $("#lstFindersFee_" + i + "__TotalAdjustmentAmount").val() != '' ? $("#lstFindersFee_" + i + "__TotalAdjustmentAmount").val() : 0;
+
+            $("#lstFindersFee_" + i + "__PayableOnAmount").val(_ContractBillingAmount - _TotalAdjustmentAmount);
+            _PayableOnAmount = $("#lstFindersFee_" + i + "__PayableOnAmount").val() == '' || $("#lstFindersFee_" + i + "__PayableOnAmount").val() == null ? 0.00 : parseFloat($("#lstFindersFee_" + i + "__PayableOnAmount").val());
+
+        }
+        else {
+
+            _Factor = $("#lstFindersFee_" + i + "__Factor").val();
+            _ContractBillingAmount = $("#lstFindersFee_" + i + "__ContractBillingAmount").val() != '' ? $("#lstFindersFee_" + i + "__ContractBillingAmount").val() : 0;
+            _TotalAdjustmentAmount = $("#lstFindersFee_" + i + "__TotalAdjustmentAmount").val() != '' ? $("#lstFindersFee_" + i + "__TotalAdjustmentAmount").val() : 0;
+            $("#lstFindersFee_" + i + "__PayableOnAmount").val(_ContractBillingAmount - _TotalAdjustmentAmount);
+            _PayableOnAmount = $("#lstFindersFee_" + i + "__PayableOnAmount").val() == '' || $("#lstFindersFee_" + i + "__PayableOnAmount").val() == null ? 0.00 : parseFloat($("#lstFindersFee_" + i + "__PayableOnAmount").val());
+
+        }
+
+
+        _DownPayPercentage = parseFloat($("#lstFindersFee_" + i + "__DownPayPercentage").val() != '' ? $("#lstFindersFee_" + i + "__DownPayPercentage").val() : 0);
+        $("#lstFindersFee_" + i + "__DownPaymentAmount").val((_PayableOnAmount * _DownPayPercentage / 100).toFixed(2));
+
+        _MonthlyPaymentPercentage = parseFloat($("#lstFindersFee_" + i + "__MonthlyPaymentPercentage").val() != '' ? $("#lstFindersFee_" + i + "__MonthlyPaymentPercentage").val() : 0);
+        $("#lstFindersFee_" + i + "__MonthlyPaymentAmount").val((_PayableOnAmount * _MonthlyPaymentPercentage / 100).toFixed(2));
+
+        _TotalNumOfpayments = parseInt($("#lstFindersFee_" + i + "__TotalNumOfpayments").val() != '' ? $("#lstFindersFee_" + i + "__TotalNumOfpayments").val() : 0);
+
+        $("#lstFindersFee_" + i + "__FinancedAmount").val(((_PayableOnAmount * _MonthlyPaymentPercentage / 100) * _TotalNumOfpayments).toFixed(2));
+        $("#lstFindersFee_" + i + "__TotalAmount").val(((_PayableOnAmount * _DownPayPercentage / 100) + ((_PayableOnAmount * _MonthlyPaymentPercentage / 100) * _TotalNumOfpayments)).toFixed(2));
+
+        var _FindersFeeTypeListId = $('#lstFindersFee_' + i + '__FindersFeeTypeListId').val();
+        var _FindersFee_MultiTenantOccupancyAmount = $("#lstFindersFee_" + i + "__MonthlyPaymentAmount").val() != '' ? parseFloat($("#lstFindersFee_" + i + "__MonthlyPaymentAmount").val()) : 0;
+        if (_FindersFeeTypeListId == 9 || _FindersFeeTypeListId == 2 || _FindersFeeTypeListId == 7 || _FindersFeeTypeListId == 3 || _FindersFeeTypeListId == 4) {
+
+            _MonthlyPaymentPercentage = parseFloat($("#lstFindersFee_" + i + "__MonthlyPaymentPercentage").val() != '' ? $("#lstFindersFee_" + i + "__MonthlyPaymentPercentage").val() : 0);
+            var _amtMT = _FindersFee_MultiTenantOccupancyAmount * 3;
+            $("#lstFindersFee_" + i + "__FinancedAmount").val((_amtMT).toFixed(2));
+            $("#lstFindersFee_" + i + "__TotalAmount").val(((_PayableOnAmount * _DownPayPercentage / 100) + _amtMT).toFixed(2));
+        }
+
+
+        //_Factor = $("#lstFindersFee_" + i + "__Factor").val();
+        //var _ContractBillingAmount = parseFloat($("#lstFindersFee_" + i + "__ContractBillingAmount").val() != '' ? $("#lstFindersFee_" + i + "__ContractBillingAmount").val() : 0);
+        //var _TotalAdjustmentAmount = parseFloat($("#lstFindersFee_" + i + "__TotalAdjustmentAmount").val() != '' ? $("#lstFindersFee_" + i + "__TotalAdjustmentAmount").val() : 0);
+        //var _MultiTenantOccupancyAmount = parseFloat($('#lstFindersFee_' + i + '__MultiTenantOccupancyAmount').val() != '' ? $('#lstFindersFee_' + i + '__MultiTenantOccupancyAmount').val() : 0);
+
+
+        //_PayableOnAmount = _ContractBillingAmount + _MultiTenantOccupancyAmount - _TotalAdjustmentAmount;
+
+        //$("#lstFindersFee_" + i + "__PayableOnAmount").val(_PayableOnAmount);
+
+        //_DownPayPercentage = parseFloat($("#lstFindersFee_" + i + "__DownPayPercentage").val() != '' ? $("#lstFindersFee_" + i + "__DownPayPercentage").val() : 0);
+        //$("#lstFindersFee_" + i + "__DownPaymentAmount").val((_PayableOnAmount * _DownPayPercentage / 100).toFixed(2));
+
+        //_MonthlyPaymentPercentage = parseFloat($("#lstFindersFee_" + i + "__MonthlyPaymentPercentage").val() != '' ? $("#lstFindersFee_" + i + "__MonthlyPaymentPercentage").val() : 0);
+        //$("#lstFindersFee_" + i + "__MonthlyPaymentAmount").val((_PayableOnAmount * _MonthlyPaymentPercentage / 100).toFixed(2));
+
+        //_TotalNumOfpayments = parseInt($("#lstFindersFee_" + i + "__TotalNumOfpayments").val() != '' ? $("#lstFindersFee_" + i + "__TotalNumOfpayments").val() : 0);
+
+        //$("#lstFindersFee_" + i + "__FinancedAmount").val(((_PayableOnAmount * _MonthlyPaymentPercentage / 100) * _TotalNumOfpayments).toFixed(2));
+        //$("#lstFindersFee_" + i + "__TotalAmount").val(((_PayableOnAmount * _DownPayPercentage / 100) + ((_PayableOnAmount * _MonthlyPaymentPercentage / 100) * _TotalNumOfpayments)).toFixed(2));
+    }
+    function maskCurrency(id) {
+        $('#' + id).inputmask("currency", {
+            alias: 'currency',
+            prefix: '$ ',
+            digits: 2,
+            autoUnmask: true,
+            removeMaskOnSubmit: true,
+            unmaskAsNumber: true,
+            allowPlus: false,
+            allowMinus: false,
+            autoGroup: true,
+            groupSeparator: ",",
+        });
+    }
+
+    function maskPercentage(id) {
+        $('#' + id).inputmask("numeric", {
+            radixPoint: ".",
+            groupSeparator: ",",
+            autoGroup: true,
+            suffix: " %",
+            rightAlign: true,
+            autoUnmask: true,
+            removeMaskOnSubmit: true,
+            clearMaskOnLostFocus: false,
+            oncleared: function () { self.Value(''); }
+        });
+    }
+    function applyMaskNumber(id) {
+        $(id).inputmask("numeric", {
+            autoUnmask: true,
+            removeMaskOnSubmit: true,
+            oncleared: function () { self.Value(''); }
+        });
+    }
+
+
+    $("#form_manualinvoice_submitForm").click(function (e) {
+
+        e.preventDefault();
+        $("#form_manualinvoice_submitForm").submit();
+    });
+
+    function IDFrmInIt() {
+
+        maskCurrency('CustomerIncreaseDecreaseDetail_OTotalAmount');
+        maskCurrency('CustomerIncreaseDecreaseDetail_TotalAmount');
+
+        //DFCustomerIncreaseDecreaseDetail_ContractTotalAmount
+        for (var i = 0; i < parseInt($('#CustomerIncreaseDecreaseDetail_ContractDetailCount').val()); i++) {
+            maskCurrency('lstContractDetail_' + i + '__Amount');
+            maskCurrency('lstContractDetail_' + i + '__OAmount');
+
+
+
+            applyMaskNumber('lstContractDetail_' + i + '__SquareFootage');
+        }
+
+        for (var i = 0; i < parseInt($('#CustomerIncreaseDecreaseDetail_FranchiseeDistributionCount').val()); i++) {
+            maskCurrency('lstFranchiseeDistribution_' + i + '__Amount');
+        }
+
+
+        $('.txamt').inputmask("currency", {
+            alias: 'currency',
+            prefix: '$ ',
+            digits: 2,
+            autoUnmask: true,
+            removeMaskOnSubmit: true,
+            unmaskAsNumber: true,
+            allowPlus: false,
+            allowMinus: false,
+            autoGroup: true,
+            groupSeparator: ",",
+        });
+
+        for (var i = 0; i < parseInt($('#CustomerIncreaseDecreaseDetail_FindersFeeCount').val()); i++) {
+            maskPercentage('lstFindersFee_' + i + '__DownPayPercentage');
+            maskPercentage('lstFindersFee_' + i + '__MonthlyPaymentPercentage');
+            applyMaskNumber('lstFindersFee_' + i + '__TotalNumOfpayments');
+
+            $('#lstFindersFee_' + i + '__MultiTenantOccupancyAmount').prop('readonly', true);
+            if ($('#lstFindersFee_' + i + '__FindersFeeTypeListId').val() == 2 || $('#lstFindersFee_' + i + '__FindersFeeTypeListId').val() == 7) {
+                $('#lstFindersFee_' + i + '__MultiTenantOccupancyAmount').prop('readonly', false);
+            }
+            else {
+                $('#lstFindersFee_' + i + '__MultiTenantOccupancyAmount').val(0);
+            }
+
+
+
+            //$("#lstFindersFee_" + i + "__ContractBillingAmount").change(function () {
+            //
+            //    CalculateFindersFee(i);
+            //});
+            //$("#lstFindersFee_" + i + "__DownPayPercentage").change(function () {
+            //
+            //    CalculateFindersFee(i);
+            //});
+            //$("#lstFindersFee_" + i + "__MonthlyPaymentPercentage").change(function () {
+            //
+            //    CalculateFindersFee(i);
+            //});
+            //$("#lstFindersFee_" + i + "__TotalNumOfpayments").change(function () {
+            //
+            //    CalculateFindersFee(i);
+            //});
+        }
+
+
+
+
+
+
+    }
+
+    function SubmitCustomerINDE() {
+        $.blockUI();
+        if (_MaintenanceTypeListId == 4) {
+            showManualInvoice(@Model.CustomerIncreaseDecreaseDetail.CustomerId, 'Increase');
+        } else {
+
+            var ___OTotalAmount = parseFloat($('#CustomerIncreaseDecreaseDetail_OTotalAmount').val() != '' ? $('#CustomerIncreaseDecreaseDetail_OTotalAmount').val() : '0');
+            var ___TotalAmount = parseFloat($('#CustomerIncreaseDecreaseDetail_TotalAmount').val() != "" ? $('#CustomerIncreaseDecreaseDetail_TotalAmount').val() : '0');
+
+            var _CrAMT = ___OTotalAmount - ___TotalAmount;
+
+            //var _CrAMT = parseFloat($("#lstContractDetail_0__OAmount").val()) -parseFloat($("#lstContractDetail_0__Amount").val());
+            CheckInvoiceForDecreaseCredit(0, 0);
+            //alert('credit')
+        }
+    }
+    function SubmitCustomerINDESkip() {
+        debugger
+        $.blockUI();
+        if (_MaintenanceTypeListId == 4) {
+            showManualInvoice(@Model.CustomerIncreaseDecreaseDetail.CustomerId, 'Increase');
+        } else {
+            var ___OTotalAmount = parseFloat($('#CustomerIncreaseDecreaseDetail_OTotalAmount').val() != '' ? $('#CustomerIncreaseDecreaseDetail_OTotalAmount').val() : '0');
+            var ___TotalAmount = parseFloat($('#CustomerIncreaseDecreaseDetail_TotalAmount').val() != "" ? $('#CustomerIncreaseDecreaseDetail_TotalAmount').val() : '0');
+
+            var _CrAMT = ___OTotalAmount - ___TotalAmount;
+            //var _CrAMT = parseFloat($("#lstContractDetail_0__OAmount").val()) -parseFloat($("#lstContractDetail_0__Amount").val());
+            CheckInvoiceForDecreaseCredit(0, 0);
+            //alert('credit')
+        }
+    }
+
+
+
+
+
+
+    function CheckInvoiceForDecreaseCredit(Invlength, index) {
+        var ___OTotalAmount = parseFloat($('#CustomerIncreaseDecreaseDetail_OTotalAmount').val() != '' ? $('#CustomerIncreaseDecreaseDetail_OTotalAmount').val() : '0');
+        var ___TotalAmount = parseFloat($('#CustomerIncreaseDecreaseDetail_TotalAmount').val() != "" ? $('#CustomerIncreaseDecreaseDetail_TotalAmount').val() : '0');
+        var decreaseAMT = ___OTotalAmount - ___TotalAmount;
+        //var decreaseAMT = parseFloat($("#lstContractDetail_0__OAmount").val()) - parseFloat($("#lstContractDetail_0__Amount").val());
+        //Html.DisplayFor(o => o.CustomerIncreaseDecreaseDetail.ContractId)
+        var sURL = '@Url.Action("GetDecreaseCreditInvoice", "Customer", new { area = "Portal" })?CustomerId=' + $('#hdfCustomerId').val() + '&EffectiveDate=' + $('#CustomerIncreaseDecreaseDetail_EffectiveDate').val() + '&DecreaseAmount=' + decreaseAMT;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                console.log(data);
+                //$('#spnTransEffectiveDateR').html($('#trans_ddlTransferEffectiveDate').val())
+                if (data.length == 0) {
+                    alert("Customer Increase/Decrease Save to Maintenance with no Invoice base in effective date!");
+                    $("#frm_CustomerDetailIncrease").submit();
+                    return;
+                }
+
+                //if (data.length > 0) {
+                var tInvoiceId = 0;
+                var lenInvoicesforReve = data.length;
+                var invId = 0; var invIdNext = 0;
+
+                $.each(data, function (index, value) {
+
+                    if (data[index + 1] != undefined) { invIdNext = data[index + 1].InvoiceId; }
+                    else { invIdNext = value.InvoiceId; }
+
+                    if (index == 0) { tInvoiceId = value.InvoiceId; }
+
+                    invId = value.InvoiceId;
+                    $('#spnTransEffectiveDateR_' + invId).html($('#trans_ddlTransferEffectiveDate').val())
+                    $('#form_decreaseCredit').append('<div id="form_decreaseCredit_' + invId + '"></div>')
+                    CheckInvoiceForCreditBind(invId, invIdNext, tInvoiceId, value.EffectiveAMT);
+
+                    $('#Customercustomermanualinvoice_CRInvoiceIds').val($('#Customercustomermanualinvoice_CRInvoiceIds').val() + invId+",")
+
+
+                });
+
+
+
+
+
+                //if (data.length > 0) {
+                //    $("#tbfranchiseedistributionfeelisthidden>tbody").html("");
+                //    $("#hdfFranchiseeDistFeeCount").val(DistributionfeeListFinal.length);
+                //    $.each(DistributionfeeListFinal, function (index, value) {
+                //        trRow = "";
+                //        trRow += '<tr>';
+                //        trRow += '    <td class="text-center">'
+                //        trRow += '      <input type="hidden" id="hdfFranchiseeDistFee_CustomerId' + index + '" name="hdfFranchiseeDistFee_CustomerId' + index + '" value="' + value.CustomerId + '" />'
+                //        trRow += '      <input type="hidden" id="hdfFranchiseeDistFee_ContractDetailId' + index + '" name="hdfFranchiseeDistFee_ContractDetailId' + index + '" value="' + value.ContractDetailId + '" />'
+                //        trRow += '      <input type="hidden" id="hdfFranchiseeDistFee_FranchiseeId' + index + '" name="hdfFranchiseeDistFee_FranchiseeId' + index + '" value="' + value.FranchiseeId + '" />'
+                //        trRow += '      <input type="hidden" id="hdfFranchiseeDistFee_FeeId' + index + '" name="hdfFranchiseeDistFee_FeeId' + index + '" value="' + value.FeeId + '" />'
+                //        trRow += '      <input type="hidden" id="hdfFranchiseeDistFee_FeeAmount' + index + '" name="hdfFranchiseeDistFee_FeeAmount' + index + '" value="' + value.Amount + '" />'
+                //        trRow += '      <input type="hidden" id="hdfFranchiseeDistFee_DetailLineNumber' + index + '" name="hdfFranchiseeDistFee_DetailLineNumber' + index + '" value="' + value.DetailLineNumber + '" />'
+                //        trRow += '    </td>';
+                //        trRow += '</tr>';
+                //        $("#tbfranchiseedistributionfeelisthidden>tbody").append(trRow);
+                //    });
+
+
+                //    if (tInvoiceId == 0) {
+                //        $("#submit_form_Transdistributioncustomer").submit();
+
+                //    }
+
+                //}
+
+                //}
+                //else {
+
+                //    alert("There are no Invoice base in effective date");
+                //    //showIncreaseDescreaseTR($('#hdftransfer_customerid').val(), $('#hdfFrenchiseeId2').val());
+                //}
+
+                //else {
+                //    alert("There are no Invoice base in effective date");
+                //}
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+
+    }
+
+    function CheckInvoiceForCreditBindShow(invId) {
+        $("#modal_applycreditform_" + invId).modal({ backdrop: 'static' });
+    }
+    function CheckInvoiceForCreditBind(invId, invIdNext, tInvoiceId,tAMT) {
+        var sURL = '@Url.Action("ApplyCreditFormInv", "AccountReceivable", new { area = "Portal" })?Id=' + invId;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#form_decreaseCredit_' + invId).html(data);
+                $(".date-picker").datepicker();
+                $(".input-group-btn").click(function () {
+                    $(this).prev().trigger("focus");
+                    $(this).prev().trigger("focus");
+                });
+                $('#invoiceIdNext_' + invId).val(invIdNext);
+                initCreditFormINV(invId);
+                $('.creditfieldcurrency').each(function () {
+                    applyMaskCurrency('#' + this.id);
+                });
+                setCreditAmtINV(tAMT,"", invId)
+                if (tInvoiceId == invId)
+                    $("#modal_applycreditform_" + invId).modal({ backdrop: 'static' });
+                $("#rdApplyAmtTypeTOT_" + invId).prop('checked', true);
+                if (invId != invIdNext) {
+                    $("#btnSaveContinue_" + invId).text('Continue')
+                    $("#btnSaveContinue_" + invId).click(function () {
+                        CheckInvoiceForCreditBindShow($('#invoiceIdNext_' + invId).val());
+
+
+
+                    })
+                    toggleApplyAmtFieldINV(invId);
+
+                    //CheckInvoiceForCreditBind(invIdNext, $('#invoiceIdNext_' + invId).val(), invIdNext, tAMT);
+
+                }
+                else {
+                    toggleApplyAmtFieldINV(invId);
+                    $("#btnSaveContinue_" + invId).text('Save')
+                    $("#btnSaveContinue_" + invId).click(function () {
+                        alert('Customer Increase/Decrease Save to Maintenance!');
+                        $('#frm_CustomerDetailIncrease').submit();
+                    })
+                }
+
+
+            },
+            error: function (err) {
+
+                console.log(err);
+            }
+        });
+        @*$.ajax({
+            type: "GET",
+            url: '@Url.Action("TransferRevenueDistribution", "Customer", new { area = "Portal" })?Id=' + invId+ "&EffectiveDate=" + $('#trans_ddlTransferEffectiveDate').val(),
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+
+                $('#form_revenuedistribution_' + invId).html(data);
+                debugger;
+                for (var i = 1; i <= parseInt($('#hdftransferfrenchiseedetail_linecount').val()) ; i++) {
+
+                    var exist = $.grep(lstDistributionFranchiseeList, function (obj) { return (obj.FranchiseeId === parseInt($('#fdt_hdfFrenchiseeId' + i).val()) && obj.LineNo === parseInt($('#fdt_txtlinenumber' + i).val())); });
+                    if (exist.length === 0) {
+                        var lnRFranchiseeDistribution = parseInt($('#hdfInvoiceDetail_FranchiseeDistributionCount_' + invId).val());
+
+                        var lnFranchiseeDistribution = lnRFranchiseeDistribution + 1; //$('#fdt_txtfranchiseeamount' + i).attr('relLine');
+
+                        $('#hdfInvoiceDetail_FranchiseeDistributionCount_' + invId).val(lnFranchiseeDistribution);
+
+                        var amtFA = parseFloat($('#fdt_txtfranchiseeamount' + i).val());
+                        var amtFAFEE = 0.00;
+                        var ct_totDays = $('#hdfInvoiceDetail_InvoiceAllDay_' + invId).val(); // new Date(new Date($('#trans_ddlTransferEffectiveDate').val()).getYear(), new Date($('#trans_ddlTransferEffectiveDate').val()).getMonth(), 0).getDate();
+                        var ct_days = $('#hdfInvoiceDetail_InvoiceWorkingDay_' + invId).val(); //(new Date($('#trans_ddlTransferEffectiveDate').val()) - new Date($('#hdfInvoiceDetail_InvoiceDate').val())) / 1000 / 60 / 60 / 24;
+
+                        var amtFAFF = (amtFA / ct_totDays) * ct_days; //(ct_totDays - ct_days-1);
+
+
+                        $.each(DistributionfeeListFinal, function (index1, value1) {
+                            if (value1.FranchiseeId == parseInt($('#fdt_hdfFrenchiseeId' + i).val()) && value1.ContractDetailId == parseInt($('#fdt_hdfcontractdetailid' + i).val()))
+                                amtFAFEE += (amtFAFF * value1.Amount / 100);
+                        });
+
+                        trRow = "";
+                        trRow += '<tr>';
+                        trRow += '   <td style="text-align:center">'
+                        trRow += '   <input type="hidden" reltfline="' + lnFranchiseeDistribution + '" id="fdt_INV_hdfcontractdetailid_' + invId + '_' + lnFranchiseeDistribution + '" name="fdt_INV_hdfcontractdetailid_' + invId + '_' +lnFranchiseeDistribution + '" value="' + $('#fdt_hdfcontractdetailid' + i).val() + '" />'
+                        trRow += '   <input type="hidden" reltfline="' + lnFranchiseeDistribution + '" id="fdt_INV_hdfFrenchiseeId_' + invId + '_' + lnFranchiseeDistribution + '" name="fdt_INV_hdfFrenchiseeId_' + invId + '_' +lnFranchiseeDistribution + '" value="' + $('#fdt_hdfFrenchiseeId' + i).val() + '" />'
+                        trRow +=     $('#fdt_ddldetaillinenumber' + i + ' option[value="' + $('#fdt_ddldetaillinenumber' + i).val() + '"]').text() + '</td>';
+                        trRow += '   <td style="text-align:center;">' + $('#fdt_txtfranchiseeno' + i).val() + '</td>';
+                        trRow += '   <td style="white-space:pre-line;text-align:center;">' + $('#fdt_txtfranchiseename' + i).val() + '</td>';
+                        trRow += '   <td style="white-space:pre-line;text-align:center;">' + $('#trans_ddlTransferEffectiveDate').val()+'</td>';
+                        trRow += '   <td style="text-align:right;"><input type="text" reltfline="' + lnFranchiseeDistribution + '" relseqnumber="' + i + '" relfdt_invamt="relfdt_invamt' + lnFranchiseeDistribution + '" relinvline="' + lnFranchiseeDistribution + '" id="fdt_inv_txtfranchiseeamount_' + invId + '_' + lnFranchiseeDistribution + '" name="fdt_inv_txtfranchiseeamount_' + invId + '_' +lnFranchiseeDistribution + '" required="" value="' + amtFAFF.toFixed(2) + '" class="form-control input-sm cnumeric" style="text-align:right;padding: 5px;border-radius: 0px;"></td>';
+                        trRow += '   <td style="text-align:right"><input type="text" reltfline="' + lnFranchiseeDistribution + '" relseqnumber="' + i + '"relfdt_invamt="relfdt_invamtfee' + lnFranchiseeDistribution + '" relinvline="' + lnFranchiseeDistribution + '" id="fdt_inv_txtfranchiseeamountfee_' + invId + '_' + lnFranchiseeDistribution + '" name="fdt_inv_txtfranchiseeamountfee_' + invId + '_' +lnFranchiseeDistribution + '" required="" readonly value="' + amtFAFEE.toFixed(2) + '" class="form-control input-sm cnumeric" style="text-align:right;padding: 5px;border-radius: 0px;"></td>';
+                        trRow += '   <td style="text-align:right;"><input type="text" reltfline="' + lnFranchiseeDistribution + '" relseqnumber="' + i + '" relfdt_invamt="relfdt_invamt' + lnFranchiseeDistribution + '" relinvline="' + lnFranchiseeDistribution + '" id="fdt_inv_txtfranchiseeamounttotal_' + invId + '_' + lnFranchiseeDistribution + '" name="fdt_inv_txtfranchiseeamounttotal_' + invId + '_' +lnFranchiseeDistribution + '" required="" readonly value="' + (parseFloat(amtFAFF) - parseFloat(amtFAFEE)).toFixed(2) + '" class="form-control input-sm cnumeric" style="text-align:right;padding: 5px;border-radius: 0px;"></td>';
+                        trRow += '</tr>';
+
+                        $("#tblRevenueDistributionInvoiceDetail_" + invId+">tbody").append(trRow);
+
+
+                        applyMaskCurrency("#fdt_inv_txtfranchiseeamount_" + invId + '_' +lnFranchiseeDistribution)
+                        applyMaskCurrency("#fdt_inv_txtfranchiseeamountfee_" + invId + '_' +lnFranchiseeDistribution)
+                        applyMaskCurrency("#fdt_inv_txtfranchiseeamounttotal_" + invId + '_' +lnFranchiseeDistribution)
+
+
+                        $('#fdt_inv_txtfranchiseeamount_' + invId + '_' + lnFranchiseeDistribution).change(function () {
+                            var _this = $(this);
+                            if (_this.val() != '' && _this.val() != '0') {
+                                var tempamtFAFEE = 0.00;
+                                $.each(DistributionfeeListFinal, function (index1, value1) {
+                                    if (value1.FranchiseeId == parseInt($('#fdt_INV_hdfFrenchiseeId' + _this.attr('reltfline')).val()) && value1.ContractDetailId == parseInt($('#fdt_INV_hdfcontractdetailid' + _this.attr('reltfline')).val()))
+                                        tempamtFAFEE += (parseFloat(_this.val()) * value1.Amount / 100);
+                                });
+                                $('#fdt_inv_txtfranchiseeamountfee_' + invId + '_' +lnFranchiseeDistribution).val((parseFloat(tempamtFAFEE)).toFixed(2))
+                                $('#fdt_inv_txtfranchiseeamounttotal_' + invId + '_' +lnFranchiseeDistribution).val((parseFloat(_this.val()) - parseFloat(tempamtFAFEE)).toFixed(2))
+                            }
+                            else {
+                                $('#trans_dfeeLink' + lnFranchiseeDistribution).html('');
+                            }
+                        });
+                    }
+                }
+
+                $('#spnTransEffectiveDateR_' + invId).html($('#trans_ddlTransferEffectiveDate').val())
+
+                if (invIdNext == invId) {
+                    $('#btnRevenueDistributionInvoiceDetail_OnSave' + invId).val("Save")
+                }
+                else {
+                    $('#btnRevenueDistributionInvoiceDetail_OnSave' + invId).val("Continue")
+                    $('#spnTransEffectiveDateR_' + invId).html($('#trans_ddlTransferEffectiveDate').val())
+                }
+
+                $('#hdfInvoiceDetailNext_InvoiceId_' + invId).val(invIdNext);
+
+
+                if (tInvoiceId > 0) {
+
+                    $("#modal_partialrevenueinvoicedetail_" + tInvoiceId).modal({ backdrop: 'static' });
+                }
+
+
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });*@
+    }
+
+    function showManualInvoiceForInDe() {
+        lstContractDetailServiceTypeList = [];
+        lineNo = 0;
+        flineNo = 0;
+        var sURL = '@Url.Action("RenderCustomerDetailManualInvoicePopup", "Customer", new { area = "Portal" })?id=' + @Model.CustomerIncreaseDecreaseDetail.CustomerId;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+
+                $('#form_modal_customermanualinvoiceInDe').html(data);
+                onlyDecimal("#txtCommissionAmount");
+                bindcustomerdetail($("#CustomerViewModel_CustomerId").val());
+                $("#hdftotallineno").val(lineNo);
+                $("#hdfftotallineno").val(flineNo);
+                $('#txtInvoicedate').inputmask("mm/dd/yyyy", {});
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("GetContractDetailServiceTypeList", "AccountReceivable", new { area = "Portal" })',
+                    success: function (data) {
+                        console.log(data);
+                        lstContractDetailServiceTypeList = data;
+                        addNewEntry();
+
+                        setTimeout(function () {
+                            $('#txtInvoiceDescription').val('Customer Increase')
+                            $('#ContractDetailServiceTypeList1').val(1)
+                            $('#txtdescription1').val('Fab-2018')
+                            console.log((parseFloat($("#lstContractDetail_0__Amount").val()) - parseFloat($("#lstContractDetail_0__OAmount").val())).toFixed(2))
+                            $('#txtunitprice1').val((parseFloat($("#lstContractDetail_0__Amount").val()) - parseFloat($("#lstContractDetail_0__OAmount").val())).toFixed(2));
+                            $('#ddldetaillinenumber1').val(-1);
+                            addNewEntry();
+                        }, 1000)
+
+                    }
+                })
+
+
+
+                $("#modal_CustomerManualInvoice").modal({ backdrop: 'static' });
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function applyMaskCurrency(id) {
+        $(id).inputmask("currency", {
+            alias: 'currency',
+            prefix: '$ ',
+            digits: 2,
+            autoUnmask: true,
+            removeMaskOnSubmit: true,
+            unmaskAsNumber: true,
+            allowPlus: false,
+            allowMinus: false,
+            autoGroup: true,
+            groupSeparator: ",",
+        });
+    }
+
+    function btnTransDistributionFeeSaveOnClick() {
+        $.each(DistributionfeeList, function (index, value) {
+            var new_arr = $.grep(DistributionfeeListFinal, function (n, i) { return (n.ContractDetailId == value.ContractDetailId && n.FranchiseeId == value.FranchiseeId && n.FeeId == value.FeeId); });
+            if (new_arr.length > 0) {
+                var amt = parseFloat($('#DistributionFeeAmount_' + value.FranchiseeId + '_' + value.ContractDetailId + '_' + value.FeeId).val());
+                new_arr[0].Amount = amt;
+            }
+            else {
+                DistributionfeeListFinal.push(value);
+            }
+
+
+            if (DistributionfeeListFinal.length > 0)
+                $("#fdt_lnkAppendDistributionFee").text('View/Edit');
+
+
+        });
+        $("#CustomerDistributionDetail_FeeString").val(JSON.stringify(DistributionfeeListFinal));
+
+        DistributionfeeList = [];
+        $("#modal_Distribution").modal('hide');
+    }
+
+    var DistributionfeeList = [];
+    var DistributionfeeListFinal = [];
+
+    function Distributionfee(fid, ContractDetailId, DistributionId, ln) {
+
+        $('#hdfDestributionFee_FranchiseeId').val(fid);
+        $('#hdfDestributionFee_ContractDetailId').val(ContractDetailId);
+        $('#hdfDestributionFee_DestributionId').val(DistributionId);
+        $('#hdfDestributionFee_Linenumber').val(ln);
+        var sURL = '@Url.Action("FranchiseeDistributionFeeData", "Customer", new { area = "Portal" })?FranchiseeId=' + fid + '&ContractDetailId=' + ContractDetailId + '&DistributionId=' + DistributionId;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#feelist>tbody').html('');
+                console.log(data)
+                DistributionfeeList = data;
+                DistributionfeeBindData(DistributionfeeList);
+
+                if (DistributionfeeList.ContractDetailId != undefined) {
+                    DistributionfeeList.push({
+                        DistributionFeesId: DistributionfeeList.DistributionFeesId, DistributionId: DistributionfeeList.DistributionId, CustomerId: $('#hdffrenchiseedetail_customerid').val(), ContractDetailId: DistributionfeeList.ContractDetailId,
+                        FranchiseeId: DistributionfeeList.FranchiseeId, DetailLineNumber: DistributionfeeList.DetailLineNumber, FeeId: DistributionfeeList.FeeId, Amount: DistributionfeeList.Amount
+                    });
+                }
+                $("#modal_Distribution").modal({ backdrop: 'static' });
+
+            }
+        });
+    }
+
+    function TransFranchiseeserviceAddDestribution() {
+
+        $.ajax({
+            url: '@Url.Action("GetFeeData", "Customer","Portal")',
+            success: function (res) {
+                console.log(res);
+                FeeDataForDistribution = res;
+                var tempRow = "";
+                $('#feeListAdd tbody').html('');
+                $.each(res, function (index, value) {
+                    tempRow = "";
+                    tempRow += '<tr>';
+                    tempRow += '    <td><input type="checkbox" rel="feeid_distribution" value="' + value.FeeId + '" /></td>';
+                    tempRow += '    <td>' + value.FeeName + '</td>';
+                    tempRow += '    <td>' + value.FeeRateTypeName + '</td>';
+                    tempRow += '    <td style="text-align: right;">' + (value.FeeRateTypeListId == 1 ? (value.Amount + '%') : ('$ ' + value.Amount)) + '</td>';
+                    tempRow += '</tr>';
+                    $('#feeListAdd tbody').append(tempRow);
+                });
+
+                $("#modal_AddDistribution").modal({ backdrop: 'static' });
+            },
+            error: function () { }
+        });
+    }
+    function DistributionfeeBindData(DistributionfeeList) {
+        $('#feelist>tbody').html('');
+        $.each(DistributionfeeList, function (index, value) {
+
+            tempRow = "";
+            tempRow += '<tr relDistributionFeeId="' + value.FranchiseeId + '_' + value.ContractDetailId + '_' + value.FeeId + '">';
+            tempRow += '<td style="vertical-align: middle;">' + value.FeeName + '</td>';
+            tempRow += '<td style="vertical-align: middle;">' + value.FeeRateTypeName + '</td>';
+            tempRow += '<td><input type="text" id="DistributionFeeAmount_' + value.FranchiseeId + '_' + value.ContractDetailId + '_' + value.FeeId + '" class="form-control input-sm pp" value="' + value.Amount + '" /></td>';
+            tempRow += '</tr>';
+            $('#feelist>tbody').append(tempRow);
+
+            $('#DistributionFeeAmount_' + value.FranchiseeId + '_' + value.ContractDetailId + '_' + value.FeeId).change(function () {
+                var new_arr = $.grep(DistributionfeeList, function (n, i) { return (n.FranchiseeId == value.FranchiseeId && n.ContractDetailId == value.ContractDetailId && n.FeeId == value.FeeId); });
+                if (new_arr.length > 0) {
+                    var amt = parseFloat($(this).val());
+                    new_arr[0].Amount = amt;
+                }
+            });
+
+        });
+    }
+
+    function CustomerIncreaseDecreaseDetail_TypeOnChange(item) {
+        var _sVal = $(item).val();
+
+        if (_sVal == 1) {
+            $('#frm_CustomerDetailIncrease .INDESubmit').show();
+
+            $('#frm_CustomerDetailIncrease .INDESkipFF').hide();
+        } else {
+            $('#frm_CustomerDetailIncrease .INDESkipFF').show();
+            $('#frm_CustomerDetailIncrease .INDESubmit').hide();
+        }
+
+
+    }
+
+</script>
+

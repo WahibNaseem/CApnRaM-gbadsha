@@ -1,0 +1,247 @@
+﻿@model JKApi.Data.DAL.PaymentGatewayDetail
+@{
+    ViewBag.Title = "PaymentGateway";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    }
+@using (Html.BeginForm("PaymentGatewayInsert", "Administration", FormMethod.Post, new { @id = "form_wizard_1", @role = "form", @class = "form form-horizontal" }))
+{
+@Html.HiddenFor(one => one.Id)
+    <div class="custom-form portlet light" id="">
+        <div class="portlet-body">
+            <div class="tab-pane active" id="tb_fr_page1">
+                <h4 class="blocktop">Payment Gateway</h4>
+
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        Gateway Name
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(one => one.PaymentGateway, new { @class = "form-control input-sm", required = "required", placeholder = "Required" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        Login ID
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(one => one.LoginID, new { @class = "form-control input-sm", required = "required", placeholder = "Required" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        Transaction Key
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(one => one.TransactionKey, new { @class = "form-control input-sm", required = "required", placeholder = "Required" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        Merchant Id
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(one => one.merchantid, new { @class = "form-control input-sm", placeholder = "Required" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        IsActive
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-8">
+                        @Html.CheckBoxFor(one => one.IsActive.Value, new { Name="IsActive", @class = "i-checks", placeholder = "Required", @checked = "true" })
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div class="col-md-12" style="padding-right: 28px;">
+                        <button type="submit" class="btn btn-primary  pull-right" id="btnSave" style="margin-left: 10px;">
+                            Save
+                            <i class="fa fa-check"></i>
+                        </button><button type="submit" class="btn btn-primary  pull-right" id="btnUpdate" style="margin-left: 10px;display:none;">
+                            Update
+                            <i class="fa fa-check"></i>
+                        </button>&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-primary  pull-right" id="btnClear" style="margin-left: 10px;">
+                            Clear
+                            <i class="fa fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+}
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover order-column" id="PaymentGatewayList" style="display:none;">
+        <thead>
+            <tr>
+                <th style="width:150px;text-align:center;">
+                    Payment Gateway
+                </th>
+                <th style="width:90px;text-align:center;">
+                    Login ID
+                </th>
+                <th style="width:90px;text-align:center;">
+                    Transaction Key
+                </th>
+                <th style="width:90px;text-align:center;">
+                    Merchant Id
+                </th>
+
+                <th style="text-align:center;width:90px;">
+                    Created Date
+                </th>
+                <th style="text-align:center;width:20px;">
+                    Active
+                </th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+<script src="~/Content/admin/assets/global/plugins/jquery.min.js"></script>
+@section pageplugins{
+
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+
+}
+
+@if (Request.IsSecureConnection)
+    {
+        <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    }
+    else
+    {
+        <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    }
+<script>
+    $(document).ready(function () {
+        var _monthVal = "";
+        var _yearVal = "";
+        var sURL = '@Url.Action("GetPaymentgatewayList", "Administration", new { area = "Portal" })';
+        var dtable = $('#PaymentGatewayList').dataTable({
+            "ordering": false,
+            "bPaginate": false,
+            "bAutoWidth": false,
+            "dom": '<"top">rt<"bottom"lp><"clear">',
+            "aaSorting": [[0, "desc"]],
+            "sAjaxSource": sURL,
+            "sAjaxDataProp": "aadata",
+            "rowCallback": function (nRow, data) {
+            },
+
+            "aoColumns": [
+                {
+                    "sName": "PaymentGateway",
+                    "bSortable": false,
+                    "mRender": function (data, type, full) {
+                        return '<a href="javascript:void(0);" onclick="btnOpenInvoiceDetail(' + full.Id + ')">' + full.PaymentGateway + '</a>';
+                    }
+                },
+                {
+                    "sName": "LoginID",
+                    "bSortable": true,
+                    "mRender": function (data, type, full) {
+                        return full.LoginID;
+                    }
+                },
+                {
+                    "sName": "TransactionKey",
+                    "bSortable": true,
+                    "sClass": "alignCenter",
+                    "mRender": function (data, type, full) {
+                        return full.TransactionKey;
+                    }
+                },
+                {
+                    "sName": "merchantid",
+                    "bSortable": true,
+                    "sClass": "alignCenter",
+                    "mRender": function (data, type, full) {
+                        return full.merchantid;
+                    }
+                },
+                
+                {
+                    "sName": "CreatedDate",
+                    "bSortable": true,
+                    "mRender": function (data, type, full) {
+                        return moment(new Date(parseInt(full.CreatedDate.substr(6)))).format("MM/DD/YYYY");
+                    }
+                },
+
+
+                {
+                    "sName": "IsActive",
+                    "bSortable": true,
+                    "sClass": "alignCenter",
+                    "mRender": function (data, type, full) {
+                        return full.IsActive;
+                    }
+                },
+            ]
+        });
+        $('#PaymentGatewayList').show();
+
+            var Inserted = @ViewBag.Inserted;
+            if (Inserted == "1") {
+                    $("#PaymentGateway").val("");
+                    $("#LoginID").val("");
+                    $("#TransactionKey").val("");
+                    $("#merchantid").val("");
+
+        }
+        $("#btnClear").click(function () {
+            $("#PaymentGateway").val("");
+            $("#LoginID").val("");
+            $("#TransactionKey").val("");
+            $("#merchantid").val("");
+            $("#Id").val("");
+            $("#btnUpdate").hide();
+            $("#btnSave").show();
+        });
+    });
+
+    function btnOpenInvoiceDetail(id) {
+        $("#Id").val(id);
+           var sURL = '@Url.Action("GatewayDetail", "Administration", new { area = "Portal" })?Id=' + id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $("#PaymentGateway").val(data.aadata.PaymentGateway);
+                    $("#LoginID").val(data.aadata.LoginID);
+                    $("#TransactionKey").val(data.aadata.TransactionKey);
+                    $("#merchantid").val(data.aadata.merchantid);
+                    $("#btnUpdate").show();
+                    $("#btnSave").hide();
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+    }
+</script>
+

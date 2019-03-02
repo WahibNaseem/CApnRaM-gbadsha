@@ -1,0 +1,426 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <link href="~/Content/admin/assets/layouts/layout2/css/custom-rev-1.css" rel="stylesheet"/>
+}
+
+<style type="text/css">
+     .row { 
+         margin: 0; 
+         padding: 3px 0; 
+     } 
+     .topheader { 
+         font-size: 14px; 
+         font-weight: bold; 
+         color: #FFF !important; 
+         text-transform: uppercase; 
+         margin-top: 3px; 
+     } 
+     .alignCenter { 
+         text-align: center; 
+     } 
+     .custom-listbox .headerbox {
+         padding: 3px 0px 3px 5px;
+         font-weight: normal;
+     }
+     .custom-listbox {
+         margin-top: 4px;
+         margin-bottom: 0px;
+     }
+     #tblRegions th { 
+         vertical-align: middle; 
+     } 
+
+     .label-horizontal-alignment {
+         margin-top: 10px; 
+         margin-right: -15px;         
+     }
+     
+     .large-label-horizontal-alignment {
+         margin-top: -2px; 
+         margin-right: -28px;
+     }     
+     
+     .modal {
+         
+     }
+     .modal-vertical-align-helper {
+         display: table;
+         height: 100%;
+         width: 100%;
+     }
+     
+     .modal-vertical-align-center {
+         display: table-cell;
+         vertical-align: middle;
+     }
+     
+     .modal-content {
+         width: inherit;
+         height: inherit;
+         margin: 0 auto;
+     }
+     
+</style>
+
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC; color: #fff;">
+        <div class="col-md-12">
+            <div class="alignCenter">
+                <div class="col-md-12 topheader">POST TO TRAVERSE</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="custom-listbox">
+    <div class="headerbox">
+        <div class="row" id="filterControls">
+            <form class="form-horizontal">
+                <div class="form-row">
+                    <div class="col-md-2">
+                        <div class="input-icon">
+                            <i class="icon-magnifier icon-align-right"></i>
+                            <input id="inputSearch" type="text" autocomplete="off" placeholder="Search..." value="" class="form-control typeahead" tabindex="1"/>
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="col-md-push-10 pull-right"><input type="button" name="btnProcess" id="btnProcess" class="btn btn-primary button-next" value="Process Now" onclick="processPostTrxToTraverse();"  tabindex="3"/></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="tablebox" style="background-color: #fff;">
+    <div class="table-responsive" id="divtblRegions" style="display: none;">
+        <table class="table table-striped table-bordered table-hover order-column" id="tblRegions" style="display: none; margin-top: 0 !important;">
+            <thead>
+            <tr>
+                <th style="text-align: center; width: 1%;"><span style="margin-left: 21px;"></span><input type="checkbox" id="chkSelectAll" onclick="SelectAllRegions(this)"/></th>
+                <th style="text-align: left; width: 3%; font-weight: bolder;">Office Code</th>
+                <th style="text-align: left; width: 30%; font-weight: bolder;">Regional Office</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade custom-model custom-form-design" id="modalPostTrxToTraverse" tabindex="-1" role="basic" aria-hidden="true">    
+    <div class="modal-vertical-align-helper">
+    <div class="modal-dialog modal-vertical-align-center" id="modalDialogDiv">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding: 0px !important; border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important; margin-right: 12px !important;"></button>
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px; padding: 7px !important; font-size: 12px; font-weight: bold; background: #3598DC !important; color: #FFF !important; border: 1px solid #3598DC !important; padding: 0px; border-radius: 8px 8px 0 0; text-transform: uppercase;">
+                    Post Transactions To Traverse
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <br></br>
+                    <div><span class="lead">Ready To Process 10 Regional Offices</span></div>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                            <span class="sr-only">Processing 10 Regional Offices</span>
+                        </div>
+                    </div>
+                </div>
+                <hr/>
+                <div class="row">
+                    <div class="col-md-6 text-left pull-left"></div>
+                    <div class="col-md-push-6 pull-right">
+                        <button type="button" id="btnClose" class="btn" data-dismiss="modal">Close</button>
+                        <button type="button" id="btnSendEmail" class="btn btn-primary" onclick="sendRequestToPayEmail()">Start</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-push-6 pull-left">&nbsp;</div>
+                    <div class="col-md-6 text-right pull-right text-info hidden" id="processingMsg"><i class="fa fa-gear fa-spin text-info"></i> <strong>Sending Request. Window will close when finished.</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    
+</div>
+<input type=hidden id="pageSize" value="-1"></input> 
+
+@section pageplugins{
+    @if (Request.IsSecureConnection)
+    {
+        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    }
+    else
+    {
+        <script src="http://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    }
+}
+@section scripts{
+
+    <script type="text/javascript">
+        var regionsDataTable;
+//        var vendorData = [];
+//        var jsonVendorData = "";
+//        var amountToPay = 0;
+//        var subTotalGrossPay;
+//        var grandTotalGrossPay;
+//
+//        var payTotals = {
+//            amount: 0,
+//            vendors: 0,
+//            invoices: []
+//        };
+//
+//        /*
+//         * Proxy object to handle relevant page events - German Sosa 10/2/2018
+//         */
+//        var payTotalsHandler = {
+//            set: function(target, key, value) {
+//                if (key === 'amount') {
+//                    document.querySelector('#amountToPay').textContent = formatCurrency(value, true);
+//                    document.querySelector('#totalToPay').textContent = formatCurrency(value, true);
+//                    target[key] = value;
+//                }
+//                if (key === 'invoices') {
+//                    target[key].push(value);
+//                }
+//            }
+//        };
+//        
+//        var payTotalsProxy = new Proxy(payTotals, payTotalsHandler);
+//        payTotalsProxy.amount = 0;
+
+        /*
+         * Brings up modal form to request payment or message if does not meet requirements - German Sosa 10/2/2018
+         */
+        function processPostTrxToTraverse() {
+//            if (parseFloat(payTotalsProxy.amount) === 0) {
+//                swal({
+//                    title: "Information",
+//                    text: "At least one invoice selection is required before you send this request.",
+//                    type: "info",
+//                    showCancelButton: false
+//                });
+//
+//            } else {
+                $("#modalPostTrxToTraverse").modal({ backdrop: 'static' });
+//            }
+        }
+//
+//        /*
+//         * Remove crappy CSS - German Sosa 10/2/2018
+//         */
+        document.addEventListener('DOMContentLoaded',
+            function() {
+                document.querySelector('#inputSearch').onkeyup = changeEventHandler;
+//                document.querySelector('#selectVendorList').onchange = changeEventHandler;
+                document.querySelector('link[href="/Content/admin/assets/layouts/layout2/css/custom.css"]').disabled =
+                    true;
+                document.querySelector('link[href="/Content/admin/assets/layouts/layout2/css/custom.css"]').remove();
+                $('#inputSearch').focus();
+            });
+
+        initDataTable();
+
+//        $('.modal-dialog').draggable();
+        $('#tblRegions').show();
+        $('#divtblRegions').show();
+
+        /*
+         * Proxy event handlers - German Sosa 10/2/2018
+         */
+        function changeEventHandler(event) {
+//            switch (event.target.id) {
+//            case "inputSearch":
+//                regionsDataTable.search(this.value).draw();
+//                break;
+//            case "selectVendorList":
+//                regionsDataTable.search(this.value).draw();
+//                break;
+//            };
+        }
+
+        /*
+         * Selects all regional offices when the main table checkbox all is clicked
+         * German Sosa 10/10/2018
+         */
+        function SelectAllRegions(checkboxObject) {
+            var allRegionsCheckboxes = document.querySelectorAll('.allRegionalOffices');
+            allRegionsCheckboxes.forEach((element) => {
+                element.checked = checkboxObject.checked;
+            });
+        }
+
+        //TODO: Get rid of jQuery! Go JS All the way please. -German Sosa
+        function initDataTable() {
+            var selectedRegion = '@ViewBag.selectedRegionId';
+            var d = new Date();
+            var todaysDate = d.getMonth().toString() +
+                '/' +
+                d.getDate().toString() +
+                '/' +
+                d.getFullYear().toString();
+            var ps = document.querySelector('#pageSize').value;
+
+            var sURL = '@Url.Action("GetRegionalOffices", "Company", new {area = "Portal"})';
+            var groupColumn = 0;
+        regionsDataTable = $('#tblRegions').DataTable({
+            paging: false,
+                bAutoWidth: false,
+                cache: false,
+                ordering: false,
+                iDisplayLength: 100,
+                info: false,
+                dom: "<'table-responsive't><'bottom'ip><'clear'>",
+                ajax: {
+                    url: sURL,
+                    dataSrc: function(jsonData) {
+                        return jsonData.returnedData;
+                    }
+                },
+                columns: [
+                    {
+                        data: "RegionId",
+                        render: function(data, type, full) {
+                            return '<input type="checkbox" name="chkRegion' +
+                                full.RegionId +
+                                '" class="allRegionalOffices" id="chkRegion' +
+                                full.RegionId + ' onchange="SelectRegion(this)" rel="' + full.RegionId + '">' ;
+                        },                        
+                        sortable: false,
+                        visible: true,
+                        class: "text-center"                       
+                    },
+                    {
+                        data: "Acronym",
+                        sortable: false,
+                        visible: true,
+                        class: "text-center"                        
+                    },
+                    {
+                        data: "Name",
+                        sortable: false,
+                        visible: true,
+                        class: "text-left"                        
+                    }
+                ]
+            });
+        }
+        /*
+         * Triggered when the modal form is opened  - German Sosa 10/2/2018
+        */
+        $('#modalPostTrxToTraverse').on('shown.bs.modal',
+            function(e) {
+                document.querySelector('#btnSendEmail').disabled = false;
+                var checkboxesVendor = document.querySelectorAll('.allOpenInvoices');
+                let innerHTMLContent = '';
+                let innerHTMLContentTableHeader =
+                    '<table class="table table-responsive table-stripped"><thead><tr>' +
+                        '<th class="col-md-5 text-left"><strong>Vendor</strong></th>' +
+                        '<th class="col-md-2 text-center"><strong>Invoice Number</strong></th>' +
+                        '<th class="col-md-2 text-center"><strong>Due Date</strong></th>' +
+                        '<th class="col-md-2 text-right"><strong>Amount</strong></th>' +
+                        '</tr></thead>';
+
+                checkboxesVendor.forEach((element, index) => {
+                    if (element.checked) {
+                        var jsonVendor = String(element.value);
+                        jsonVendor = jsonVendor.replace(/[|]/g, '"').replace(/[=]/g, "'");
+                        var vendor = JSON.parse(jsonVendor);
+
+                        innerHTMLContent += '<tr>' +
+                            '<td class="col-md-5 text-left">' +
+                            vendor.VendorName +
+                            '</td>' +
+                            '<td class="col-md-2 text-center">' +
+                            vendor.InvoiceNum +
+                            '</td>' +
+                            '<td class="col-md-2 text-center">' +
+                            formatJSONDateUtc(vendor.NetDueDate) +
+                            '</td>' +
+                            '<td class="col-md-2 text-right">' +
+                            formatCurrency(vendor.GrossDueAmt, true) +
+                            '</td></tr>';
+                    }
+
+                    var innerContent = innerHTMLContentTableHeader + innerHTMLContent + '</table>';
+
+                    $('#vendorInvoiceList').html(innerContent);
+                });
+                $('#txtEmailBody').focus();
+            });
+
+        function postTrxToTraverseProcess() {
+//            document.querySelector('#processingMsg').classList.remove('hidden');
+//            document.querySelector('#btnSendEmail').disabled = true;
+
+            var mailData = {
+                from: 'fms@janiking.com',
+                to: document.querySelector('#txtToEmail').value,
+                cc: document.querySelector('#txtCcEmail').value,
+                subject: document.querySelector('#txtSubjectEmail').value.replace(',', ';'),
+                body: document.querySelector('#txtEmailBody').value,
+                invoices: '{ "invoices" : payTotals.invoices }'
+            };
+//            let sURL = '@Url.Action("SendAnEmail", "Company", new {area = "Portal"})';
+            let sURL = '@Url.Action("SendAnEmail", "Company", new {area = "Portal"})?to=' +
+                mailData.to +
+                '&body=' +
+                mailData.body +
+                '&subject=' +
+                mailData.subject +
+                '&cc=' +
+                mailData.cc +
+                '&invoices=' +
+                JSON.stringify(payTotals.invoices);
+            fetch(sURL)
+                .then(function(callResponse) {
+                    if (callResponse.status === 200) {
+                        document.querySelector('#processingMsg').classList.add('hidden');
+                        payTotalsProxy.amount = 0;
+                        document.querySelector('#chkSelectAll').checked = false;
+                        var checkboxesAll = document.querySelectorAll("input[type='checkbox']:checked");
+                        checkboxesAll.forEach((element) => {
+                            element.checked = false;
+                        });
+                        $("#modalPostTrxToTraverse").modal('hide');
+                    }
+                }).catch(function(error) {
+                });
+        }
+
+        //TODO: Move below javascript function to a file and include when necessary - German Sosa
+        /*
+         * The following functions should be on a main utilities class/file and we need to use webpack - German Sosa
+         * For now, I'll leave them here, but they have to be moved.
+         */
+        function formatJSONDateUtc(jsonDate) {
+            if (jsonDate != null) {
+                var dtstr = jsonDate.substr(6);
+                var dateString = dtstr.substring(0, dtstr.length - 2);
+                var currentTime = new Date(parseInt(dateString));
+                var date = moment.utc(currentTime).format("MM/DD/YYYY");
+                return date;
+            }
+            return null;
+        }
+
+        function formatCurrency(total, dollar) {
+            dollar = (dollar == true ? true : false);
+            var neg = false;
+            if (total < 0) {
+                neg = true;
+                total = Math.abs(total);
+            }
+            return (neg ? "-" : '') +
+                (dollar ? "$" : "") +
+                parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        };
+
+    </script>
+}

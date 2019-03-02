@@ -1,0 +1,708 @@
+﻿@model JKViewModels.Franchise.FranchiseeTransactionViewModel
+@section styles{
+
+    <style type="text/css">
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .pad-right {
+            padding-right: 0px !important;
+        }
+
+        #divNewTransaction .input-sm {
+            padding: 3px 3px !important;
+        }
+    </style>
+}
+
+
+<form action="@Url.Action("FranchiseeManualTrasactionSave", "Franchise", new { area = "Portal" })" method="post" id="form_FranchiseeTrasaction">
+    @Html.HiddenFor(o => o.FranchsieeTrxTypeListId);
+    <div class="form form-horizontal" id="divNewTransaction">
+        <div class="custom-form portlet light">
+            <div class="headerbox">
+                <div class="row">
+                    <div class="col-md-12">
+                        Franchisee Manual Transaction
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: -12px !important;margin-right: 12px !important;"></button>
+                </div>
+            </div>
+            <div class="portlet-body form">
+                <div class="form-body">
+                    @Html.HiddenFor(o => o.FranchiseeManualTransactionTempId)
+                    @Html.HiddenFor(o => o.MasterTrxTypeListId)
+                    @Html.HiddenFor(o => o.FranchiseeId, new { @class = "form-control input-sm date-picker", required = "required", id = "hdfFranchiseeId" })
+                    <input type="hidden" name="hdfTaxRate" id="hdfTaxRate" value="" />
+                    <div class="form-group" style="border:1px solid #999999;">
+                        <div class="form-group">
+                            <div class="col-md-2 control-label" style="padding-top: 0px;">
+                                Franchisee No.:
+                            </div>
+                            <div class="col-md-3">
+                                <span id="spnFranchiseeNumber"></span>
+                            </div>
+                            <div class="col-md-offset-1 col-md-2 control-label" style="padding-top: 0px;">
+                                Address:
+                            </div>
+                            <div class="col-md-4">
+                                <span id="spnFranchiseeAddress"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <div class="col-md-2 control-label" style="padding-top: 0px;">
+                                Franchisee Name:
+                            </div>
+                            <div class="col-md-3">
+                                <span id="spnFranchiseeName"></span>
+                            </div>
+                            <div class="col-md-offset-3 col-md-4">
+                                <span id="spnFranchiseeCityStatePincode"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="border:1px solid #3598dc;padding-left: 0px;padding-right: 0px;">
+                        @if (Model.FranchsieeTrxTypeListId != null)
+                        {
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="col-md-2 control-label pad-right">
+
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <div class="icheck-inline" style="margin-top: 0px;">
+                                                <label class="check-inline" style="margin-top: 6px;margin-right: 35px;">
+                                                    @if (Model.FranchsieeTrxTypeListId == 1)
+                                                    {
+                                                        <input type="radio" class="i-checks rdoCredit" name="membership1" value="1" id="rdoCredit" checked />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="radio" class="i-checks rdoCredit" name="membership1" value="1" id="rdoCredit" />
+                                                    }
+                                                    @*@Html.RadioButtonFor(o => o.FranchsieeTrxTypeListId, new { @name = "membership1", @value = "1", @class = "i-checks rdotype", @id = "rdoCredit", @checked = "checked" })*@
+                                                    <span>Credit</span>
+                                                </label>
+                                                <label class="check-inline" style="margin-top: 6px;">
+                                                    @if (Model.FranchsieeTrxTypeListId == 3)
+                                                    {
+                                                        <input type="radio" class="i-checks rdoPayment" name="membership1" value="3" id="rdoPayment" checked />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="radio" class="i-checks rdoPayment" name="membership1" value="3" id="rdoPayment" />
+                                                    }
+                                                    @*@Html.RadioButtonFor(o => o.FranchsieeTrxTypeListId, new { @name = "membership1", @value = "3", @class = "i-checks rdotype", @id = "rdoPayment" })*@
+                                                    <span>Payment</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="form-group">
+                            <div class="col-md-2 control-label pad-right" style="padding-right: 0px;">Transaction For</div>
+                            <div class="col-md-2">
+                                <select class=" form-control input-sm" id="ddlSelect">
+                                    <option value="0">Select</option>
+                                    <option value="1">Single</option>
+                                    <option value="2">Recurring</option>
+                                </select>
+                            </div>
+                            <div class="col-md-1 control-label pad-right" style="padding-right: 0px;">
+                                Date:
+                            </div>
+                            <div class="col-md-2">
+                                @Html.TextBoxFor(o => o.TransactionDate, new { @class = "form-control input-sm date-picker", required = "required", @placeholder = "mm/dd/yyyy" })
+                                @*<div class="col-md-12 input-group " data-date-format="mm/dd/yyyy">
+
+                                        <span class="input-group-btn cal-btn">
+                                            <button class="btn default" type="button" style="margin-top: 3px;">
+                                                <i class="fa fa-calendar"></i>
+                                            </button>
+                                        </span>
+                                    </div>*@
+                            </div>
+                            <div id="divPayment">
+                                <div class="col-md-1 control-label pad-right" style="padding-right:0px;">
+                                    PaymentNo.
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.TextBoxFor(o => o.PaymentNo, new { @class = "form-control input-sm" })
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div id="divbelow">
+                            <div class="form-group" id="divRecNP">
+                                <div class="col-md-2 control-label" style="padding-left: 0px;padding-right: 0px;">
+                                    No of Payment:
+                                </div>
+                                <div class="col-md-1">
+                                    @Html.TextBoxFor(o => o.NumOfPayments, new { @class = "form-control input-sm", maxlength = 3, onchange = "CalculateAmount()" })
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-2 control-label pad-right" style="padding-right: 0px;">
+                                    Type:
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DropDownListFor(model => model.ServiceTypeListId, (SelectList)ViewBag.ServiceTypeList, "Select", new { @class = "form-control input-sm" })
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.CheckBoxFor(model => model.ReSell, new { @id = "chkResale" }) ReSell
+                                </div>
+
+                            </div>
+                            <div id="divAfterType">
+                                <div class="form-group" id="divRecVL">
+                                    <div class="col-md-2 control-label pad-right" style="padding-right: 0px;">
+                                        Vendor:
+                                    </div>
+                                    <div class="col-md-3">
+                                        @Html.DropDownListFor(model => model.VendorCode, (SelectList)ViewBag.VendorList, "Select", new { @class = "form-control input-sm" })
+                                    </div>
+                                    <div class="col-md-2 control-label pad-right" style="padding-right: 0px;width:135px">
+                                        Vendor Invoice No.<span style="color:red">*</span>:
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(o => o.VendorInvoiceNumber, new { @class = "form-control input-sm" })
+                                    </div>
+                                    <div class="col-md-2 control-label pad-right" style="padding-right: 0px;width:140px">
+                                        Vendor Invoice Date<span style="color:red">*</span>:
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="col-md-12 input-group date" data-date-format="mm/dd/yyyy">
+                                            @Html.TextBoxFor(o => o.VendorInvoiceDate, new { @class = "form-control input-sm date-picker RemovePeriodvalidation" })
+                                            <span class="input-group-btn cal-btn">
+                                                <button class="btn default" type="button" style="margin-top: 3px;">
+                                                    <i class="fa fa-calendar"></i>
+                                                </button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-2 control-label pad-right" style="padding-right: 0px;">
+                                        Description<span style="color:red">*</span>:
+                                    </div>
+                                    <div class="col-md-10">
+                                        @Html.TextBoxFor(o => o.Description, new { @class = "form-control input-sm", required = "required" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-2 control-label pad-right" style="padding-right: 0px;">
+                                        Quantity<span style="color:red">*</span>:
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.TextBoxFor(o => o.Quantity, new { @class = "form-control input-sm", required = "required", onchange = "CalculateAmount()", maxlength = 3, @style = "width: 70px;" })
+                                    </div>
+                                    <div class="col-md-1 control-label pad-right" style="padding-right: 0px;width:80px">
+                                        Item Amt<span style="color:red">*</span>:
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.TextBoxFor(o => o.ItemAmount, new { @class = "form-control input-sm", required = "required", onchange = "CalculateAmount()", maxlength = 12, @style = "width: 80px;" })
+                                    </div>
+                                    <div class="col-md-1 control-label pad-right" style="padding-right: 0px;width:85px">
+                                        Sub-Total:
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.TextBoxFor(o => o.Subtotal, new { @class = "form-control input-sm", required = "required", @readonly = "readonly", @style = "width: 80px;" })
+                                    </div>
+                                    <div class="col-md-1 control-label pad-right" style="padding-right: 0px;">
+                                        Tax:
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.TextBoxFor(o => o.Tax, new { @class = "form-control input-sm", required = "required", @readonly = "readonly", @style = "width: 80px;" })
+                                    </div>
+                                    <div class="col-md-1 control-label pad-right" style="padding-right: 0px;">
+                                        Total:
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.TextBoxFor(o => o.Total, new { @class = "form-control input-sm", required = "required", @readonly = "readonly", @style = "width: 85px;" })
+                                    </div>
+
+                                </div>
+
+                                <hr style="margin-bottom: 0px;" />
+                                <div class="form-group" id="divRec">
+                                    <div class="col-md-2 control-label pad-right" style="padding-right: 0px;">
+                                        Start Date:
+                                    </div>
+                                    <div class="col-md-2" style="padding-right: 0px;">
+                                        @Html.TextBoxFor(o => o.StartDate, new { @class = "form-control input-sm date-picker", @placeholder = "mm/dd/yyyy" })
+                                        @*<div class="col-md-12 input-group date" data-date-format="mm/dd/yyyy">
+                                                @Html.TextBoxFor(o => o.StartDate, new { @class = "form-control input-sm date-picker", required = "required" })
+                                                <span class="input-group-btn cal-btn">
+                                                    <button class="btn default" type="button" style="margin-top: 3px;">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </button>
+                                                </span>
+                                            </div>*@
+                                    </div>
+
+
+                                    <div class="col-md-2 control-label pad-right" style="padding-left: 0px;padding-right: 0px;">
+                                        Payments Billed:
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(o => o.PaymentsBilled, new { @class = "form-control input-sm", @readonly = "readonly" })
+                                    </div>
+                                    <div class="col-md-2 control-label pad-right" style="padding-right: 0px;">
+                                        Gross Total:
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(o => o.GrossTotal, new { @class = "form-control input-sm", @readonly = "readonly" })
+                                    </div>
+                                    <br />
+                                    <div class="row">
+                                        <div class="row">
+                                            <hr style="margin-bottom: 0px;" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-10"></div>
+                                    <div class="col-md-2">
+                                        <input type="button" class="col-md-12 btn btn-primary button-next" value="Save" id="btnSaveClose" name="SaveClose" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr style="margin-bottom: 0px;" />
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label">
+                                    Note :<span class="required"> * </span>
+                                </div>
+                                <div class="col-md-6 control-label">
+                                    <textarea class="form-control input-sm PendingMessage" style="resize: none;overflow-x: hidden;" rows="3" id="txtFranchiseeTrasactionStatusNote" name="txtFranchiseeTrasactionStatusNote"></textarea>
+                                </div>
+                                <div class="col-md-2 control-label MainAdmins" style="margin-top: 30px;">
+                                    <input type="submit" id="btnReject" class="btn btn-primary col-md-11 submit-button-no-prompt-reject" name="SaveReject" value="REJECTED" style="margin-bottom:3px;font-size:11px;margin-top:3px;margin-left:5px !important;width: 100px;    height: 25px;" />
+                                </div>
+                                <div class="col-md-2 control-label MainAdmins" style="margin-top: 30px;">
+                                    <input type="submit" id="btnApprove" class="btn btn-primary col-md-11 submit-button-no-prompt-approve" name="SaveApprove" value="APPROVED" style="font-size:11px;padding-left:0px !important;padding-right:0px !important;margin-top:3px;margin-left:0px !important;width: 100px;    height: 25px;" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+<script>
+    function initFMT() {
+        $(".input-group-btn").click(function () {
+            $(this).prev().trigger("focus");
+            $(this).prev().trigger("focus");
+        });
+
+        $("#divbelow").hide();
+        $("#divAfterType").hide();
+        $("#ddlSelect").change(function () {
+            $(".error-franchise-select").html('');
+            var value = this.value;
+            if (value == 0) {
+                cleanform()
+                $("#divbelow").hide();
+            }
+            if (value == 1) {
+                if($("#spnFranchiseeNumber").text() == '') {
+                    $(".error-franchise-select").html('Please select Franchise First.');
+                    return;
+                }
+                cleanform()
+                $("#divbelow").show();
+                $("#divAfterType").hide();
+                $("#divRec").hide();
+                $("#divRecNP").hide();
+                $("#divRecVL").hide();
+            }
+
+            if (value == 2) {
+                if($("#spnFranchiseeNumber").text() == '') {
+                    $(".error-franchise-select").html('Please select Franchise First.');
+                    return;
+                }
+                cleanform()
+                $("#divbelow").show();
+                $("#divRec").show();
+                $("#divRecNP").show();
+                $("#divRecVL").hide();
+                $("#divAfterType").hide();
+            }
+        });
+
+
+
+
+        $('#chkResale').change(function () {
+            if ($(this).is(":checked") || $('#ServiceTypeListId').val() != 18) {
+                CalculateAmount();
+            }
+            else {
+                CalculateAmount();
+            }
+        });
+
+        $("#ServiceTypeListId").change(function () {
+            var value = this.value;
+            if ($("#ddlSelect").val().trim() != 0 && value != "") {
+                $("#divAfterType").show();
+            }
+            else {
+                $("#divAfterType").hide();
+            }
+            if (this.value == 18) {
+                $("#divRecVL").show();
+            }
+            else {
+                $("#divRecVL").hide();
+            }
+            CalculateAmount();
+        });
+
+
+
+        if (parseInt($('#FranchiseeManualTransactionTempId').val()) > 0) {
+            if ($('#NumOfPayments').val() == "1") {
+                $("#ddlSelect").val(1);
+                $("#divbelow").show();
+                $("#divRec").hide();
+                $("#divRecNP").hide();
+                $("#divRecVL").hide();
+                $("#divAfterType").show();
+            } else {
+                $("#ddlSelect").val(2);
+                $("#divbelow").show();
+                $("#divRec").show();
+                $("#divRecNP").show();
+                $("#divRecVL").hide();
+                $("#divAfterType").show();
+            }
+            $("#StartDate").datepicker({ autoclose: true, dateFormat: 'mm/dd/yy' });
+            $("#TransactionDate").datepicker({ autoclose: true, dateFormat: 'mm/dd/yy' });
+
+        } else {
+            
+            $("#TransactionDate").datepicker("setDate", new Date());
+        }
+        $(".date-picker").datepicker("option", "dateFormat", "mm/dd/yy");
+
+       
+
+        //$("#rdoSingle").prop("checked", true);
+       
+        applyMaskCurrency($("#ItemAmount"));
+        applyMaskCurrency($("#Subtotal"));
+        applyMaskCurrency($("#Total"));
+        applyMaskCurrency($("#GrossTotal"));
+        applyMaskCurrency($("#Tax"));
+        applyMaskCurrency($("#PaymentsBilled"));
+        applyMaskCurrency('#ItemAmount');
+        OnlyNumber('#Quantity');
+        OnlyNumber('#NumOfPayments');
+         if ($('#ServiceTypeListId').val() != 18) {
+                                $("#divRecVL").hide();
+                            }
+                            else {
+                                $("#divRecVL").show();
+                            }
+
+
+        }
+
+    $("#ServiceTypeListId").change(function () {
+        var value = this.value;
+        if ($("#ddlSelect").val().trim() != 0 && value != "") {
+            $("#divAfterType").show();
+        }
+        else {
+            $("#divAfterType").hide();
+        }
+        if (this.value == 18) {
+            $("#divRecVL").show();
+        }
+        else {
+            $("#divRecVL").hide();
+        }
+        CalculateAmount();
+    });
+
+    $(".rdoCredit").change(function () {
+        $("#divPayment").hide();
+        $("#FranchsieeTrxTypeListId").val(1);
+    });
+
+    $(".rdoPayment").change(function () {
+        $("#divPayment").show();
+        $("#FranchsieeTrxTypeListId").val(3);
+    });
+
+        function cleanform() {
+            $("#VendorId").val('')
+            $("#NumOfPayments").val('');
+            $("#ServiceTypeListId").val('');
+            $("#Description").val('');
+            $("#Quantity").val('');
+            $("#VendorId").val('');
+            $("#VendorInvoiceNumber").val('');
+            $("#StartDate").val('');
+            $("#ItemAmount").val('');
+            $("#Subtotal").val('');
+            $("#Total").val('');
+            $("#Tax").val('');
+            $("#PaymentsBilled").val('');
+            $("#GrossTotal").val('');
+        }
+
+        function CalculateAmount() {
+            var temptaxRate = $("#hdfTaxRate").val() == '' ? 0 : parseFloat($("#hdfTaxRate").val());
+            var tempItemQuantity = $("#Quantity").val() == '' ? 0 : parseFloat($("#Quantity").val());
+            var tempItemAmount = $("#ItemAmount").val() == '' ? 0 : parseFloat($("#ItemAmount").val());
+            var tempSubtotal = $("#Subtotal");
+            var tempTax = $("#Tax");
+            var tempTotal = $("#Total");
+
+            tempSubtotal.val(tempItemQuantity * tempItemAmount);
+            tempTax.val(parseFloat(tempSubtotal.val()) * temptaxRate / 100)
+            if ($('#chkResale').is(":checked") || $('#ServiceTypeListId').val() != 18) {
+                tempTax.val(0);
+            }
+
+            tempTotal.val(parseFloat(tempSubtotal.val()) + parseFloat(tempTax.val()));
+
+            if ($("#ddlSelect").val().trim() == 2) {
+                $("#PaymentsBilled").val(tempTotal.val());
+                $("#GrossTotal").val(parseFloat(tempTotal.val()) * parseInt($("#NumOfPayments").val()));
+            }
+
+            //applyMaskCurrency('#txtsubtotal');
+            //applyMaskCurrency('#txttaxamount');
+            //applyMaskCurrency('#txttotalamount');
+        };
+        //function onlyDecimal(id) {
+        //    $(id).keydown(function (event) {
+        //        if (event.shiftKey == true) { event.preventDefault(); }
+        //        if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105) || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 190 || event.keyCode == 110) { }
+        //        else { event.preventDefault(); }
+        //        if ($(this).val().toString().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110)) event.preventDefault();
+        //    });
+        //}
+
+        @*function applyAutoSeacrh() {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetAllFranchisees", "Franchise", new { area = "Portal" })',
+                data: {},
+                success: function (data) {
+                    var typeaheadSource = [];
+                    $.each(data, function (key, value) {
+                        typeaheadSource.push({ id: value.FranchiseeId, name: value.FranchiseeNo + ' ' + value.Name })
+                    });
+
+                    $('#input_Search').typeahead({
+                        source: typeaheadSource,
+                        updater: function (item) {
+                            $.ajax({
+                                type: "GET",
+                                url: '@Url.Action("FranchiseDetailAutoComplete", "Franchise", new { area = "Portal" })?franchiseid=' + item.id,
+                                success: function (res) {
+                                    console.log(res);
+
+                                    $('#hdfTaxRate').val(res.ContractTaxRate);
+                                    $('#hdfFranchiseeId').val(res.FranchiseeId);
+                                    $('#spnFranchiseeNumber').html(res.FranchiseeNo);
+                                    $('#spnFranchiseeName').html(res.Name);
+                                    $('#spnFranchiseeAddress').html(res.Address1);
+                                    $('#spnFranchiseeCityStatePincode').html(res.City + ', ' + res.StateName + ' ' + res.PostalCode);
+                                }
+                            });
+
+                            return item;
+                        }
+                    }).focus();
+                }
+            });
+        }
+        applyAutoSeacrh();*@
+
+        function OnlyNumber(id) {
+            $(id).keydown(function (event) {
+                if (event.shiftKey == true) { event.preventDefault(); }
+                if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105) || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46) { }
+                else { event.preventDefault(); }
+            });
+        }
+        function applyMaskCurrency(id) {
+            $(id).inputmask("currency", {
+                alias: 'currency',
+                prefix: '$ ',
+                digits: 2,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                unmaskAsNumber: true,
+                allowPlus: false,
+                allowMinus: false,
+                autoGroup: true,
+                groupSeparator: ",",
+            });
+        }
+
+        $("#btnSaveNew").click(function (e) {
+            e.preventDefault();
+            ValidateFranchiseTransaction($(this).attr('name'));
+
+        });
+
+        $("#btnSaveClose").click(function (e) {
+            e.preventDefault();
+            ValidateFranchiseTransaction($(this).attr('name'));
+
+        });
+
+        /* Validate Franchise Manual Transaction */
+
+        function ValidateFranchiseTransaction(a) {
+
+            var isValid = true;
+            /* Type */
+            if ($("#ServiceTypeListId").val().trim() == "") {
+                $("#ServiceTypeListId").css('border-color', 'red');
+                $(window).scrollTop(10);
+                if (isValid) {
+                    isValid = false;
+                }
+            }
+            else {
+                $("#ServiceTypeListId").css('border-color', '');
+            }
+
+            /* Description */
+            if ($("#Description").val().trim() == "") {
+                $("#Description").css('border-color', 'red');
+                $(window).scrollTop(10);
+                if (isValid) {
+                    isValid = false;
+                }
+            }
+            else {
+                $("#Description").css('border-color', '');
+            }
+
+              /* if Type Franchise Supplies selected */
+            if ($("#ServiceTypeListId").val().trim() == "18") {
+
+                /* Vendor */
+                if ($("#VendorId").val().trim() == "") {
+                    $("#VendorId").css('border-color', 'red');
+                    $(window).scrollTop(10);
+                    if (isValid) {
+                        isValid = false;
+                    }
+                }
+                else {
+                    $("#VendorId").css('border-color', '');
+                }
+
+                /* Vendor Invoice No */
+                if ($("#VendorInvoiceNumber").val().trim() == "") {
+                    $("#VendorInvoiceNumber").css('border-color', 'red');
+                    $(window).scrollTop(10);
+                    if (isValid) {
+                        isValid = false;
+                    }
+                }
+                else {
+                    $("#VendorInvoiceNumber").css('border-color', '');
+                }
+
+
+            }
+            else {
+                $("#VendorId").css('border-color', '');
+                $("#VendorInvoiceNumber").css('border-color', '');
+            }
+
+            /* Quantity */
+            if ($("#Quantity").val().trim() == "") {
+                $("#Quantity").css('border-color', 'red');
+                $(window).scrollTop(10);
+                if (isValid) {
+                    isValid = false;
+                }
+            }
+            else {
+                $("#Quantity").css('border-color', '');
+            }
+
+            /* Item Amount */
+            if ($("#ItemAmount").val() <= 0) {
+                $("#ItemAmount").css('border-color', 'red');
+                $(window).scrollTop(10);
+                if (isValid) {
+                    isValid = false;
+                }
+            }
+            else {
+                $("#ItemAmount").css('border-color', '');
+            }
+
+            /* Recurring */
+
+            if ($("#ddlSelect").val().trim() == 2) {
+
+                if ($("#StartDate").val().trim() == "") {
+                    $("#StartDate").css('border-color', 'red');
+                    $(window).scrollTop(10);
+                    if (isValid) {
+                        isValid = false;
+                    }
+                }
+                else {
+                    $("#StartDate").css('border-color', '');
+                }
+
+            }
+            /* Single */
+            if ($("#ddlSelect").val().trim() == 1) {
+                $("#StartDate").css('border-color', '');
+            }
+           
+            if (isValid) {
+                $('#hdfSaveClose').val(a);
+                $("#form_FranchiseeTrasaction").submit();
+            }
+        }
+
+
+    jQuery(document).ready(function () {
+        $("#divPayment").hide();
+        if ($('#rdoCredit').is(":checked")) {
+            $("#divPayment").hide();
+            $("#FranchsieeTrxTypeListId").val(1);
+        }
+        if ($('#rdoPayment').is(":checked")) {
+            $("#divPayment").show();
+            $("#FranchsieeTrxTypeListId").val(3);
+        }
+        
+
+    })
+
+
+
+
+</script>

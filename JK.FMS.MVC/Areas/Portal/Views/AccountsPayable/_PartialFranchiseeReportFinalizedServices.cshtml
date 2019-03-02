@@ -1,0 +1,90 @@
+﻿@model JKApi.Service.AccountPayable.FranchiseeReportFinalizedDetailsViewModel
+
+@using System.Globalization;
+
+<DIV id="page_3" style="padding-left:15px;">
+
+    <table class="header" style="margin:0px !important; padding:0px;">
+        <tr>
+            <td width="25%">
+                &nbsp;
+            </td>
+
+            <td width="50%">
+                <P style="text-align: center;font-size:11px;margin:0px !important;">
+                    <br />
+                    @Model.Report.RegionName.ToUpper()<br />
+                    BUSINESS FOR THE MONTH OF @Model.MonthYearDisplay.ToUpper()
+                </P>
+            </td>
+
+            <td width="25%">
+                <P style="font-size:12px;padding-left:50px;margin:0px !important;">
+                    Date: @DateTime.Now.ToShortDateString()<br />
+                    Time: @DateTime.Now.ToString("HH:mm:ss")
+                </P>
+            </td>
+        </tr>
+    </table>
+
+    <table class="header" style="margin:0px !important;padding:0px;">
+        <tr>
+            <td width="20%">
+                <P style="font-size:11px;margin:0px !important;">
+                    Franchisee Code:<br />
+                    @Html.DisplayFor(o => o.Report.FranchiseeNo)
+                </P>
+            </td>
+            <td width="80%">
+                <P style="font-size:11px;margin:0px !important;">
+                    Name:<br />
+                    @Html.DisplayFor(o => o.Report.FranchiseeName)
+                </P>
+            </td>
+        </tr>
+    </table>
+
+    <table class="price-list" style="margin-top:0px;">
+        <tr class="title-row">
+            <td colspan="4">Total Revenue by Customer</td>
+        </tr>
+        <tr class="header-row">
+            <td class="col1">Customer Transaction</td>
+            <td colspan="2">Customer</td>
+            <td class="price1">Total Without Tax</td>
+        </tr>
+        @foreach (var service in Model.DetailsByService)
+        {
+            var TotalByServiceType = 0.00;
+
+            //if (service.ServiceTypeListId != 57)  /*57 = Tax Credit*/
+            //{
+            <tr>
+                <td colspan="4">@service.ServiceType</td>
+            </tr>
+                foreach (var line in service.Details)
+                {
+                   
+                <tr>
+                    <td class="col1">&nbsp;</td>
+                    <td class="col2">@line.CustomerNo</td>
+                    <td class="col3">@line.CustomerName</td>
+                    <td class="price1">@Model.NumberDisplay(line.Subtotal)</td>
+                </tr>
+
+                TotalByServiceType = TotalByServiceType + (double)line.Subtotal;
+
+            }
+            <tr>
+                <td class="col2">Sub Total</td>
+                <td class="price1" colspan="3">@Model.NumberDisplay((decimal)TotalByServiceType)</td>
+            </tr>
+            //}
+        }
+        <tr class="footer-row">
+            <td colspan="3">Total Revenues for this Franchisee </td>
+            <td class="price1">@Model.NumberDisplay(Model.DetailsByTransaction.Sum(o => o.Subtotal))</td>
+        </tr>
+    </table>
+
+</DIV>

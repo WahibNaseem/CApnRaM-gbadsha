@@ -1,0 +1,284 @@
+﻿@model List<JKViewModels.Management.CorporationDuesReportViewModel>
+@{
+    ViewBag.Title = "CorporationDuesReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+    </style>
+}
+
+@*<div class="custom-listbox" style="margin-top:4px;margin-bottom:3px;">*@
+<div class="custom-form portlet light form-horizontal" style="max-width:740px;margin: 0px auto;padding:0;min-height: 100px;">
+    <div class="headerbox">
+        <div class="row" style="background-color: #3598DC;color: #fff;">
+            <div class="col-md-12 no-padding">
+                <div class="alignCenter">
+                    <div class="col-md-12 text-center">
+                        Corporation Dues Report
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="portlet-body form">
+        <div class="form-body" id="printDiv">
+
+            @{  decimal total = 0;
+                var region = Model.Count > 0 ? Model.FirstOrDefault().Region.ToUpper() : "";
+                decimal finaltotal = 0;
+                decimal totalGrossAmt = 0;
+            }
+
+            <div class="form-group">
+
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="row">
+                            <div class="col-md-12" style="text-align:left;margin-left:-20px">
+                                <b>@DateTime.Now.ToShortDateString()</b>
+                            </div>
+                            <div class="col-md-12" style="text-align:left;margin-left:-20px">
+                                <b>@DateTime.Now.ToShortTimeString()</b>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="row">
+                            <div class="col-md-12" style="text-align:center;    margin-top: -15px;">
+                                <h4><b>JANI-KING OF @region, INC</b></h4>
+                            </div>
+                            <div class="col-md-12" style="text-align:center;">
+                                <b>Corporate Dues Report For <span class="billmonth" id="billmonth"></span>,&nbsp;<span class="billyear" id="billyear">@ViewBag.billyear</span></b>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="row">
+                            <div class="col-md-12" style="text-align:right;">
+                                <img height="70%" width="70%" src="/Content/admin/assets/layouts/layout2/img/lg_jklogo.jpg" alt="logo" class="logo-default">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <hr style="margin-bottom: 2px;margin-top: 2px;" />
+
+                <div class="row">
+                    <table width="100%" cellspacing="0" cellpadding="0" style="border: none;">
+                        @foreach (var itemtable in Model)
+                        {
+                            if (itemtable.Name == "Total Monthly Revenue")
+                            {
+                                <tr>
+                                    <td style="text-align:left;width: 40%;">@itemtable.Name</td>
+                                    <td style="text-align:right;width: 30%;">@String.Format("{0:c}", itemtable.Amount)</td>
+                                    <td style="width: 30%;"></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left;width: 40%;"></td>
+                                    <td style="text-align:right;width: 30%;"></td>
+                                    <td style="width: 30%;"></td>
+                                </tr>
+                            }
+                            else
+                            {
+                                total += Convert.ToDecimal(itemtable.Amount);
+                                finaltotal = Convert.ToDecimal((total * Convert.ToDecimal(ViewBag.RegionPercent == null ? 0 : ViewBag.RegionPercent)) / 100);
+
+                                totalGrossAmt = total + Convert.ToDecimal(ViewBag.InHouseWork == null ? 0 : ViewBag.InHouseWork) + Convert.ToDecimal(ViewBag.FranchiseeSupplies == null ? 0 : ViewBag.FranchiseeSupplies);
+
+                                <tr>
+                                    <td style="text-align:left;width: 40%;">@itemtable.Name</td>
+                                    <td style="text-align:right;width: 30%;">@String.Format("{0:c}", itemtable.Amount)</td>
+                                    <td style="width: 30%;"></td>
+                                </tr>
+                            }
+
+                        }
+                    </table>
+                </div>
+                <div class="row">
+                    <table width="100%" cellspacing="0" cellpadding="0" style="border: none;">
+                        <tr>
+                            <td style="text-align:right;width: 40%;">TOTAL:</td>
+                            <td style="text-align:right;width: 30%;border-top: 1px solid black;"><span id="total">@String.Format("{0:c}", total)</span> </td>
+                            <td style="text-align:center;width: 30%;"><span id="finalAmount">* @ViewBag.RegionPercent % = @String.Format("{0:c}", finaltotal)</span></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:right;width: 40%;"></td>
+                            <td style="text-align:right;width: 30%;"></td>
+                            <td style="width: 30%;"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left;width: 40%;">In House Work:</td>
+                            <td style="text-align:right;width: 30%;">@ViewBag.InHouseWork</td>
+                            <td style="width: 30%;"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left;width: 40%;">Franchisee Supplies:</td>
+                            <td style="text-align:right;width: 30%;">
+                                @ViewBag.FranchiseeSupplies
+                            </td>
+                            <td style="width: 30%;"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:right;width: 40%;">TOTAL GROSS:</td>
+                            <td style="text-align:right;width: 30%;border-top: 1px solid black;">@String.Format("{0:c}", totalGrossAmt) </td>
+                            <td style="width: 30%;"></td>
+                        </tr>
+                    </table>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-12">
+                        <table width="100%" style="border:1px solid black;">
+                            <tr style="border: 1px solid black;">
+                                <td>Franchisee Name</td>
+                                <td>Date Sign</td>
+                                <td>Down Payment</td>
+                                <td>Plan</td>
+                                <td>Check #</td>
+                                <td>Amount</td>
+                            </tr>
+                            <tr style="border: 1px solid black;">
+                                <td> </td>
+                                <td>/ /</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr style="border: 1px solid black;">
+                                <td>TOTAL DOWN PAYMENTS:</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>TOTAL PAID</td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <table width="100%" cellspacing="0" cellpadding="0" style="border: none;">
+                        <tr>
+                            <td style="text-align:right;width: 40%;"></td>
+                            <td style="text-align:right;width: 30%;">Net Amount Due</td>
+
+                            <td style="text-align:center; width: 30%;border-top: 1px solid black;">@finaltotal</td>
+
+                        </tr>
+                        <tr>
+                            <td style="text-align:right;width: 40%;"></td>
+                            <td style="text-align:right;width: 30%;">Administration Fee</td>
+                            <td style="text-align:center; width: 30%;">@String.Format("{0:c}", ViewBag.AdministrationFee == null ? 0 : ViewBag.AdministrationFee)</td>
+                        </tr>
+                    </table>
+                </div>
+                <hr style="border: 1px solid;" />
+
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-1">
+            <button type="button" class="btn btn-primary button-next" onclick="printDiv()">Print <i class="fa fa-print"></i></button>
+        </div>
+        <div class="col-md-1 col-md-offset-9" style="padding-left: 30px;">
+            <button type="button" class="btn btn-primary button-next" onclick="location.href='@Url.Action("ManagementReports", "Management", new { area = "Portal"})'">Back <i class="fa fa-backward"></i></button>
+        </div>
+    </div>
+    <br />
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            var monthNames = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+            ];
+
+            var d = '@ViewBag.billmonth';
+            $(".billmonth").text(monthNames[d - 1]);
+            $(".billyear").text('@ViewBag.billyear');
+
+            var today = new Date().toUTCString();
+            $('.todaydate').text(moment(today).format('MM/DD/YYYY, HH:MM'));
+
+        })
+
+        function printDiv() {
+
+            var divToPrint = document.getElementById('printDiv');
+
+            var newWin = window.open('', 'Print-Window');
+
+            newWin.document.open();
+
+            newWin.document.write('<html><body onload="window.print()">' + divToPrint.innerHTML + '</body></html>');
+
+            newWin.document.close();
+
+            setTimeout(function () { newWin.close(); }, 10);
+
+        }
+    </script>
+}

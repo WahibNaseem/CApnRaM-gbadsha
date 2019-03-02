@@ -1,0 +1,129 @@
+﻿@model JKViewModels.Company.BankViewModel
+@{
+    ViewBag.Title = "AddBankAccount";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("AddBankAccount", "Company", FormMethod.Post, new { @id = "form_AddBankAccount", @role = "form", @class = "form form-horizontal" }))
+{
+    <div class="custom-form portlet light">
+        <div class="headerbox">
+            <div class="row">
+                <div class="col-md-4">
+                    Add New Bank Account
+                </div>
+            </div>
+        </div>
+        <div class="portlet-body form">
+            <div class="form-body">
+                <div class="form-group">
+                    <div class="col-md-5 col-md-offset-2">
+                        <label>Bank Account Type</label>
+                        @Html.DropDownListFor(one => one.BankTypeListId, (SelectList)ViewBag.BankTypeList, new { @class = "form-control input-sm col-md-5", @id = "select_BankTypeList" })
+                    </div>
+                    <div class="col-md-2">
+                        <label>Currency</label>
+                        @Html.DropDownListFor(one => one.BankTypeListId, new List<SelectListItem>
+                            {
+                            new SelectListItem { Text = "US Dollar", Value = "US Dollar"}
+                            },
+             new { @class = "form-control input-sm col-md-5", @id = "select_BankTypeList" })
+                    </div>
+                    <div class="col-md-2"></div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-7 col-md-offset-2">
+                        <label>Description</label>
+                        @Html.TextAreaFor(one => one.BankDescription, new { @class = "form-control input-sm", @id = "select_BankDescription" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-7 col-md-offset-2">
+                        <label>Bank Name</label>
+                        @Html.TextBoxFor(one => one.Name, new { @class = "form-control input-sm", @id = "select_Name" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-7 col-md-offset-2">
+                        <label>Bank Address</label>
+                        @Html.TextBoxFor(one => one.Address, new { @class = "form-control input-sm", @id = "select_Address" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3 col-md-offset-2">
+                        <label>City</label>
+                        @Html.TextBoxFor(one => one.City, new { @class = "form-control input-sm", @id = "select_City" })
+                    </div>
+                    <div class="col-md-2">
+                        <label>State</label>
+                        @Html.DropDownListFor(one => one.State, (SelectList)ViewBag.State, new { @class = "form-control input-sm", @id = "select_State" })
+                    </div>
+                    <div class="col-md-2">
+                        <label>ZipCode</label>
+                        @Html.TextBoxFor(one => one.PostalCode, new { @class = "form-control input-sm", @id = "select_PostalCode" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-5 col-md-offset-2">
+                        <label>Bank Phone</label>
+                        @Html.TextBoxFor(one => one.Phone, new { @class = "form-control input-sm", @id = "select_Phone" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-4 col-md-offset-2">
+                        <label>Bank Account No</label>
+                        @Html.TextBoxFor(one => one.AccountNumber, new { @class = "form-control input-sm", @id = "select_accountNo" })
+                    </div>
+                    <div class="col-md-3">
+                        <label>Routing Number</label>
+                        @Html.TextBoxFor(one => one.RoutingNumber, new { @class = "form-control input-sm", @id = "select_RoutingNo" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-4 col-md-offset-2">
+                        <label>LockBox ID</label>
+                        @Html.TextBoxFor(one => one.LockBoxId, new { @class = "form-control input-sm", @id = "select_LockBoxId" })
+                    </div>
+                    <div class="col-md-3">
+                        <label>Bank Location Number/Name</label>
+                        @Html.TextBoxFor(one => one.BankNumber, new { @class = "form-control input-sm", @id = "select_BankNumber" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-4 col-md-offset-2">
+                        <label>Enter Begin Balance</label>
+                        <input class="form-control input-sm" id="txtAmount" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3 col-md-offset-9">
+                        <input type="submit" class="btn btn-primary button-next" value="Submit" id="btnSave" />
+                        @*<input type="button" class="btn btn-primary button-next" value="Cancel" id="btnCancel" />*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#select_Phone').inputmask("mask", {
+                "mask": "(999) 999-9999", removeMaskOnSubmit: true,
+            });
+        });
+
+        $("#txtAmount").inputmask("numeric", {
+            decimal: ".",
+            negative: false,
+            scale: 2,
+            groupSeparator: ",",
+            digits: 2,
+            autoGroup: true,
+            prefix: "$",
+            rightAlign: false,
+            autoUnmask: true,
+            removeMaskOnSubmit: true,
+        });
+    </script>
+}

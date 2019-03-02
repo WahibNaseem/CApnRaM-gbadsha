@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+ 
+<html>
+<head>
+    <meta name="viewport" content="width=device-width"/>
+    <title>Index</title>
+</head>
+<body>
+    
+    <div id="map" style="height: 800px;"></div>
+    <script src="https://maps.google.com/maps/api/js?key=AIzaSyCrw533WZZijl0sItzXs-DjfyHMN5g4xD8" async defer></script>
+
+    <script type="text/javascript">
+         var markers = [];
+        <!-- var markers = [{title: "BUFFALO BILLS, LLC. - SEASONAL", lat: "42.77326570", lng: "-78.78585660", description: 118556}, -->
+                         <!-- {title: "THE REGNET ENTERPRISE, LLC", lat: "42.8337105", lng: "-78.8208438", description: 20}, -->
+                         <!-- {title: "TANYA SOLER", lat: "42.8682845", lng: "-78.8388063", description: 67}, -->
+                         <!-- {title: "ANDREW GERACE", lat: "42.8703805", lng: "-78.837269", description: 73}, -->
+                         <!-- {title: "ROMEO SANTIANO", lat: "42.865932", lng: "-78.724708", description: 75}, -->
+                         <!-- {title: "BAJRO HADZIC", lat: "42.9060911", lng: "-78.8314734", description: 85}, -->
+                         <!-- {title: "JOHNNY ROBINSON", lat: "42.7977814", lng: "-78.8181415", description: 95}, -->
+                         <!-- {title: "SAMO ENTERPRISES, LLC", lat: "42.8856052", lng: "-78.814505", description: 96}, -->
+                         <!-- {title: "GRANDNUBIAN, LLC", lat: "42.9114215", lng: "-78.8100578", description: 97}, -->
+                         <!-- {title: "WILLIAM BROWN, JR.", lat: "42.9001406", lng: "-78.8305886", description: 102}, -->
+                         <!-- {title: "LEHMAN CORP.", lat: "42.864588", lng: "-78.6997648", description: 111}] -->
+        
+        window.onload = function () {
+           function get(name) {
+                if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))
+                    return decodeURIComponent(name[1]);
+            }
+		  markers = JSON.parse(get('loc'))
+          console.log(document.getElementById('mapFR_').contentWindow.targetObject)
+		  
+          function initMap() {
+            var mapOptions = {
+                center: new google.maps.LatLng(markers[0].lat, markers[0].lng),
+                zoom: 12,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            var infoWindow = new google.maps.InfoWindow();
+            var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+            for (i = 0; i < markers.length; i++) {
+                var data = markers[i]
+                var myLatlng = new google.maps.LatLng(data.lat, data.lng);
+                var marker = new google.maps.Marker({
+                    position: myLatlng,
+                    map: map,
+                    title: data.title
+                });
+                (function (marker, data) {
+                    google.maps.event.addListener(marker, "click", function (e) {
+                        infoWindow.setContent(data.description);
+                        infoWindow.open(map, marker);
+                    });
+                })(marker, data);
+            }
+          }
+
+    initMap();
+        };
+      
+    </script>
+</body>
+
+</html>

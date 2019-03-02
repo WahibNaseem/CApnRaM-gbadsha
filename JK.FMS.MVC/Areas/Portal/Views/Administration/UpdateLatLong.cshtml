@@ -1,0 +1,89 @@
+﻿
+@{
+    ViewBag.Title = "UpdateLatLong";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="custom-form portlet light" style="max-width:400px;margin: 0px auto;padding:0;min-height: 100px;">
+    <div class="headerbox">
+        <div class="row">
+            <div class="col-md-12">
+                Update Google Map
+            </div>
+        </div>
+    </div>
+    <div class="portlet-body form">
+        <form class="form-horizontal" role="form" method="post">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-2">Region</label>
+                            <div class="col-md-7 no-padding">
+                                <select class="form-control input-sm" id="regionlist">
+                                    @foreach (var item in (SelectList)ViewBag.regionlist)
+                                    {
+                                        <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-2"></label>
+                            <label class="mt-checkbox">
+                                <input type="checkbox" name="active" value="1" class="i-checks" id="chkactive" />Active
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-2"></label>
+                            <label class="mt-checkbox">
+                                <input type="checkbox" name="inactive" value="1" class="i-checks" id="chkinactive"/>Inactive
+                                <span></span>
+                            </label>
+
+
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="form-actions">
+
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-primary button-next pull-right" onclick="ProcessGMap()" style="margin-right:0px;">Process</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    function ProcessGMap() {
+      
+        $.blockUI();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("UpdateLatLongProcess", "Administration", new { area = "Portal" })?active=' + $('#chkactive').is(":Checked") + '&inactive=' + $('#chkinactive').is(":Checked") + '&regionId=' + $('#regionlist').val(),
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    console.log(data);
+                    $.unblockUI();
+                    swal({ title: "Google Map Address Updated", type: "success" });
+                },
+                error: function () {
+                    $.unblockUI();
+                    
+                    swal({ title: "Google Map Address Not Updated", type: "error" });
+                }
+            });
+        }
+</script>

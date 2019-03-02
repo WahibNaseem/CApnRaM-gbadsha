@@ -1,0 +1,335 @@
+﻿@*@model List<JKViewModels.AccountReceivable.ARLogListFinalViewModel>*@
+
+@{
+    ViewBag.Title = "ARLog";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+
+    <style type="text/css">
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+            font-weight: normal;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        #modal_RegionModel .modal-content {
+            width: 55% !important;
+            margin-left: 30% !important;
+        }
+
+        .ARList thead > tr > th, .ARList tbody > tr > td, .ARList tfoot > tr > td {
+            font-size: 11px !important;
+            padding: 5px !important;
+        }
+
+    .has-error {
+        border-color: red;
+    }
+</style> 
+        }
+
+  
+
+
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    PAYMENT LOG
+                </div>
+                <div class="col-md-4" style="padding-right:5px;">
+                    <div class="col-md-7 pull-right no-padding">
+                        <div style="display:table-cell;padding-right: 5px;">
+                            Region
+                        </div>
+                        <div style="display:table-cell;width:100%;">
+                            @if (ViewBag.regionlist != null)
+                            {
+                            <select class="form-control input-sm" id="regionlist" multiple="multiple" style="display:none;">
+                                @foreach (var item in (SelectList)ViewBag.regionlist)
+                                    {
+                                <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                    }
+                            </select>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="headerbox" style="margin-top: 5px;">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-3">
+            &nbsp;<button type="button" class="btn btn-primary button-next pull-left" style="margin-right:10px;padding: 3px 12px; font-size: 12px;" onclick="DetailARLogReportPrint()">Print</button>
+            @*&nbsp;<button type="submit" class="btn btn-primary button-next pull-left" style="margin-right:10px;padding: 3px 12px; font-size: 12px;">Export</button>*@
+            &nbsp;<input type="button" class="btn btn-primary button-next pull-left" id="btnExportInExcel" value="Export To Excel" style="margin-right:10px;padding: 3px 12px; font-size: 12px;" />
+        </div>
+        <div class="col-md-1 control-label"></div>
+        <div class="col-md-2">
+            <div class="input-group date" data-date-format="mm/dd/yyyy">
+                <input class="form-control input-sm date-picker RemovePeriodvalidation" id="dtGenerateReportData"/>
+                <span class="input-group-btn cal-btn">
+                    <button class="btn default cal-btn" type="button" style="margin-top: 0px;padding: 4px 8px;height: 25px;">
+                        <i class="fa fa-calendar"></i>
+                    </button>
+                </span>
+            </div>
+        </div>
+        <div class="col-md-1"><button type="button" name="Submit" id="btnARLogSubmit" class="btn btn-primary input-sm" onclick="" style="padding: 3px 12px;background-color: #337ab7;color: #fff;border: none;">Submit</button></div>
+        <div class="col-md-5 pull-right" style="padding-right:5px;">
+            
+        </div>
+    </div>
+</div>
+
+<div id="ARListReport" style="display:none;">
+    
+</div>
+<div class="modal fade in" id="modal_RegionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Select Region
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Select Region</label>
+                                @if (ViewBag.regionlist != null)
+                                {
+                                    <select class="form-control input-sm" id="selectregionlist">
+                                        <option value="">Select Region</option>
+                                        @foreach (var item in (SelectList)ViewBag.regionlist)
+                                        {
+                                            <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div class="col-md-12">
+                        <button type="button" name="SaveNew" id="btnRegion" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:0px;">Select Region</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+         $(window).load(function () {
+            if ('@ViewBag.selectedRegionId' == 0) {
+                $("#modal_RegionModel").modal({ backdrop: 'static' });
+            } else {
+               // refreshTable();
+                $('#ARList').show();
+            }
+        });
+        jQuery(document).ready(function () {
+            $("#regionlist").multiselect({
+                includeSelectAllOption: false,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2,
+            })
+
+            $("#btnRegion").click(function () {
+                if ($("#selectregionlist").val() != "") {
+                    $("#regionlist option[value='" + $("#selectregionlist").val() + "']").attr("selected", 1);
+                    $("#regionlist").multiselect("refresh");
+                    //refreshTable();
+                    $(".close").click();
+                }
+            });
+
+            $('#ARList').show();
+
+            $('#btnExportInExcel').click(function (e) {
+
+                try {
+                    var tab_text = "<table border='2px'>";
+                    var textRange; var j = 0;
+
+                    tab = document.getElementById('parenttable'); // id of table
+
+                    for (j = 0 ; j < tab.rows.length ; j++) {
+                        tab_text += "<tr>" + tab.rows[j].innerHTML + "</tr>";
+                        //tab_text=tab_text+"</tr>";
+                    }
+                    tab_text = tab_text + "</table>";
+                    tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+                    tab_text = tab_text.replace(/<img[^>]*>/gi, ""); // remove if u want images in your table
+                    tab_text = tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+                    var ua = window.navigator.userAgent;
+                    var msie = ua.indexOf("MSIE ");
+
+                    var dt = new Date();
+                    var day = dt.getDate();
+                    var month = dt.getMonth() + 1;
+                    var year = dt.getFullYear();
+                    var hour = dt.getHours();
+                    var mins = dt.getMinutes();
+                    var postfix = month + "." + day + "." + year;
+                    //creating a temporary HTML link element (they support setting file names)
+                    var a = document.createElement('a');
+                    //getting data from our div that contains the HTML table
+                    var data_type = 'data:application/vnd.ms-excel';
+                    //var table_div = document.getElementById('dvData');
+                    //var table_html = table_div.outerHTML.replace(/ /g, '%20');
+                    a.href = data_type + ', ' + encodeURIComponent(tab_text);
+                    //setting the file name
+                    a.download = 'PaymentLog_' + postfix + '.xls';
+                    //triggering the function
+                    a.click();
+                    //just in case, prevent default behaviour
+                    e.preventDefault();
+                }
+                catch (e) {
+                }
+            });
+        })
+
+        $('#btnARLogSubmit').click(function () {
+
+            if ($('#dtGenerateReportData').val() == '') {
+                $('#dtGenerateReportData').addClass("has-error");
+                return false;
+            }
+            else {
+                $('#dtGenerateReportData').removeClass("has-error");
+            }
+
+            $.blockUI();
+            var sURL = '@Url.Action("ARLogReportData", "AccountReceivable", new { area = "Portal" })?regionIds=' + $("#regionlist").val()+'&createddate='+$('#dtGenerateReportData').val();
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#ARListReport').html(data);
+                    $('#ARListReport').show();
+                    $.unblockUI();
+                },
+                error: function () {
+                    alert("Content load failed.");
+                    $.unblockUI();
+                }
+            });
+
+        });
+
+
+
+        @*function DetailARLogReportExportToPDF() {
+            window.location.href = '@Url.Action("ARLogReportExportToPDF", "AccountReceivable", new { area = "Portal" })?regionIds=' + $("#regionlist").val()+'&createddate='+$('#dtGenerateReportData').val();
+
+        }*@
+
+        function DetailARLogReportPrint() {
+            window.print();           
+        }
+    </script>
+}
+
+

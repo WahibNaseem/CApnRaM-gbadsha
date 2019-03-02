@@ -1,0 +1,191 @@
+﻿@model List<JKViewModels.Franchisee.FinderfeeReportListResultModel>
+@{
+
+    var RemitData = ViewBag.RemitTo;
+
+    var request = HttpContext.Current.Request;
+    var _siteUrl = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Authority);
+    string imgpath = _siteUrl + "/Content/admin/assets/layouts/layout2/img/lg_jklogo.jpg";
+}
+}
+
+<style>
+    .tblAccountHistory thead th,
+    .tblAccountHistory thead td {
+        padding: 3px 0px !important;
+        font-size: 12px !important;
+        /*background-color: #95A5A6 !important;
+        color: #fff;*/
+    }
+
+    .tblAccountHistory tbody td {
+        padding: 3px 0px !important;
+        font-size: 12px !important;
+    }
+
+    .tblAccountHistory thead th {
+        vertical-align: middle;
+        font-weight: bold;
+    }
+</style>
+
+<table>
+    <tr>
+        <td width="15%">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-4">
+                        <img src="@imgpath" width="90" height="70" />
+                    </div>
+                </div>
+            </div>
+        </td>
+        <td width="60%">
+            <div class="row">
+                <div class="col-md-12" style="text-align:center;">
+                    <b>
+                        @if (RemitData != null)
+                        {
+                            @RemitData.RegionName
+                        }
+                    </b>
+                    <p style="font-size:15px;padding-top:5px;">Finders Fee Balance as of @ViewBag.SDate to @ViewBag.EDate</p>
+                </div>
+            </div>
+        </td>
+        <td width="20%">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-4">
+                    </div>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+<table cellspacing="0" style="width:100%;margin-left:-50px !important;margin-right:-50px !important; " class="tblAccountHistory">
+    <thead>
+        <tr>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:73px!important;"><b>Franchisee Customer</b></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:175px !important;"><b></b></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:25px!important;"><b>Seq</b></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:32px!important;"><b>FF Type</b></th>
+            @*<th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"><b>Contract Billing</b></th>*@
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;"><b>FF Started</b></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:65px!important;"><b>Payment#</b></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:72px!important;"><b>Current Payment</b></th>
+            @*<th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:72px!important;"><b>Total Due</b></th>*@
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:72px!important;"><b>Amt Paid</b></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:72px!important;"><b>Balance</b></th>
+        </tr>
+        <tr>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:73px!important;height:5px;"></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:175px !important;"></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:25px!important;"></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:32px!important;"></th>
+            @*<th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"></th>*@
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;"></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:65px!important;"></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:72px!important;"></th>
+            @*<th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:72px!important;"></th>*@
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:72px!important;"></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:72px!important;"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() != 0)
+        {
+            var unique_customer_ids = Model.Select(s => s.FranchiseeNo).Distinct().ToList();
+            foreach (var customer_id in unique_customer_ids)
+            {
+                var entries = Model.Where(s => s.FranchiseeNo == customer_id).ToList();
+                if (entries.Count() != 0)
+                {
+                    var first_item = entries.First();
+                    <tr>
+                        <td style="text-align:left;padding-top:5px;" colspan="4"><b>@Html.DisplayFor(modelItem => first_item.FranchiseeNo) </b>- <b>@Html.DisplayFor(modelItem => first_item.FranchiseeName) </b></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    decimal CurrentTotal = 0;
+                    decimal PayableOnAmount = 0;
+                    decimal PaidAmount = 0;
+                    decimal BalanceAmount = 0;
+                    foreach (var item in entries)
+                    {
+                        <tr>
+                            <td style="text-align:left;font-size:11px;">@Html.DisplayFor(modelItem => item.CustomerNo) </td>
+                            <td style="text-align:left;font-size:10px;">@Html.DisplayFor(modelItem => item.Name)</td>
+                            <td style="text-align:center;">@Html.DisplayFor(modelItem => item.SequenceNum)</td>
+                            <td style="text-align:center;">
+                                @if (item.FindersFeeType == "Single Ten.                                                                                                                  ")
+                                {
+                                    <text>S</text>
+                                }
+                            </td>
+                            @*<td style="text-align:right;">@string.Format("{0:C}", item.ContractBillingAmount)</td>*@
+                            <td style="text-align:center;">@Convert.ToDateTime(item.trxdate).ToString("MM/dd/yyyy")</td>
+                            <td style="text-align:center;">@Html.DisplayFor(modelItem => item.PaymentNumber)</td>
+                            <td style="text-align:right;">@string.Format("{0:C}", item.TotalAmount)  </td>
+                            @*<td style="text-align:right;">@string.Format("{0:C}", item.PayableOnAmount)  </td>*@
+                            <td style="text-align:right;">@string.Format("{0:C}", item.PaidAmount)  </td>
+                            <td style="text-align:right;padding-right:3px !important;">@string.Format("{0:C}", item.BalanceAmount)  </td>
+                        </tr>
+                        CurrentTotal += Convert.ToDecimal(item.TotalAmount);
+                        PayableOnAmount += Convert.ToDecimal(item.PayableOnAmount);
+                        PaidAmount += Convert.ToDecimal(item.PaidAmount);
+                        BalanceAmount += Convert.ToDecimal(item.BalanceAmount);
+                    }
+                    <tr>
+                        <td colspan="4" align="right"></td>
+                        <td colspan="2" style="border-bottom:1px solid #000000 !important;border-top:1px solid #000000 !important;border-left:1px solid #000000 !important;height:27px;padding-left:10px;">
+                            <b>Franchisee Total:</b>
+                        </td>
+                        <td style="text-align:right;border-bottom:1px solid #000000 !important;border-top:1px solid #000000 !important;">
+                            <b>@string.Format("{0:C}", CurrentTotal)</b>
+                        </td>
+                        @*<td style="text-align:right;border-bottom:1px solid #000000 !important;border-top:1px solid #000000 !important;">
+                            <b>@string.Format("{0:C}", PayableOnAmount)</b>
+                        </td>*@
+                        <td style="text-align:right;border-bottom:1px solid #000000 !important;border-top:1px solid #000000 !important;">
+                            <b>@string.Format("{0:C}", PaidAmount)</b>
+                        </td>
+                        <td style="text-align:right;border-bottom:1px solid #000000 !important;border-top:1px solid #000000 !important;border-right:1px solid #000000 !important;padding-right:3px !important;">
+                            <b>@string.Format("{0:C}", BalanceAmount)</b>
+                        </td>
+
+                    </tr>
+                }
+            }
+        }
+
+        @*<tr>
+                    <td style="text-align:center">FranchiseeNo</td>
+                    <td style="text-align:left">FranchiseeName</td>
+                    <td style="text-align:right">$200</td>
+                    <td style="text-align:right">$300 </td>
+                    <td style="text-align:right">$400</td>
+                    <td style="text-align:right">$500</td>
+                    <td style="text-align:right">$600</td>
+                    <td style="text-align:right">$800</td>
+                    <td style="text-align:right">$300</td>
+                    <td style="text-align:right">$200</td>
+                </tr>
+
+            <tr>
+                <td style="text-align:center;border-top:1px solid #000000 !important"></td>
+                <td style="text-align:right;border-top:1px solid #000000  !important;padding-top:8px;"><b>Totals</b></td>
+                <td style="text-align:right;border-top:1px solid #000000  !important;padding-top:8px;">$100</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$100</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$100</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$100</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$100</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$100</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$100</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$100</td>
+            </tr>*@
+    </tbody>
+</table>
+
+<div style="page-break-before:always"></div>
+

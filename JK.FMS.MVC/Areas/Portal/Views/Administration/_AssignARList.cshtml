@@ -1,0 +1,59 @@
+﻿@using JKViewModels;
+@model AssignARModel
+
+@if (Model != null && Model.RoleBasedMenuAccessList != null && Model.RoleBasedMenuAccessList.Count > 0)
+{
+
+    @Html.HiddenFor(m => m.RoleId, new { @id = "hdnRoleId", Value = Model.RoleId })
+
+    for (int i = 0; i < Model.RoleBasedMenuAccessList.Count; i++)
+    {
+        @Html.HiddenFor(m => m.RoleBasedMenuAccessList[i].ARPermissionId, new { @id = "hdnMenu_" + Model.RoleBasedMenuAccessList[i].ARPermissionId, Value = Model.RoleBasedMenuAccessList[i].ARPermissionId })
+        @Html.HiddenFor(m => m.RoleBasedMenuAccessList[i].IsApprove, new { @id = "hdnIsApprove_" + Model.RoleBasedMenuAccessList[i].ARPermissionId, Value = Model.RoleBasedMenuAccessList[i].IsApprove })
+        @Html.HiddenFor(m => m.RoleBasedMenuAccessList[i].IsReject, new { @id = "hdnIsReject_" + Model.RoleBasedMenuAccessList[i].ARPermissionId, Value = Model.RoleBasedMenuAccessList[i].IsReject })
+        @Html.HiddenFor(m => m.RoleBasedMenuAccessList[i].IsApproveEmail, new { @id = "hdnIsApproveEmail_" + Model.RoleBasedMenuAccessList[i].ARPermissionId, Value = Model.RoleBasedMenuAccessList[i].IsApproveEmail })
+        @Html.HiddenFor(m => m.RoleBasedMenuAccessList[i].IsRejectEmail, new { @id = "hdnIsRejectEmail_" + Model.RoleBasedMenuAccessList[i].ARPermissionId, Value = Model.RoleBasedMenuAccessList[i].IsRejectEmail })
+
+    }
+}
+
+
+<div class="treeview-header clearfix">
+    <label class="colLeft">Section Name</label>
+    <div class="chkMenuAccess">
+        <div class="colMiddle">Is Approve <input type="checkbox" class="chkMenu chkAll" id="chkAllRead" /></div>
+        <div class="colRight">Is Reject <input type="checkbox" class="chkMenu chkAll" id="chkAllWrite" /></div>
+        <div class="colMiddle">Is Approve Email <input type="checkbox" class="chkMenu chkAll" id="chkAllApproveEmail" /></div>
+        <div class="colRight">Is Reject Email <input type="checkbox" class="chkMenu chkAll" id="chkAllRejectEmail" /></div>
+
+    </div>
+</div>
+<ul id="treeView" class="treeview-red">
+    @if (Model != null && Model.RoleBasedMenuAccessList != null && Model.RoleBasedMenuAccessList.Count > 0)
+    {
+
+        List<RolebasedARAccessDetailModel> menus = Model.RoleBasedMenuAccessList;
+
+        for (int i = 0; i < menus.Count; i++)
+        {
+            <li id="li_@menus[i].ARPermissionId" data-tt-id="@menus[i].ARPermissionId">
+
+                <label>@menus[i].DisplayName</label>
+
+                <div class="chkMenuAccess">
+                    <input type="checkbox" class="chkMenu chkAllRead chkParentRead" checked="checked" data-parentmenuid="@menus[i].ARPermissionId" data-menuid="@menus[i].ARPermissionId" id="chkIsAprove_@menus[i].ARPermissionId" />
+
+                    <input type="checkbox" class="chkMenu chkAllWrite chkParentWrite" checked="checked" data-parentmenuid="@menus[i].ARPermissionId" data-menuid="@menus[i].ARPermissionId" id="chkIsReject_@menus[i].ARPermissionId" />
+
+                    <input type="checkbox" class="chkMenu chkAllApproveEmail chkParentRead" checked="checked" data-parentmenuid="@menus[i].ARPermissionId" data-menuid="@menus[i].ARPermissionId" id="chkIsApproveEmail_@menus[i].ARPermissionId" />
+
+                    <input type="checkbox" class="chkMenu chkAllRejectEmail chkParentWrite" checked="checked" data-parentmenuid="@menus[i].ARPermissionId" data-menuid="@menus[i].ARPermissionId" id="chkIsRejectEmail_@menus[i].ARPermissionId" />
+                </div>
+            </li>
+        }
+    }
+</ul>
+
+@Html.HiddenFor(m => Model.Message, new { @id = "hdnMessage", Value = Model.Message })
+@Html.HiddenFor(m => Model.MessageType, new { @id = "hdnMessageType", Value = Model.MessageType })
+

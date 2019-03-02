@@ -1,0 +1,222 @@
+﻿@model JKApi.Service.AccountReceivable.CreditDetailPrintViewModel
+@{
+    var request = HttpContext.Current.Request;
+    var _siteUrl = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Authority);
+
+    string imgpath = _siteUrl + "/Content/admin/assets/layouts/layout2/img/lg_jklogo.jpg";
+    string lineimgpath = _siteUrl + "/Content/admin/assets/layouts/layout2/img/dotline.jpg";
+}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <table class="table">
+        <tr>
+            @*LOGO*@
+            <td valign="top" class="t1col1">
+                <img src="@imgpath" alt="logo" width="90" height="60">
+            </td>
+            @*Remit To*@
+            <td align="left" valign="top" class="t1col2"></td>
+
+            <td width="10" class="t1col3"></td>
+
+            @*Credit Detail*@
+            <td class="t1col4">
+                <table width="180" style="font-size:9px;" class="tabborder">
+                    <tr>
+                        <td colspan="2" align="center">Credit</td>
+                    </tr>
+                    <tr>
+                        <td align="center"><b>Credit Date</b><br />@Convert.ToDateTime(Model.CreditDate).ToString("MM/dd/yyyy")</td>
+                        <td align="center"><b>Credit No</b><br />@Model.CreditNo</td>
+                    </tr>
+                    <tr>
+                        <td align="center"><b>Customer #</b><br />@Model.CustomerNo</td>
+                        <td align="center"><b>Credit Amount</b><br />@string.Format("{0:c}", Model.CreditAmount)</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="4">
+                <table>
+                    <tr>
+                        <td>
+                            <strong>For:</strong>  <br />
+                            @Html.DisplayFor(one => one.CustomerName) <br />
+                            @Html.DisplayFor(one => one.Address1) , @Html.DisplayFor(one => one.Address2) <br />
+                            @Html.DisplayFor(one => one.City),@Html.DisplayFor(one => one.StateName), @Html.DisplayFor(one => one.PostalCode)  <br />
+                            @if (Model.Phone != null)
+                            {
+                                string phoneFormat = Model.Phone.Trim();
+                                if (Model.Phone != null)
+                                {
+                                    if (phoneFormat.Length == 10)
+                                    {
+                                        @Html.Label("(" + phoneFormat.Substring(0, 3) + ")" + " " + phoneFormat.Substring(3, 3) + "-" + phoneFormat.Substring(6, 4));
+                                    }
+                                    else
+                                    {
+                                        @Html.Label(phoneFormat);
+                                    }
+                                }
+                            }
+                        </td>
+                        <td>&nbsp;</td>
+                        <td>
+                            <strong></strong>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="4">
+                <p></p> <br />
+                <p></p>  <br />
+                <img src="@lineimgpath" width="546"><br />
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="4">
+                <table>
+                    <tr>
+                        <td class="t3col1"></td>
+                        <td class="t3col2">
+                            <div style="text-align:center;">
+                                JANI-KING OF BUFFALO , INC. <br />
+                                <b>Commerical Cleaning Services</b> <br />
+                                @if (Model.Phone != null)
+                                {
+                                    string phoneFormat = Model.Phone.Trim();
+                                    if (Model.Phone != null)
+                                    {
+                                        if (phoneFormat.Length == 10)
+                                        {
+                                            @Html.Label("(" + phoneFormat.Substring(0, 3) + ")" + " " + phoneFormat.Substring(3, 3) + "-" + phoneFormat.Substring(6, 4));
+                                        }
+                                        else
+                                        {
+                                            @Html.Label(phoneFormat);
+                                        }
+                                    }
+                                }
+                            </div>
+                        </td>
+                        <td class="t3col3" align="right">
+                            <img src="@imgpath" alt="logo" class="logo-default" width="65" height="45">
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="4">
+                <table>
+                    <tr>
+                        <td>
+                            <strong></strong>
+                            <br />
+                            <br />
+                            <br />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+
+        <tr>
+            <td colspan="4">
+                <table>
+                    <tr>
+                        <td>
+                            <strong>For :</strong><br />
+                            @*@Html.DisplayFor(one => one.InvoiceDetail.CustomerNo)<br />*@
+                            @Html.DisplayFor(one => one.CustomerName) <br />
+                            @Html.DisplayFor(one => one.Address1),@Html.DisplayFor(one => one.Address2) <br />
+                            @Html.DisplayFor(one => one.City), @Html.DisplayFor(one => one.StateName) @Html.DisplayFor(one => one.PostalCode) <br />
+                            <div>                                
+                                @if (Model.Phone != null)
+                                {
+                                    string phoneFormat = Model.Phone.Trim();
+                                    if (Model.Phone != null)
+                                    {
+                                        if (phoneFormat.Length == 10)
+                                        {
+                                            @Html.Label("(" + phoneFormat.Substring(0, 3) + ")" + " " + phoneFormat.Substring(3, 3) + "-" + phoneFormat.Substring(6, 4));
+                                        }
+                                        else
+                                        {
+                                            @Html.Label(phoneFormat);
+                                        }
+                                    }
+                                }
+                            </div>
+                        </td>
+                        <td>&nbsp;</td>
+                        <td>
+                            <strong>@*For:*@</strong><br />
+                            @*@Html.DisplayFor(one => one.InvoiceDetail.B_Name)*@<br />
+                            @*@Html.DisplayFor(one => one.InvoiceDetail.B_Attention)*@
+                            @*@Html.DisplayFor(one => one.InvoiceDetail.B_Address1),@Html.DisplayFor(one => one.InvoiceDetail.B_Address2)*@<br />
+                            @*@Html.DisplayFor(one => one.InvoiceDetail.B_City), @Html.DisplayFor(one => one.InvoiceDetail.B_State) @Html.DisplayFor(one => one.InvoiceDetail.B_PostalCode)*@
+                        </td>
+                    </tr>
+                </table>
+            </td>
+
+
+        </tr>
+
+    </table>
+    @{
+        bool extspace = true;
+        bool Ismulpages = false;
+        int rowcount = 0;
+    }
+
+    <table cellpadding="5" style="font-size:8.5px" class="tablborder">
+        <tr>
+            <th align="center" valign="top" class="t22col1"><b>TYPE</b></th>
+            <th align="center" valign="top" class="col2"><b>LINE #</b></th>
+            <th align="center" valign="top" class="col3"><b>DATE.</b></th>
+            <th align="center" valign="top" class="col4"><b>NUMBER</b></th>
+            <th align="center" valign="top" class="t2col6"><b>DESCRIPTION</b></th>
+            <th align="center" valign="top" class="t2col6" width="46"><b>AMOUNT</b> </th>
+        </tr>
+        <tr>
+
+            <td align="center" valign="top">@Html.DisplayFor(one => one.CustomerCreditPaymentType.Type)</td>
+            <td align="center" valign="top">1</td>
+            <td align="center" valign="top">@Convert.ToDateTime(Model.CreditDate).ToString()</td>
+            <td align="center" valign="top">@Html.DisplayFor(one => one.CustomerCreditPaymentType.Number)</td>
+            @*
+                <td align="left" valign="top">
+                    @Html.Raw((Model.Description != null ? Model.Description.Replace("\r\n", "<br />") : ""))
+
+                    @if (Model.Description != null)
+                    {
+                    if (Model.Description.Length > 400)
+                    {
+                    if (extspace == true) { extspace = false; }
+                    }
+                    }
+                </td>*@
+            <td align="center" valign="top">@string.Format("{0:c}", Model.CustomerCreditPaymentType.Amount)</td>
+            @*
+                <td align="center" valign="top">@Html.DisplayFor(one => one.InvoiceDetail.PurchaseOrderNo)</td>*@
+
+        </tr>
+
+    </table>
+
+</body>
+</html>

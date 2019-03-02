@@ -1,0 +1,84 @@
+﻿@model JKViewModels.AccountReceivable.UndoBillRunViewModel
+
+@{
+    ViewBag.Title = "ProcessUndoBillRun";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <style type="text/css">
+        .jkcustom-page-title {
+            font-size: 18px;
+            padding: 3px;
+            color: #fff !important;
+            background: #3598dc !important;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .jkcustom-form-table {
+            width: 100%;
+        }
+
+            .jkcustom-form-table tr {
+            }
+
+                .jkcustom-form-table tr > td {
+                    padding-bottom: 3px;
+                    padding-top: 3px;
+                }
+
+        .form-group.form-md-line-input {
+            position: relative;
+            margin: 0 0 15px;
+            padding-top: 20px;
+        }
+    </style>
+}
+
+@using (Html.BeginForm("ProcessUndoBillRun", "AccountReceivable", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="col-md-12">
+        <div class="jkcustom-page-title">
+            Undo Bill Run
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <div class="form-horizontal panel panel-default  center-body text-center">
+            <div class="panel-body">
+
+                <div class="form-group">
+                    <div class="col-md-1"> </div>
+                        <div class="col-md-3">
+                            <strong>
+                                @Html.LabelFor(model => model.billMonthYear, new { @class = "control-label" })
+                            </strong>
+                        </div>
+                        <div class="col-md-5">
+                            @Html.DropDownListFor(model => model.billMonthYear, new List<SelectListItem> {
+                                 new SelectListItem { Text = "-Select One-", Value = "-1"},
+                           }, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.billMonthYear, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                <input type="submit" value="Undo" class="btn btn-default btn-info" />
+            </div>
+        </div>
+    </div>
+
+
+}
+
+@*<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>*@
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+
+

@@ -1,0 +1,365 @@
+﻿@model JKViewModels.Franchisee.FFinderFeeDetailFullViewModel
+@{
+
+    Layout = null;
+}
+<style type="text/css">
+    .edit-txtbx{
+
+    }
+    .edit-txtbx.txamt{
+        text-align:right;
+    }
+</style>
+
+<div class="modal fade in" id="modal_FeeFinderdetailResult" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Finders Fee
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <div class="form-body" style="padding-top: 0px;">
+                    <div class="form-group">
+                        <div class="row" style="padding-bottom: 0px;">
+                            <div class="col-md-12">
+                                <div class="col-md-3 control-label" style="padding-top: 0px;">
+                                    <span><b>Franchisee No<span style="color:#000000;">&nbsp;:</b></span></span>
+                                </div>
+                                <div class="col-md-2" style="padding-left:0px;">
+                                    <span><b>@Model.FranchiseeNo</b></span>
+                                </div>
+                                <div class="col-md-2">
+                                </div>
+                                <div class="col-md-2 control-label" style="padding-top: 0px;">
+                                    <span><b>Customer No<span style="color:#000000;">&nbsp;:</b></span></span>
+                                </div>
+                                <div class="col-md-3" style="padding-left:0px;">
+                                    <span><b>@Model.CustomerNo</b></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="padding-top: 0px;padding-bottom: 0px;">
+                            <div class="col-md-12">
+                                <div class="col-md-3 control-label" style="padding-top: 0px;">
+                                </div>
+                                <div class="col-md-3" style="padding-left: 0px;">
+                                    <span>@Model.FranchiseeName <br />@Model.F_Address<br />@Model.F_City, @Model.F_StateName @Model.F_PostalCode</span>
+                                </div>
+                                <div class="col-md-1">
+                                </div>
+                                <div class="col-md-2 control-label">
+                                </div>
+                                <div class="col-md-3" style="padding-left:0px;">
+                                    <span>@Model.CustomerName <br />@Model.CAddress<br />@Model.C_City, @Model.C_StateName @Model.C_PostalCode</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row" style="padding-top: 0px;padding-bottom: 0px;">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-10 text-left" style="background: #99a2a2;color: #fff;font-size: 16px;">
+                                Finders Fee Information
+                            </div>
+                            <div class="col-md-1"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label">
+                                    Status<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DropDownListFor(m => m.TransactionStatusListId,(SelectList)ViewBag.TransactionStatusList,"Select",new {@class= "form-control input-sm edit-txtbx" })                                  
+                                </div>
+                                <div class="col-md-1 control-label" style="padding-left: 0px;padding-right: 0px;">
+                                    Start Date<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.TextBoxFor(one => one.StartDate, "{0:MM/dd/yyyy}", new { @class = "form-control input-sm  edit-txtbx date-picker " })
+                                </div>
+                                <div class="col-md-2 control-label">
+                                    Resume Date<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.TextBoxFor(one => one.ResumeDate, "{0:MM/dd/yyyy}", new { @class = "form-control input-sm  edit-txtbx date-picker" })
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label">
+                                    Description<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(one => one.Description, new { @class = "form-control input-sm  edit-txtbx" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row" style="padding-top: 0px;padding-bottom: 0px;">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-10 text-left" style="background: #99a2a2;color: #fff;font-size: 16px;">
+                                Finders Fee Calculation Information
+                            </div>
+                            <div class="col-md-1"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label">
+                                    Adjustment:<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-9">
+                                    <table class="table table-striped table-bordered table-hover order-column" id="tblNewFinderFee">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">
+                                                    Type
+                                                </th>
+                                                <th class="text-center">
+                                                    Description
+                                                </th>
+                                                <th class="text-center">
+                                                    Amount
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                           @foreach (var item in Model.FindersFeeAdjustments)
+                                            {
+                                            <tr>
+                                                <td>
+                                                    <select>
+                                                        @{
+                                                            <option value="0">Select</option>
+                                                            foreach (var itemdd in (SelectList)ViewBag.FindersFeeAdjustmentTypeList)
+                                                            {
+                                                                <option value="@itemdd.Value" @(item.FindersFeeAdjustmentTypeListId.ToString()==itemdd.Value?"Selected":"")>
+                                                                    @itemdd.Text
+                                                                </option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                    @*@Html.DropDownListFor(m => item.FindersFeeAdjustmentTypeListId,
+                                                    (SelectList)ViewBag.FindersFeeAdjustmentTypeList,
+                                                    "Select", new { @class = "form-control input-sm edit-txtbx" })*@
+                                                </td>
+                                                <td>@item.Description</td>
+                                                <td>@item.Amount</td>
+                                            </tr>
+
+                                           
+                                            }
+                                        </tbody>
+                                       
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label"><a href="javascript:void(0);">+ Add</a></div>
+                                <div class="col-md-2 control-label" style="padding-left: 0px;">
+                                    Calculation Method<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+
+                                    @Html.DropDownListFor(m => m.FindersFeeTypeListId,
+                                                    (SelectList)ViewBag.FindersFeeTypeList,
+                                                    "Select", new { @class = "form-control input-sm edit-txtbx" })
+
+                                    @*<select class="form-control input-sm">
+                                        <option></option>@Html.DisplayFor(one => one.FindersFeeTypeListName)
+                                    </select>*@
+                                </div>
+                                <div class="col-md-2 control-label">
+                                    Billing<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.TextBoxFor(one => one.ContractBillingAmount, "{0:c}", new { @class = "form-control input-sm edit-txtbx txamt" })
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label"></div>
+                                <div class="col-md-2 control-label">
+                                    Factor<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.TextBoxFor(one => one.Factor, new { @class = "form-control input-sm edit-txtbx" })
+                                </div>
+                                <div class="col-md-2 control-label">
+                                    Total Adjustments<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.TextBoxFor(one => one.TotalAdjustmentAmount, "{0:c}", new { @class = "form-control input-sm edit-txtbx txamt" })
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label"></div>
+                                <div class="col-md-2 control-label">
+                                    DP Percent<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.TextBoxFor(one => one.DownPayPercentage, new { @class = "form-control input-sm edit-txtbx" })
+                                </div>
+                                <div class="col-md-2 control-label">
+                                    Payable On<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.TextBoxFor(one => one.PayableOnAmount,"{0:c}", new { @class = "form-control input-sm edit-txtbx txamt" })
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label"></div>
+                                <div class="col-md-2 control-label">
+                                    Interest<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.TextBoxFor(one => one.Interest, "{0:c}", new { @class = "form-control input-sm  edit-txtbx txamt" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row" style="padding-top: 0px;padding-bottom: 0px;">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-10 text-left" style="background: #99a2a2;color: #fff;font-size: 16px;">
+                                Finder Fee Calculation Information
+                            </div>
+                            <div class="col-md-1"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label"></div>
+                                <div class="col-md-8">
+                                    <label class="mt-checkbox mt-checkbox-outline">
+                                        <input type="checkbox">Include First Payment in down payment
+                                        <span></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label"></div>
+                                <div class="col-md-2 control-label" style="padding-left: 0px;">
+                                    Number of Payments<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.TextBoxFor(one => one.TotalNumOfpayments, new { @class = "form-control input-sm edit-txtbx" })
+                                </div>
+                                <div class="col-md-3 control-label" style="padding-left: 0px; padding-right: 0px">
+                                    Multi-Tenant 100% Occupancy<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.TextBoxFor(one => one.MultiTenantOccupancyAmount, "{0:c}", new { @class = "form-control input-sm edit-txtbx txamt" })
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label"></div>
+                                <div class="col-md-2 control-label">
+                                    Monthly Payment<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.TextBoxFor(one => one.MonthlyPaymentAmount, "{0:c}", new { @class = "form-control input-sm edit-txtbx txamt" })
+                                </div>
+                                <div class="col-md-3 control-label" style="padding-right: 0px">
+                                    Payments Billed<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.TextBoxFor(one => one.ContractBillingAmount, "{0:c}", new { @class = "form-control input-sm edit-txtbx txamt" })
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label"></div>
+                                <div class="col-md-2 control-label">
+                                    Amount Financed<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.TextBoxFor(one => one.FinancedAmount, "{0:c}", new { @class = "form-control input-sm edit-txtbx txamt" })
+                                </div>
+                                <div class="col-md-3 control-label" style="padding-right: 0px">
+                                    Amount Paid<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.TextBoxFor(one => one.PaidAmount,"{0:c}", new { @class = "form-control input-sm edit-txtbx txamt" })
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label"></div>
+                                <div class="col-md-2 control-label" style="padding-left: 0px;">
+                                    Down Pymnt Amount<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.TextBoxFor(one => one.DownPaymentAmount, "{0:c}", new { @class = "form-control input-sm edit-txtbx txamt" })
+                                </div>
+                                <div class="col-md-3 control-label" style="padding-right: 0px">
+                                    Balance<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.TextBoxFor(one => one.BalanceAmount, "{0:c}", new { @class = "form-control input-sm edit-txtbx txamt" })
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label"></div>
+                                <div class="col-md-2 control-label">
+                                    Total FF<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.TextBoxFor(one => one.TotalAmount, "{0:c}", new { @class = "form-control input-sm edit-txtbx txamt" })
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label"></div>
+                                <div class="col-md-2 control-label">
+                                    Note<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-7">
+                                    @Html.TextBoxFor(one => one.Notes, new { @class = "form-control input-sm edit-txtbx" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+@section scripts{
+<script type="text/javascript">
+
+    
+    function DetailListExportPDF() {
+        $.blockUI();
+        window.location.href = '@Url.Action("FFDetailListExportPDF", "Franchise", new { area = "Portal" })?id=' + $('#hddFF_FranchiseeId').val();
+        $.unblockUI();
+    }
+
+    function DetailListPrint() {
+        $.blockUI();
+        var sURL = '@Url.Action("FFDetailListPrint", "Franchise", new { area = "Portal" })?id=' + $('#hddFF_FranchiseeId').val();
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                var tUrl = data;
+                printJS({ printable: document.location.origin + tUrl, type: 'pdf', showModal: false });
+                $.unblockUI();
+            },
+            error: function () {
+                alert("Content load failed.");
+                $.unblockUI();
+            }
+        });
+    }
+</script>
+}

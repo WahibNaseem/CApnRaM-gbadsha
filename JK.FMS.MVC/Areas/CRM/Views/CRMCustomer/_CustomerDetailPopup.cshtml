@@ -1,0 +1,994 @@
+﻿@model JKViewModels.Customer.FullCustomerViewModel1
+<style>
+    .AddBackground {
+        background-color: #d64e56;
+    }
+</style>
+<div class="modal fade in" id="ModelCustomerDetailsPopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg" id="RenderCustomerDetailsPopup">
+
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    NEW CUSTOMER - @ViewBag.StatusName.ToUpper() UPDATE
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <div class="form-body" style="padding: 0px !important;padding-left:15px !important;">
+                    <div class="form-group">
+                        <div class="row" style="background-color: #4b85cc;color: #fff;padding-top:8px;padding-bottom:8px;margin-left: 10px;margin-right: 25px;margin-top:8px;">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        Customer Information : <b> @Html.DisplayFor(one => one.CustomerDetail.CustomerName)  </b>
+                                        <input type="hidden" value="@ViewBag.CallFrom" id="hdfCustomerDetailCallFrom" />
+                                    </div>
+                                    <div class="col-md-6 text-center">Customer # <b>@Model.CustomerDetail.CustomerNo </b></div>
+                                    <input type="hidden" id="hdnOfferCustomerid" value="@ViewBag.CustomerID" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="portlet-body" style="padding:10px">
+                            <div class="row">
+                                <div class="col-md-12" style="padding-left:0px;">
+                                    <div class="col-md-8" style="padding-left:0px;border: 1px solid grey; margin-left: -1px;margin-right: 1px;min-height:165px;">
+                                        <div class="col-md-12">
+                                            <div class="col-md-12">
+                                                <div class="form-body" style="padding: 5px;padding-bottom:0px;">
+                                                    <div class="form-group mr0">
+                                                        <label class="col-md-3 control-label" style="padding-left: 4px;padding-right: 4px;padding-top:0px;"><b>Status:</b></label>
+                                                        <div class="col-md-9" style="padding-top:0px;padding-left: 10px;padding-right:4px;">
+                                                            <label class="control-label" style="text-align:left!important;padding-top: 0px;">
+                                                                @ViewBag.StatusName
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group mr0">
+                                                        <label class="col-md-3 control-label" style="padding-top: 0px;padding-left: 4px;padding-right: 4px;"><b>Account Type:</b></label>
+                                                        <div class="col-md-9" style="padding-top: 0px;padding-left: 10px;padding-right: 4px;">
+                                                            <label class="control-label" style="text-align:left!important;padding-top: 0px;">@Html.DisplayFor(one => one.CustomerDetail.Account_Type)</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group mr0">
+                                                        <label class="col-md-3 control-label" style="padding-top: 0px;padding-left: 4px;padding-right: 4px;"><b>Contact Name:</b></label>
+                                                        <div class="col-md-9" style="padding-top: 0px;padding-left: 10px;padding-right: 4px;">
+                                                            <label class="control-label" style="text-align:left!important;padding-top: 0px;">@Html.DisplayFor(one => one.CustomerDetail.ContactName)</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group mr0">
+                                                        <label class="col-md-3 control-label" style="padding-left: 4px;padding-right: 4px;padding-top:0px;"><b>Phone:</b></label>
+                                                        <div class="col-md-9" style="padding-left: 10px;padding-right: 4px;padding-top:0px;">
+                                                            <label class="control-label" style="text-align:left!important;padding-top: 0px;padding-bottom: 0px;">@(string.IsNullOrEmpty(Model.CustomerDetail.Phone) ? Model.CustomerDetail.CustomerCell : Model.CustomerDetail.Phone)</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group mr0">
+                                                        <label class="col-md-3 control-label" style="padding-left: 4px;padding-right: 4px;padding-top:0px;"><b>Email:</b></label>
+                                                        <div class="col-md-9" style="padding-left: 10px;padding-right: 4px;padding-top:0px;">
+                                                            <label class="control-label" style="text-align:left!important;padding-top: 0px;">@Html.DisplayFor(one => one.CustomerDetail.Email)</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group mr0">
+                                                        <label class="col-md-3 control-label" style="padding-left: 4px;padding-right: 4px;padding-top:0px;"><b>Address:</b></label>
+                                                        <div class="col-md-9" style="padding-left: 10px;padding-right: 4px;padding-top:0px;">
+                                                            <label class="control-label" style="text-align:left!important;padding-top: 0px;">
+                                                                @Html.DisplayFor(one => one.CustomerDetail.Address) @Html.DisplayFor(one => one.CustomerDetail.Address2)
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4" style="padding-right:0px;border: 1px solid grey;min-height:165px;">
+                                        <div class="col-md-6">
+                                            <div class="form-group mr0" style="margin-top: 13px;">
+                                                @if (ViewBag.HasActiveCustomerInfo)
+                                                {
+                                                    <a class="btn-custom btn btn-primary col-md-11" style="font-size: 11px;" onclick="showEditCustomerInfo(@ViewBag.CustomerID)" id="btnEditCustomerInfo">Edit Customer Info</a>
+                                                }
+                                                else
+                                                {<a class="btn-custom btn btn-primary col-md-11 AddBackground" style="font-size: 11px;" onclick="showEditCustomerInfo(@ViewBag.CustomerID)" id="btnEditCustomerInfo">Edit Customer Info</a>
+                                                }
+                                            </div>
+
+
+
+                                            <div class="form-group mr0">
+                                                @*@if (ViewBag.CustomerContract > 0 && (bool)ViewBag.CustomerContractDetail == true)*@
+                                                @if (ViewBag.HasActiveContract)
+                                                {
+                                                    <a href="javascript:void(0);" id="anhContractCA" class="btn-custom btn btn-primary col-md-11" style="font-size: 11px;" onclick="OpenCustomerContractPopup(@ViewBag.CustomerID)">Customer Contract</a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="javascript:void(0);" id="anhContractCA" class="btn-custom btn btn-primary col-md-11  ca-nvalid AddBackground" style="font-size: 11px;background-color:#d64e56;" onclick="OpenCustomerContractPopup(@ViewBag.CustomerID)">Customer Contract</a>
+                                                }
+                                            </div>
+                                            <div class="form-group mr0">
+                                                @if (ViewBag.HasActiveContractType != 2) { 
+                                                    if (ViewBag.HasActiveDistribution)
+                                                    {
+                                                        @*<a class="btn-custom btn btn-primary col-md-11" style="font-size: 11px;" onclick="showCustomerFranchiseeDistribution(@Model.MaintenanceTempId)">Distribution</a>*@
+                                                        <a class="btn-custom btn btn-primary col-md-11" id="anhDistributionCA" style="font-size: 11px;" onclick="BindFranchiseeCustomerDistribution(@Model.CustomerDetail.CustomerId,@ViewBag.DistributionFranchiseeId)">Distribution</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a class="btn-custom btn btn-primary col-md-11 ca-nvalid" id="anhDistributionCA" style="font-size: 11px;background-color:#d64e56;" onclick="ShowCustomerSuggetionBox()">Distribution</a>
+                                                    }
+                                                }
+                                                <input type="hidden" value="@Model.MaintenanceTempId" id="hdnMaintenanceTempId" />
+                                            </div>
+
+                                            <div class="form-group mr0">
+                                                @if (ViewBag.HasActiveContractType != 2)
+                                                {
+                                                    if (ViewBag.Status == 39)
+                                                    {
+                                                        if (ViewBag.CustomerContract > 0 && ViewBag.TotalDistribution > 0 && (bool)ViewBag.CustomerContractDetail == true)
+                                                        {
+                                                            if (ViewBag.FindersFeeCustomer > 0)
+                                                            {
+                                                                <a href="javasscript:void(0)" id="anhFindersFeeCA" class="btn-custom btn btn-primary col-md-11" style="font-size: 11px;" onclick="AddFindersFee(@ViewBag.CustomerID, @ViewBag.DistributionDetailLineNeedsFF,@ViewBag.DistributionId)">Finders Fee</a>
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <a href="javasscript:void(0)" id="anhFindersFeeCA" class="btn-custom btn btn-primary col-md-11 ca-nvalid" style="font-size: 11px;background-color:#d64e56;" onclick="AddFindersFee(@ViewBag.CustomerID, @ViewBag.DistributionDetailLineNeedsFF,@ViewBag.DistributionId)">Finders Fee</a>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <a href="javasscript:void(0)" id="anhFindersFeeCA" class="btn-custom btn btn-primary col-md-11 ca-nvalid" style="font-size: 11px;background-color:#d64e56;" onclick="FinderFeePopupAlert()">Finders Fee</a>
+                                                        }
+                                                    }
+                                                }
+                                                </div>
+                                                
+
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group mr0" style="margin-top: 13px;">
+                                                @if (ViewBag.HasDocumentUploaded == true)
+                                                {
+                                                    <a href="javascript:void(0)" id="anhUploadDocumentCA" class="btn-custom btn btn-primary col-md-11" style="font-size: 11px;" onclick="OpenCustomerUploadDocumentPopup(@ViewBag.CustomerID)">Documents</a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="javascript:void(0)" id="anhUploadDocumentCA" class="btn-custom btn btn-primary col-md-11  ca-nvalid" style="font-size: 11px;background-color:#d64e56;" onclick="OpenCustomerUploadDocumentPopup(@ViewBag.CustomerID)">Documents</a>
+                                                }
+
+
+                                            </div>
+                                            @if (ViewBag.Status == 38)
+                                            {
+                                                <div class="form-group mr0">
+                                                    @*<a href="javascript:void(0);" class="btn-custom btn btn-primary col-md-11" style="font-size: 11px;background-color:#d64e56;" onclick="AccountOffringModel(@ViewBag.CustomerID)">Account Offering</a>*@
+                                                    <a href="javascript:void(0);" class="btn-custom btn btn-primary col-md-11" style="font-size: 11px;background-color:#d64e56;" onclick="ClickAccountOffring(@ViewBag.CustomerID)">Account Offering</a>
+                                                </div>
+                                            }
+                                            @*<div class="form-group mr0">
+                                                <a class="btn-custom btn btn-primary col-md-11" style="font-size:11px;padding-left: 0px;padding-right: 0px;" onclick="">Maintenance</a>
+                                            </div>*@
+                                            @if (ViewBag.Status == 38)
+                                            {
+                                                <div class="form-group mr0">
+                                                    <a href="javascript:void(0);" class="btn-custom btn btn-primary col-md-11" style="font-size: 11px;background-color:#d64e56;" onclick="NewAccountForm(@ViewBag.CustomerID)">Account Walk-Thru</a>
+                                                </div>
+                                            }
+                                                @if (Model.MaintenanceTempId > 0)
+                                                {
+                                                    <div class="form-group mr0">
+                                                        <a href="javascript:void(0);" class="btn-custom btn btn-primary col-md-11" style="font-size: 11px;background-color:#d64e56;" onclick="OpenFinderFeeForm(@ViewBag.CustomerID)">Account Acceptance</a>
+                                                    </div>
+                                                }
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="display:none;">
+                                <div class="col-md-12" style="color:red;padding-left:82px;display:none;" id="errmes"><p>Distribution Details is Required.</p> </div>
+                                @if (Model.MessagesData != null)
+                                {
+                                    int count = Model.MessagesData.Count();
+                                    var data = Model.MessagesData.LastOrDefault();
+
+                                    foreach (var d in Model.MessagesData)
+                                    {
+                                        <div class="col-md-12 PendingMessage">
+                                            <div class="col-md-2 control-label">
+                                                @d.FirstName @d.LastName :<span class="required"> * </span>
+                                            </div>
+                                            <div class="col-md-6 control-label">
+                                                <textarea class="form-control input-sm" style="resize: none;overflow-x:hidden;" readonly="readonly" rows="3">@d.Message</textarea>
+                                            </div>
+                                            <div class="col-md-2 control-label">
+                                            </div>
+                                            <div class="col-md-2 control-label">
+                                            </div>
+                                        </div>
+                                    }
+                                    if (data != null && data.IsRejacted == true && data.CreatedByChild == Model.USERID)
+                                    {
+                                        <script>$(".PendingMessage").last().find("textarea").prop("readonly", false)</script>
+                                        <div class="col-md-12">
+                                            <input type="hidden" id="hdnCustomerId" value="@Model.CustomerDetail.CustomerId" />
+                                            <div class="col-md-2 control-label">
+                                                @*  Note :<span class="required"> * </span>*@
+                                            </div>
+                                            <div class="col-md-6 control-label">
+                                                @*<textarea class="form-control input-sm" style="resize: none;overflow-x: hidden;" rows="3" id="txtNote"></textarea>*@
+                                            </div>
+                                            <div class="col-md-2 control-label MainAdmins" style="display:none;">
+                                                <input type="button" id="btnReject" onclick="UpdateApproveReject(2)" class="btn btn-primary col-md-11" value="REJECTED" style="margin-bottom:3px;font-size:11px;margin-top:3px;margin-left:-10px !important" />
+                                            </div>
+                                            <div class="col-md-2 control-label MainAdmins" style="display:none;">
+                                                <input type="button" id="btnApprove" onclick="UpdateApproveReject(1)" class="btn btn-primary col-md-11" value="APPROVED" style="font-size:11px;padding-left:0px !important;padding-right:0px !important;margin-top:3px;margin-left:-40px !important" />
+                                            </div>
+                                            <div style="left: 35px;" class="col-md-2 control-label">
+                                                <input type="button" id="btnSubmit" onclick="UpdateRejectMessage(3,$('.PendingMessage').last().find('textarea'))" class="btn btn-primary col-md-11" value="Submit" style="font-size:11px;padding-left:0px !important;padding-right:0px !important;margin-top:3px;margin-left:-40px !important" />
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+
+                                        <div class="col-md-12">
+                                            <input type="hidden" id="hdnCustomerId" value="@Model.CustomerDetail.CustomerId" />
+                                            <div class="col-md-2 control-label">
+                                                @*Note :<span class="required"> * </span>*@
+                                            </div>
+                                            <div class="col-md-6 control-label">
+                                                @*<textarea class="form-control input-sm" style="resize: none;overflow-x: hidden;" rows="3" id="txtNote"></textarea>*@
+                                            </div>
+                                            <div class="col-md-2 control-label MainAdmins">
+                                                <input type="button" id="btnReject" onclick="UpdateApproveReject(2)" class="btn btn-primary col-md-11" value="REJECTED" style="margin-bottom:3px;font-size:11px;margin-top:3px;margin-left:-10px !important" />
+                                            </div>
+                                            <div class="col-md-2 control-label MainAdmins">
+                                                <input type="button" id="btnApprove" onclick="UpdateApproveReject(1)" class="btn btn-primary col-md-11" value="APPROVED" style="font-size:11px;padding-left:0px !important;padding-right:0px !important;margin-top:3px;margin-left:-40px !important" />
+                                            </div>
+                                            <div style="display:none;left: 35px;" class="col-md-2 control-label ActionPenidng">
+                                                <input type="button" id="btnSubmit" onclick="UpdateApproveReject(4)" class="btn btn-primary col-md-11" value="Submit" style="font-size:11px;padding-left:0px !important;padding-right:0px !important;margin-top:3px;margin-left:-40px !important" />
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="col-md-12">
+                                        <input type="hidden" id="hdnCustomerId" value="@Model.CustomerDetail.CustomerId" />
+                                        <div class="col-md-2 control-label">
+                                            @*Note :<span class="required"> * </span>*@
+                                        </div>
+                                        <div class="col-md-6 control-label">
+                                            @*<textarea class="form-control input-sm" style="resize: none;overflow-x: hidden;" rows="3" id="txtNote"></textarea>*@
+                                        </div>
+                                        <div class="col-md-2 control-label MainAdmins">
+                                            <input type="button" id="btnReject" onclick="UpdateApproveReject(2)" class="btn btn-primary col-md-11" value="REJECTED" style="margin-bottom:3px;font-size:11px;margin-top:3px;margin-left:-10px !important" />
+                                        </div>
+                                        <div class="col-md-2 control-label MainAdmins">
+                                            <input type="button" id="btnApprove" onclick="UpdateApproveReject(1)" class="btn btn-primary col-md-11" value="APPROVED" style="font-size:11px;padding-left:0px !important;padding-right:0px !important;margin-top:3px;margin-left:-40px !important" />
+                                        </div>
+                                        <div style="display:none;left: 35px;" class="col-md-2 control-label ActionPenidng">
+                                            <input type="button" id="btnSubmit" onclick="UpdateApproveReject(4)" class="btn btn-primary col-md-11" value="Submit" style="font-size:11px;padding-left:0px !important;padding-right:0px !important;margin-top:3px;margin-left:-40px !important" />
+                                        </div>
+                                    </div>
+                                }
+
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12">
+
+                                    <div class="col-md-6">
+                                        <span style="color:red;display:none;" class="errmsg" id="spnerrmsg">All validation required </span>
+                                        @foreach (var item in ViewBag.ValidationItem)
+                                        {
+
+                                            <label class="mt-checkbox" style="width:100%;">
+                                                <input type="checkbox" id="chkValidationItem_@item.ValidationItemId" class="clsvalitem" value="@item.ValidationItemId">@item.Name<span style="color:red">*</span>
+                                                <span></span>
+                                            </label>
+                                        }
+                                    </div>
+                                    <div class="col-md-6 control-label">
+                                        <span style="color:red;display:none;" class="errmsg" id="pushbackROerrmsg">Note is required for pushing back to RO.</span>
+                                        @if (ViewBag.Status == 39) // region accounting
+                                        {
+                                            <input type="button" class="btn btn-primary" onclick="RegionOperationStatusView()" value="Notes" style="font-size:11px;background-color: #17C4BB;" />
+                                        }
+                                        <textarea class="form-control input-sm" style="resize: none;overflow-x: hidden;" rows="6" id="txtNote"></textarea>
+                                    </div>
+                                    <div class="col-md-6 control-label" style="text-align: right">
+                                        <input type="button" class="btn btn-primary" onclick="CustomerUpdateStatus(@(ViewBag.Status))" value="Submit" style="min-width:150px;font-size:11px;" />
+                                        @if (ViewBag.Status == 39) // region accounting
+                                        {
+                                            <input type="button" class="btn btn-primary" onclick="CustomerPushBackToRO()" value="Push Back to RO" style="min-width:150px;font-size:11px;" />
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade custom-model custom-form-design" id="ModalFranchiseDistribution_CustomerPopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:350px">
+        <div class="modal-content" style="border-radius: 0px;" id="RenderFranchiseDistributionCustomer">
+            <div class="modal-content" style="border-radius: 8px;" id="RenderFranchiseDistribution">
+                <div class="custom-form portlet light" id="" style="margin-top:0px;box-shadow: none;">
+                    <div class="headerbox" style="font-weight: normal;border-radius: 0;">
+                        <div class="col-md-12 text-center" style="font-size:15px;">
+                            <b> SEARCH FRANCHISEE </b>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 5px !important;margin-right: 12px !important;"></button>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                    <div class="row" style="padding-top:8px;padding-bottom:8px;margin-left: 0px;margin-right: 0px;min-height: 100px;">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdfsearch_franchiseeid" name="hdfsearch_franchiseeid" value="0" />
+                                <div class="input-icon" style="margin-top: 30px;">
+                                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                                    <input id="fcsearch-box" type="text" required name="franchiseenumber" autocomplete="off" placeholder="Search Franchisee Name or Number" value="" class="form-control input-sm typeahead" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @*<div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <button type="button" class="btn btn-primary button-next pull-right" onclick="ShowCustomerSave()">Submit</button>
+                                </div>
+                            </div>
+                        </div>*@
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade custom-model custom-form-design" id="Modal_CustomerValidation" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:550px">
+        <div class="modal-content" style="border-radius: 0px;" id="Render_CustomerValidation">
+            <div class="modal-content" style="border-radius: 8px;padding:2px" id="Render_CustomerValidation">
+                <div class="custom-form portlet light" id="" style="margin-top:0px;box-shadow: none;">
+                    <div class="headerbox" style="font-weight: normal;border-radius: 0;">
+                        <div class="col-md-12 text-center" style="font-size:15px;">
+                            <b> Customer Pending process </b>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 5px !important;margin-right: 12px !important;"></button>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                    <div class="row" style="padding-left:15%;padding-right:15%;">
+                        <div style="background-color: #b5b5b5;border: 1px solid;border-color: black;margin-top: 10px;color: white;text-align: center;font-size: 15px;">Region Operations</div>
+                    </div>
+                    <div class="row" style="padding-top:8px;padding-bottom:8px;margin-left: 0px;margin-right: 0px;min-height: 100px;">
+                        <div class="col-md-12">
+                            @foreach (var item in ViewBag.ValidationItemOld)
+                            {
+                                if (((List<JKApi.Data.DAL.Validation>)ViewBag.ValidationItemResult).Any(x => x.ValidationItemId == item.ValidationItemId))
+                                {
+                                    <label class="mt-checkbox" style="width:100%;">
+                                        <input type="checkbox" id="chkValidationItem_@item.ValidationItemId" value="@item.ValidationItemId" checked disabled>@item.Name
+                                        <span></span>
+                                    </label>
+                                }
+                                else
+                                {
+                                    @*<label class="mt-checkbox" style="width:100%;">
+                                            <input type="checkbox" id="chkValidationItem_@item.ValidationItemId" value="@item.ValidationItemId" checked>@item.Name
+                                            <span></span>
+                                        </label>*@
+                                }
+                            }
+                        </div>
+                        <div class="col-md-12" style="min-height: 100px;margin-top: 20px;">
+                            <div class="col-md-2 right" style="text-align:right">
+                                <strong>Notes:</strong>
+                            </div>
+                            <div class="col-md-8">
+                                @if (ViewBag.statusNote != null)
+                                {
+                                    <textarea readonly class="form-control input-sm" style="background-color: white;resize: none;overflow-x: hidden;" rows="3" id="txtNote">@ViewBag.statusNote</textarea>
+                                    @*<strong>@ViewBag.statusNote</strong>*@
+
+                                }
+                                else
+                                {
+                                    <textarea readonly class="form-control input-sm" style="background-color: white;resize: none;overflow-x: hidden;" rows="3" id="txtNote"></textarea>
+                                }
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade custom-model custom-form-design" id="NewAccountDataModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:900px">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="custom-form portlet light" style="margin-top:0px;" id="RenderNewAccountData">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="form_FranchiseCustomersDistributionPopup"></div>
+<div id="form_FranchiseCustomersDistributionFindersFeePopup"></div>
+<div id="form_FranchiseeCustomerMaintenanceApproval"></div>
+
+<div class="modal fade in" id="ModelCustomerUploadDocumentPopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:877px">
+        <div class="modal-content" style="border-radius: 8px;" id="RenderCustomerUploadDocumentPopup">
+        </div>
+    </div>
+</div>
+<div class="modal fade custom-model custom-form-design" id="_FinderFeeForm" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:830px">
+        <div class="modal-content" style="border-radius: 8px;" id="_FinderFeeFormData">
+        </div>
+    </div>
+</div>
+
+<div class="modal fade custom-model custom-form-design" id="ModelAccountOffringNew" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:480px">
+        <div class="modal-content" style="border-radius: 8px;" id="ModelAccountOffringNewData">
+            <div class="custom-form portlet light" id="" style="margin-top:0px;box-shadow: none;">
+                <div class="headerbox" style="font-weight: normal;border-radius: 0;">
+                    <div class="col-md-12 text-center" style="font-size:15px;">
+                        <b>Account Offering</b>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 5px !important;margin-right: 12px !important;"></button>
+                    </div>
+                    <div class="clearfix"> </div>
+                </div>
+                <div class="row" style="padding-top:20px;padding-bottom:8px;margin-left: 0px;margin-right: 0px;min-height: 100px;">
+                    <div class="col-md-12">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-8">
+                            <label class="mt-radio" style="width:100%;">
+                                <input type="radio" id="chkSendOffer" class="" name="SendOffer" value="1" checked="checked"> Send Offer by Email or Franchisee Portal
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-8" style="padding-top:10px;">
+                            <label class="mt-radio" style="width:100%;">
+                                <input type="radio" id="chkManualenterOffer" name="SendOffer" class="" value="2"> Manual enter offer
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="col-md-9"></div>
+                        <div class="col-md-2" style="padding-top:20px;text-align:center;">
+                            <input type="button" class="btn btn-primary" onclick="ClickonSubmit()" value="Continues">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade custom-model custom-form-design" id="ModalFranchise_CustomerPopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:350px">
+        <div class="modal-content" style="border-radius: 0px;" id="RenderFranchiseCustomerOfferPopup">
+            <div class="modal-content" style="border-radius: 8px;" id="RenderFranchiseOfferPopup">
+                <div class="custom-form portlet light" id="" style="margin-top:0px;box-shadow: none;">
+                    <div class="headerbox" style="font-weight: normal;border-radius: 0;">
+                        <div class="col-md-12 text-center" style="font-size:15px;">
+                            <b> SEARCH FRANCHISEE </b>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 5px !important;margin-right: 12px !important;"></button>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                    <div class="row" style="padding-top:8px;padding-bottom:8px;margin-left: 0px;margin-right: 0px;min-height: 100px;">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdfsearch_franchiseeCustomerid" name="hdfsearch_franchiseeCustomerid" value="0" />
+                                <div class="input-icon" style="margin-top: 30px;">
+                                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                                    <input id="fcsearch-box-offerpopup" type="text" required name="franchiseenumber" autocomplete="off" placeholder="Search Franchisee Name or Number" value="" class="form-control input-sm typeahead" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade custom-model custom-form-design" id="ModalCustomerOfferingPopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:800px">
+        <div class="modal-content" style="border-radius: 0px;" id="RenderModalCustomerOfferingPopup">
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        @*if (@ViewBag.DistributionDetailLineNeedsFF != -1) {
+             AddFindersFee(@ViewBag.CustomerId, @ViewBag.DistributionDetailLineNeedsFF)
+
+        }*@
+
+
+        //$("#btnEditCustomerInfo").click(function () {
+        //    $("#btnEditCustomerInfo").removeClass("AddBackground");
+        //});
+        //$("#anhContractCA").click(function () {
+        //    $("#anhContractCA").removeClass("AddBackground");
+        //});
+        $("#anhUploadDocumentCA").click(function () {
+            $("#anhUploadDocumentCA").removeClass("AddBackground");
+        });
+    });
+
+    function AddFindersFee(cid, contractDetailDistributionLineNo,DistributionId) {
+        var fid = -1;
+        if (contractDetailDistributionLineNo != null)
+        {
+            var sURL = '@Url.Action("RenderFranchiseCustomerOnlyFranchiseeFeePopup", "Franchise", new { area = "Portal" })?cid=' + cid + '&fid=' + fid + '&contractDetailDistributionLineNo=' + contractDetailDistributionLineNo + '&AddFinderFeeOnly=true&DistributionId='+DistributionId;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_FranchiseCustomersDistributionFindersFeePopup').html(data);
+                    $("#modal_FeeFinderdetailResult").modal({ backdrop: 'static' });
+                    var _FindersFeeTypeListId = $("#FindersFee_FindersFeeTypeListId").val();
+
+                    $('#FindersFee_MultiTenantOccupancyAmount').prop('readonly', true);
+                    if (_FindersFeeTypeListId == 9 || _FindersFeeTypeListId == 2 || _FindersFeeTypeListId == 7 || _FindersFeeTypeListId == 3 || _FindersFeeTypeListId == 4) {
+                        $('#FindersFee_MultiTenantOccupancyAmount').prop('readonly', false);
+                    }
+
+                    InItTransferDistributionfee();
+                    GetFindersFeeScheduleList();
+                    //GetFindersFeeScheduleCalculation();
+
+                    $.unblockUI();
+                },
+                error: function (err) {
+
+                    $.unblockUI();
+                    console.log(err);
+                }
+            });
+        }
+
+
+    }
+
+
+    function RegionOperationStatusView()
+    {
+        $("#Modal_CustomerValidation").modal({ backdrop: 'static' });
+    }
+
+    function ShowCustomerSuggetionBox() {
+
+        $.ajax({
+            url: '@Url.Action("CheckContractAndContractDetailforDistribution", "CRMCustomer",new { area = "CRM" })?id='+@Model.CustomerDetail.CustomerId,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                if (data == true) {
+                    $('#fcsearch-box').val('');
+                    $('#hdfsearch_franchiseeid').val('');
+                    var box = $('#fcsearch-box').data('typeahead');
+                    if (box != null) {
+                        box.source = c_typeaheadSource;
+                    }
+                    else {
+                        $('#fcsearch-box').typeahead({
+                            source: c_typeaheadSource,
+                            updater: function (item) {
+                                $('#hdfsearch_franchiseeid').val(item.id);
+                                BindFranchiseeCustomerDistribution(@Model.CustomerDetail.CustomerId,item.id);
+                                return item;
+                            },
+                            minLength: 1
+                        }).focus();
+                    }
+
+                    $("#ModalFranchiseDistribution_CustomerPopup").modal({ backdrop: 'static' });
+                } else {
+                    swal("Please first complete customer contract and contract details");
+                }
+            },
+            error: function () { }
+        });
+
+
+    }
+    function ShowCustomerFranchiseDistributionSave() {
+        if($('#hdfsearch_franchiseeid').val()!='0'&&$('#hdfsearch_franchiseeid').val()!='')
+        {
+            BindFranchiseeCustomerDistribution(@Model.CustomerDetail.CustomerId,$('#hdfsearch_franchiseeid').val());
+
+        }
+    }
+
+    function UpdateApproveReject(status) {
+
+        if($("#hdnMaintenanceTempId").val() == "" || $("#hdnMaintenanceTempId").val() == 0 || $("#hdnMaintenanceTempId").val() == undefined)
+        {
+            $("#errmes").show();
+            return false;
+        }
+
+        if ($('#txtNote').val().trim() == '') {
+            $('#txtNote').css('border-color', 'red');
+            return false;
+        } else { $('#txtNote').css('border-color', ''); }
+
+        var Id = $("#hdnCustomerId").val();
+        if (Id > 0) {
+
+            $.ajax({
+                url: '@Url.Action("UpdateApproveReject", "Customer")',
+                dataType: "json",
+                data: { CustomerId: Id, Note: $("#txtNote").val(), Status: status },
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function () {
+                    window.location.href = window.location.href;
+                },
+                error: function () { }
+            });
+        }
+    }
+
+    function UpdateRejectMessage(status,ctl) {
+
+        if($("#hdnMaintenanceTempId").val() == "" || $("#hdnMaintenanceTempId").val() == 0 || $("#hdnMaintenanceTempId").val() == undefined)
+        {
+            $("#errmes").show();
+            return false;
+        }
+
+        if ($(ctl).val().trim() == '') {
+            $(ctl).css('border-color', 'red');
+            return false;
+        } else { $(ctl).css('border-color', ''); }
+
+        var Id = $("#hdnCustomerId").val();
+        if (Id > 0) {
+
+            $.ajax({
+                url: '@Url.Action("UpdateApproveReject", "Customer")',
+                dataType: "json",
+                data: { CustomerId: Id, Note: $(ctl).val(), Status: status },
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function () {
+                    window.location.href = window.location.href;
+                },
+                error: function () { }
+            });
+        }
+    }
+
+    function CustomerUpdateStatus(status) {
+        $('.errmsg').hide();
+        var isval = true;
+        var errStr = '';
+
+        $(".clsvalitem").each(function () {
+            if (!$(this).is(":checked")) {
+                if (isval == true) {
+                    isval = false;
+                }
+            }
+        })
+
+
+        if ($('#anhContractCA[class*=ca-nvalid]').length > 0) {
+            errStr = (errStr != '' ? errStr + ', Contract and Contract Detail' : 'Contract and Contract Detail');
+            isval = false;
+        }
+
+        if ($('#anhDistributionCA[class*=ca-nvalid]').length > 0 ) {
+            errStr = (errStr != '' ? errStr + ', Distribution' : 'Distribution');
+            isval = false;
+        }
+
+        if ($('#anhFindersFeeCA[class*=ca-nvalid]').length > 0) {
+            errStr = (errStr != '' ? errStr + ', FindersFee' : 'FindersFee');
+            isval = false;
+        }
+        if (!isval) {
+            errStr = (errStr != '' ? errStr + ' and All validation required' : 'All validation required');
+        }
+
+
+        if (!isval) {
+            swal({ title: errStr, type:"warning" })
+            return;
+        }
+
+        var Id = $("#hdnCustomerId").val();
+
+        if (Id > 0) {
+            var strIds=$('.clsvalitem:checked').map(function(){
+                return this.value;
+            }).get().join(',');
+
+            $.ajax({
+                url: '@Url.Action("CustomerUpdateStatus", "CRMCustomer")',
+                dataType: "json",
+                data: { CustomerId: Id, Note: $("#txtNote").val(), Status: status,valIds:strIds},
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function () {
+                    window.location.href = window.location.href;
+                },
+                error: function () { }
+            });
+        }
+
+    }
+
+    function CustomerPushBackToRO() {
+        if ($('#txtNote').val().trim() == '') {
+            $('#txtNote').css('border-color', 'red');
+            $("#pushbackROerrmsg").show();
+            return false;
+        }
+
+        var Id = $("#hdnCustomerId").val();
+
+        if (Id > 0) {
+            $.ajax({
+                url: '@Url.Action("CustomerPushBackToRO", "CRMCustomer")',
+                dataType: "json",
+                data: { CustomerId: Id, Note: $("#txtNote").val() },
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function () {
+                    window.location.href = window.location.href;
+                },
+                error: function () { }
+            });
+        }
+    }
+
+    function BindFranchiseeCustomerDistribution(cid, fid) {
+
+        $("#ModalFranchiseDistribution_CustomerPopup").modal("hide");
+        var sURL = '@Url.Action("RenderFranchiseCustomerOnlyDistributionPopup", "Customer", new { area = "Portal" })?cid=' + cid + '&fid=' + fid + '&callfrom=' + $('#hdfCustomerDetailCallFrom').val();
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+
+                $('#form_FranchiseCustomersDistributionPopup').html(data);
+                if ($("#CustomerDetail_EffectiveDate").val()=='')
+                    $("#CustomerDetail_EffectiveDate").datepicker("setDate", new Date());
+                //$("#modal_CIDFranchiseeDistribution").modal({ backdrop: 'static' });
+                //$("#FD_modal_FranchiseeDistribution").modal({ backdrop: 'static' });
+
+
+                $.unblockUI();
+            },
+            error: function (err) {
+                $.unblockUI();
+                console.log(err);
+            }
+        });
+        //var sURL = '@Url.Action("RenderFranchiseCustomerDistributionPopup", "Customer", new { area = "Portal" })?cid=' + cid + '&fid=' + fid + '&callfrom=' + $('#hdfCustomerDetailCallFrom').val();
+        @*var sURL = '@Url.Action("RenderFranchiseCustomerOnlyDistributionPopup", "Customer", new { area = "Portal" })?cid=' + cid + '&fid=' + fid + '&callfrom=' + $('#hdfCustomerDetailCallFrom').val();
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+
+                $('#form_FranchiseCustomersDistributionPopup').html(data);
+                $("#CustomerDetail_EffectiveDate").datepicker("setDate", new Date());
+                $("#modal_CIDFranchiseeDistribution").modal({ backdrop: 'static' });
+
+
+                InItTransferDistributionfee();
+
+                //lstFranchiseeDistribution_0__Amount').length
+                //applyMaskCurrency
+
+                GetFindersFeeScheduleList();
+
+                maskCurrency('FranchiseeDistribution_Amount');
+                FranchiseeDistributionData(cid);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });*@
+
+    }
+
+
+    function showCustomerFranchiseeDistribution(Id) {
+        var sURL = '@Url.Action("FranchiseeCustomerMaintenancePendingDetail", "Customer", new { area = "Portal" })?id=' + Id;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#form_FranchiseeCustomerMaintenanceApproval').html(data);
+
+                GetFindersFeeScheduleList();
+                maskCurrency('FranchiseeDistribution_Amount');
+                //CustomerDetail_EffectiveDate
+
+                maskCurrency('lstFindersFeeAdjustment_0__Amount');
+                maskCurrency('FindersFee_ContractBillingAmount');
+                maskCurrency('FindersFee_TotalAdjustmentAmount');
+                maskCurrency('FindersFee_PayableOnAmount');
+                maskPercentage('FindersFee_DownPayPercentage');
+                maskCurrency('FindersFee_DownPaymentAmount');
+                maskPercentage('FindersFee_MonthlyPaymentPercentage');
+                maskCurrency('FindersFee_MonthlyPaymentAmount');
+                maskCurrency('FindersFee_FinancedAmount');
+                maskCurrency('FindersFee_TotalAmount');
+
+
+
+                $('#modal_CIDFranchiseeDistribution').modal({ backdrop: 'static' });
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+    function OpenCustomerUploadDocumentPopup(Id) {
+
+        var sURL = '@Url.Action("CustomerUploadDocumentPopup", "Customer", new { area = "Portal" })?id=' + Id +'&isCRM=true';
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#RenderCustomerUploadDocumentPopup').html(data);
+                $("#ModelCustomerUploadDocumentPopup").modal({ backdrop: 'static' });
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+
+    }
+
+    function NewAccountForm(CustomerId) {
+        var sURL = '@Url.Action("NewAccountForm", "CRMCustomer", new { area = "CRM" })'+"?CustomerId="+CustomerId;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#RenderNewAccountData').html(data);
+                $("#NewAccountDataModel").modal({ backdrop: 'static' });
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+    function OpenFinderFeeForm(CustomerId) {
+        var sURL = '@Url.Action("AccountAcceptanceForm", "CRMCustomer", new { area = "CRM" })'+"?CustomerId="+CustomerId;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#_FinderFeeFormData').html(data);
+                $("#_FinderFeeForm").modal({ backdrop: 'static' });
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function FinderFeePopupAlert()
+    {
+        swal("Please first complete customer contract, contract details and distribution details");
+    }
+    function ClickAccountOffring(){
+        $("#chkSendOffer").prop("checked",true);
+        $("#ModelAccountOffringNew").modal({ backdrop: 'static' });
+    }
+    function ClickonSubmit()
+    {
+        $("#ModelAccountOffringNew").modal('hide');
+        if($("#chkSendOffer").is(':checked'))
+        {
+            AccountOffringModel($("#hdnOfferCustomerid").val());
+        }
+        else if($("#chkManualenterOffer").is(':checked'))
+        {
+            ShowCustomerSuggetionBoxForOfferPopup();
+        }
+    }
+
+    function ShowCustomerSuggetionBoxForOfferPopup() {
+
+        $.ajax({
+            url: '@Url.Action("CheckContractAndContractDetailforDistribution", "CRMCustomer",new { area = "CRM" })?id='+@Model.CustomerDetail.CustomerId,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                if (data == true) {
+                    $('#fcsearch-box-offerpopup').val('');
+                    $('#hdfsearch_franchiseeCustomerid').val('');
+                    var box = $('#fcsearch-box-offerpopup').data('typeahead');
+                    if (box != null) {
+                        box.source = c_typeaheadSource;
+                    }
+                    else {
+                        $('#fcsearch-box-offerpopup').typeahead({
+                            source: c_typeaheadSource,
+                            updater: function (item) {
+                                $('#hdfsearch_franchiseeCustomerid').val(item.id);
+                                CustomerOfferingPopup();
+                                return item;
+                            },
+                            minLength: 1
+                        }).focus();
+                    }
+
+                    $("#ModalFranchise_CustomerPopup").modal({ backdrop: 'static' });
+                } else {
+                    swal("Please first complete customer contract and contract details");
+                }
+            },
+            error: function () { }
+        });
+    }
+
+    function CustomerOfferingPopup()
+    {
+        $("#ModalFranchise_CustomerPopup").modal('hide');
+
+        var sURL = '@Url.Action("CustomerOfferingPopup", "CRMRegionOperation", new { area = "CRM" })'+"?CustomerId="+$("#hdnOfferCustomerid").val() +"&FranchiseeId="+$("#hdfsearch_franchiseeCustomerid").val();
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $("#RenderModalCustomerOfferingPopup").html(data)
+                $("#ModalCustomerOfferingPopup").modal({ backdrop: 'static' });
+                $(".date-picker").datepicker();
+                $(".timepicker").timepicker();
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+
+    }
+</script>
+
+

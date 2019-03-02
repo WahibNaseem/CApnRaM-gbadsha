@@ -1,0 +1,938 @@
+﻿@using System.Globalization
+@using MvcAjaxPager
+@using PagedList
+@using JKViewModels.AccountReceivable
+
+
+@model IEnumerable<JKViewModels.AccountReceivable.AgingReportViewModel>
+@{
+    ViewBag.Title = "Aging Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var isAjaxRequest = (bool)ViewBag.isAjaxRequest;
+    var filters = ViewBag.AgingReportFilters as JKViewModels.AccountReceivable.AgingReportViewModel;
+    var isSummaryView = Convert.ToBoolean(filters.isSummaryView);
+    var pagedData = (StaticPagedList<AgingReportViewModel>)ViewBag.pagedCustomers;
+    var data = pagedData.ToList();
+
+    var reportDate = filters.ReportDate != null ? filters.ReportDate.Value.ToString("MM/dd/yyyy") : "";
+    var agingDate = filters.agingDate != null ? filters.agingDate.Value.ToString("MM/dd/yyyy") : "";
+    var paymentDate = filters.PaymentDate != null ? filters.PaymentDate.Value.ToString("MM/dd/yyyy") : "";
+    var isNonChargebackOnly = (filters.isNonChargebackOnly != null && filters.isNonChargebackOnly == true) ? "true" : "false";
+
+    var sortBy = (string)ViewBag.sortBy;
+
+    var IsMonthView = (string)ViewBag.IsMonthView;
+    
+
+}
+@section styles{
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")' rel="stylesheet" type="text/css" />
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")' rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+}
+<style>
+    .close {
+        background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+        height: 12px !important;
+        width: 12px !important;
+        margin-top: 0px !important;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .row {
+        margin: 0;
+        padding: 3px 0;
+    }
+
+    .page-size {
+        padding-left: 0;
+        padding-right: 0;
+        width: 62px;
+    }
+
+    .topheader {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFF !important;
+        text-transform: uppercase;
+        margin-top: 3px;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+
+    .alignCenter {
+        text-align: center;
+    }
+
+    #CustomerList th {
+        vertical-align: middle;
+    }
+
+    .no-padding {
+        padding: 0;
+    }
+
+    .no-margin {
+        margin: 0;
+    }
+
+    .padding-tb1 {
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+
+    .margin-tb1 {
+        margin-top: 1px;
+        margin-bottom: 1px;
+    }
+
+    .custom-listbox .headerbox {
+        padding: 3px 0px 3px 5px;
+    }
+
+    .custom-listbox {
+        margin-top: 4px;
+        margin-bottom: 0px;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .multiselect-container.dropdown-menu {
+        text-transform: none;
+        font-size: 14px;
+    }
+
+    .td1 {
+        text-align: center;
+        width: 100px;
+        background: #337ab7;
+        color: white;
+        font-size: 12px;
+    }
+
+    .td2 {
+        width: 70px;
+        text-align: center;
+        background: #337ab7;
+        color: white;
+        font-size: 12px;
+    }
+
+    .td3 {
+        width: 70px;
+        text-align: center;
+        background: #337ab7;
+        color: white;
+        font-size: 12px;
+    }
+
+    .td4 {
+        text-align: center;
+        width: 90px;
+        background: #337ab7;
+        color: white;
+        font-size: 12px;
+    }
+
+    .td5 {
+        text-align: center;
+        width: 90px;
+        background: #337ab7;
+        color: white;
+        font-size: 12px;
+    }
+
+    .td6 {
+        text-align: center;
+        width: 90px;
+        background: #337ab7;
+        color: white;
+        font-size: 12px;
+    }
+
+    .td7 {
+        text-align: center;
+        width: 90px;
+        background: #337ab7;
+        color: white;
+        font-size: 12px;
+    }
+
+    .td8 {
+        text-align: center;
+        width: 90px;
+        background: #337ab7;
+        color: white;
+        font-size: 12px;
+    }
+
+    .td9 {
+        text-align: center;
+        width: 90px;
+        background: #337ab7;
+        color: white;
+        font-size: 12px;
+    }
+
+    .pageSize, .ddlSort {
+        width: 100px;
+        display: inline;
+    }
+</style>
+
+
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    AGING REPORT
+                </div>
+                <div class="col-md-4" style="padding-right:5px;">
+                    <div class="col-md-7 pull-right no-padding">
+                        <div style="display:table-cell;padding-right: 5px;">
+                            Region
+                        </div>
+                        <div style="display:table-cell;width:100%;">
+
+                            @if (ViewBag.regionlist != null)
+                                {
+                                <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                                    @{
+                                            var regionIds = filters.regionIds.Split(',');
+                                            foreach (var item in (SelectList)ViewBag.regionlist)
+                                            {
+                                        <option @( regionIds.Contains(item.Value) ? "selected" : "") value="@item.Value"> @item.Text </option>
+                                            }
+                                    }
+                                </select>
+                                }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="custom-listbox">
+
+    <div class="headerbox">
+        <div class="row no-padding">
+            @*<div class="col-md-1 page-size">
+                    <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                        <option value="-1">All</option>
+                        <option value="100" selected>100</option>
+                        <option value="50">50</option>
+                        <option value="25">25</option>
+                    </select>
+
+                </div>*@
+            <div class="col-md-3">
+                <div class="input-icon">
+                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                    <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search..." value="" class="form-control input-sm typeahead" />
+                </div>
+            </div>
+            <div class="col-md-5" style="text-align:center">
+                <div class="radio-list">
+                    <label class="radio-inline">
+                        <input type="radio" name="optionsRadios" id="rbDetail" value="option1" onclick="showAgingReport(false)" checked="@(!isSummaryView)"> Detail
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="optionsRadios" id="rbSummary" value="option2" onclick="showAgingReport(true)" checked="@(isSummaryView)"> Summary
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-4" style="padding-right:5px; text-align:right">
+                <span class="">
+                    <input type="button" class="btn btn-primary" id="btnExportInExcel" value="Export To Excel" />
+                    <a class="btn btn-primary" id="btnBack" href="/Portal/AccountReceivable/Aging">Back</a>
+                </span>
+                <span class="">
+
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div id="dvReportContainer" class="tablebox">
+        @Html.Partial("~/Areas/Portal/Views/AccountReceivable/_PartialAgingReportList.cshtml", Model)
+    </div>
+</div>
+
+<div class="form-horizontal" id="form_FranchiseeBillingDetail"></div>
+<div class="form-horizontal" id="invoicedetail_form"></div>
+
+@section scripts{
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+
+    <script type="text/javascript">
+
+        var AgingRpt = function(){
+
+            var pagerInit = function (){
+                $('.AgingRptNav a').unbind().click(function (event) {
+                    try {
+                        event.preventDefault();
+
+                        if ($(this).attr('disabled') == 'disabled')
+                            return;
+                        var CurrentPageSize = $('#hidPageSize').val() || 25;
+                        var CurrentPage = $(this).attr('data-page') || 0;
+
+                        var sortBy = $('#hidSortBy').val() || 'none';
+
+                        var url = '@Url.Action("AgingReport", "AccountReceivable", new { area = "Portal" })';
+                        url += '?reportDate=' + "@reportDate";
+                        url += '&agingDate=' + "@agingDate";
+                        url += '&paymentDate=' + "@paymentDate";
+                        url += '&monthsToInclude=' + @filters.monthsToInclude;
+                        url += '&isNonChargebackOnly=' + @isNonChargebackOnly;
+                        url += '&isSummaryView=' + "@isSummaryView";
+                        url += '&regionIds=' + "@filters.regionIds";
+                        url += '&pageNo=' + CurrentPage + '&pageSize=' + CurrentPageSize;
+                        url += '&sortBy' + sortBy;
+
+                        $.ajax({
+                            url: url,
+                            method: "GET",
+                            data: {},
+                            contentType: false,
+                            processData: false,
+                            success: function (response, status, request) {
+                                //alert(data);
+
+                                $('#dvReportContainer').html(response);
+                                AgingRpt().init();
+
+                            },
+                            error: function (error) {
+                                //alert(Error);
+                                console.log(error);
+                                AgingRpt().init();
+                            }
+                        });
+
+                        // window.location.replace(url);
+
+                        // $('#hidCurrentPage').val(CurrentPage);
+                        //bindGrid();
+                    }
+                    catch (ex) {
+                        console.log(ex);
+                    };
+                });
+            }
+
+            var pageSizeChangeInit = function(){
+
+                $("#pageSize").change(function () {
+                    try{
+
+                        $.blockUI({
+                            message: $('#throbberBlock'),
+                            theme: true,
+                            baseZ: 12000
+                        });
+
+                        var pageSize = $(this).val() || 25;
+                        pageSize = (pageSize == "All") ? "0" : pageSize;
+
+                        var url = '@Url.Action("AgingReport", "AccountReceivable", new { area = "Portal" })';
+                        url += '?reportDate=' + "@reportDate";
+                        url += '&agingDate=' + "@agingDate";
+                        url += '&paymentDate=' + "@paymentDate";
+                        url += '&monthsToInclude=' + @filters.monthsToInclude;
+                        url += '&isNonChargebackOnly=' + @isNonChargebackOnly;
+                        url += '&isSummaryView=' + "@isSummaryView";
+                        url += '&regionIds=' + "@filters.regionIds";
+                        url += '&pageNo=' + 1 + '&pageSize=' + pageSize;
+
+                        //$('#dvReportContainer').load(url);
+
+                        $.ajax({
+                            url: url,
+                            method: "GET",
+                            data: {},
+                            contentType: false,
+                            processData: false,
+                            success: function (response, status, request) {
+                                //alert(data);
+
+                                $('#dvReportContainer').html(response);
+                                AgingRpt().init();
+
+                            },
+                            error: function (error) {
+                                //alert(Error);
+                                console.log(error);
+                                AgingRpt().init();
+                            }
+                        });
+
+                        //window.location.replace(url);
+
+                    }
+                    catch(e){
+                        console.log(e);
+                    }
+
+                });
+            };
+
+            var sortInit = function(){
+
+                $("#ddlSort").change(function () {
+                    try{
+
+                        $.blockUI({
+                            message: $('#throbberBlock'),
+                            theme: true,
+                            baseZ: 12000
+                        });
+
+                        var pageSize = $('#hidPageSize').val() || 25;
+                        pageSize = (pageSize == "All") ? "0" : pageSize;
+
+                        var sortBy = $(this).val() || 'none';
+
+                        var url = '@Url.Action("AgingReport", "AccountReceivable", new { area = "Portal" })';
+                        url += '?reportDate=' + "@reportDate";
+                        url += '&agingDate=' + "@agingDate";
+                        url += '&paymentDate=' + "@paymentDate";
+                        url += '&monthsToInclude=' + @filters.monthsToInclude;
+                        url += '&isNonChargebackOnly=' + @isNonChargebackOnly;
+                        url += '&isSummaryView=' + "@isSummaryView";
+                        url += '&regionIds=' + "@filters.regionIds";
+                        url += '&pageNo=' + 1 + '&pageSize=' + pageSize;
+                        url += '&sortBy=' + sortBy;
+
+                        //$('#dvReportContainer').load(url);
+
+                        $.ajax({
+                            url: url,
+                            method: "GET",
+                            data: {},
+                            contentType: false,
+                            processData: false,
+                            success: function (response, status, request) {
+                                //alert(data);
+
+                                $('#dvReportContainer').html(response);
+                                AgingRpt().init();
+
+                            },
+                            error: function (error) {
+                                //alert(Error);
+                                console.log(error);
+                                AgingRpt().init();
+                            }
+                        });
+
+                        //window.location.replace(url);
+
+                    }
+                    catch(e){
+                        console.log(e);
+                    }
+
+                });
+            };
+
+            return {
+                init: function(){
+                    try{
+                        pagerInit();
+                        pageSizeChangeInit();
+                        sortInit();
+                        phoneNumberMask();
+                    }
+                    catch(e){
+                        console.log(e);
+                    }
+                },
+                RegionChange : function(){
+                    try{
+
+                        $.blockUI({
+                            message: $('#throbberBlock'),
+                            theme: true,
+                            baseZ: 12000
+                        });
+
+                        var r = $('#regionlist').val();
+                        var isSummaryView = $('#isSummaryView').val();
+
+                        var regionIds = r.join(",");
+                        var url = '@Url.Action("AgingReport", "AccountReceivable", new { area = "Portal" })';
+                        url += '?reportDate=' + "@reportDate";
+                        url += '&agingDate=' + "@agingDate";
+                        url += '&paymentDate=' + "@paymentDate";
+                        url += '&monthsToInclude=' + @filters.monthsToInclude;
+                        url += '&isNonChargebackOnly=' + @isNonChargebackOnly;
+                        url += '&regionIds=' + "@filters.regionIds";
+                        url += '&isSummaryView=' + isSummaryView;
+                        url += '&regionIds=' + regionIds;
+
+                        $.ajax({
+                            url: url,
+                            method: "GET",
+                            data: {},
+                            contentType: false,
+                            processData: false,
+                            success: function (response, status, request) {
+                                //alert(data);
+
+                                $('#dvReportContainer').html(response);
+                                AgingRpt().init();
+
+                            },
+                            error: function (error) {
+                                //alert(Error);
+                                console.log(error);
+                                AgingRpt().init();
+                            }
+                        });
+
+                        //window.location.replace(url);
+
+                    }
+                    catch(e){
+
+                    }
+                }
+            }
+
+
+        };
+
+
+        var dtable;
+        function getCurrentUrl() {
+            var r = $('#regionlist').val();
+            return '@Url.Action("CustomerSearchList", "Customer", new { area = "Portal" })?status=' + (s == null ? '' : s) + '&rgId=' + r;
+        }
+
+        function showAgingReport(isSummaryView) {
+            try {
+
+                $.blockUI({
+                    message: $('#throbberBlock'),
+                    theme: true,
+                    baseZ: 12000
+                });
+
+                //$('#isSummaryView').val(isSummaryView);
+                var url = '@Url.Action("AgingReport", "AccountReceivable", new { area = "Portal" })';
+                url += '?reportDate=' + "@reportDate";
+                url += '&agingDate=' + "@agingDate";
+                url += '&paymentDate=' + "@paymentDate";
+                url += '&monthsToInclude=' + @filters.monthsToInclude;
+                url += '&isNonChargebackOnly=' + @isNonChargebackOnly;
+                url += '&regionIds=' + "@filters.regionIds";
+                url += '&isSummaryView=' + isSummaryView;
+
+
+
+
+                $.ajax({
+                    url: url,
+                    method: "GET",
+                    data: {},
+                    contentType: false,
+                    processData: false,
+                    success: function (response, status, request) {
+                        //alert(data);
+
+                        $('#dvReportContainer').html(response);
+                        AgingRpt().init();
+
+                    },
+                    error: function (error) {
+                        //alert(Error);
+                        console.log(error);
+                        AgingRpt().init();
+                    }
+                });
+
+
+            }
+            catch (e) {
+                console.log(e);
+            }
+
+        }
+
+        function getUrl() {
+            var r = $('#regionlist').val();
+            var isSummaryView = $('#isSummaryView').val();
+            var regionIds = '0';
+            if (r > 0) {
+                regionIds = r;
+            }
+            var isNonChargebackOnly = $('#isNonChargebackOnly').val();
+            var agingDate = $('#agingDate').val();
+            var monthsToInclude = $('#monthsToInclude').val();
+            return '@Url.Action("AgingReport", "AccountReceivable", new { area = "Portal" })?agingDate=' + agingDate + '&monthsToInclude=' + monthsToInclude + '&isNonChargebackOnly=' + isNonChargebackOnly + '&isSummaryView=' + isSummaryView + '&regionIds=' + regionIds;
+        }
+        function showInvoiceDetail(id) {
+            //$("#modal_invoicedetail").modal({ backdrop: 'static' });
+            var sURL = '@Url.Action("FranchiseeBillingDetailPopup", "AccountsPayable", new { area = "Portal" })?Id=' + id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_FranchiseeBillingDetail').html(data);
+                    $("#modal_FranchiseeBillingDetail").modal({ backdrop: 'static' });
+                    $("#modal_FranchiseeBillingDetail").draggable();
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+        function phoneNumberMask() {
+            $("#CustomerList tbody tr").each(function () {
+                try {
+                    var d = $(this);
+                    d = $(d).find("td b");
+                    d[2].textContent = "Phone: " + d[2].textContent.split(':')[1].trim().replace(/(\d{3})\-?(\d{3})\-?(\d{4})/, '$1-$2-$3');
+                }
+                catch (e) {
+
+                }
+            });
+        }
+        $(document).ready(function () {
+            $(document).on('init.dt', function (e, settings) {
+                var api = new $.fn.dataTable.Api(settings);
+                if ($(api.table().node()).attr('id') == 'CustomerList') {
+                    setPaging();
+                }
+            });
+
+            AgingRpt().init();
+
+            $(".selectable").selectable();
+
+            $("#regionlist").multiselect({
+                includeSelectAllOption: false,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2,
+            });
+
+
+            $("#input_Search").keyup(function () {
+
+                if ($(this).val() != '') {
+                    $("#CustomerList tbody>tr").hide()
+                    $("#CustomerList tbody>tr[relcusn*='" + $(this).val().toUpperCase() + "']").show()
+                } else {
+                    $("#CustomerList tbody>tr").show()
+                }
+
+
+                //var table = $("#CustomerList").DataTable();
+                //table.search($(this).val()).draw();
+            });
+
+
+
+            $("#regionlist").change(function () {
+                AgingRpt().RegionChange();
+            });
+
+            $('.modal-dialog').draggable();
+            
+            $('#btnExportInExcel').click(function (e) {
+
+                try{
+
+                    @*$.blockUI({
+                        message: $('#throbberBlock'),
+                        theme: true,
+                        baseZ: 12000
+                    });
+
+                    var url = '@Url.Action("AgingReport", "AccountReceivable", new { area = "Portal" })?agingDate=' + "@filters.agingDate.Value.ToShortDateString()";
+                    url += '&monthsToInclude=' + @filters.monthsToInclude + '&isNonChargebackOnly=' + @( (filters.isNonChargebackOnly != null && filters.isNonChargebackOnly == true) ? "true" : "false" );
+                    url += '&isSummaryView=' + "@isSummaryView.ToString()" + '&regionIds=' + "@filters.regionIds";
+                    url += '&pageNo=' + 1 + '&pageSize=' + '0';
+
+                    //$('#dvReportContainer').load(url);
+
+                    $.ajax({
+                        url: url,
+                        method: "GET",
+                        data: {},
+                        contentType: false,
+                        processData: false,
+                        success: function (response, status, request) {
+                            //alert(data);
+
+                            $('#dvReportContainer').html(response);
+
+
+
+                            //AgingRpt().init();
+
+                        },
+                        error: function (error) {
+                            //alert(Error);
+                            console.log(error);
+                            AgingRpt().init();
+                        }
+                    });*@
+
+                    if($("#rbDetail").is(':checked'))
+                    {
+                        var tab_text = "<table border='2px'>";
+                        var textRange; var j = 0;
+
+                        tab = document.getElementById('CustomerForExcelFormat'); // id of table
+
+                        for (j = 0 ; j < tab.rows.length ; j++) {
+                            tab_text += "<tr bgcolor='#87AFC6'>"  + tab.rows[j].innerHTML + "</tr>";
+                            //tab_text=tab_text+"</tr>";
+                        }
+                        tab_text = tab_text + "</table>";
+                        tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+                        tab_text = tab_text.replace(/<img[^>]*>/gi, ""); // remove if u want images in your table
+                        tab_text = tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+                        var ua = window.navigator.userAgent;
+                        var msie = ua.indexOf("MSIE ");
+
+                        var dt = new Date();
+                        var day = dt.getDate();
+                        var month = dt.getMonth() + 1;
+                        var year = dt.getFullYear();
+                        var hour = dt.getHours();
+                        var mins = dt.getMinutes();
+                        var postfix = month + "." + day + "." + year;
+                        //creating a temporary HTML link element (they support setting file names)
+                        var a = document.createElement('a');
+                        //getting data from our div that contains the HTML table
+                        var data_type = 'data:application/vnd.ms-excel';
+                        //var table_div = document.getElementById('dvData');
+                        //var table_html = table_div.outerHTML.replace(/ /g, '%20');
+                        a.href = data_type + ', ' + encodeURIComponent(tab_text);
+                        //setting the file name
+                        a.download = 'Aging_' + postfix + '.xls';
+                        //triggering the function
+                        a.click();
+                        //just in case, prevent default behaviour
+                        e.preventDefault();
+                    }
+                    else if($("#rbSummary").is(':checked'))
+                    {
+                        var tab_text = "<table border='2px'>";
+                        var textRange; var j = 0;
+
+                        tab = document.getElementById('CustomerList'); // id of table
+
+                        for (j = 0 ; j < tab.rows.length ; j++) {
+                            tab_text += "<tr bgcolor='#87AFC6'>"  + tab.rows[j].innerHTML + "</tr>";
+                            //tab_text=tab_text+"</tr>";
+                        }
+                        tab_text = tab_text + "</table>";
+                        tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+                        tab_text = tab_text.replace(/<img[^>]*>/gi, ""); // remove if u want images in your table
+                        tab_text = tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+                        var ua = window.navigator.userAgent;
+                        var msie = ua.indexOf("MSIE ");
+
+                        var dt = new Date();
+                        var day = dt.getDate();
+                        var month = dt.getMonth() + 1;
+                        var year = dt.getFullYear();
+                        var hour = dt.getHours();
+                        var mins = dt.getMinutes();
+                        var postfix = month + "." + day + "." + year;
+                        //creating a temporary HTML link element (they support setting file names)
+                        var a = document.createElement('a');
+                        //getting data from our div that contains the HTML table
+                        var data_type = 'data:application/vnd.ms-excel';
+                        //var table_div = document.getElementById('dvData');
+                        //var table_html = table_div.outerHTML.replace(/ /g, '%20');
+                        a.href = data_type + ', ' + encodeURIComponent(tab_text);
+                        //setting the file name
+                        a.download = 'Aging_' + postfix + '.xls';
+                        //triggering the function
+                        a.click();
+                        //just in case, prevent default behaviour
+                        e.preventDefault();
+                         
+                    } 
+
+                }
+                catch(e){
+
+                }
+
+
+                //var tab_text = "<table border='2px'>";
+                //var textRange; var j = 0;
+                //tab = document.getElementById('CustomerList'); // id of table
+
+                //for (j = 0 ; j < tab.rows.length ; j++) {
+                //    tab_text += "<tr bgcolor='#87AFC6'>"  + tab.rows[j].innerHTML + "</tr>";
+                //    //tab_text=tab_text+"</tr>";
+                //}
+                //tab_text = tab_text + "</table>";
+                //tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+                //tab_text = tab_text.replace(/<img[^>]*>/gi, ""); // remove if u want images in your table
+                //tab_text = tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+                //var ua = window.navigator.userAgent;
+                //var msie = ua.indexOf("MSIE ");
+
+                //var dt = new Date();
+                //var day = dt.getDate();
+                //var month = dt.getMonth() + 1;
+                //var year = dt.getFullYear();
+                //var hour = dt.getHours();
+                //var mins = dt.getMinutes();
+                //var postfix = month + "." + day + "." + year;
+                ////creating a temporary HTML link element (they support setting file names)
+                //var a = document.createElement('a');
+                ////getting data from our div that contains the HTML table
+                //var data_type = 'data:application/vnd.ms-excel';
+                ////var table_div = document.getElementById('dvData');
+                ////var table_html = table_div.outerHTML.replace(/ /g, '%20');
+                //a.href = data_type + ', ' + encodeURIComponent(tab_text);
+                ////setting the file name
+                //a.download = 'Aging_' + postfix + '.xls';
+                ////triggering the function
+                //a.click();
+                ////just in case, prevent default behaviour
+                //e.preventDefault();
+
+            });
+
+            phoneNumberMask();
+        });
+
+
+        function fnExcelReport() {
+
+            var tab_text = "<table border='2px'><tr bgcolor='#87AFC6'>";
+            var textRange; var j = 0;
+            tab = document.getElementById('CustomerList'); // id of table
+
+            for (j = 0 ; j < tab.rows.length ; j++) {
+                tab_text = tab_text + tab.rows[j].innerHTML + "</tr>";
+                //tab_text=tab_text+"</tr>";
+            }
+
+            tab_text = tab_text + "</table>";
+            tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+            tab_text = tab_text.replace(/<img[^>]*>/gi, ""); // remove if u want images in your table
+            tab_text = tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+            var ua = window.navigator.userAgent;
+            var msie = ua.indexOf("MSIE ");
+            if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+            {
+                txtArea1 = window.open();
+                txtArea1.document.open("txt/html", "replace");
+                txtArea1.document.write(tab_text);
+                txtArea1.document.close();
+                txtArea1.focus();
+                sa = txtArea1.document.execCommand("SaveAs", true, "aging report.xls");
+            }
+            else                 //other browser not tested on IE 11
+                sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
+
+            return (sa);
+        };
+
+        function setPaging() {
+            var z = $("#pageSize").val();
+            var table = $("#CustomerList").DataTable();
+            if (z > 0) {
+                table.page.len(z).draw();
+            }
+            else if (z == -1) {
+                table.page.len(table.rows().count()).draw();
+            }
+            else {
+                table.page.page.len(25).draw();
+            }
+        }
+
+        function formatCurrency(total, dollar) {
+            dollar = (dollar == true ? true : false);
+            var neg = false;
+            if (total < 0) {
+                neg = true;
+                total = Math.abs(total);
+            }
+            return (neg ? "-" : '') + (dollar ? "$" : "") + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        }
+
+
+
+        function OpenInvoiceDetail(id) {
+
+
+            var sURL = '@Url.Action("InvoiceDetail", "AccountReceivable", new { area = "Portal" })?Id=' + id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#invoicedetail_form').html(data);
+                    $("#modal_invoicedetail").modal({ backdrop: 'static' });
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+        function btnInvoicePopupClose() {
+            $("#modal_invoicedetail").modal('hide');
+        }
+
+
+    </script>
+}

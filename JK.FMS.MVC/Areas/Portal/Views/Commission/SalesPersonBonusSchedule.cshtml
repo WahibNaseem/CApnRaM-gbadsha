@@ -1,0 +1,390 @@
+﻿@model JKViewModels.Management.DeductionsViewModel
+@{
+    ViewBag.Title = "Deductions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <style type="text/css">
+        .jkcustom-page-title {
+            font-size: 18px;
+            padding: 3px;
+            color: #fff !important;
+            background: #3598dc !important;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .jkcustom-form-table {
+            width: 100%;
+        }
+
+            .jkcustom-form-table tr {
+            }
+
+
+                .jkcustom-form-table tr > td {
+                    padding-bottom: 3px;
+                    padding-top: 3px;
+                }
+
+        .form-group.form-md-line-input {
+            position: relative;
+            margin: 0 0 15px;
+            padding-top: 20px;
+        }
+    </style>}
+
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;padding-top:3px;padding-bottom:3px;margin-left: 0px;margin-right: 0px;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    EA/Sales CommSch Bonus
+                </div>
+                <div class="col-md-4" style="padding-right:5px;">
+                    <div class="col-md-7 pull-right no-padding">
+                        <div style="display:table-cell;padding-right: 5px;">
+
+                        </div>
+                        <div style="display:table-cell;width:100%;">
+                            <button type="button" name="btnAddCommissionSchedule" id="btnAddCommissionSchedule" class="btn red dropdown-toggle pull-right subsectionBtn"
+                                    style="padding: 3px 12px;">
+                                <i class="fa fa-plus"></i>&nbsp;<span class="hidden-sm hidden-xs">Add New</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="tablebox">
+    <div class="table-responsive" id="divSalesPersonBonusScheduleList" style="background-color:#ffffff;">
+        <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" id="SalesPersonBonusScheduleList" style="margin-top:0 !important;">
+            <thead>
+                <tr>
+                    <th style="text-align:center;vertical-align:middle;">
+                        Sales Rep / AE
+                    </th>
+                    <th style="text-align:center;width:100px;vertical-align:middle;">
+                        Contract Type
+                    </th>
+                    <th style="text-align:center;width:100px;vertical-align:middle;">
+                        Effective Date
+                    </th>
+                    <th style="text-align:center;width:350px;vertical-align:middle;">
+                        Bonus Schedule
+                    </th>
+                    <th style="text-align:center;width:350px;vertical-align:middle;">
+                        Bonus Amount
+                    </th>
+                    <th style="text-align:center;width:100px;vertical-align:middle;">
+                        Status
+                    </th>
+                    <th style="text-align:center;width:80px;vertical-align:middle;">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<div id="renderModalCommissionSchedulePopup"></div>
+
+
+
+
+@section pageplugins{
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+}
+
+@section scripts{
+    <script type="text/javascript">
+
+        var _SalesPersonBonusCommissionScheduleId = 0;
+        var _CommissionPaymentSchedule = {};
+        $(document).ready(function () {
+            $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("GetSalesPersonBonusScheduleListData", "Commission", new { area = "Portal" })',
+                    data: {},
+                    success: function (data) {
+                        BindSalesPersonCommSchBonusList(data);
+                    }
+            });
+        });
+
+        function BindSalesPersonCommSchBonusList(res) {
+            var listItem = $('#SalesPersonBonusScheduleList tbody');
+            listItem.html('');
+            res.forEach(function (item) {
+                trData = "<tr>";
+                trData += '<td style="text-align:center;vertical-align:middle;">' + item.SalesPersonName + '</td>';
+                trData += '<td style="text-align:center;vertical-align:middle;">' + item.ContractType + '</td>';
+                trData += '<td style="text-align:center;width:100px;vertical-align:middle;">' + formatJSONDateUtc(item.EffectiveDate) + '</td>';
+                trData += '<td style="text-align:center;vertical-align:middle;">' + item.CommissionAdditionalBonusScheduleDescription + '</td>';
+                trData += '<td style="text-align:center;vertical-align:middle;">' + (item.BonusAmountTypeId == 1 ? ('$ ' + parseFloat(item.BonusAmount.toString()).toFixed(2)) : (parseFloat(item.BonusAmount.toString()).toFixed(2)+'%')) + '</td>';
+                trData += '<td style="text-align:center;vertical-align:middle;">' + item.StatusListName + '</td>';
+                trData += '<td style="text-align: center;"><a href="javascript:void(0)" onclick="ShowCommissionScheduleMaintenance(';
+                trData += item.SalesPersonBonusCommissionScheduleId + ",";
+                trData += item.CommissionAdditionalBonusScheduleId + ",";
+                trData += '\'' + formatJSONDateUtc(item.EffectiveDate) + "\',";
+                trData += item.SalesPersonId + ",";
+                trData += item.StatusListId + ",";
+                trData += item.ContractTypeId;
+                trData += ')">Edit</a>&nbsp;&nbsp;&nbsp; <a href="javascript:void(0)" onclick="DeleteCommissionSchedule(';
+                trData += item.SalesPersonBonusCommissionScheduleId;
+                trData += ')">Delete</a></td>';
+                trData += '</tr>';
+
+                listItem.append(trData);
+            });
+        }
+
+
+        $('#btnAddCommissionSchedule').click(function () {
+            _SalesPersonBonusCommissionScheduleId = 0;
+            $.ajax({
+                    type: "GET",
+                url: '@Url.Action("SalesPersonBonusScheduleManage", "Commission", new { area = "Portal" })?SalesPersonBonusCommissionScheduleId=' + _SalesPersonBonusCommissionScheduleId,
+                    data: {},
+                success: function (data) {
+                    $('#renderModalCommissionSchedulePopup').html(data);
+                    $('#txtEffectiveDate').datepicker();
+                    $('#txtEffectiveDate').val('');
+                    $('#ddlCommissionAdditionalBonusScheduleList').val('');
+                    $('#ddlsalesUserList').val('');
+                    $('#CTStatuslist').val(42);
+                    $("#ModalCommissionSchedulePopup").modal({ backdrop: 'static' });
+                    }
+            });
+        });
+
+        function btnSaveCommissionPaymentSchedule() {
+
+
+            var jData1 = {
+                SalesPersonBonusCommissionScheduleId: _SalesPersonBonusCommissionScheduleId,
+                SalesPersonId: $('#ddlsalesUserList').val(),
+                ContractTypeId: $('#ddlContractTypeList').val()
+            };
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("CheckSalesPersonBonusCommSchData", "Commission", new { area = "Portal" })',
+                data: jData1,
+                success: function (data) {
+                    if (data) {
+                        swal('This Sales Person and Contract Type not same, Please change.');
+                        return;
+                    } else {
+                        var jData = {
+                            SalesPersonBonusCommissionScheduleId: _SalesPersonBonusCommissionScheduleId,
+                            CommissionAdditionalBonusScheduleId: $('#ddlCommissionAdditionalBonusScheduleList').val(),
+                            EffectiveDate: $('#txtEffectiveDate').val(),
+                            IsActive: ($('#CTStatuslist').val() == 42 ? true : false),
+                            SalesPersonId: $('#ddlsalesUserList').val(),
+                            statusListId: $('#CTStatuslist').val(),
+                            ContractTypeId: $('#ddlContractTypeList').val(),
+                            BonusAmountType: $('#ddlBonusAmountTypeList').val(),
+                            BonusAmount: $('#txtBonusAmount').val()
+                        };
+
+                        $.ajax({
+                            type: "GET",
+                            url: '@Url.Action("InsertUpdateSalesPersonBonusScheduleData", "Commission", new { area = "Portal" })',
+                            data: jData,
+                            success: function (data) {
+
+                                BindSalesPersonCommSchBonusList(data);
+                                _CommissionPaymentScheduleId = 0;
+                                $("#ModalCommissionSchedulePopup").modal('hide');
+                            }
+                        });
+
+                        $("#ModalCommissionSchedulePopup").modal({ backdrop: 'static' });
+                    }
+                }
+            });
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+        function DeleteCommissionSchedule(SalesPersonBonusCommissionScheduleId) {
+            _SalesPersonBonusCommissionScheduleId = 0;
+             $.ajax({
+                    type: "GET",
+                 url: '@Url.Action("DeleteSalesPersonBonusScheduleListData", "Commission", new { area = "Portal" })?SalesPersonBonusCommissionScheduleId=' + SalesPersonBonusCommissionScheduleId,
+                    data: {},
+                    success: function (data) {
+                        BindSalesPersonCommSchBonusList(data);
+                        //console.log(data);
+                    }
+            });
+        }
+
+
+
+
+
+        function ShowCommissionScheduleMaintenance(SalesPersonBonusCommissionScheduleId, CommissionAdditionalBonusScheduleId, EffectiveDate, SalesPersonId, StatusListId, ContractTypeId) {
+
+
+
+            _SalesPersonBonusCommissionScheduleId = SalesPersonBonusCommissionScheduleId;
+
+            $.ajax({
+                    type: "GET",
+                url: '@Url.Action("SalesPersonBonusScheduleManage", "Commission", new { area = "Portal" })?SalesPersonBonusCommissionScheduleId=' + _SalesPersonBonusCommissionScheduleId,
+                    data: {},
+                success: function (data) {
+                    $('#renderModalCommissionSchedulePopup').html(data);
+                    $('#txtEffectiveDate').val(EffectiveDate);
+                    $('#ddlCommissionAdditionalBonusScheduleList').val(CommissionAdditionalBonusScheduleId);
+                    $('#ddlsalesUserList').val(SalesPersonId);
+                    $('#CTStatuslist').val(StatusListId);
+                    $('#txtEffectiveDate').datepicker();
+                    $('#ddlContractTypeList').val(ContractTypeId);
+                    //$('#ddlBonusAmountTypeList').val(BonusAmountType);
+                    //$('#txtBonusAmount').val(BonusAmount);
+                    if ($('#ddlBonusAmountTypeList').val() == 1)
+                        applyMaskCurrency('#txtBonusAmount');
+                    else
+                        maskPercentage('#txtBonusAmount');
+                    $("#ModalCommissionSchedulePopup").modal({ backdrop: 'static' });
+                    
+                    }
+            });
+        }
+
+
+        
+
+        function CheckSalesPersonCommSchBonusData() {
+
+            var jData = {
+                SalesPersonBonusCommissionScheduleId: _SalesPersonBonusCommissionScheduleId,
+                SalesPersonId: $('#ddlsalesUserList').val(),
+                ContractTypeId: $('#ddlContractTypeList').val()
+            };
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("CheckSalesPersonCommSchBonusData", "Commission", new { area = "Portal" })',
+                data: jData,
+                success: function (data) {
+                    if (data) {
+                        swal('This Sales Person and Contract Type not same, Please change.');
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            });
+        }
+
+
+        function ddlBonusAmountTypeListChange() {
+            if ($('#ddlBonusAmountTypeList').val() == 1)
+                applyMaskCurrency('#txtBonusAmount');
+            else
+                maskPercentage('txtBonusAmount');
+
+        }
+
+
+
+        function btnCancelCommissionPaymentSchedule() {
+            _SalesPersonBonusCommissionScheduleId = 0;
+            $("#ModalCommissionSchedulePopup").modal('hide');
+        };
+
+       
+
+        function formatJSONDateUtc(jsonDate) {
+            if (jsonDate != null) {
+                var dtstr = jsonDate.substr(6);
+                var dateString = dtstr.substring(0, dtstr.length - 2);
+                var currentTime = new Date(parseInt(dateString)).toUTCString();
+                var date = moment.utc(currentTime).format("MM/DD/YYYY");
+                return date;
+            }
+            return null;
+        }
+        function applyMaskCurrency(id) {
+            $(id).inputmask("currency", {
+                alias: 'currency',
+                prefix: '$ ',
+                digits: 2,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                unmaskAsNumber: true,
+                allowPlus: false,
+                allowMinus: false,
+                autoGroup: true,
+                groupSeparator: ",",
+            });
+        }
+        function maskCurrency(id) {
+            $('#' + id).inputmask("currency", {
+                alias: 'currency',
+                prefix: '$ ',
+                digits: 2,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                unmaskAsNumber: true,
+                allowPlus: false,
+                allowMinus: false,
+                autoGroup: true,
+                groupSeparator: ",",
+            });
+        }
+
+        function maskPercentage(id) {
+            $('#' + id).inputmask("numeric", {
+                radixPoint: ".",
+                groupSeparator: ",",
+                autoGroup: true,
+                suffix: " %",
+                rightAlign: true,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                clearMaskOnLostFocus: false,
+                oncleared: function () { self.Value(''); }
+            });
+        }
+        function addCommas(nStr) {
+            nStr += '';
+            x = nStr.split('.');
+            x1 = x[0];
+            x2 = x.length > 1 ? '.' + x[1] : '';
+            var rgx = /(\d+)(\d{3})/;
+            while (rgx.test(x1)) {
+                x1 = x1.replace(rgx, '$1' + ',' + '$2');
+            }
+            return x1 + x2;
+        }
+
+    </script>
+
+
+}

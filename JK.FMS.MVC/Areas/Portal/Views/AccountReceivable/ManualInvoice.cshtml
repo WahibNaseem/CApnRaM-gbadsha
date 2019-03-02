@@ -1,0 +1,1154 @@
+﻿@model JKViewModels.AccountReceivable.CustomerTransactionCommonViewModel
+@{
+    ViewBag.Title = "ManualInvoice";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section styles{
+
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")' rel="stylesheet" type="text/css" />
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")' rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        #tblcontractdetailrows {
+        }
+
+        .theadRow tr {
+            font-size: 12px;
+        }
+
+        .theadRow td {
+            border: 1px solid #e8e8e8 !important;
+            padding: 0px 5px !important;
+            font-size: 12px;
+        }
+
+        .theadRowH td {
+            border-left: 1px solid #e8e8e8 !important;
+            border-right: 1px solid #e8e8e8 !important;
+            border-bottom: 1px solid #e8e8e8 !important;
+            padding: 5px 5px !important;
+            font-size: 12px;
+        }
+
+        .theadRowH.remove-padding td {
+            padding: 0px !important;
+            font-size: 12px;
+        }
+
+        .theadRow td > label, .theadRowH td > label {
+            float: left;
+            margin-top: 3px;
+            font-size: 12px;
+        }
+
+        .theadRow td input[type=checkbox], .theadRowH td input[type=checkbox] {
+            float: left;
+            margin-right: 5px;
+            margin-top: 6px;
+            font-size: 12px;
+        }
+
+        .theadRow td input[type=text], .theadRowH td input[type=text] {
+            margin-top: 0px !important;
+            border: 0;
+            border-radius: 0;
+            font-size: 12px;
+        }
+
+        .theadRow td .input-sm, .theadRowH td .input-sm {
+            margin-top: 0px !important;
+            border: 0;
+            border-radius: 0;
+            font-size: 12px;
+        }
+
+        .error {
+            border: 1px solid red !important;
+        }
+
+        label.error {
+            display: none !important;
+        }
+    </style>
+}
+
+
+<div class="custom-form portlet light">
+    <div class="headerbox">
+        <div class="row">
+            &nbsp;
+        </div>
+    </div>
+    <div class="portlet-body form">
+        @using (Html.BeginForm("ManualInvoice", "AccountReceivable", FormMethod.Post, new { area = "Portal", id = "form_manualinvoice_submitForm" }))
+        {
+            @Html.HiddenFor(m => m.CustomerId, new { id = "hdfCustomerId", required = "required" })
+
+            <input type="hidden" id="hdftotallineno" name="hdftotallineno" />
+            <input type="hidden" id="hdfftotallineno" name="hdfftotallineno" />
+
+            <input type="hidden" id="hdfTaxRateId" name="hdfTaxRateId" />
+            <input type="hidden" id="hdfContractTaxRate" name="hdfContractTaxRate" />
+            <input type="hidden" id="hdfLeaseTaxRate" name="hdfLeaseTaxRate" />
+            <input type="hidden" id="hdfSupplyTaxRate" name="hdfSupplyTaxRate" />
+
+            <input type="hidden" id="hdfCallBySave" name="hdfCallBySave" />
+
+            <div class="form-body">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-1" style="padding: 5px;">
+                                Invoice For&nbsp;:
+                            </label>
+                            <div class="col-md-5 inline-block">
+                                <input id="csearch-box" type="text" required name="customernumber" autocomplete="off" placeholder="Search Customer Name or Number" value="" class="form-control input-sm typeahead requiredValidation" />
+                            </div>
+
+                        </div>
+                        <hr style="margin: 0px;" />
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <span class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Customer No:  <b><span id="spncustomerno"></span></b> </span>
+                            <label class="col-md-12"><b><span id="spncustomername"></span></b></label>
+                            <label class="col-md-12"><span id="spncustomeraddress"></span></label>
+                            <label class="col-md-12"><span id="spncustomercity"></span>, <span id="spncustomerstate"></span>&nbsp;<span id="spncustomerpincode"></span></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6" >
+                        <div class="form-group" style="padding-top: 15px;display:none;">
+                            <label class="col-md-4 control-label text-right">Print Invoice</label>
+                            <div class="col-md-8">
+                                <div class="input-group">
+                                    <div class="icheck-inline" style="margin-top: 0px;">
+                                        <label class="check-inline" style="margin-right: 5px;">
+                                            <input type="radio" name="membership" value="1" class="i-checks" id="rdoYes" checked />
+                                            <span>Yes</span>
+                                        </label>
+
+                                        <label class="check-inline">
+                                            <input type="radio" name="membership" value="0" class="i-checks" id="rdoNo" />
+                                            <span>No</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Billing</label>
+                            <label class="col-md-12"><b><span id="spncustomerbname"></span></b></label>
+                            <label class="col-md-12"><span id="spncustomeraddress1"></span></label>
+                            <label class="col-md-12"><span id="spncustomercity1"></span>, <span id="spncustomerstate1"></span>&nbsp;<span id="spncustomerpincode1"></span></label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <div class="table-responsive">
+
+
+                                <table class="col-md-12 table" id="tblcontractdetailrows">
+                                    <thead>
+                                        <tr class="theadRow" style="background-color:#e8e8e8;">
+                                            <td style="padding: 3px!important;">Description</td>
+                                            <td colspan="6" style="padding: 0px!important;">
+                                                @*<input type="text" id="txtInvoiceDescription" value="" style="width:100%;width: 100%;padding: 4px;border-radius: 0px;" />*@
+                                                <textarea required="" id="txtInvoiceDescription" name="txtInvoiceDescription" class="form-control input-sm requiredValidation" row="1" style="width:100%;padding: 5px;border-radius: 0px;resize:vertical;max-height:100px;min-height:30px;"></textarea>
+                                            </td>
+                                            <td colspan="2" style="padding: 3px!important;text-align: right;padding-right: 10px!important;">Inv Date</td>
+                                            <td style="padding: 0px!important;"><input type="text" name="txtInvoicedate" id="txtInvoicedate" placeholder="" value="@DateTime.Now.ToString("MM/dd/yyyy")" class="form-control input-sm date" /></td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <tfoot>
+                                        <tr class="theadRowH remove-padding">
+                                            <td colspan="6" rowspan="3" style="text-align:left;vertical-align:top;padding:7px;"><a href="javascript:void(0);" onclick="addNewEntry()">+ Add</a>&nbsp;&nbsp;<a href="javascript:void(0);" style="color:red;" onclick="DeleteEntry()">- Delete</a></td>
+                                            <td colspan="2" style="padding:4px !important"><b>Sub Total</b></td>
+                                            <td colspan="1" style="padding:0 !important"><input readonly id="txtsubtotal" type="text" name="txtsubtotal" value="" class="form-control input-sm" style="padding: 5px;border-radius: 0px;" /></td>
+                                        </tr>
+                                        <tr class="theadRowH remove-padding">
+                                            <td colspan="2" style="padding:4px !important"><b>Tax</b></td>
+                                            <td colspan="1" style="padding:0 !important"><input readonly id="txttaxamount" type="text" name="txttaxamount" value="" class="form-control input-sm" style="padding: 5px;border-radius: 0px;" /></td>
+                                        </tr>
+                                        <tr class="theadRowH remove-padding">
+                                            <td colspan="2" style="padding:4px !important"><b>Total</b></td>
+                                            <td colspan="1" style="padding:0 !important"><input readonly id="txttotalamount" type="text" name="txttotalamount" value="" class="form-control input-sm" style="padding: 5px;border-radius: 0px;" /></td>
+                                        </tr>
+                                    </tfoot>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <table class="col-md-12" style="border:1px solid #e8e8e8" id="frdestributionTable">
+                                <thead>
+                                    <tr>
+                                        <th colspan="5"><input type="text" id="fsearch-box" autocomplete="off" name="name" value="" placeholder="Search Pay To by Number or Name" class="form-control input-sm typeahead" style="padding: 5px;border-radius: 0px;margin: 0px;" /></th>
+                                    </tr>
+                                    <tr>
+                                        <th style="width:150px;padding:3px;margin: 0px;">Line No</th>
+                                        <th style="width:150px;padding:3px;margin: 0px;">Franchisee No.</th>
+                                        <th style="padding:3px;">Name</th>
+                                        <th style="width:100px;padding:3px;">Amount</th>
+                                        <th style="width:25px;padding:3px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+
+                <div class="col-md-12">
+                    <button type="button" name="SaveNew" id="btnSaveNew" value="SaveNew" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:0px;">Save & New</button>
+                    <button type="button" name="SaveClose" id="btnSaveClose" value="SaveClose" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:10px;">Save & Close</button>
+                </div>
+
+            </div>
+
+        }
+    </div>
+</div>
+
+@section pageplugins{
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+}
+
+@section scripts{
+    <script type="text/javascript">
+
+        function ValidateInputSelect() {
+
+            var IsValidItem = true;
+            $("input.requiredValidation").each(function () {
+                console.log($(this).val());
+                if ($(this).val().length == 0) {
+                    $(this).addClass('error');
+                    IsValidItem = false;
+                }
+                else {
+                    $(this).removeClass('error');
+                }
+            });
+
+            $("select.requiredValidation").each(function () {
+                console.log($(this).val());
+                if ($(this).val() == "" || $(this).val() == "Select") {
+                    $(this).addClass('error');
+                    IsValidItem = false;
+                }
+                else {
+                    $(this).removeClass('error');
+                }
+            });
+
+
+            $("select.ddldetaillinenumber").each(function () {
+                console.log($(this).val());
+                if ($(this).val() == "" || $(this).val() == "Select") {
+                    $(this).addClass('error');
+                    IsValidItem = false;
+                }
+                else {
+                    $(this).removeClass('error');
+                }
+            });
+
+
+            $("textarea.requiredValidation").each(function () {
+                console.log($(this).val());
+                if ($(this).val() == "") {
+                    $(this).addClass('error');
+                    IsValidItem = false;
+                }
+                else {
+                    $(this).removeClass('error');
+                }
+            });
+
+
+
+            var amt = 0;
+            $("input.frfranchiseeamount").each(function () {
+
+                var tempFranchiseeAmt = parseFloat($(this).val())
+                amt = amt + tempFranchiseeAmt;
+            });
+
+            var txtsubtotal = parseFloat($('#txtsubtotal').val());
+
+            if (amt != txtsubtotal) {
+                IsValidItem = false;
+                $(".frfranchiseeamount").addClass('error');
+            }
+            else {
+                $(".frfranchiseeamount").removeClass('error');
+            }
+
+
+
+            return IsValidItem;
+
+
+        }
+
+
+
+        $("#btnSaveNew").click(function (e) {
+
+            if (!ValidateInputSelect())
+                return false;
+
+            $('#hdfCallBySave').val('SaveNew')
+            e.preventDefault();
+            $.blockUI();//$.blockUI({ message: $('#throbberBlock'), theme: true, baseZ: 12000 });
+            $("#form_manualinvoice_submitForm").submit();
+
+
+        });
+
+        $("#btnSaveClose").click(function (e) {
+
+            if (!ValidateInputSelect())
+                return false;
+            $('#hdfCallBySave').val('SaveClose')
+            e.preventDefault();
+            $.blockUI();
+            $("#form_manualinvoice_submitForm").submit();
+
+        });
+
+        var lstContractDetailServiceTypeList = [];
+        var lineNo = 0;
+        var flineNo = 0;
+
+        var app = {};
+
+        (function (app) {
+
+            var _id;
+
+            app.init = function (id) {
+                if (id != '') {
+                    _id = id;
+                    $("#hdfCustomerId").val(_id);
+                    bindcustomerdetail(_id);
+
+                    if ($("#hdfCustomerId").val() != '') {
+                        $('#csearch-box').prop('required', false);
+                    }
+                }
+            }
+
+        })(app);
+
+        $(document).ready(function () {
+
+
+
+
+            $(document).on('change', '.ddldetaillinenumber', function (event) {
+                var _valAMT = $(this).val();
+                var fln = $(this).attr("relLine");
+                if ($(this).attr("relLine") != "Select") {
+
+                    $('#frfranchiseeamount' + fln).prop("required", true);
+                }
+                else {
+                    $('#frfranchiseeamount' + fln).prop("required", false);
+                }
+                if (_valAMT == "-1") {
+                    UnitData = $("#txtsubtotal").val();
+                    $("#frfranchiseeamount" + fln).val(UnitData);
+                }
+                else if ($("#frfranchiseeamount" + fln).val() != "" && $("txtExtendedPrice" + _valAMT).val() != "") {
+                    var UnitData;
+                    var FrData;
+                    //if ($("#txtExtendedPrice" + fln).val().indexOf(",") > 0)
+                    //    UnitData = $("#txtExtendedPrice" + fln).val().replace("$ ", "").replace(",", "");
+                    //else
+                    UnitData = $("#txtExtendedPrice" + _valAMT).val();
+                    $("#frfranchiseeamount" + fln).val(UnitData);
+
+                    FrData = $("#frfranchiseeamount" + fln).val();
+
+
+                    if (parseFloat(FrData) > parseFloat(UnitData)) {
+                        {
+                            alert("Franchisee amount should not be greater than Extended Price.");
+                            $("#frfranchiseeamount" + fln).focus();
+                            $("#frfranchiseeamount" + fln).select();
+                        }
+                    }
+                }
+                else if ($("#frfranchiseeamount" + fln).val() == "" && $("txtExtendedPrice" + _valAMT).val() != "") {
+                    UnitData = $("#txtExtendedPrice" + _valAMT).val();
+                    $("#frfranchiseeamount" + fln).val(UnitData);
+                }
+
+
+            });
+
+            $('input').on("keypress", function (e) {
+
+                $("input.unitPrice").each(function () {
+                    if ($(this).val() != "") {
+                        $(this).removeClass('error');
+                    }
+                });
+
+                $("select.ContractDetailServiceTypeList").each(function () {
+                    if ($(this).val() != "") {
+                        $(this).removeClass('error');
+                    }
+                });
+
+                /* ENTER PRESSED*/
+                if (e.keyCode == 13) {
+                    /* FOCUS ELEMENT */
+                    var inputs = $(this).parents("form").eq(0).find(":input");
+                    var idx = inputs.index(this);
+
+                    if (idx == inputs.length - 1) {
+                        inputs[0].select()
+                    } else {
+                        inputs[idx + 1].focus(); //  handles submit buttons
+                        inputs[idx + 1].select();
+                    }
+
+
+
+                    return false;
+                }
+            });
+
+            app.init('@ViewContext.RouteData.Values["id"]');
+
+            $("#hdftotallineno").val(lineNo);
+            $("#hdfftotallineno").val(flineNo);
+            //$('#txtInvoicedate').inputmask("mm/dd/yyyy", {});
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetServiceTypeListManualInvoice", "Customer", new { area = "Portal" })',
+                success: function (data) {
+                    lstContractDetailServiceTypeList = data;
+                    addNewEntry();
+                }
+            })
+            $("#txtInvoicedate").datepicker();
+            $("#txtInvoicedate").datepicker("option", "dateFormat", "mm/dd/yy");
+            $('#txtInvoicedate').datepicker('setDate', new Date());
+
+            applyAutoSeacrh();
+
+            
+        });
+
+        function applyAutoSeacrh() {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetAllCustomer", "Customer", new { area = "Portal" })',
+                data: {},
+                success: function (data) {
+
+                    var typeaheadSource = [];
+                    $.each(data, function (key, value) {
+                        typeaheadSource.push({ id: value.CustomerId, name: value.CustomerNo + ' ' + $.trim(value.Name) })
+                    });
+                    var box = $('#csearch-box').data('typeahead');
+                    if (box != null) {
+
+                        console.log('csearch source change');
+                        box.source = typeaheadSource;
+                    }
+                    else {
+                        console.log('csearch initiated');
+                        $('#csearch-box').typeahead({
+                            source: typeaheadSource,
+                            updater: function (item) {
+                                $("#hdfCustomerId").val(item.id);
+                                $("#frdestributionTable tbody").empty();
+                                flineNo = 0;
+                                bindcustomerdetail(item.id);
+                                return item;
+                            },
+                            minLength: 1
+                        }).focus();
+                    }
+
+
+
+                    $("#ContractDetail_Amount").inputmask("numeric", {
+                        decimal: ".",
+                        negative: false,
+                        scale: 2,
+                        groupSeparator: ",",
+                        digits: 2,
+                        autoGroup: true,
+                        prefix: "$",
+                        rightAlign: true,
+                        autoUnmask: true,
+                        removeMaskOnSubmit: true,
+                    });
+
+                    $('.cnumeric').inputmask("numeric", { negative: false, scale: 2, rightAlign: false, autoUnmask: true, removeMaskOnSubmit: true, autoUnmask: true, removeMaskOnSubmit: true });
+                }
+            });
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetAllFranchisees", "Franchise", new { area = "Portal" })',
+                data: {},
+                success: function (data) {
+                    var typeaheadSource = [];
+                    $.each(data, function (key, value) {
+                        typeaheadSource.push({ id: value.FranchiseeId, name: value.FranchiseeNo + '   ' + value.Name })
+                    });
+
+                    $('#fsearch-box').typeahead({
+                        source: typeaheadSource,
+                        updater: function (item) {
+                            $("#hdfFrenchiseeId").val(item.id);
+                            bindfranchiseedetailUpdated(item.id, $.trim(item.name.split('   ')[0]), $.trim(item.name.split('   ')[1]));
+                            return item;
+                        }
+                    }).focus();
+                }
+            });
+
+
+
+        }
+
+
+        function bindcustomerdetail(customerid) {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("CustomerDetaildata", "AccountReceivable", new { area = "Portal" })',
+                data: 'customerid=' + customerid,
+                success: function (data) {
+                    document.getElementById("chkTaxExcempt1").checked = false;
+                    $("#spncustomerno").text($.trim(data.CustomerNo));
+                    $("#spncustomername").text($.trim(data.Name));
+                    $("#spncustomeraddress").text($.trim(data.Address1));
+                    $("#spncustomercity").text($.trim(data.City))
+                    $("#spncustomerstate").text($.trim(data.StateName));
+                    $("#spncustomerpincode").text($.trim(data.PostalCode));
+
+
+                    $("#spncustomerbname").text($.trim(data.BName));
+                    $("#spncustomerbattname").text($.trim(data.Attention));
+                    $("#spncustomeraddress1").text($.trim(data.BAddress1));
+                    $("#spncustomercity1").text($.trim(data.BCity))
+                    $("#spncustomerstate1").text($.trim(data.BStateName));
+                    $("#spncustomerpincode1").text($.trim(data.PostalCode));
+
+                    $("#hdfTaxRateId").val(data.TaxRateId);
+                    $("#hdfContractTaxRate").val(data.ContractTaxRate);
+                    $("#hdfLeaseTaxRate").val(data.LeaseTaxRate);
+                    $("#hdfSupplyTaxRate").val(data.SupplyTaxRate);
+                    if (data.TaxExcempt == true)
+                        document.getElementById("chkTaxExcempt1").checked = true;
+                    bindcCustomerDistributionDetailFranchiseedetail(customerid);
+                }
+            });
+        }
+
+
+        function bindfranchiseedetailUpdated(franchiseeid, franchiseeno, franchiseename) {
+
+            flineNo++;
+
+
+
+            var linenumber = 0;
+            var txttotal = ''
+            var lineTotalAmount = 0;
+
+            var tempRow = '<tr id=row_' + flineNo + '><td>'
+            tempRow = tempRow + '<input relLine="' + flineNo + '" type="hidden" id="hdfFrenchiseeId' + flineNo + '" name="hdfFrenchiseeId' + flineNo + '" value="' + franchiseeid + '" />'
+            tempRow = tempRow + '<select relLine="' + flineNo + '"  relddldetaillinenum="ddldetaillinenumber" class="form-control input-sm ddldetaillinenumber" style="border-radius: 0px;" id="ddldetaillinenumber' + flineNo + '" name="ddldetaillinenumber' + flineNo + '"></select>';
+            tempRow = tempRow + '</td>'
+            tempRow = tempRow + '<td><input type="text" required relLine="' + flineNo + '" id="frfranchiseeno' + flineNo + '" name="frfranchiseeno' + flineNo + '" value="' + $.trim(franchiseeno) + '" readonly class="form-control input-sm cnumeric" style="padding: 5px;border-radius: 0px;" /></td>'
+            tempRow = tempRow + '<td><input type="text" required relLine="' + flineNo + '" id="frfranchiseename' + flineNo + '" name="frfranchiseename' + flineNo + '" value="' + $.trim(franchiseename) + '" readonly class="form-control input-sm cnumeric" style="padding: 5px;border-radius: 0px;" /></td>'
+            tempRow = tempRow + '<td><input type="text" relLine="' + flineNo + '" id="frfranchiseeamount' + flineNo + '" name="frfranchiseeamount' + flineNo + '" value="' + txttotal + '" class="form-control input-sm cnumeric requiredValidation frfranchiseeamount" style="padding: 5px;border-radius: 0px;" /></td>';
+            tempRow = tempRow + '<td><a style="font-size: 16px;padding: 3px;color: mediumvioletred;" href="javascript:deleteFrenchisee(' + flineNo + ');"><i class="fa fa-trash" aria-hidden="true"></i></a></td></tr>';
+
+
+            $('#frdestributionTable tbody').append(tempRow);
+            applyMaskCurrency('#frfranchiseeamount' + flineNo);
+            $("#hdfftotallineno").val(flineNo);
+
+            updateFranchiseeLineItemDropDowns(lineNo);
+
+            $("#frfranchiseeamount" + flineNo).change(function () {
+                var ddlLine = $(this).parent().parent().find("td")[0];
+                var Line_No = $(ddlLine).find("select option:selected").val();
+                if ($("#txtExtendedPrice" + Line_No).val() != "" && $(this).val() != "") {
+                    var UnitData;
+                    var FrData;
+                    //if ($("#txtExtendedPrice" + Line_No).val().indexOf(",") > 0)
+                    //    UnitData = $("#txtExtendedPrice" + Line_No).val().replace("$ ", "").replace(",", "");
+                    //else
+                    UnitData = $("#txtExtendedPrice" + Line_No).val();
+                    FrData = $(this).val();
+                    if (parseFloat(UnitData) < parseFloat(FrData)) {
+                        alert("Franchisee amount should not be greater than Extended Price.");
+                        $(this).focus();
+                        $(this).select();
+                    }
+                }
+            });
+
+            setTimeout(function () {
+                $("#hdfFrenchiseeId").val(0);
+                $('#fsearch-box').val('');
+            }, 500);
+
+        }
+
+
+
+
+        function bindcCustomerDistributionDetailFranchiseedetail(customerid) {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("CustomerDistributionDetailFranchiseedata", "AccountReceivable", new { area = "Portal" })',
+                data: 'customerid=' + customerid,
+                success: function (data) {
+                    $.each(data, function () {
+                        bindfranchiseedetailUpdated(this.FranchiseeId, this.FranchiseeNo, this.Name);
+                    });
+
+                }
+            });
+        }
+
+        function deleteFrenchisee(flineNoRemove) {
+            $("tr[id=row_" + flineNoRemove + "]").remove();
+            flineNo--;
+            updateFranchiseeLineItemDropDowns(lineNo);
+        }
+
+        function bindfranchiseedetail(linenumber, franchiseeid, franchiseename) {
+            flineNo++;
+
+
+            //var txtmarkup = parseFloat($('#txtmarkup' + linenumber).val() == '' ? 0 : $('#txtmarkup' + linenumber).val())
+            var txtqty = parseFloat($('#txtqty' + linenumber).val() == '' ? 0 : $('#txtqty' + linenumber).val())
+            var txtunitprice = parseFloat($('#txtunitprice' + linenumber).inputmask('unmaskedvalue') == '' ? 0 : $('#txtunitprice' + linenumber).inputmask('unmaskedvalue'))
+            var txttotal = (txtqty * txtunitprice)
+
+            var lineTotalAmount = 0;
+            $('input[relLinea="' + linenumber + '"]').each(function (el) {
+                lineTotalAmount += parseFloat(this.defaultValue);
+            });
+
+            if (lineTotalAmount + txttotal > txttotal) {
+                if (lineTotalAmount < txttotal) {
+                    txttotal = txttotal - lineTotalAmount;
+                }
+                else {
+                    txttotal = 0;
+                }
+            }
+
+
+
+            var tempRow = '<tr id=row_' + flineNo + '><td><input type="hidden" relLine="' + linenumber + '" id="hdfFrenchiseeId' + flineNo + '_' + linenumber + '" name="hdfFrenchiseeId' + flineNo + '_' + linenumber + '" value="' + franchiseeid + '" /><input type="text" readonly id="frlinenumber' + flineNo + '_' + linenumber + '" name="frlinenumber' + flineNo + '_' + linenumber + '" value="' + linenumber + '" class="form-control input-sm cnumeric" style="padding: 5px;border-radius: 0px;" /></td>'
+            tempRow = tempRow + '<td><input type="text" required relLine="' + linenumber + '" readonly id="frfranchiseeno' + flineNo + '_' + linenumber + '" name="frfranchiseeno' + flineNo + '_' + linenumber + '" value="' + $.trim(franchiseename.split('   ')[0]) + '" class="form-control input-sm cnumeric" style="padding: 5px;border-radius: 0px;" /></td>'
+            tempRow = tempRow + '<td><input type="text" required relLine="' + linenumber + '" readonly id="frfranchiseename' + flineNo + '_' + linenumber + '" name="frfranchiseename' + flineNo + '_' + linenumber + '" value="' + $.trim(franchiseename.split('   ')[1]) + '" class="form-control input-sm cnumeric" style="padding: 5px;border-radius: 0px;" /></td>'
+            tempRow = tempRow + '<td><input type="text" required relLine="' + linenumber + '"  relLinea="' + linenumber + '" id="frfranchiseeamount' + flineNo + '_' + linenumber + '" name="frfranchiseeamount' + flineNo + '_' + linenumber + '" value="' + txttotal + '" class="form-control input-sm cnumeric requiredValidation" style="padding: 5px;border-radius: 0px;" /></td>';
+            tempRow = tempRow + '<td><a style="font-size: 16px;padding: 3px;color: mediumvioletred;" href="javascript:deleteFrenchisee(' + linenumber + ',' + flineNo + ');"><i class="fa fa-trash" aria-hidden="true"></i></a></td></tr>';
+
+
+
+            $('#frdestributionTable tbody').append(tempRow);
+            applyMaskCurrency('#frfranchiseeamount' + flineNo + '_' + linenumber);
+            $("#hdfftotallineno").val(flineNo);
+
+
+            setTimeout(function () {
+                $("#hdfFrenchiseeId").val(0);
+                //document.getElementById('ddldetaillinenumber').selectedIndex = 0;
+                $('#fsearch-box').val('');
+            }, 500);
+
+        }
+        $('#fsearch-box').keypress(function (event) {
+            var keycode = (event.keyCode ? event.keyCode : event.which);
+            if (keycode == '13') {
+                $(this).typeahead('val', '');
+            }
+        });
+
+
+
+        function DeleteEntry() {
+            lineNo;
+            if (lineNo > 1) {
+                $("#tblcontractdetailrows tbody tr[relline='S" + lineNo + "']").remove();
+                lineNo--;
+                $("#hdftotallineno").val(lineNo);
+                //OnlyNumber('#txtmarkup' + lineNo)
+                //OnlyNumber('#txtqty' + lineNo)
+                applyMaskCurrency('#txtunitprice' + lineNo)
+                CalculateAmount(lineNo);
+
+                $('.unitPrice').keyup(function () {
+                    var fieldId = $(this).attr('id');
+                    fieldId = fieldId.replace('txtunitprice', '');
+                    //unitPrice
+                    $('#hdfunitprice' + fieldId).val($('#txtunitprice' + fieldId).val());
+                });
+
+                updateFranchiseeLineItemDropDowns(lineNo);
+
+            }
+
+        }
+
+        function changeSelectedType(line)
+        {         
+            if ($('#rdoclientsupplies' + line).is(':checked')) {
+                $('#ContractDetailServiceTypeList' + line).val(29)
+            }
+
+            if ($('#ContractDetailServiceTypeList' + line).val() == 5 || $('#ContractDetailServiceTypeList' + line).val() == 29) {
+
+                $('#rdoclientsupplies' + line).prop('checked', true);
+                $('#rdoclientsupplies' + line).prop('disabled', false);
+
+                $('#rdoExtraWork' + line).prop('disabled', true);
+                $('#rdoAdditional' + line).prop('disabled', true);
+                $('#rdoRegularBilling' + line).prop('disabled', true);
+                
+
+                $('#txtCommissionAmount' + line).val("0");
+                $('#txtCommissionAmount' + line).hide();
+                $('#spnPer' + line).hide();
+
+                $('#txtmarkup' + line).prop("readonly", false);
+            }
+            else {
+                $('#rdoExtraWork' + line).prop('disabled', false);
+                $('#rdoAdditional' + line).prop('disabled', false);
+                $('#rdoRegularBilling' + line).prop('disabled', false);
+                $('#rdoclientsupplies' + line).prop('disabled', false);
+
+                $('#txtmarkup' + line).prop("readonly", true);
+                $('#txtmarkup' + line).val(0);
+            }
+          
+            updateFranchiseeLineItemDropDowns(line);
+        }
+
+        function updateFranchiseeLineItemDropDowns(lineNo) {
+
+            var lineitems = []; lineitems.push("<option value=''>Select</option>");
+            for (var i = 1; i <= lineNo; i++) {
+                lineitems.push("<option value=" + i + ">" + i + "</option>");
+            }
+
+            var isViewAll = true;
+            var selectType = [];
+            var selectedId = 0;
+
+            for (var i = 1; i <= lineNo; i++) {
+                var radios = document.getElementsByName('tablerdo' + i);
+                for (var j = 0, length = radios.length; j < length; j++) {
+                    if (radios[j].checked) {
+                        selectType.push(radios[j].value);
+                        break;
+                    }
+                }
+            }
+
+            for (var i = 0; i < selectType.length; i++) {
+                if (i == 0) {
+                    selectedId = selectType[i];
+                }
+                if (selectType[i] != selectedId) {
+                    isViewAll = false;
+                }
+            }
+
+            if (lineNo > 1 && isViewAll) {
+                lineitems.push("<option value='-1'>All</option>");
+            }
+            //$('#ddldetaillinenumber').html(lineitems.join(' '));
+
+            $('select[relddldetaillinenum="ddldetaillinenumber" ]').each(function (item) {
+
+                var prevSelected = $(this).val();
+
+                $(this).html('');
+                $(this).html(lineitems.join(' '));
+
+                $(this).find('option[value="' + prevSelected + '"]').attr("selected", "selected");
+
+            });
+        }
+
+        //function onChange_PrintInvoice() {
+        //    if ($('#rdoYes').is(':Checked')) {
+        //        $('textarea[reldesc="invoicedescription"]').prop('required', true);
+        //        $('textarea[reldesc="invoicedescription"]').addClass("requiredValidation");
+
+
+        //    } else {
+        //        $('textarea[reldesc="invoicedescription"]').prop('required', false);
+        //        $('textarea[reldesc="invoicedescription"]').removeClass("requiredValidation");
+        //        $('textarea[reldesc="invoicedescription"]').removeClass('error');
+        //    }
+
+
+
+        //}
+
+        function addNewEntry() {
+
+            var ItemValid = true;
+
+            $("input.unitPrice").each(function () {
+                if ($(this).val().length == 0 || $(this).val() == "0") {
+                    $(this).addClass('error');
+                    ItemValid = false;
+                }
+                else {
+                    $(this).removeClass('error');
+                }
+            });
+
+            $("select.ContractDetailServiceTypeList").each(function () {
+                if ($(this).val().length == 0 || $(this).val() == "0") {
+                    $(this).addClass('error');
+                    ItemValid = false;
+                }
+                else {
+                    $(this).removeClass('error');
+                }
+            });
+
+            if (!ItemValid)
+                return false;
+
+            lineNo++;
+
+            var tr = "";
+            tr = tr + '<tr relline="S' + lineNo + '" style="background-color:#eef1f5;border-right: 1px solid #eef1f5;">';
+            tr = tr + '<td colspan="10" style="padding:0!important;">';
+            tr = tr + '<table class="col-md-12" style="margin: 0px!important;">';
+            tr = tr + '<tr class="theadRow">';
+            tr = tr + '<td style="width:72px;padding: 0px !important;text-align:center;">Line No</td><td></td>';
+            //tr = tr + '<td style="padding: 0px !important;text-align:right;"><label for="chkPrintInvoice' + lineNo + '" style="padding-left: 0px;float: right;">Print Invoice</label><input style="float: right;" type="checkbox" id="chkPrintInvoice' + lineNo + '" name="chkPrintInvoice' + lineNo + '"></td>';
+
+            tr = tr + '<td style="padding: 0px !important;text-align:right;"><label for="chkPrintInvoice' + lineNo + '" style="padding-left: 0px;float: right;"></td>';
+            tr = tr + '<td style="width: 110px;"></td>';
+            tr = tr + '<td style="width: 110px;padding: 0 0px !important;"></td>';
+            tr = tr + '<td style="width: 159px;"><label class="check-inline" style="margin-right: 5px;" ><input type="radio" name="tablerdo' + lineNo + '" value="1" class="i-checks" id = "rdoAdditional' + lineNo + '" checked /><span>Additional Billing Office</span></label ></td>';
+            tr = tr + '<td style="width: 60px;padding: 0 0px !important;"><input type="text" id="txtCommissionAmount' + lineNo + '" name="txtCommissionAmount' + lineNo + '" value="0" maxlength="10" class="form-control input-sm" /></td>';
+            tr = tr + '<td><span id="spnPer' + lineNo + '">%</span></td>';
+            tr = tr + '<td><div class="icheck-inline" style="margin-top: 0px;"><label class="check-inline" style="margin-right: 5px;" >'
+            tr = tr + '<input type = "radio" onchange="changeSelectedType(' + lineNo + ')" name="tablerdo' + lineNo + '" value = "2" class="i-checks" id = "rdoExtraWork' + lineNo + '" checked /><span>ExtraWork</span></label ><label class="check-inline">'
+            tr = tr + '<input type="radio" onchange="changeSelectedType(' + lineNo + ')" name="tablerdo' + lineNo + '" value="3" class="i-checks" id="rdoRegularBilling' + lineNo + '" /><span>Regular Billing</span></label>'
+            tr = tr + '&nbsp;&nbsp;<label  class="check-inline"><input type="radio" onchange="changeSelectedType(' + lineNo + ')" name="tablerdo' + lineNo + '" value="4" class="i-checks" id="rdoclientsupplies' + lineNo + '" /><span>Client Supplies</span></label>'
+            tr = tr + '</div></td > ';
+
+            tr = tr + '<td><input type="checkbox" id="chkTaxExcempt' + lineNo + '" name="chkTaxExcempt' + lineNo + '"><label for="chkTaxExcempt' + lineNo + '" style="padding-left: 0px;">Tax Exempt</label> </td>';
+            tr = tr + '</tr>';
+            tr = tr + '</table>';
+            tr = tr + '</td>';
+            tr = tr + '</tr>';
+
+
+            $('#tblcontractdetailrows>tbody').append(tr);
+            tr = "";
+            tr = tr + '<tr relline="S' + lineNo + '" class="theadRowH" style="background-color:#eef1f5;">';
+            tr = tr + '<td style="text-align:center;width:60px;padding: 0px !important;"><input type="text" readonly="" id="txtlinenumber' + lineNo + '" name="txtlinenumber' + lineNo + '" value="' + lineNo + '" class="form-control input-sm cnumeric" style="text-align:center;"></td>';
+            tr = tr + '<td style="text-align:center;width:150px;">Service</td>';
+            tr = tr + '<td style="text-align:center;">Detail Description</td>';
+            tr = tr + '<td style="width:80px;text-align:center;">Markup %</td>';
+            tr = tr + '<td style="width:60px;text-align:center;">Qty</td>';
+            tr = tr + '<td style="width:100px;text-align:center;">Unit Price</td>';
+            tr = tr + '<td style="width:100px;text-align:center;">Markup Amt.</td>';
+            tr = tr + '<td style="width:100px;text-align:center;">Extended Price</td>';
+            tr = tr + '<td style="width:90px;text-align:center;">Tax</td>';
+            tr = tr + '<td style="width:100px;text-align:center;">Total</td>';
+            tr = tr + '</tr>';
+
+
+            $('#tblcontractdetailrows>tbody').append(tr);
+            tr = "";
+            tr = tr + '<tr relline="S' + lineNo + '" class="theadRowH remove-padding">';
+            tr = tr + '<td style="background-color:#eef1f5;"></td>';
+            tr = tr + '<td style="width: 200px;"><select class="form-control input-sm requiredValidation ContractDetailServiceTypeList" id="ContractDetailServiceTypeList' + lineNo + '" name="ContractDetailServiceTypeList' + lineNo + '" ></select></td>';
+            tr = tr + '<td><textarea id="txtdescription' + lineNo + '" name="txtdescription' + lineNo + '" class="form-control input-sm" row="1" style="padding: 5px;border-radius: 0px;resize:vertical;max-height:100px;min-height:30px;"></textarea></td>';
+
+            tr = tr + '<td><input type="text" required="" onchange="CalculateAmount(' + lineNo + ')" id="txtmarkup' + lineNo + '" name="txtmarkup' + lineNo + '" value="0" class="form-control input-sm" style="padding: 5px;border-radius: 0px;" ></td>';
+            tr = tr + '<td><input type="text" required="" onchange="CalculateAmount(' + lineNo + ')" id="txtqty' + lineNo + '" name="txtqty' + lineNo + '" value="1" class="form-control input-sm" style="padding: 5px;border-radius: 0px;text-align:right;"></td>';
+            tr = tr + '<td><input type="hidden" id="hdfunitprice' + lineNo + '" name="hdfunitprice' + lineNo + '"/>'
+            tr = tr + '<input type="text" required="" onblur="CalculateAmount(' + lineNo + ')" id="txtunitprice' + lineNo + '" name="txtunitprice' + lineNo + '" value="" class="form-control input-sm requiredValidation unitPrice" style="padding: 5px;border-radius: 0px;"></td>';
+            tr = tr + '<td><input type="text" required="" readonly="" onchange="CalculateAmount(' + lineNo + ')" id="txtMarkupAmt' + lineNo + '" name="txtMarkupAmt' + lineNo + '" value="" class="form-control input-sm" style="padding: 5px;border-radius: 0px;"></td>';
+            tr = tr + '<td><input type="text" required="" readonly="" onchange="CalculateAmount(' + lineNo + ')" id="txtExtendedPrice' + lineNo + '" name="txtExtendedPrice' + lineNo + '" value="" class="form-control input-sm" style="padding: 5px;border-radius: 0px;"></td>';
+            tr = tr + '<td><input type="text" required="" readonly="" onchange="CalculateAmount(' + lineNo + ')" id="txttax' + lineNo + '" name="txttax' + lineNo + '" value="" class="form-control input-sm" style="padding: 5px;border-radius: 0px;"></td>';
+            tr = tr + '<td><input type="text" required="" readonly="" onchange="CalculateAmount(' + lineNo + ')" id="txttotal' + lineNo + '" name="txttotal' + lineNo + '" value="" class="form-control input-sm" style="padding: 5px;border-radius: 0px;"></td>';
+            tr = tr + '</tr>';
+
+            $('#tblcontractdetailrows>tbody').append(tr);
+            applyMaskCurrency('#txtMarkupAmt' + lineNo);
+            applyMaskCurrency('#txtExtendedPrice' + lineNo);
+            applyMaskCurrency('#txtunitprice' + lineNo);
+            applyMaskCurrency('#txttax' + lineNo);
+            applyMaskCurrency('#txttotal' + lineNo);
+            applyMaskNumber('#txtmarkup' + lineNo);
+            applyMaskNumber('#txtqty' + lineNo);
+            applyTaxExcempt(lineNo)
+            applyCommission(lineNo)
+
+            var items = [];
+            items.push("<option value=''>Select</option>");
+            $.each(lstContractDetailServiceTypeList, function () {
+                items.push("<option value=" + this.ServiceTypeListid + ">" + this.name + "</option>");
+            });
+            
+            $('#ContractDetailServiceTypeList' + lineNo).html(items.join(' '));
+
+            ContractDetailServiceTypeListCheck('ContractDetailServiceTypeList' + lineNo, lineNo);
+            ContractDetailServiceTypeListOnChange('ContractDetailServiceTypeList' + lineNo, lineNo);
+
+            //$('#txtunitprice' + lineNo).keyup(function () {
+            //    $('#hdfunitprice' + lineNo).val($('#txtunitprice' + lineNo).val());
+            //});
+
+            $('.unitPrice').keyup(function () {
+                var fieldId = $(this).attr('id');
+                fieldId = fieldId.replace('txtunitprice', '');
+                //unitPrice
+                $('#hdfunitprice' + fieldId).val($('#txtunitprice' + fieldId).val());
+            });
+
+
+            updateFranchiseeLineItemDropDowns(lineNo);
+
+
+            $("#hdftotallineno").val(lineNo);
+            //OnlyNumber('#txtmarkup' + lineNo)
+            //OnlyNumber('#txtqty' + lineNo)
+            applyMaskCurrency('#txtunitprice' + lineNo)
+
+
+        }
+        function CalculateAmount(ln) {
+            if ($("#hdfContractTaxRate").val() == undefined || $("#hdfContractTaxRate").val() == "")
+                $("#hdfContractTaxRate").val("0.0");
+
+            var temptax = parseFloat($("#hdfContractTaxRate").val()) || 0;
+            var txtmarkup = parseFloat($('#txtmarkup' + ln).val() == '' ? 0 : $('#txtmarkup' + ln).val())
+
+            var txtunitpriceT = parseFloat($('#hdfunitprice' + ln).val() == '' ? 0 : $('#hdfunitprice' + ln).val());
+
+            var txtqty = parseFloat($('#txtqty' + ln).val() == '' ? 0 : $('#txtqty' + ln).val())
+            var txtmarkupamt = (txtunitpriceT * txtmarkup / 100);
+            var txtunitpriceplusmarkup = (txtunitpriceT + txtmarkupamt);
+            var txttax = $('#txttax' + ln)
+            var txttotal = $('#txttotal' + ln)
+            var txtExtetotal = 0;
+
+            $('#txtMarkupAmt' + ln).val(txtmarkupamt);
+            txtExtetotal = (txtunitpriceplusmarkup * txtqty);
+            var taxAmt = 0;
+            //txtExtetotal = ((txtunitprice + (txtunitprice * txtmarkup / 100)) * txtqty);
+            $('#txtExtendedPrice' + ln).val(txtExtetotal);
+            if ($('#chkTaxExcempt' + ln).is(":checked")) {
+                taxAmt = 0;
+            }
+            else {
+                taxAmt = txtExtetotal * temptax / 100;
+            }
+
+            txttax.val(taxAmt);
+            txttotal.val(txtExtetotal + taxAmt);
+
+            var toAmt = 0;
+            var toTaxAmt = 0;
+            for (var i = 1; i <= lineNo; i++) {
+
+                toTaxAmt = toTaxAmt + parseFloat($('#txttax' + i).inputmask('unmaskedvalue') == '' ? 0 : $('#txttax' + i).inputmask('unmaskedvalue'));
+                toAmt = toAmt + parseFloat($('#txttotal' + i).inputmask('unmaskedvalue') == '' ? 0 : $('#txttotal' + i).inputmask('unmaskedvalue'));
+            }
+            $('#txtsubtotal').val(toAmt - toTaxAmt)
+            $('#txttaxamount').val(toTaxAmt)
+            $('#txttotalamount').val(toAmt)
+
+            applyMaskCurrency('#txtsubtotal');
+            applyMaskCurrency('#txttaxamount');
+            applyMaskCurrency('#txttotalamount');
+        };
+        function applyCommission(id) {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetAdditionalBilling", "AccountReceivable", new { area = "Portal" })',
+                data: {},
+                success: function (data) {
+
+                    $('#txtCommissionAmount' + id).hide();
+                    $('#spnPer' + id).hide();
+                    $('#rdoAdditional' + id).change(function () {
+                        if ($(this).is(":checked")) {
+                            $('#txtCommissionAmount' + id).show();
+                            $('#txtCommissionAmount' + id).val(data);
+                            $('#spnPer' + id).show();
+                        }
+                        else {
+                            $('#txtCommissionAmount' + id).val("0");
+                            $('#txtCommissionAmount' + id).hide();
+                            $('#spnPer' + id).hide();
+                        }
+                    });
+                    $('#rdoRegularBilling' + id).change(function () {
+                        if ($(this).is(":checked")) {
+                            $('#txtCommissionAmount' + id).val("0");
+                            $('#txtCommissionAmount' + id).hide();
+                            $('#spnPer' + id).hide();
+                        }
+                    });
+                    $('#rdoExtraWork' + id).change(function () {
+                        if ($(this).is(":checked")) {
+                            $('#txtCommissionAmount' + id).val("0");
+                            $('#txtCommissionAmount' + id).hide();
+                            $('#spnPer' + id).hide();
+                        }
+                    });
+
+                    $('#rdoclientsupplies' + id).change(function () {
+                        if ($(this).is(":checked")) {
+                            $('#txtCommissionAmount' + id).val("0");
+                            $('#txtCommissionAmount' + id).hide();
+                            $('#spnPer' + id).hide();
+                        }
+                    });
+
+
+                }
+            });
+        }
+
+        function ContractDetailServiceTypeListOnChange(id, line) {
+            $('#' + id).change(function () {
+                ContractDetailServiceTypeListCheck(id, line);
+                CalculateAmount(line);
+            });
+        }
+
+        function ContractDetailServiceTypeListCheck(id, line) {
+            if ($('#' + id).val() == 5 || $('#' + id).val() == 29) {
+                $('#rdoclientsupplies' + line).prop('checked', true);
+
+                $('#rdoExtraWork' + line).prop('disabled', true);
+                $('#rdoAdditional' + line).prop('disabled', true);
+                $('#rdoRegularBilling' + line).prop('disabled', true);
+                $('#rdoclientsupplies' + line).prop('disabled', false);
+
+                $('#txtCommissionAmount' + line).val("0");
+                $('#txtCommissionAmount' + line).hide();
+                $('#spnPer' + line).hide();
+
+                $('#txtmarkup' + line).prop("readonly", false);
+            }
+            else {
+                if ($('#' + id).val() != 29 && $('#rdoclientsupplies' + line).is(':Checked')) {
+                    $('#rdoExtraWork' + line).prop('checked', true);
+                }
+
+                $('#rdoExtraWork' + line).prop('disabled', false);
+                $('#rdoAdditional' + line).prop('disabled', false);
+                $('#rdoRegularBilling' + line).prop('disabled', false);
+                $('#rdoclientsupplies' + line).prop('disabled', false);
+
+                $('#txtmarkup' + line).prop("readonly", true);
+                $('#txtmarkup' + line).val(0);
+            }
+            updateFranchiseeLineItemDropDowns(line);
+        }
+
+        function applyTaxExcempt(id) {
+            $('#chkTaxExcempt' + id).change(function () { CalculateAmount(id); });
+        }
+        //function onlyDecimal(id) {
+        //    $(id).keydown(function (event) {
+        //        if (event.shiftKey == true) { event.preventDefault(); }
+        //        if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105) || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 190 || event.keyCode == 110) { }
+        //        else { event.preventDefault(); }
+        //        if ($(this).val().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110)) event.preventDefault();
+        //    });
+        //}
+        function OnlyNumber(id) {
+            $(id).keydown(function (event) {
+                //if (event.shiftKey == true) { event.preventDefault(); }
+                if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105) || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46) { }
+                else { event.preventDefault(); }
+            });
+        }
+        function applyMaskCurrency(id) {
+            $(id).inputmask("currency", {
+                alias: 'currency',
+                prefix: '$ ',
+                digits: 2,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                unmaskAsNumber: true,
+                allowPlus: false,
+                allowMinus: false,
+                autoGroup: true,
+                positionCaretOnTab: false,
+                positionCaretOnClick: "select",
+                groupSeparator: ",",
+            });
+        }
+
+        function applyMaskNumber(id) {
+            $(id).inputmask("numeric", {
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                positionCaretOnTab: false,
+                positionCaretOnClick: "select",
+                oncleared: function () { self.Value(''); }
+            });
+        }
+        Inputmask.extendAliases({
+            'myCurrency': {
+                alias: 'currency',
+                prefix: '$ ',
+                digits: 2,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                unmaskAsNumber: true,
+                allowPlus: false,
+                allowMinus: false,
+                autoGroup: true,
+                groupSeparator: ",",
+            }
+        });
+
+    </script>
+}

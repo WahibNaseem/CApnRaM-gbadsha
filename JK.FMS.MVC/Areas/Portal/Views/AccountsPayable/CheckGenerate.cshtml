@@ -1,0 +1,98 @@
+﻿@model JKViewModels.AccountsPayable.CheckGenerateViewModel
+@{
+    ViewBag.Title = "CheckGenerate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section styles{
+    <style type="text/css">
+        .jkcustom-page-title {
+            font-size: 18px;
+            padding: 3px;
+            color: #fff !important;
+            background: #3598dc !important;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .jkcustom-form-table {
+            width: 100%;
+        }
+
+            .jkcustom-form-table tr {
+            }
+
+                .jkcustom-form-table tr > td {
+                    padding-bottom: 3px;
+                    padding-top: 3px;
+                }
+
+        .form-group.form-md-line-input {
+            position: relative;
+            margin: 0 0 15px;
+            padding-top: 20px;
+        }
+    </style>}
+
+@using (Html.BeginForm("CheckGenerate", "AccountsPayable", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="col-md-12">
+        <div class="jkcustom-page-title">
+            Generate Checks
+        </div>
+    </div>
+
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+
+        <div class="form-horizontal panel panel-default  center-body text-center">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-2">
+                            <strong>
+                                @Html.LabelFor(model => model.generateSelect, new { @class = "control-label" })
+                            </strong>
+                        </div>
+                        <div class="col-md-5">
+                            @Html.DropDownListFor(model => model.generateSelect, new List<SelectListItem> {
+                                 new SelectListItem { Text = "-Select One-", Value = "-1"},
+                                    new SelectListItem { Text = "Due Franchisee", Value = "1"},
+                                    new SelectListItem { Text = "Accounting Fee Rebate", Value = "2"},
+                                    new SelectListItem {Text  = "Chargebacks Paid",Value="3"},
+                                     new SelectListItem {Text  = "Negative Due Transferred",Value="4"},
+                           }, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.generateSelect, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-2">
+                            <strong>
+                                @Html.LabelFor(model => model.date, new { @class = "control-label" })
+                            </strong>
+                        </div>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(model => model.date, new { @class = "form-control date-picker", @id = "dtpDate" })
+                            @Html.ValidationMessageFor(model => model.date, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+                </div>
+                <input type="submit" value="Generate" class="btn btn-default btn-info" />
+            </div>
+        </div>
+    </div>
+    <div class="col-md-1">
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+    @Scripts.Render("~/bundles/jqueryval")
+}

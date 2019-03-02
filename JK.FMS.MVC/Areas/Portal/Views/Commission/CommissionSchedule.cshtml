@@ -1,0 +1,755 @@
+﻿@{
+    ViewBag.Title = "Deductions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <style type="text/css">
+        .jkcustom-page-title {
+            font-size: 18px;
+            padding: 3px;
+            color: #fff !important;
+            background: #3598dc !important;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .jkcustom-form-table {
+            width: 100%;
+        }
+
+            .jkcustom-form-table tr {
+            }
+
+
+                .jkcustom-form-table tr > td {
+                    padding-bottom: 3px;
+                    padding-top: 3px;
+                }
+
+        .form-group.form-md-line-input {
+            position: relative;
+            margin: 0 0 15px;
+            padding-top: 20px;
+        }
+    </style>}
+
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;padding-top:3px;padding-bottom:3px;margin-left: 0px;margin-right: 0px;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    Commission Schedule
+                </div>
+                <div class="col-md-4" style="padding-right:5px;">
+                    <div class="col-md-7 pull-right no-padding">
+                        <div style="display:table-cell;padding-right: 5px;">
+
+                        </div>
+                        <div style="display:table-cell;width:100%;">
+                            <button type="button" name="btnAddCommissionSchedule" id="btnAddCommissionSchedule" class="btn red dropdown-toggle pull-right subsectionBtn"
+                                    style="padding: 3px 12px;">
+                                <i class="fa fa-plus"></i>&nbsp;<span class="hidden-sm hidden-xs">Add New</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="tablebox">
+    <div class="table-responsive" id="divCommissionScheduleList" style="background-color:#ffffff;">
+        <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" id="CommissionScheduleList" style="margin-top:0 !important;">
+            <thead>
+                <tr>
+                    <th style="text-align:center;width:100px;vertical-align:middle;">
+                        Customer No
+                    </th>
+                    <th style="text-align:center;vertical-align:middle;">
+                        Customer Name
+                    </th>
+                    <th style="text-align:center;width:100px;vertical-align:middle;">
+                        Start Date
+                    </th>
+                    <th style="text-align:right;vertical-align:middle;width:150px;">
+                        Contract Amount
+                    </th>
+                    <th style="text-align:center;width:150px;vertical-align:middle;">
+                        Comm Type
+                    </th>
+                    <th style="text-align:center;width:150px;vertical-align:middle;">
+                        Sales Rep / AE
+                    </th>
+                    <th style="text-align:center;width:100px;vertical-align:middle;">
+                        Title
+                    </th>
+                    <th style="text-align:center;width:80px;vertical-align:middle;">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <hr />
+    <div class="headerbox">
+        <div class="row" style="background-color: #3598DC;color: #fff;padding-top:3px;padding-bottom:3px;margin-left: 0px;margin-right: 0px;">
+            <div class="col-md-12 no-padding">
+                <div class="alignCenter">
+                    <div class="col-md-4" style="text-align:right;">
+                    </div>
+                    <div class="col-md-4 topheader">
+                        New Sales Contracts List
+                    </div>
+                    <div class="col-md-4" style="padding-right:5px;">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="table-responsive" id="divCommissionScheduleContractList" style="background-color:#ffffff;">
+        <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" id="CommissionScheduleContractList" style="margin-top:0 !important;">
+            <thead>
+                <tr>
+                    <th style="text-align:center;width:100px;vertical-align:middle;">
+                        Customer No
+                    </th>
+                    <th style="text-align:center;vertical-align:middle;">
+                        Customer Name
+                    </th>
+                    <th style="text-align:center;width:100px;vertical-align:middle;">
+                        Start Date
+                    </th>
+                    <th style="text-align:right;vertical-align:middle;width:150px;">
+                        Contract Amount
+                    </th>
+                    <th style="text-align:center;width:150px;vertical-align:middle;">
+                        Comm Type
+                    </th>
+                    <th style="text-align:center;width:150px;vertical-align:middle;">
+                        Sales Rep / AE
+                    </th>
+                    <th style="text-align:center;width:100px;vertical-align:middle;">
+                        Title
+                    </th>
+                    <th style="text-align:center;width:80px;vertical-align:middle;">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade custom-model custom-form-design" id="ModalCommissionSchedulePopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:800px">
+        <div class="modal-content" style="border-radius: 0px;" id="RenderCommissionSchedule">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Commission Schedule Maintenenace
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <div class="headerbox">
+                    <div class="row" style="background-color: #4b85cc;color: #fff;padding-top:3px;padding-bottom:3px;margin-left: 0px;margin-right: 0px;margin-top:5px;margin-bottom:5px;">
+                        <div class="col-md-12">
+                            <div class="col-md-4">
+                                <div class="input-icon">
+                                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                                    <input id="csearch-box" type="text" required name="customernumber" autocomplete="off" placeholder="Search by Customer Name or Number" value="" class="form-control input-sm typeahead" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-body" style="padding-top: 0px;">
+                    <form action="@Url.Action("AddNewTransaction", "Franchise", new { area = "Portal" })" method="post">
+
+                        <div class="row">
+                            <div class="col-md-12" style="border:1px solid #999999;">
+                                <div class="row" style="padding-bottom: 5px;">
+                                    <div class="col-md-2 control-label" style="padding-top: 0px;">
+                                        <input type="hidden" id="hdfCustomerId" name="hdfCustomerId" value="0" />
+                                        <input type="hidden" id="hdfCommissionScheduleId" name="hdfCommissionScheduleId" value="0" />
+                                        <input type="hidden" id="hdfContractId" name="hdfContractId" value="0" />
+                                        Customer No.:
+                                    </div>
+                                    <div class="col-md-2">
+                                        <strong><span id="spncustomernumber"></span></strong>
+                                    </div>
+                                    <div class="col-md-2 control-label" style="padding-top: 0px;">
+                                        Name:
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong><span id="spncustomerName"></span></strong>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-bottom: 5px;">
+                                    <div class="col-md-2 control-label" style="padding-top: 0px;">
+                                        Address:
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong><span id="spncustomerAddress"></span></strong>
+                                    </div>
+                                    <div class="col-md-2 control-label" style="padding-top: 0px;">
+                                        Contract Type:
+                                    </div>
+                                    <div class="col-md-2" style="padding-top: 0px;">
+                                        <strong><span id="spncontracttypelistname"></span></strong>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-bottom: 5px;">
+                                    <div class="col-md-2 control-label pad-right">
+                                        Start Date:
+                                    </div>
+                                    <div class="col-md-2" style="width: 120px;">
+                                        <input type="text" name="txtStartDate" id="txtStartDate" readonly="readonly" value="" class="form-control input-sm" />
+                                    </div>
+                                    <div class="col-md-2 control-label pad-right">
+                                        End Date:
+                                    </div>
+                                    <div class="col-md-2" style="width: 120px;">
+                                        <input type="text" name="txtEndDate" id="txtEndDate" readonly="readonly" value="" class="form-control input-sm" />
+                                    </div>
+                                    <div class="col-md-2 control-label pad-right">
+                                        Contract Amount:
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="text" name="txtContractAmount" id="txtContractAmount" readonly="readonly" value="" class="form-control input-sm" />
+                                    </div>
+                                </div>
+
+                            </div>
+                            <hr />
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="col-md-3 control-label pad-right">
+                                        Compensation Schedule: <span class="required">*</span>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <select class="form-control input-sm rmValidationSe" id="ddlCommissionCompensationScheduleList">
+                                            <option value="">Select Compensation Schedule</option>
+                                            @foreach (var item in (SelectList)ViewBag.CommissionCompensationScheduleList)
+                                            {
+                                                <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class=" col-md-3 control-label pad-right">
+                                        Sales Rep/ AE: <span class="required">*</span>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <select class="form-control input-sm rmValidationSe" id="ddlsalesUserList">
+                                            <option value="">Select Sales Rep/ AE</option>
+                                            @foreach (var item in (SelectList)ViewBag.salesUserList)
+                                            {
+                                                <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="col-md-offset-1  col-md-2 control-label pad-right">
+                                        Status: <span class="required">*</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-control input-sm rmValidationSe" id="CTStatuslist">
+                                            <option value="">Select</option>
+                                            @foreach (var item in (SelectList)ViewBag.statusList)
+                                            {
+                                                <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="col-md-3 control-label pad-right">
+                                        Notes:
+                                    </div>
+                                    <div class="col-md-9">
+                                        <input type="text" name="txtNotes" id="txtNotes" value="" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div style="padding: 0px 0px 6px 10px;color: #fff !important;background: #3598dc !important;padding-left: 200px;">
+                                <label class="mt-checkbox">
+                                    <input type="checkbox" id="chkApplyBonus">Additional Bonus Schedule
+                                    <span style="background-color: white;border: 1px solid black;"></span>
+                                </label>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="col-md-offset-1  col-md-2 control-label pad-right">
+                                        Amount:
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="text" name="txtBonusAmount" id="txtBonusAmount" readonly="readonly" value="" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="col-md-offset-1  col-md-2 control-label pad-right">
+                                        Explanation
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="text" name="txtExplanation" id="txtExplanation" readonly="readonly" value="" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="col-md-offset-1  col-md-2 control-label pad-right">
+                                        Description:
+                                    </div>
+                                    <div class="col-md-5">
+                                        <input type="text" name="txtDescription" id="txtDescription" readonly="readonly" value="" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+                <div class="form-actions" style="padding: 7px;">
+                    <div class="col-md-12">
+                        <button type="button" name="Cancel" id="btnCancelCommissionPaymentSchedule" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:0px;min-width: 90px;">Cancel</button>
+                        <button type="button" name="Save" id="btnSaveCommissionPaymentSchedule" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:10px;min-width: 90px;">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section pageplugins{
+
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+}
+
+@section scripts{
+    <script type="text/javascript">
+
+
+        applyMaskCurrency('#txtContractAmount');
+        applyMaskCurrency('#txtBonusAmount');
+
+         applyAutoSeacrh();
+        function applyAutoSeacrh() {
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetAllCustomer", "Customer", new { area = "Portal" })',
+                data: {},
+                success: function (data) {
+
+                    var typeaheadSource = [];
+                    $.each(data, function (key, value) {
+                        typeaheadSource.push({ id: value.CustomerId, name: value.CustomerNo + ' ' + $.trim(value.Name) })
+                    });
+                    var box = $('#csearch-box').data('typeahead');
+                    if (box != null) {                        
+                        box.source = typeaheadSource;
+                    }
+                    else {
+                        $('#csearch-box').typeahead({
+                            source: typeaheadSource,
+                            updater: function (item) {                                
+                                CommissionScheduleCustomerDetail(item.id);
+                                //redirect(item.id);
+                                return item;
+                            },
+                            minLength: 1
+                        }).focus();
+                    }
+                }
+            });
+        }
+
+
+
+        $('#chkApplyBonus').click(function () {
+            
+            if ($(this).is(':checked')) {
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("GetAdditionalBonusAmount", "Commission", new { area = "Portal" })?Amount=' + $('#txtContractAmount').val(),
+                    data: {},
+                    success: function (data) {
+                        $('#txtBonusAmount').val(data);
+                    }
+                });
+                //$('#txtBonusAmount').prop('readonly', false);
+                $('#txtExplanation').prop('readonly', false);
+                $('#txtDescription').prop('readonly', false);
+            } else {
+                $('#txtBonusAmount').val(0);
+                $('#txtExplanation').val('');
+                $('#txtDescription').val('');
+                $('#txtBonusAmount').prop('readonly', true);
+                $('#txtExplanation').prop('readonly', true);
+                $('#txtDescription').prop('readonly', true);
+            }
+        });
+
+        $('#btnAddCommissionSchedule').click(function () {
+            _CommissionScheduleId = 0;
+            $('#spncustomernumber').html('');
+            $('#spncustomerAddress').html('');
+            $('#spncustomerName').html('');
+            $('#txtStartDate').val('');
+            $('#txtEndDate').val('');
+            $('#txtContractAmount').val(0)
+            $('#ddlCommissionCompensationScheduleList').val('');
+            $('#ddlsalesUserList').val('');
+            $('#CTStatuslist').val('');
+            $('#txtNotes').val('');
+            $('#hdfCustomerId').val(0);
+            $('#hdfCommissionScheduleId').val(0);
+            $('#hdfContractId').val(0);
+            $('#spncontracttypelistname').html('');
+            $('#csearch-box').val('');
+            $('#txtBonusAmount').val(0);
+            $('#txtExplanation').val('');
+            $('#txtDescription').val('');
+            
+            $("#ModalCommissionSchedulePopup").modal({ backdrop: 'static' });
+
+
+        });
+
+
+        function DeleteCommissionSchedule(commissionScheduleId) {
+            _CommissionScheduleId = 0;
+            //
+             $.ajax({
+                    type: "GET",
+                 url: '@Url.Action("DeleteCommissionScheduleListData", "Commission", new { area = "Portal" })?CommissionScheduleId=' + commissionScheduleId,
+                    data: {},
+                    success: function (data) {
+                        BindCommissionScheduleList(data);                        
+                    }
+            });
+        }
+
+        function DeleteCommissionScheduleContarct(contractId) {
+            _CommissionScheduleId = 0;
+            //
+             $.ajax({
+                    type: "GET",
+                 url: '@Url.Action("DeleteCommissionScheduleContractListData", "Commission", new { area = "Portal" })?contractId=' + contractId,
+                    data: {},
+                    success: function (data) {
+                        BindCommissionScheduleList(data);                     
+                    }
+            });
+        }
+
+        
+
+        function ShowCommissionScheduleMaintenance(customernumber, customerAddress, customerName, StartDate, EndDate, ContractAmount, CompensationTypeList, salesUserListid,
+            StatusListId, Notes, ContractId, CustomerId, commissionScheduleId, ContractTypeListId, ContractTypeListName, BonusAmount, BonusExplanation, BonusDescription) {
+
+
+
+            _CommissionScheduleId = commissionScheduleId;
+            $('#spncustomernumber').html(customernumber);
+            $('#spncustomerAddress').html(customerAddress);
+            $('#spncustomerName').html(customerName);
+            $('#txtStartDate').val(StartDate);
+            $('#txtEndDate').val(EndDate == 'null' ? null : EndDate);
+            $('#txtContractAmount').val(ContractAmount);
+            $('#ddlCommissionCompensationScheduleList').val(CompensationTypeList);
+            $('#ddlsalesUserList').val(salesUserListid);
+            $('#CTStatuslist').val(StatusListId);
+            $('#txtNotes').val(Notes);
+            $('#hdfCustomerId').val(CustomerId);
+            $('#hdfCommissionScheduleId').val(commissionScheduleId);
+            $('#hdfContractId').val(ContractId);
+            $('#spncontracttypelistname').html(ContractTypeListName);
+            $('#txtBonusAmount').val(BonusAmount);
+            $('#txtExplanation').val(BonusExplanation);
+            $('#txtDescription').val(BonusDescription);
+            if (BonusAmount > 0) {
+                $('#chkApplyBonus').prop('checked', true);
+                $('#txtBonusAmount').prop('readonly', true);
+                $('#txtExplanation').prop('readonly', false);
+                $('#txtDescription').prop('readonly', false);
+            } else {
+                $('#chkApplyBonus').prop('checked', false);
+                $('#txtBonusAmount').prop('readonly', true);
+                $('#txtExplanation').prop('readonly', true);
+                $('#txtDescription').prop('readonly', true);
+            }
+
+            
+
+            $("#ModalCommissionSchedulePopup").modal({ backdrop: 'static' });
+        }
+        
+
+        function BindCommissionScheduleList(res) {
+            var listItem = $('#CommissionScheduleList tbody');
+            listItem.html('');
+            res.lstSchedules.forEach(function (item) {
+                trData = "<tr>";
+                trData += '<td style="text-align:center;width:100px;vertical-align:middle;">' + item.CustomerNo + '</td>';
+                trData += '<td style="text-align:left;vertical-align:middle;">' + item.CustomerName + '</td>';
+                trData += '<td style="text-align:center;width:100px;vertical-align:middle;">' + formatJSONDateUtc(item.ContractStartDate) + '</td>';
+                trData += '<td style="text-align:right;vertical-align:middle;width:150px;">$' + addCommas(parseFloat(Math.round(item.ContractAmount * 100) / 100).toFixed(2)) + '</td>';
+                trData += '<td style="text-align:center;width:150px;vertical-align:middle;">' + item.CommissionCompensationScheduleDescription + '</td>';
+                trData += '<td style="text-align:center;width:150px;vertical-align:middle;">' + item.SalesPersonName + '</td>';
+                trData += '<td style="text-align:center;width:100px;vertical-align:middle;">' + item.StatusListName + '</td>';
+                trData += '<td style="text-align: center;"><a href="javascript:void(0)" onclick="ShowCommissionScheduleMaintenance(';
+                trData += '\'' + item.CustomerNo + "\',";
+                trData += '\'' + item.CustomerAddress + "\',";
+                trData += '\'' + item.CustomerName + "\',";
+                trData += '\'' + formatJSONDateUtc(item.ContractStartDate) + "\',";
+                trData += '\'' + formatJSONDateUtc(item.ContractEndDate) + "\',";
+                trData += item.ContractAmount + ",";
+                trData += item.CommissionCompensationScheduleId + ",";
+                trData += item.SalesPersonId + ",";
+                trData += item.StatusListId + ",";
+                trData += '\'' + item.Notes + "\',";
+                trData += item.ContractId + ",";
+                trData += item.CustomerId + ",";
+                trData += item.CommissionScheduleId + ",";
+                trData += item.ContractTypeListId + ",";
+                trData += '\'' + item.ContractTypeListName + '\',';
+                trData +=  item.BonusAmount + ',';
+                trData += '\'' + item.BonusExplanation + '\',';
+                trData += '\'' + item.BonusDescription + '\'';
+                trData += ')">Edit</a>&nbsp;&nbsp;&nbsp; <a href="javascript:void(0)" onclick="DeleteCommissionSchedule(';
+                trData += item.CommissionScheduleId;
+                trData += ')">Delete</a></td>';
+                trData += '</tr>';
+                listItem.append(trData);
+            });
+            var listItem1 = $('#CommissionScheduleContractList tbody');
+            listItem1.html('');
+            
+            res.lstContracts.forEach(function (item) {
+                trData = "<tr>";
+                trData += '<td style="text-align:center;width:100px;vertical-align:middle;">' + item.CustomerNo + '</td>';
+                trData += '<td style="text-align:left;vertical-align:middle;">' + item.CustomerName + '</td>';
+                trData += '<td style="text-align:center;width:100px;vertical-align:middle;">' + formatJSONDateUtc(item.ContractStartDate) + '</td>';
+                trData += '<td style="text-align:right;vertical-align:middle;width:150px;">$ ' + addCommas(parseFloat(Math.round(item.ContractAmount * 100) / 100).toFixed(2)) + '</td>';
+                trData += '<td style="text-align:center;width:150px;vertical-align:middle;">' + '' + '</td>';
+                trData += '<td style="text-align:center;width:150px;vertical-align:middle;">' + item.SalesPersonName + '</td>';
+                trData += '<td style="text-align:center;width:100px;vertical-align:middle;">' + item.StatusListName + '</td>';
+                trData += '<td style="text-align: center;"><a href="javascript:void(0)" onclick="ShowCommissionScheduleMaintenance(';
+                trData += '\'' + item.CustomerNo + "\',";
+                trData += '\'' + item.CustomerAddress + "\',";
+                trData += '\'' + item.CustomerName + "\',";
+                trData += '\'' + formatJSONDateUtc(item.ContractStartDate) + "\',";
+                trData += '\'' + formatJSONDateUtc(item.ContractEndDate) + "\',";
+                trData += item.ContractAmount + ",";
+                trData += item.CommissionCompensationScheduleId + ",";
+                trData += item.SalesPersonId + ",";
+                trData += item.StatusListId + ",";
+                trData += '\'' + item.Notes + "\',";
+                trData += item.ContractId + ",";
+                trData += item.CustomerId + ",";
+                trData += item.CommissionScheduleId + ",";
+                trData += item.ContractTypeListId + ",";
+                trData += '\'' + item.ContractTypeListName + '\',';
+                trData += item.BonusAmount + ',';
+                trData += '\'' + item.BonusExplanation + '\',';
+                trData += '\'' + item.BonusDescription + '\'';
+                trData += ')">Edit</a>&nbsp;&nbsp;&nbsp; <a href="javascript:void(0)" onclick="DeleteCommissionScheduleContarct(';
+                trData += item.ContractId;
+                trData += ')">Delete</a></td>';
+                trData += '</tr>';
+                listItem1.append(trData);
+            });
+
+        }
+
+        function CommissionScheduleCustomerDetail(custId) {
+
+            var jData = {
+                customerId: custId
+            }
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetCommissionScheduleCustomerData", "Commission", new { area = "Portal" })',
+                data: jData,
+                success: function (data) {                    
+                    $('#spncustomernumber').html(data.CustomerNumber);
+                    $('#spncustomerAddress').html(data.Address1 + ', ' + data.City + ', ' + data.State + ' ' + data.PostalCode);
+                    $('#spncustomerName').html(data.CustomerName);
+
+                    $('#hdfCustomerId').val(data.CustomerId);
+                    $('#txtStartDate').val(formatJSONDateUtc(data.StartDate));
+                    $('#txtEndDate').val(formatJSONDateUtc(data.ExpirationDate));
+                    $('#txtContractAmount').val(data.Amount);
+                    $('#hdfContractId').val(data.ContractId);
+                }
+                });
+
+            $("#ModalCommissionPaymentSchedulePopup").modal({ backdrop: 'static' });
+        }
+        $('.rmValidation').keyup(function () {
+            var val = $(this).val();
+            if (val) {
+                $(this).css('border-color', '');
+            }
+        });
+        $('.rmValidationSe').change(function () {
+            var val = $(this).val();
+            if (val) {
+                $(this).css('border-color', '');
+            }
+        });
+        $('.rmValidationNum').keyup(function () {
+            var val = $(this).val();
+            if (parseInt(val) > 0) {
+                $(this).css('border-color', '');
+            }
+        });
+
+        $('#btnSaveCommissionPaymentSchedule').click(function () {
+            var isvalid = true;
+            var hdfCustomerId = parseInt($('#hdfCustomerId').val());
+            if (hdfCustomerId>0) {
+            var CommissionCompensationScheduleId = $('#ddlCommissionCompensationScheduleList').val();
+            var SalesPersonId = $('#ddlsalesUserList').val();
+            var CTStatuslist = $('#CTStatuslist').val();
+
+            if (CommissionCompensationScheduleId.trim() == '') { $('#ddlCommissionCompensationScheduleList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ddlCommissionCompensationScheduleList').css('border-color', ''); }
+            if (SalesPersonId.trim() == '') { $('#ddlsalesUserList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ddlsalesUserList').css('border-color', ''); }
+            if (CTStatuslist.trim() == '') { $('#CTStatuslist').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#CTStatuslist').css('border-color', ''); }
+      
+                if (isvalid) {
+
+                    var jData = {
+                        commissionScheduleId: _CommissionScheduleId,
+                        CommissionCompensationScheduleId: CommissionCompensationScheduleId,
+                        contractAmount: $('#txtContractAmount').val(),
+                        contractStartDate: $('#txtStartDate').val(),
+                        contractEndDate: $('#txtEndDate').val(),
+                        contractId: $('#hdfContractId').val(),
+                        customerId: $('#hdfCustomerId').val(),
+                        notes: $('#txtNotes').val(),
+                        isActive: ($('#CTStatuslist').val() == 42 ? true : false),
+                        SalesPersonId: $('#ddlsalesUserList').val(),
+                        statusListId: $('#CTStatuslist').val(),
+                        description: $('#txtCTDescription').val(),
+                        bonusAmount: $('#txtBonusAmount').val(),
+                        bonusExplanation: $('#txtExplanation').val(),
+                        bonusDescription: $('#txtDescription').val()
+                    };
+
+                    $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("InsertUpdateCommissionScheduleData", "Commission", new { area = "Portal" })',
+                        data: jData,
+                        success: function (data) {
+                            BindCommissionScheduleList(data);
+                            _CommissionPaymentScheduleId = 0;
+                            $("#ModalCommissionSchedulePopup").modal('hide');
+                        }
+                    });
+                }
+            } else {
+                alert("Select Customer!");
+            }
+            $("#ModalCommissionSchedulePopup").modal({ backdrop: 'static' });
+        });
+
+
+
+        $('#btnCancelCommissionPaymentSchedule').click(function () {
+
+            _CommissionScheduleId = 0;
+            $("#ModalCommissionSchedulePopup").modal('hide');
+        });
+
+        var _CommissionScheduleId = 0;
+        var _CommissionPaymentSchedule = {};
+        $(document).ready(function () {
+
+            $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("GetCommissionScheduleListData", "Commission", new { area = "Portal" })',
+                    data: {},
+                    success: function (data) {
+                        BindCommissionScheduleList(data);                        
+                    }
+            });
+            applyMaskCurrency('#txtContractAmount');
+
+
+        });
+
+        function formatJSONDateUtc(jsonDate) {
+            if (jsonDate != null) {
+                var dtstr = jsonDate.substr(6);
+                var dateString = dtstr.substring(0, dtstr.length - 2);
+                var currentTime = new Date(parseInt(dateString)).toUTCString();
+                var date = moment.utc(currentTime).format("MM/DD/YYYY");
+                return date;
+            }
+            return null;
+        }
+        function applyMaskCurrency(id) {
+            $(id).inputmask("currency", {
+                alias: 'currency',
+                prefix: '$ ',
+                digits: 2,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                unmaskAsNumber: true,
+                allowPlus: false,
+                allowMinus: false,
+                autoGroup: true,
+                groupSeparator: ",",
+            });
+        }
+        function addCommas(nStr) {
+            nStr += '';
+            x = nStr.split('.');
+            x1 = x[0];
+            x2 = x.length > 1 ? '.' + x[1] : '';
+            var rgx = /(\d+)(\d{3})/;
+            while (rgx.test(x1)) {
+                x1 = x1.replace(rgx, '$1' + ',' + '$2');
+            }
+            return x1 + x2;
+        }
+
+    </script>
+
+
+}

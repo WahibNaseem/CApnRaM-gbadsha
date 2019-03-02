@@ -1,0 +1,572 @@
+﻿@model JKViewModels.Customer.CommonAccountOfferingViewModel
+
+
+
+<style type="text/css">
+    ​ .topheader {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFF !important;
+        text-transform: uppercase;
+        margin-top: 3px;
+    }
+
+
+    .lbl-p5 {
+        padding: 5px;
+    }
+
+        .lbl-p5.red {
+            color: red;
+        }
+
+
+        .lbl-p5.green {
+            color: lightgreen;
+        }
+
+    input[type="text"].txtcolon:before {
+        content: ": ";
+    }
+
+    .credit-field {
+        width: 80px !important;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+
+    .alignCenter {
+        text-align: center;
+    }
+
+    .close {
+        background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+        height: 12px !important;
+        width: 12px !important;
+        margin-top: 0px !important;
+    }
+
+    .custom-listbox .headerbox {
+        padding: 3px 0px 3px 5px;
+        font-weight: normal;
+    }
+
+    .custom-listbox {
+        margin-top: 4px;
+        margin-bottom: 0px;
+    }
+
+    .row {
+        margin: 0;
+        padding: 3px 0;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .multiselect-container.dropdown-menu {
+        text-transform: none;
+        font-size: 14px;
+    }
+
+    .no-padding {
+        padding: 0;
+    }
+
+    #modal_RegionModel .modal-content {
+        width: 55% !important;
+        margin-left: 30% !important;
+    }
+
+    #CustomerAccountOffringResultList thead > tr > th,
+    #CustomerAccountOffringResultList tbody > tr > td,
+    #CustomerAccountOffringResultList tfoot > tr > td {
+        font-size: 11px !important;
+        padding: 3px !important;
+        text-align: center;
+    }
+
+    #CustomerAccountOffringResultList thead > tr > th {
+        vertical-align: middle;
+    }
+
+
+    .has-error {
+        border-color: red;
+    }
+</style>
+
+
+
+<div class="modal fade in" id="modal_AccountOffringResult" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog" style="width: 1280px;">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Account Offering
+                </h4>
+            </div>
+            <div class="modal-body" style="padding-top: 1px;margin-top: -5px;">
+                <div class="col-md-12">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8" style="border:2px solid #d4c7c7;">
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tb_fr_page1">
+                                <div class="form-group">
+                                    <div class="col-md-6" style="padding: 10px;">
+                                        @Html.HiddenFor(one => one.CustomerDetail.CustomerId, new { @id = "hdfAO_CustomerId" })
+                                        @Html.HiddenFor(one => one.CustomerDetail.CustomerLatitude, new { @id = "hdfAO_CustomerLatitude" })
+                                        @Html.HiddenFor(one => one.CustomerDetail.CustomerLongitude, new { @id = "hdfAO_CustomerLongitude" })
+                                        @Html.HiddenFor(one => one.CustomerDetail.RegionId, new { @id = "hdfAO_RegionId" })
+                                        <input type="hidden" name="hdfAO_CustomerLatitude" id="hdfAO_CustomerLatitude" value="@Model.CustomerDetail.CustomerLatitude" />
+                                        <input type="hidden" name="hdfAO_CustomerLongitude" id="hdfAO_CustomerLongitude" value="@Model.CustomerDetail.CustomerLongitude" />
+
+                                        <div class="row" style="padding:3px;margin-top:-10px;"><b>Customer Name: @Html.DisplayFor(one => one.CustomerDetail.CustomerName)</b></div>
+                                        <div class="row" style="padding:3px;"><b>Customer No: @Html.DisplayFor(one => one.CustomerDetail.CustomerNo)</b></div>
+                                    </div>
+                                    <div class="col-md-6 text-right" style="padding-right:30px;text-align:right">
+                                        <div class="row" style="padding: 3px;"><b>Address</b> @(Model.CustomerDetail.CustomerAddress ), </div>
+                                        <div class="row" style="padding: 3px;">@(Model.CustomerDetail.City + ", "+ Model.CustomerDetail.State+" " + Model.CustomerDetail.PostalCode)</div>
+                                        <div class="row" style="padding: 3px;">@(Model.CustomerDetail.Phone)</div>
+                                    </div>
+                                    @*<div class="col-md-2 text-right" style="padding-right:30px;text-align:right">
+                                        <div class="row" style="padding:3px;"><b>Address : </b></div>
+                                    </div>
+                                    <div class="col-md-4 text-right" style="padding-right:30px;text-align:left">
+                                        <div class="row" style="padding:3px;">@Model.CustomerDetail.CustomerAddress</div>
+                                        <div class="row" style="padding:3px;">@Model.CustomerDetail.CustomerAddress1</div>
+                                    </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8" style="border:2px solid #d4c7c7;">
+                        <div class="col-md-4"></div>
+                        <div class="input-group">
+                            <div class="icheck-inline" style="margin-top: 0px;">
+                                <label class="check-inline" style="margin-top: 12px;">
+                                    <input type="radio" name="membership" value="1" class="i-checks" id="rdoDistance" checked="checked" />
+                                    <span><b style="font-size: 14px;">Result by Distance</b></span>
+                                </label>
+                                <label class="check-inline" style="margin-top: 12px;">
+                                    <input type="radio" name="membership" value="0" class="i-checks" id="rdoObligation" />
+                                    <span><b style="font-size: 14px;">Result by Amount Obligation</b></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-horizontal">
+                    <div class="row">
+                        <div class="col-md-12" style="padding-top:15px;margin-bottom: -7px;">
+                            <div class="col-md-2" style="padding-left: 0px;">
+                                <input class="btn btn-primary" type="button" value="Show Map" onclick="showFranchiseeInMap()" />
+                            </div>
+                            <div class="col-md-2" style="padding-left: 0px;margin-left: -30px;">
+
+                            </div>
+                            <div class="col-md-8">
+                                <div id="divDistance" style="padding-top: 5px;">
+                                    <div class="control-label col-md-2">
+                                        Distance within:
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="text" class="form-control input-sm col-md-2" id="txtDistance_detailfranchiseeAccountOffering" />
+                                    </div>
+                                    <div class="col-md-1">
+                                        <input type="button" class="btn btn-primary" value="Update" id="btnDistance_detailfranchiseeAccountOffering" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row" style="background-color: #4b85cc;color: #fff;">
+
+                        <div class="col-md-12">
+
+                            <div class="col-md-3">
+                                <div class="portlet-input input-inline input-small">
+                                    <div class="input-icon">
+                                        <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                                        <input type="text" placeholder="Search..." class="form-control input-inline input-small input-sm search-field" id="input_Search" style="min-width:250px;margin-top:0px;" />
+                                    </div>
+                                    <div id="container">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+
+                            </div>
+                            <div class="col-md-1">
+
+                            </div>
+                            <div class="col-md-6">
+
+                            </div>
+
+                            <div class="col-md-1">
+                                <input type="button" name="btnAO_SendOffer" id="btnAO_SendOffer" value="Send Offer" class="btn btn-primary input-sm" />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="form-group" id="divRevenueByTransaction">
+                    <div class="row">
+                        <div class="table-responsive" id="div_CustomerAccountOffringResultList" style="padding-top:  0px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="modal fade in" id="modal_AccountOffringResultSHOWMAP" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog" style="width: 1400px;">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Account Offering On MAP
+                </h4>
+            </div>
+            <div class="modal-body" style="padding-top: 1px;margin-top: -5px;">
+                <iframe id="mapFR_" style="width:100%;height:620px;border:none;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade in" id="modal_AccountOffringExpire" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;padding-top: 100px;">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Contract Offer Detail
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <h4 class="text-center">This contract offer require Franchisee response by:</h4>
+                <div class="form-body">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-3 control-label">
+                                        Date/Time:<span class="required">*</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="input-group date" data-date-format="mm/dd/yyyy">
+                                            <input type="text" name="txtInvoicedateexpire" id="txtInvoicedateexpire" class="form-control input-sm date-picker edit"  value="@DateTime.Now.ToString(" MM/dd/yyyy")" />
+                                            @*<span class="input-group-btn cal-btn">
+                                                <button class="btn default cal-btn" readonly="true" type="button">
+                                                    <i class="fa fa-calendar"></i>
+                                                </button>
+                                            </span>*@
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="input-group time">
+                                            <input value="@DateTime.Now.ToShortTimeString()" id="txtInvoicedateexpireTime" class="form-control input-sm timepicker timepicker-default timepicker-no-seconds" />
+                                            @*<span class="input-group-btn cal-btn">
+                                                <button class="btn default cal-btn" type="button">
+                                                    <i class="fa fa-clock-o"></i>
+                                                </button>
+                                            </span>*@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-3 control-label">
+                                        Special notes:
+                                    </div>
+                                    <div class="col-md-8">
+                                        <textarea class="form-control" id="txtspeNote" rows="4"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-9 control-label">
+                                    </div>
+                                    <div class="col-md-2" style="padding-left: 0px;">
+                                        <input class="btn btn-primary" id="btn_ExpireSend" type="button" value="Send" style="width: 100%;" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*<div class="modal fade in" id="modal_AccountOffringSendOffer" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+        <div class="modal-dialog" style="width: 700px;">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                        Send Offer
+                    </h4>
+                </div>
+                <div class="modal-body" style="padding-top: 1px;margin-top: -5px;">
+                   <div class="row">
+                       <div class="col-md-3 control-label">
+                           Email From:
+                       </div>
+                       <div class="col-md-9">
+                           <input type="text" name="txtao_emailfrom" id="txtao_emailfrom" value="" class="form-control input-sm" />
+                       </div>
+                   </div>
+                    <div class="row">
+                        <div class="col-md-3 control-label">
+                            To Email:
+                        </div>
+                        <div class="col-md-9">
+                            <input type="text" name="txtao_emailto" id="txtao_emailto" value="" class="form-control input-sm" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 control-label">
+                            CC Email:
+                        </div>
+                        <div class="col-md-9">
+                            <input type="text" name="txtao_emailcc" id="txtao_emailcc" value="" class="form-control input-sm" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 control-label">
+                            Subject:
+                        </div>
+                        <div class="col-md-9">
+                            <input type="text" name="txtao_emailsubject" id="txtao_emailsubject" value="Client Contract Offer" class="form-control input-sm" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3 control-label">
+                            HTML Body:
+                        </div>
+                        <div class="col-md-9">
+                            <textarea class="form-control" rows="5" id="txtao_emailbody">
+                                Need content from Oprations
+                                Text  also continue here...
+                            </textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-9 control-label">
+
+                        </div>
+                        <div class="col-md-3">
+                            <input type="button" name="btnao_emailsend" id="btnao_emailsend" value="Send" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+
+<script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+<script type="text/javascript">
+    var markers = [];
+    var gMapsLoaded = false;
+
+    $("#txtDistance_detailfranchiseeAccountOffering").keypress(function (e) {
+        if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+            return false;
+        }
+    });
+    $(document).ready(function () {
+
+        $('#txtDistance_detailfranchiseeAccountOffering').val($('#txtAccountOfferingDistance').val());
+        _BindAccountOffringListResult();
+    });
+
+    function _BindAccountOffringListResult() {
+
+        var _id = $('#hdfCustomerId').val();
+        var _frt = $('#select_AOFranchiseeTypeList').val()
+        var _dis = $('#txtAccountOfferingDistance').val()
+        var _sDate = $('#sDateAccountOffering').val()
+        var _eDate = $('#eDateAccountOffering').val()
+
+        var sURL = '@Url.Action("PartialCustomerAccountOffringListResult", "Customer", new { area = "Portal" })?id=' + _id + '&frt=' + _frt + '&dis=' + _dis + '&sdate=' + _sDate + '&edate=' + _eDate;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#div_CustomerAccountOffringResultList').html('');
+                $('#div_CustomerAccountOffringResultList').html(data);
+                $('#CustomerAccountOffringResultList').DataTable({
+                    "bLengthChange": false, //thought this line could hide the LengthMenu
+                    "bInfo": false,
+                    "bPaginate": false,
+                    "pageLength": 1000, // default records per page
+                    "dom": '<"top">rt<"bottom"lp><"clear">'
+
+                });
+
+                $("#input_Search").keyup(function () {
+                    var table = $("#CustomerAccountOffringResultList").DataTable();
+                    table.search($(this).val()).draw();
+                });
+            },
+            error: function () {
+                alert("Content load failed.");
+            }
+        });
+    };
+
+    function showFranchiseeInMap() {
+        if ($("#hdfAO_CustomerLatitude").val() != "0" && $("#hdfAO_CustomerLongitude").val() != "0") {
+            $('#loading').show();
+            var _id = $('#hdfCustomerId').val();
+            var _frt = $('#select_AOFranchiseeTypeList').val()
+            var _dis = $('#txtAccountOfferingDistance').val()
+            var _sDate = $('#sDateAccountOffering').val()
+            var _eDate = $('#eDateAccountOffering').val()
+            $('#mapFR_').attr('src', '@Url.Action("PartialBindMapAccountOffringResult", "Customer", new { area = "Portal" })?id=' + _id + '&frt=' + _frt + '&dis=' + _dis + '&sdate=' + _sDate + '&edate=' + _eDate);
+            $("#modal_AccountOffringResultSHOWMAP").modal({ backdrop: 'static' });
+        }
+        else {
+            alert("Customer location not found!");
+        }
+    }
+
+
+    $('#btnDistance_detailfranchiseeAccountOffering').click(function () {
+        if ($('#txtDistance_detailfranchiseeAccountOffering').val() != '') {
+            $('#txtAccountOfferingDistance').val($('#txtDistance_detailfranchiseeAccountOffering').val());
+            _BindAccountOffringListResult();
+        }
+
+    });
+
+
+    $('#btnAO_SendOffer').click(function (e) {
+        $('#txtspeNote').val('');
+        $("#modal_AccountOffringExpire").modal("show");
+        $("#modal_AccountOffringExpire").modal({ backdrop: 'static' });
+    });
+
+    $('#btn_ExpireSend').click(function (e) {
+        var isvalid = true;
+
+        if ($('#txtInvoicedateexpire').val() == '') { $('#txtInvoicedateexpire').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtInvoicedateexpire').css('border-color', ''); }
+        if ($('#txtInvoicedateexpireTime').val() == '') { $('#txtInvoicedateexpireTime').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtInvoicedateexpireTime').css('border-color', ''); }
+
+        if (isvalid == true) {
+            if ($("#hdfAO_CustomerLatitude").val() != "0" && $("#hdfAO_CustomerLongitude").val() != "0") {
+                var _id = $('#hdfCustomerId').val();
+                var _franchiseeIds = '';
+                var expiredate = $('#txtInvoicedateexpire').val();
+                var expiretime = $('#txtInvoicedateexpireTime').val();
+                var note = $('#txtspeNote').val();
+                $('input[relAO="relAO_checkbox"]:checked').each(function () {
+                    console.log(this.value);
+                    _franchiseeIds += this.value + ",";
+                });
+                var sURL = '@Url.Action("InsertOfferingData", "Customer", new { area = "Portal" })?cid=' + _id + '&fids=' + _franchiseeIds + '&exDate=' + expiredate + '&extime=' + expiretime + '&note=' + note;
+                $.ajax({
+                    type: "GET",
+                    url: sURL,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (data) {
+                        //window.location = '@Url.Action("OfferingList", "CRMRegionOperation",new { area = "CRM" })'
+                        //swal({ title: "Congratulation!", icon: "success" });
+                        //swal("Congratulation!", "The contract offer has been sent successfully!", "success")
+                        alert("The contract offer has been sent successfully!");
+                        $("#modal_AccountOffringResult").modal("hide");
+                        $("#modal_AccountOffring").modal("hide");
+                        $("#modal_AccountOffringExpire").modal("hide");
+                    },
+                    error: function () {
+                        alert("Content load failed.");
+                    }
+                });
+            }
+            else {
+                alert("Customer location not found!");
+            }
+        }
+    })
+
+
+    @*$('#btnao_emailsend').click(function (e) {
+
+        var _id = $('#hdfCustomerId').val();
+        var _franchiseeIds = '';
+        $('input[relAO="relAO_checkbox"]:checked').each(function () {
+            console.log(this.value);
+            _franchiseeIds += this.value+",";
+        });
+
+        //(string _emailFrom, string _emailto, string _emailcc, string _emailsubject, string _emailBody, int cid, string fids)
+        var _emailFrom = $('#txtao_emailfrom').val();
+        var _emailto = $('#txtao_emailto').val();
+        var _emailcc = $('#txtao_emailcc').val();
+        var _emailsubject = $('#txtao_emailsubject').val();
+        var _emailBody = $('#txtao_emailbody').val();
+
+        var sURL = '@Url.Action("AccountOfferingEmailSend", "Customer", new { area = "Portal" })?cid=' + _id + '&fids=' + _franchiseeIds + '&_emailFrom=' + _emailFrom + '&_emailto=' + _emailto + '&_emailcc=' + _emailcc + '&_emailsubject=' + _emailsubject + '&_emailBody=' + _emailBody;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                console.log(data);
+                $("#modal_AccountOffringSendOffer").modal('hide');
+            },
+            error: function () {
+                alert("Content load failed.");
+            }
+        });
+
+
+    });*@
+
+
+</script>

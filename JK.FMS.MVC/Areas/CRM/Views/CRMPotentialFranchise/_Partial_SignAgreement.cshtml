@@ -1,0 +1,253 @@
+﻿@using JK.Resources
+
+<style>
+    #sold_potential .mt-checkbox {
+        margin-right: 5px !important;
+    }
+</style>
+
+<!--Follow Up-->
+<div class="col-md-7" id="contact_followup" style="margin-left:-30px;">
+    <div class="row">
+        <div class="col-md-12 portlet-align">
+            <div class="portlet box div-right portlet-bottom" style="background-color: #a3a9ad;">
+                <div class="portlet-title compact">
+                    <div class="caption">
+                        Sign Agreement
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="form-body">
+
+                        <form action="#" class="form-horizontal">
+                            @*@Html.Hidden("AccountDetailId", "", new { @id = "accountdetailid" })*@
+                            <div class="form-group" style="margin-top:5px;">
+                                <label id="lbl_signfranchiseagreement" class="control-label col-md-5">Sign Franchise Agreement<span class="required">*</span>:</label>
+                                <div class="col-md-7">
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px;">
+                                            <input type="radio" value="1" class="i-checks" id="radio_yes_signfranchiseagreement" />
+                                            <span>Yes</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px; margin-left:0px;">
+                                            <input type="radio" value="0" class="i-checks" id="radio_no_signfranchiseagreement" />
+                                            <span>No</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <form action="#" class="form-horizontal">
+                            <div class="form-group" style="margin-top:5px;">
+                                <label  id="lbl_guarantees" class="control-label col-md-5">Guarantees Signed by All Non Officer/Partner Spouses<span class="required">*</span>:</label>
+                                <div class="col-md-7">
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px;">
+                                            <input type="radio" value="1" class="i-checks" id="radio_yes_guarantees" />
+                                            <span>Yes</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px; margin-left:0px;">
+                                            <input type="radio" value="0" class="i-checks" id="radio_no_guarantees" />
+                                            <span>No</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <form action="#" class="form-horizontal">
+                            <div class="form-group" style="margin-top:5px;">
+                                <label id="lbl_requireddocuments" class="control-label col-md-5">Required documents uploaded<span class="required">*</span>:</label>
+                                <div class="col-md-7">
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px;">
+                                            <input type="radio" value="1" class="i-checks" id="radio_yes_requireddocuments" />
+                                            <span>Yes</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-3">
+
+                                        <label class="check-inline" style="margin-top: 6px; margin-left:0px;">
+                                            <input type="radio" value="0" class="i-checks" id="radio_no_requireddocuments" />
+                                            <span>No</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <button id="btn_signagreementdocupload" class="btn green btn-block">Upload/Edit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <form action="#" class="form-horizontal">
+                            <div class="form-group" style="margin-top:5px;">
+                                <label id="lbl_backgroundcheck" class="control-label col-md-5">To Legal for Background Check<span class="required">*</span>:</label>
+                                <div class="col-md-7">
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px;">
+                                            <input type="radio" value="1" class="i-checks" id="radio_yes_backgroundcheck" />
+                                            <span>Yes</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px; margin-left:0px;">
+                                            <input type="radio" value="0" class="i-checks" id="radio_no_backgroundcheck" />
+                                            <span>No</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="form-group errmsg" style="display:none; text-align:center" id="requiredDocumentsMsg">
+                            <span style="color:red;">You must upload the required documents.</span>
+                        </div>
+
+                        <form action="#" id="form_contactinfo_sold" class="form-horizontal">
+                            <div class="form-group" style="display:none; text-align:center" id="dateTooEarlyMsg">
+                                <span style="color:red;">Date must be more recent than previous meetings.</span>
+                            </div>
+
+                            <!--Date Sign AND Term(Yrs)-->
+                            <div class="form-group" style="margin-top:5px;">
+
+                                <label class="control-label col-md-3">Plan Type<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                    @Html.DropDownList("ContractTypeList", (SelectList)ViewBag.FranchiseeContractTypeList, "Select...", new { @class = "form-control input-sm", @style = "margin-left:-5px;width:180px;", @id = "input_plantype" })
+                                </div>
+
+                                <label class="control-label col-md-3">Date Sign<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;">
+                                    <input type="text" class="form-control input-sm date date-picker" data-date-format="mm/dd/yyyy" style="padding-left:0px;" id="input_datesign" />
+                                </div>
+
+
+
+                                @*<label class="control-label col-md-3">Term(Yrs)<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;">
+                                    <input type="text" class="form-control input-sm " style="padding-left:0px;" id="input_terms" />
+                                </div>*@
+                            </div>
+
+
+                            <!--Exp.Date AND Plan Type-->
+                            <div class="form-group" style="margin-top:5px;">
+
+                                <label class="control-label col-md-3">Term(Yrs)<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                    <input type="text" class="form-control input-sm " style="margin-left:-5px;width:180px;" id="input_terms" />
+                                </div>
+
+                                <label class="control-label col-md-3">Exp.Date<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;">
+                                    <input type="text" class="form-control input-sm date date-picker" data-date-format="mm/dd/yyyy" style = "padding-left:0px;" id="input_expdate" />
+                                </div>
+                                @*<label class="control-label col-md-3">Plan Type<span class="required">*</span>:</label>
+        <div class="col-md-3" style="padding-left:0px;">
+            @Html.DropDownList("ContractTypeList", (SelectList)ViewBag.FranchiseeContractTypeList, "Select...", new { @class = "form-control input-sm", @style = "padding-left:0px;", @id = "input_plantype" })
+        </div>*@
+                            </div>
+
+                            <!--Plan Amount AND IB Amount-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label class="control-label col-md-3">Plan Amount<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                    <input type="text" class="form-control input-sm" style="margin-left:-5px;width:180px;" id="input_planamount"/>
+                                </div>
+                                <label class="control-label col-md-3">IB Amount:</label>
+                                <div class="col-md-3" style="padding-left:0px;">
+                                    <input type="text" class="form-control input-sm" id="input_ibamount" />
+                                </div>
+                            </div>
+
+                            <!--Down Payment AND Interest-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label class="control-label col-md-3">Down Payment:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                    <input type="text" class="form-control input-sm " style="margin-left:-5px;width:180px;" id="input_downpayment"/>
+                                </div>
+                                <label for="select_contractterm" class="control-label col-md-3">Interest:</label>
+                                <div class="col-md-3" style="padding-left:0px;">
+                                    <input type="text" class="form-control input-sm" id="input_interest"/>
+                                </div>
+                            </div>
+
+                            <!-- Payment Amount AND No Of Payments-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label class="control-label col-md-3">Payment Amount:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                    <input type="text" class="form-control input-sm" style="margin-left:-5px;width:180px;" id="input_paymentamount" />
+                                </div>
+                                <label class="control-label col-md-3">No Of Payments<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;">
+                                    <input type="text" class="form-control input-sm" id="input_nopayments" />
+                                </div>
+                            </div>
+                            <!--Current Payment AND Payment Start Date-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label class="control-label col-md-3">Current Payment:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                    <input type="text" class="form-control input-sm " style="margin-left:-5px;width:180px;" id="input_currentpayment" />
+                                </div>
+                                <label class="control-label col-md-3">Payment Start Date<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;">
+                                    <input type="text" class="form-control input-sm date date-picker" data-date-format="mm/dd/yyyy" id="input_paymentstartdate" />
+                                </div>
+                            </div>
+
+                            <!--Trigger Amt AND Legal Obl.Start-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label class="control-label col-md-3">Trigger Amt<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                    <input type="text" class="form-control input-sm" style="margin-left:-5px;width:180px;" id="input_triggeramount" />
+                                </div>
+                                <label class="control-label col-md-3">Legal Obl.Start<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;">
+                                    <input type="text" class="form-control input-sm date date-picker" data-date-format="mm/dd/yyyy" id="input_legaloblstart" />
+                                </div>
+                            </div>
+
+
+                            <!--Legal Obl.End AND Legal Obl.Due-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label class="control-label col-md-3">Legal Obl.End:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                    <input type="text" class="form-control input-sm date date-picker" data-date-format="mm/dd/yyyy" style="margin-left:-5px;width:180px;" id="input_legaloblend" />
+                                </div>
+                                <label class="control-label col-md-3">Legal Obl.Due<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;">
+                                    <input type="text" class="form-control input-sm" id="input_legalobldue"/>
+                                </div>
+                            </div>
+
+                        </form>  
+                        
+                        <h5 class="form-section sbold uppercase"><b>@JKCRMResource.note:</b></h5>
+                        <!-- Note -->
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                @Html.TextArea("note", "", new { @class = "form-control autosizeme textarea_soldnote", rows = "4", style = "font-size: 11px" ,@id="text_signagreement"})
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="form-actions">
+                        <div class="row" id="summary_action">
+                            <div class="col-md-3 pull-right" style="margin-top: 20px;">
+                                <button type="button" class="btn green btn-block" onclick="validateSignAgreement();">@CommonResource.btnSave</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

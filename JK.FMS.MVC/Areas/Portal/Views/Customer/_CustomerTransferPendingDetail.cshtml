@@ -1,0 +1,1144 @@
+﻿@model JKViewModels.Customer.CommonCustomerrTransferPendingDetailViewModel
+
+
+@section styles{
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")' rel="stylesheet" type="text/css" />
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")' rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+}
+<style type="text/css">
+    .input-sm.pp {
+        margin-top: 0;
+        margin-bottom: 0;
+        text-align: right;
+        padding: 3px;
+        border-radius: 0;
+    }
+
+    .has-error {
+        border-color: red;
+    }
+
+    .close {
+        background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+        height: 12px !important;
+        width: 12px !important;
+        margin-top: 0px !important;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .row {
+        margin: 0;
+        padding: 3px 0;
+    }
+
+    .page-size {
+        padding-left: 0;
+        padding-right: 0;
+        width: 62px;
+    }
+
+    .topheader {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFF !important;
+        text-transform: uppercase;
+        margin-top: 3px;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+
+    .alignCenter {
+        text-align: center;
+    }
+
+    #CustomerList th {
+        vertical-align: middle;
+    }
+
+    .no-padding {
+        padding: 0;
+    }
+
+    .no-margin {
+        margin: 0;
+    }
+
+    .padding-tb1 {
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+
+    .margin-tb1 {
+        margin-top: 1px;
+        margin-bottom: 1px;
+    }
+
+    .custom-listbox .headerbox {
+        padding: 3px 0px 3px 5px;
+    }
+
+    .custom-listbox {
+        margin-top: 4px;
+        margin-bottom: 0px;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .multiselect-container.dropdown-menu {
+        text-transform: none;
+        font-size: 14px;
+    }
+
+
+    #modal_FranchiseeDistribution table.dataTable thead th, #modal_FranchiseeDistribution table.dataTable thead td {
+        font-size: 10px !important;
+    }
+
+    #modal_FranchiseeDistribution table.dataTable tbody th, #modal_FranchiseeDistribution table.dataTable tbody td {
+        font-size: 11px !important;
+    }
+</style>
+
+
+@using (Html.BeginForm("CustomerDetailTransferApprovalSubmit", "Customer", FormMethod.Post, new { area = "Portal", @id = "frmCustomerDetailTransferApprovalSubmit" }))
+{
+    @*<form class="form-horizontal" action="@Url.Action("CustomerDetailTransferApprovalSubmit", "Customer", new { area = "Portal" })" method="POST">*@
+    <div class="modal fade custom-model custom-form-design" id="modal_CTFranchiseeDistribution" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" style="width:1000px">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                        CUSTOMER @((Model.CustomerrTransferPendingDetail.StatusName ?? "Status").ToUpper()) APPROVAL
+                    </h4>
+                </div>
+                <div class="modal-body" style="padding: 5px;padding-top:0px;">
+                    <input type="hidden" id="hdftransfer_Callfor" name="hdftransfer_Callfor" value="Approve" />
+                    @Html.HiddenFor(o => o.CustomerrTransferPendingDetail.MaintenanceTempId)
+                    <input type="hidden" id="hdftransfer_customerid" name="hdftransfer_customerid" value="" />
+                    <input type="hidden" id="hdftransfercontractdetail_linecount" name="hdftransfercontractdetail_linecount" value="" />
+                    <input type="hidden" id="hdftransferfrenchiseedetail_linecount" name="hdftransferfrenchiseedetail_linecount" value="" />
+
+                    <div class="row">
+                        <div style="max-width: 98%;margin: 0px auto;">
+                            <div class="custom-form portlet light">
+                                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 10px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius:0;text-transform: uppercase;">
+                                    Maintenance Detail
+                                </h4>
+                                <div class="form-group">
+                                    <div class="col-md-8">
+                                        <b>Customer Name:  @Html.DisplayFor(o => o.CustomerrTransferPendingDetail.CustomerName, new { @class = "form-control" })</b>
+                                        @Html.HiddenFor(o => o.CustomerrTransferPendingDetail.CustomerId)
+                                    </div>
+                                    <div class="col-md-4 text-right">
+                                        <b>Customer No: @Html.DisplayFor(o => o.CustomerrTransferPendingDetail.CustomerNo)</b>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" style="border:1px solid #e8e8e8">
+                                        <tbody>
+                                            <tr>
+                                                <td style="font-weight:bold">Maintenance Type:</td>
+                                                <td>Transfer</td>
+                                                <td style="font-weight:bold">Reason:</td>
+                                                <td>@Html.DisplayFor(o => o.CustomerrTransferPendingDetail.StatusReason, new { @class = "form-control" })</td>
+                                                <td style="font-weight:bold">Effective Date:</td>
+                                                <td>@string.Format("{0:MM/dd/yyyy}", Model.CustomerrTransferPendingDetail.EffectiveDate)</td>
+
+                                                @if (Model.CustomerrTransferPendingDetail.LastServiceDate != DateTime.MinValue)
+                                                {
+                                                    <td style="font-weight:bold">Last Service Date:</td>
+                                                    <td>@string.Format("{0:MM/dd/yyyy}", Model.CustomerrTransferPendingDetail.LastServiceDate)</td>
+                                                }
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+
+
+
+
+
+
+
+                                <div class="portlet-body form">
+
+
+                                    <hr style="margin-top: 1px;margin-bottom: 1px;" />
+                                    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 10px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius:0;text-transform: uppercase;">
+                                        CUSTOMER CONTRACT/CONTRACT DETAIL
+                                    </h4>
+                                    <div style="margin-bottom: 20px;">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" id="tblTransFranchiseeDistributionList">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width:20px;text-align:center;">
+                                                            PO No.
+                                                        </th>
+                                                        <th style="width:140px;text-align:center;">
+                                                            Account Type
+                                                        </th>
+                                                        <th style="width:30px;text-align:center;">
+                                                            Term (m)
+                                                        </th>
+                                                        <th style="text-align:center;width:50px;">
+                                                            Start Date
+                                                        </th>
+                                                        <th style="text-align:center;width:30px;">
+                                                            Expiration Date
+                                                        </th>
+                                                        <th style="text-align:center;width:30px;">
+                                                            Total Amount
+                                                        </th>
+                                                        <th style="text-align:center;width:30px;">
+                                                            Status
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td style="width:20px;text-align:center;">
+                                                            @Html.DisplayFor(o => o.CustomerrTransferPendingDetail.PONumber)
+                                                        </td>
+                                                        <td style="width:140px;text-align:center;">
+                                                            @Html.DisplayFor(o => o.CustomerrTransferPendingDetail.AccountTypeName)
+                                                        </td>
+                                                        <td style="width:30px;text-align:center;">
+                                                            @Html.DisplayFor(o => o.CustomerrTransferPendingDetail.Term)
+                                                        </td>
+                                                        <td style="text-align:center;width:50px;">
+                                                            @string.Format("{0:MM/dd/yyyy}", Model.CustomerrTransferPendingDetail.StartDate)
+                                                        </td>
+                                                        <td style="text-align:center;width:30px;">
+                                                            @string.Format("{0:MM/dd/yyyy}", Model.CustomerrTransferPendingDetail.ExpirationDate)
+                                                        </td>
+                                                        <td style="text-align:center;width:30px;">
+                                                            @string.Format("{0:c}", Model.CustomerrTransferPendingDetail.TotalAmount)
+                                                        </td>
+                                                        <td style="text-align:center;width:30px;">
+                                                            @Html.DisplayFor(o => o.CustomerrTransferPendingDetail.Status)
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" style="border:1px solid #e8e8e8" id="frTransdestributionTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width:130px;padding:3px;margin: 0px;text-align:center;">Contract Detail Line</th>
+                                                        <th style="padding:3px;margin: 0px;text-align:center;">Service Description</th>
+                                                        <th style="width:130px;padding:3px;text-align:center;">Amount</th>
+                                                        <th style="width:25px;padding:3px;text-align:center;">Frequency</th>
+                                                        <th style="width:100px;padding:3px;text-align:center;">Schedule</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.lstContractDetail)
+                                                    {
+                                                        <tr>
+                                                            <td style="text-align:center;">@item.LineNumber</td>
+                                                            <td style="text-align:center;">@item.ServiceTypeName</td>
+                                                            <td style="text-align:right;">@string.Format("{0:c}", @item.Amount)</td>
+                                                            <td style="text-align:center;">@item.BillingFrequencyListName</td>
+                                                            <td style="text-align:center;"><a href="javascript:void(0);" onclick="showContractDetailSchedule(@item.Mon,@item.Tues,@item.Wed,@item.Thur,@item.Fri,@item.Sat,@item.Sun)">View</a></td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                            <hr />
+                                            <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 10px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius:0;text-transform: uppercase;">
+                                                FRANCHISEE DESTRIBUTION
+                                            </h4>
+
+                                            <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" style="border:1px solid #e8e8e8" id="frTransFransdestributionTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width:130px;padding:3px;margin: 0px;text-align:center;">Contract Detail Line</th>
+                                                        <th style="width:130px;padding:3px;text-align:center;">Franchisee No.</th>
+                                                        <th style="padding:3px;text-align:center;">Franchisee Name</th>
+                                                        <th style="width:130px;padding:3px;text-align:center;">Distribution Amount</th>
+                                                        <th style="width:25px;padding:3px;text-align:center;">Fee</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @for (int i = 0; i < Model.lstFranchiseeDistribution.Count; i++)
+                                                    {
+                                                        <tr>
+                                                            <td style="text-align:center;">
+                                                                @Html.HiddenFor(x => Model.lstFranchiseeDistribution[i].MaintenanceDetailDistributionTempId)
+                                                                @Model.lstFranchiseeDistribution[i].DetailLineNumber
+                                                            </td>
+                                                            <td style="text-align:center;">@Model.lstFranchiseeDistribution[i].FranchiseeNo</td>
+                                                            <td style="text-align:center;">@Model.lstFranchiseeDistribution[i].FranchiseeName</td>
+                                                            <td style="text-align:right;">
+                                                                @if (Model.lstFranchiseeDistribution[i].Amount == 0)
+                                                                {
+                                                                    @Html.TextBoxFor(x => Model.lstFranchiseeDistribution[i].Amount, new { @style = "text-align:right;", @class = "form-control input-sm crInput", @readonly = "" })}
+                                                                else
+                                                                {
+                                                                    @Html.TextBoxFor(x => Model.lstFranchiseeDistribution[i].Amount, new { @style = "text-align:right;", @class = "form-control input-sm crInput" })
+                                                                }
+                                                            </td>
+                                                            <td style="text-align:center;">
+                                                                <a href="javascript:void(0);" onclick="TransferDistributionfee(@Model.lstFranchiseeDistribution[i].FranchiseeId,@Model.lstFranchiseeDistribution[i].ContractDetailId,0,@Model.lstFranchiseeDistribution[i].DetailLineNumber)">View</a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                            @if (!string.IsNullOrWhiteSpace(Model.CustomerrTransferPendingDetail.StatusName) && Model.CustomerrTransferPendingDetail.StatusName.Trim() != "Cancelled")
+                                            {
+                                                <hr />
+                                                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 10px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius:0;text-transform: uppercase;">
+                                                    STOP FINDERS FEE & TROUBLE TRANSFER FEE
+                                                </h4>
+                                                <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" style="border:1px solid #e8e8e8" id="frTransFransdestributionTable">
+                                                    <thead>
+                                                        <tr>
+
+                                                            <td style="padding: 5px !important;" class="text-right;">Type:</td>
+                                                            <td style="padding: 5px !important;" class="text-center">Regular Billing</td>
+                                                            <td style="padding: 5px !important;" class="text-right">Transfer Date:</td>
+                                                            <td style="padding: 5px !important;" class="text-center"> @string.Format("{0:MM/dd/yyyy}", Model.CustomerrTransferPendingDetail.EffectiveDate)</td>
+                                                            <td style="padding: 5px !important;" class="text-right" colspan="2">Trouble Transfer Fee:</td>
+                                                            <td style="padding: 5px !important;" class="text-center">@(Model.lstFranchiseeStopFindersFee.Where(t => t.IsTroubleWithFee == true).Count() > 0 ? "$ 50.00" : "$ 0.00")</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th class="text-center" style="padding: 5px !important;vertical-align:middle;background: lightgray;width: 85px;">Franchisee No</th>
+                                                            <th class="text-center" style="padding: 5px !important;vertical-align:middle;background: lightgray;width: 220px;">Franchisee Name</th>
+                                                            <th class="text-center" style="padding: 5px !important;vertical-align:middle;background: lightgray;width: 100px;">Finders Fee Stop Date</th>
+                                                            <th class="text-center" style="padding: 5px !important;vertical-align:middle;background: lightgray;">Note</th>
+                                                            <th class="text-center" style="padding: 5px !important;vertical-align:middle;background: lightgray;width:100px;">Trouble With Fees</th>
+                                                            <th class="text-center" style="padding: 5px !important;vertical-align:middle;background: lightgray;width:100px;">Trouble Without Fees</th>
+                                                            <th class="text-center" style="padding: 5px !important;vertical-align:middle;background: lightgray;width:100px;">Not a Trouble Account</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @for (int i = 0; i < Model.lstFranchiseeStopFindersFee.Count; i++)
+                                                        {
+                                                            <tr>
+                                                                <td style="text-align:center;">
+                                                                    @Html.HiddenFor(x => Model.lstFranchiseeStopFindersFee[i].MaintenanceDetailTempId)
+                                                                    @Model.lstFranchiseeStopFindersFee[i].FranchiseeNo
+                                                                </td>
+                                                                <td style="text-align:center;">@Model.lstFranchiseeStopFindersFee[i].FranchiseeName</td>
+                                                                <td style="text-align:center;">
+                                                                    @Html.TextBoxFor(x => Model.lstFranchiseeStopFindersFee[i].FindersFeeStopDate, "{0:MM/dd/yyyy}")
+                                                                </td>
+                                                                <td style="text-align:center;">
+                                                                    @Html.TextBoxFor(x => Model.lstFranchiseeStopFindersFee[i].Notes)
+                                                                </td>
+                                                                <td style="text-align:center;">
+                                                                    @Html.RadioButtonFor(x => Model.lstFranchiseeStopFindersFee[i].TroubleFee, "IsTroubleWithFee")
+                                                                </td>
+                                                                <td style="text-align:center;">
+                                                                    @Html.RadioButtonFor(x => Model.lstFranchiseeStopFindersFee[i].TroubleFee, "IsIsTroubleWithoutFee")
+                                                                </td>
+                                                                <td style="text-align:center;">
+                                                                    @Html.RadioButtonFor(x => Model.lstFranchiseeStopFindersFee[i].TroubleFee, "IsNotATroubleAccount")
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+
+
+
+                                                <hr />
+                                                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 10px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius:0;text-transform: uppercase;">
+                                                    Revenue Distribution
+                                                </h4>
+                                                <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" style="border:1px solid #e8e8e8" id="frTransFransdestributionTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-center" style="vertical-align:middle;background: lightgray;width: 85px;">Invoice No</th>
+                                                            <th class="text-center" style="vertical-align:middle;background: lightgray;width: 85px;">Invoice Date</th>
+                                                            <th class="text-center" style="vertical-align:middle;background: lightgray;width: 85px;">BillingPay No</th>
+                                                            <th class="text-center" style="vertical-align:middle;background: lightgray;width: 85px;">Line No</th>
+                                                            <th class="text-center" style="vertical-align:middle;background: lightgray;width: 85px;">Franchisee No</th>
+                                                            <th class="text-center" style="vertical-align:middle;background: lightgray;width: 220px;">Franchisee Name</th>
+                                                            <th class="text-center" style="vertical-align:middle;background: lightgray;width:100px;">Contract Detail Amt</th>
+                                                            <th class="text-center" style="vertical-align:middle;background: lightgray;width:100px;">Transfer Amount</th>
+                                                            <th class="text-center" style="vertical-align:middle;background: lightgray;width:100px;">Fees</th>
+                                                            <th class="text-center" style="vertical-align:middle;background: lightgray;width:100px;">Total Transfer Amount</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                        @for (int i = 0; i < Model.lstRevenueDistributionCombine.Count; i++)
+                                                        {
+                                                            <tr>
+                                                                <td style="text-align:center;">
+                                                                    @Html.HiddenFor(x => Model.lstRevenueDistributionCombine[i].MaintenanceDetailDistributionTempId)
+                                                                    @Html.HiddenFor(x => Model.lstRevenueDistributionCombine[i].FeePer)
+                                                                    @Model.lstRevenueDistributionCombine[i].InvoiceNo
+                                                                </td>
+                                                                <td style="text-align:center;">
+                                                                    @(String.Format("{0:MM/dd/yyyy}", Model.lstRevenueDistributionCombine[i].InvoiceDate))
+                                                                </td>
+                                                                <td style="text-align:center;">
+                                                                    @Model.lstRevenueDistributionCombine[i].BillingPayNo
+                                                                </td>
+                                                                <td style="text-align:center;">
+                                                                    @Model.lstRevenueDistributionCombine[i].LineNumber
+                                                                </td>
+                                                                <td style="text-align:center;">@Model.lstRevenueDistributionCombine[i].FranchiseeNo</td>
+                                                                <td style="text-align:center;">@Model.lstRevenueDistributionCombine[i].FranchiseeName</td>
+                                                                <td style="text-align:right;">
+                                                                    @(String.Format("{0:c}", Model.lstRevenueDistributionCombine[i].ContractDetailAmount))
+                                                                </td>
+
+                                                               
+                                                                    <td style="text-align:center;">
+                                                                        @Html.TextBoxFor(x => Model.lstRevenueDistributionCombine[i].Amount, new { @style = "text-align:right;"+(Model.lstRevenueDistributionCombine[i].Amount < 0 ? "color:red; ":""), @class = "form-control input-sm crInput" })
+                                                                    </td>
+                                                                    <td style="text-align:center;">
+                                                                        @Html.TextBoxFor(x => Model.lstRevenueDistributionCombine[i].FeeAmount, new { @readonly = "readonly", @style = "text-align:right;", @class = "form-control input-sm crInput" })
+                                                                    </td>
+                                                                    <td style="text-align:center;">
+                                                                        @Html.TextBoxFor(x => Model.lstRevenueDistributionCombine[i].TotalAmount, new { @readonly = "readonly", @style = "text-align:right;" + (Model.lstRevenueDistributionCombine[i].TotalAmount < 0 ? "color:red; " : ""), @class = "form-control input-sm crInput" })
+                                                                    </td>
+                                                            </tr>
+                                                           
+                                                        }
+
+                                                        @*@for (int i = 0; i < Model.lstRevenueDistribution.Count; i++)
+                                                        {
+                                                            <tr>
+                                                                <td style="text-align:center;">
+                                                                    @Html.HiddenFor(x => Model.lstRevenueDistribution[i].MaintenanceDetailDistributionTempId)
+                                                                    @Html.HiddenFor(x => Model.lstRevenueDistribution[i].FeePer)
+                                                                    @Model.lstRevenueDistribution[i].InvoiceNo
+                                                                </td>
+                                                                <td style="text-align:center;">
+                                                                    @(String.Format("{0:MM/dd/yyyy}", Model.lstRevenueDistribution[i].InvoiceDate))
+                                                                </td>
+                                                                <td style="text-align:center;">
+                                                                    @Model.lstRevenueDistribution[i].BillingPayNo
+                                                                </td>
+                                                                <td style="text-align:center;">
+                                                                    @Model.lstRevenueDistribution[i].LineNumber
+                                                                </td>
+                                                                <td style="text-align:center;">@Model.lstRevenueDistribution[i].FranchiseeNo</td>
+                                                                <td style="text-align:center;">@Model.lstRevenueDistribution[i].FranchiseeName</td>
+                                                                <td style="text-align:right;">
+                                                                    @(String.Format("{0:c}", Model.lstRevenueDistribution[i].ContractDetailAmount))
+                                                                </td>
+                                                                <td style="text-align:center;">
+                                                                    @Html.TextBoxFor(x => Model.lstRevenueDistribution[i].Amount, new { @style = "text-align:right;", @class = "form-control input-sm crInput" })
+                                                                </td>
+                                                                <td style="text-align:center;">
+                                                                    @Html.TextBoxFor(x => Model.lstRevenueDistribution[i].FeeAmount, new { @readonly = "readonly", @style = "text-align:right;", @class = "form-control input-sm crInput" })
+                                                                </td>
+                                                                <td style="text-align:center;">
+                                                                    @Html.TextBoxFor(x => Model.lstRevenueDistribution[i].TotalAmount, new { @readonly = "readonly", @style = "text-align:right;", @class = "form-control input-sm crInput" })
+                                                                </td>
+                                                            </tr>
+                                                        }*@
+
+
+                                                        @*@for (int i = 0; i < Model.lstRevenueDistributionOld.Count; i++)
+                                                            {
+                                                                <tr>
+                                                                    <td style="text-align:center;">
+                                                                        @Html.HiddenFor(x => Model.lstRevenueDistributionOld[i].MaintenanceDetailDistributionTempId)
+                                                                        @Html.HiddenFor(x => Model.lstRevenueDistributionOld[i].FeePer)
+                                                                        @Model.lstRevenueDistributionOld[i].InvoiceNo
+                                                                    </td>
+                                                                    <td style="text-align:center;">
+                                                                        @(String.Format("{0:MM/dd/yyyy}", Model.lstRevenueDistributionOld[i].InvoiceDate))
+                                                                    </td>
+                                                                    <td style="text-align:center;">
+                                                                        @Model.lstRevenueDistributionOld[i].BillingPayNo
+                                                                    </td>
+                                                                    <td style="text-align:center;">
+                                                                        @Model.lstRevenueDistributionOld[i].LineNumber
+                                                                    </td>
+                                                                    <td style="text-align:center;">@Model.lstRevenueDistributionOld[i].FranchiseeNo</td>
+                                                                    <td style="text-align:center;">@Model.lstRevenueDistributionOld[i].FranchiseeName</td>
+                                                                    <td style="text-align:right;">
+                                                                        @(String.Format("{0:c}", Model.lstRevenueDistributionOld[i].ContractDetailAmount))
+                                                                    </td>
+                                                                    <td style="text-align:right;">
+                                                                        @(String.Format("{0:c}", Model.lstRevenueDistributionOld[i].Amount))
+                                                                    </td>
+                                                                    <td style="text-align:right;">
+                                                                        @(String.Format("{0:c}", Model.lstRevenueDistributionOld[i].FeeAmount))
+                                                                    </td>
+                                                                    <td style="text-align:right;">
+                                                                        @(String.Format("{0:c}", Model.lstRevenueDistributionOld[i].TotalAmount))
+                                                                    </td>
+
+                                                                </tr>
+                                                            }
+
+                                                            @for (int i = 0; i < Model.lstRevenueDistribution.Count; i++)
+                                                            {
+                                                                <tr>
+                                                                    <td style="text-align:center;">
+                                                                        @Html.HiddenFor(x => Model.lstRevenueDistribution[i].MaintenanceDetailDistributionTempId)
+                                                                        @Html.HiddenFor(x => Model.lstRevenueDistribution[i].FeePer)
+                                                                        @Model.lstRevenueDistribution[i].InvoiceNo
+                                                                    </td>
+                                                                    <td style="text-align:center;">
+                                                                        @(String.Format("{0:MM/dd/yyyy}", Model.lstRevenueDistribution[i].InvoiceDate))
+                                                                    </td>
+                                                                    <td style="text-align:center;">
+                                                                        @Model.lstRevenueDistribution[i].BillingPayNo
+                                                                    </td>
+                                                                    <td style="text-align:center;">
+                                                                        @Model.lstRevenueDistribution[i].LineNumber
+                                                                    </td>
+                                                                    <td style="text-align:center;">@Model.lstRevenueDistribution[i].FranchiseeNo</td>
+                                                                    <td style="text-align:center;">@Model.lstRevenueDistribution[i].FranchiseeName</td>
+                                                                    <td style="text-align:right;">
+                                                                        @(String.Format("{0:c}", Model.lstRevenueDistribution[i].ContractDetailAmount))
+                                                                    </td>
+                                                                    <td style="text-align:center;">
+                                                                        @Html.TextBoxFor(x => Model.lstRevenueDistribution[i].Amount, new { @style = "text-align:right;", @class = "form-control input-sm crInput" })
+                                                                    </td>
+                                                                    <td style="text-align:center;">
+                                                                        @Html.TextBoxFor(x => Model.lstRevenueDistribution[i].FeeAmount, new { @readonly = "readonly", @style = "text-align:right;", @class = "form-control input-sm crInput" })
+                                                                    </td>
+                                                                    <td style="text-align:center;">
+                                                                        @Html.TextBoxFor(x => Model.lstRevenueDistribution[i].TotalAmount, new { @readonly = "readonly", @style = "text-align:right;", @class = "form-control input-sm crInput" })
+                                                                    </td>
+                                                                </tr>
+                                                            }*@
+                                                    </tbody>
+                                                </table>
+
+                                                <hr />
+                                                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 10px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius:0;text-transform: uppercase;">
+                                                    Finders Fees
+                                                </h4>
+                                                for (int p = 0; p < Model.lstFindersFee.Count; p++)
+                                                {
+                                                    @Html.HiddenFor(one => one.lstFindersFee[p].MaintenanceTempDetailId)
+                                                    @Html.HiddenFor(one => one.lstFindersFee[p].MaintenanceTempId)
+                                                    @Html.HiddenFor(one => one.lstFindersFee[p].FindersFeeId)
+                                                    @Html.HiddenFor(one => one.lstFindersFee[p].FranchiseeId)
+                                                    @Html.HiddenFor(one => one.lstFindersFee[p].CustomerId)
+
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="table-responsive">
+                                                                <table class="table table-striped table-bordered table-hover order-column dataTable no-footer">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th style="width:125px;text-align:center;">
+                                                                                Franchisee No
+                                                                            </th>
+                                                                            <th style="width:300px;text-align:center;">
+                                                                                Franchisee Name
+                                                                            </th>
+                                                                            <th style="text-align:center;">
+                                                                                Address
+                                                                            </th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td style="text-align:center;">@Html.DisplayFor(o => o.lstFindersFee[p].FranchiseeNo)</td>
+                                                                            <td style="text-align:center;">@Html.DisplayFor(o => o.lstFindersFee[p].FranchiseeName)</td>
+                                                                            <td style="text-align:center;">
+                                                                                @Html.DisplayFor(o => o.lstFindersFee[p].F_Address),
+                                                                                @Html.DisplayFor(o => o.lstFindersFee[p].F_City),
+                                                                                @Html.DisplayFor(o => o.lstFindersFee[p].F_StateName) @Html.DisplayFor(o => o.lstFindersFee[p].F_PostalCode)
+                                                                            </td>
+                                                                        </tr>
+
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <h4 class="block" style="background-color: #e7ecf1!important;color: #999999 !important;">Finder Fee Information</h4>
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="col-md-2 control-label" style="padding-left: 0px;padding-right: 0px;">
+                                                                        Start Date<span style="color:#000000;">&nbsp;:</span>
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        @Html.TextBoxFor(one => one.lstFindersFee[p].StartDate, "{0:MM/dd/yyyy}", new { @class = "form-control input-sm  edit-txtbx date-picker " })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <div class="col-md-2 control-label">
+                                                                        Description<span style="color:#000000;">&nbsp;:</span>
+                                                                    </div>
+                                                                    <div class="col-md-9">
+                                                                        @Html.TextBoxFor(one => one.lstFindersFee[p].Description, new { @class = "form-control input-sm  edit-txtbx" })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <h4 class="block" style="background-color: #e7ecf1!important;color: #999999 !important;">Finder Fee Calculation Information</h4>
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="col-md-2 control-label">
+                                                                        Adjustment:<span style="color:#000000;">&nbsp;:</span><br /><br />
+                                                                    </div>
+                                                                    <div class="col-md-9">
+                                                                        <div class="table-responsive">
+                                                                            <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" style="margin-top: 0px !important;" id="tblNewFindersFeeAdjustment">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th class="text-center" style="width:150px;">
+                                                                                            Type
+                                                                                        </th>
+                                                                                        <th class="text-center">
+                                                                                            Description
+                                                                                        </th>
+                                                                                        <th class="text-center" style="width:100px;">
+                                                                                            Amount
+                                                                                        </th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    @if (Model.lstFindersFeeAdjustment.Count > 0)
+                                                                                    {
+                                                                                        for (int b = 0; b < Model.lstFindersFeeAdjustment.Where(o => o.FindersFeeId == Model.lstFindersFee[p].FindersFeeId).ToList().Count; b++)
+                                                                                        {
+                                                                                            <tr>
+                                                                                                <td>
+                                                                                                    @Html.HiddenFor(one => one.lstFindersFeeAdjustment[b].MaintenanceTempDetailId)
+                                                                                                    @Html.HiddenFor(one => one.lstFindersFeeAdjustment[b].MaintenanceTempId)
+                                                                                                    @Html.HiddenFor(m => m.lstFindersFeeAdjustment[b].FindersFeeAdjustmentId)
+                                                                                                    @Html.HiddenFor(m => m.lstFindersFeeAdjustment[b].FranchiseeId)
+                                                                                                    @Html.HiddenFor(m => m.lstFindersFeeAdjustment[b].FindersFeeId)
+                                                                                                    @Html.DropDownListFor(m => m.lstFindersFeeAdjustment[b].FindersFeeAdjustmentTypeListId,
+new SelectList((System.Collections.IEnumerable)@ViewBag.FindersFeeAdjustmentTypeListRaw, "FindersFeeAdjustmentTypeListId", "Name", Model.lstFindersFeeAdjustment[b].FindersFeeAdjustmentTypeListId),
+"Select", new { @class = "form-control input-sm" })
+                                                                                                </td>
+                                                                                                <td>@Html.TextBoxFor(o => o.lstFindersFeeAdjustment[b].Description, new { @class = "form-control input-sm", @style = "width:100%;" })</td>
+                                                                                                <td>@Html.TextBoxFor(o => o.lstFindersFeeAdjustment[b].Amount, new { @class = "form-control input-sm txamt", @style = "width:100px;" })</td>
+                                                                                            </tr>
+                                                                                        }
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <tr>
+                                                                                            <td colspan="3" style="text-align:center;">No finders fee adjustment records.</td>
+                                                                                        </tr>
+                                                                                    }
+                                                                                </tbody>
+
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <div class="col-md-2 control-label">
+                                                                        <a href="javascript:void(0);" onclick="AppendNewFinderAdjestment(@Model.lstFindersFee[p].FindersFeeId,0)">+ Add</a>
+                                                                    </div>
+                                                                    <div class="col-md-2 control-label" style="padding-left: 0px;">
+                                                                        Calculation Method<span style="color:#000000;">&nbsp;:</span>
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        @Html.DropDownListFor(m => m.lstFindersFee[p].FindersFeeTypeListId,
+new SelectList((System.Collections.IEnumerable)@ViewBag.FindersFeeTypeListRaw, "FindersFeeTypeListId", "Name", Model.lstFindersFee[p].FindersFeeTypeListId)
+, "Select", new { @class = "form-control input-sm edit-txtbx", onchange = "FindersFee_FindersFeeTypeListId_Onchange(" + p + ")", @readonly = "readonly" })
+
+                                                                    </div>
+                                                                    <div class="col-md-3 control-label" style="display:none;">
+                                                                        Factor<span style="color:#000000;">&nbsp;:</span>
+                                                                    </div>
+                                                                    <div class="col-md-2" style="display:none;">
+                                                                        @Html.TextBoxFor(one => one.lstFindersFee[p].Factor, new { @class = "form-control input-sm edit-txtbx" })
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <div class="col-md-2 control-label"></div>
+                                                                    <div class="col-md-2 control-label">
+                                                                        Monthly Billing<span style="color:#000000;">&nbsp;:</span>
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        @Html.TextBoxFor(one => one.lstFindersFee[p].ContractBillingAmount, new { @class = "form-control input-sm edit-txtbx txamt", @readonly = "readonly" })
+                                                                    </div>
+                                                                    <div class="col-md-3 control-label">
+                                                                        Total Adjustments<span style="color:#000000;">&nbsp;:</span>
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        @Html.TextBoxFor(one => one.lstFindersFee[p].TotalAdjustmentAmount, new { @class = "form-control input-sm edit-txtbx txamt", @readonly = "readonly" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <div class="col-md-2 control-label"></div>
+                                                                    <div class="col-md-2 control-label">
+                                                                        Payable On<span style="color:#000000;">&nbsp;:</span>
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        @Html.TextBoxFor(one => one.lstFindersFee[p].PayableOnAmount, new { @class = "form-control input-sm edit-txtbx txamt", @readonly = "readonly" })
+                                                                    </div>
+                                                                </div>
+
+
+                                                                <div class="col-md-12">
+                                                                    <div class="col-md-1 control-label"></div>
+                                                                    <div class="col-md-3 control-label">
+                                                                        DownPayment Percent<span style="color:#000000;">&nbsp;:</span>
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        @Html.TextBoxFor(one => one.lstFindersFee[p].DownPayPercentage, new { @class = "form-control input-sm edit-txtbx", onchange = "CalculateFindersFee(" + p + ")" })
+                                                                    </div>
+                                                                    <div class="col-md-3 control-label" style="padding-left: 0px;">
+                                                                        Down Pymnt Amount<span style="color:#000000;">&nbsp;:</span>
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        @Html.TextBoxFor(one => one.lstFindersFee[p].DownPaymentAmount, new { @class = "form-control input-sm edit-txtbx txamt", @readonly = "readonly" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <div class="col-md-1 control-label"></div>
+                                                                    <div class="col-md-3 control-label">
+                                                                        Monthly Payment Percentage<span style="color:#000000;">&nbsp;:</span>
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        @Html.TextBoxFor(one => one.lstFindersFee[p].MonthlyPaymentPercentage, new { @class = "form-control input-sm edit-txtbx txamt", onchange = "CalculateFindersFee(" + p + ")" })
+                                                                    </div>
+                                                                    <div class="col-md-3 control-label" style="padding-right: 0px">
+                                                                        Monthly Payment Amount<span style="color:#000000;">&nbsp;:</span>
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        @Html.TextBoxFor(one => one.lstFindersFee[p].MonthlyPaymentAmount, new { @class = "form-control input-sm edit-txtbx txamt", @readonly = "readonly" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12" style="display:none;">
+                                                                    <div class="col-md-2 control-label"></div>
+                                                                    <div class="col-md-2 control-label">
+                                                                        Interest Percent<span style="color:#000000;">&nbsp;:</span>
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        @Html.TextBoxFor(one => one.lstFindersFee[p].Interest, new { @class = "form-control input-sm  edit-txtbx txamt", @readonly = "readonly", @value = "0" })
+                                                                    </div>
+                                                                    <div class="col-md-3 control-label">
+                                                                        Interest Amount<span style="color:#000000;">&nbsp;:</span>
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        @Html.TextBoxFor(one => one.lstFindersFee[p].Interest, new { @class = "form-control input-sm  edit-txtbx txamt", @readonly = "readonly", @value = "0" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <div class="col-md-2 control-label"></div>
+                                                                    <div class="col-md-2 control-label" style="padding-left: 0px;">
+                                                                        Number of Payments<span style="color:#000000;">&nbsp;:</span>
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        @Html.TextBoxFor(one => one.lstFindersFee[p].TotalNumOfpayments, new { @class = "form-control input-sm edit-txtbx", onchange = "CalculateFindersFee(" + p + ")" })
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <div class="col-md-2 control-label"></div>
+                                                                    <div class="col-md-2 control-label">
+                                                                        Amount Financed<span style="color:#000000;">&nbsp;:</span>
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        @Html.TextBoxFor(one => one.lstFindersFee[p].FinancedAmount, new { @class = "form-control input-sm edit-txtbx txamt", @readonly = "readonly" })
+                                                                    </div>
+                                                                    <div class="col-md-6" style="padding-right: 0px">
+                                                                        <label class="mt-checkbox mt-checkbox-outline">
+                                                                            @Html.CheckBoxFor(one => one.lstFindersFee[p].IncludeDownPayInFirstPay)Include First Payment in down payment
+                                                                            <span></span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <div class="col-md-2 control-label"></div>
+                                                                    <div class="col-md-2 control-label">
+                                                                        Total FF<span style="color:#000000;">&nbsp;:</span>
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        @Html.TextBoxFor(one => one.lstFindersFee[p].TotalAmount, new { @class = "form-control input-sm edit-txtbx txamt", @readonly = "readonly" })
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-md-12">
+                                                                    <div class="col-md-2 control-label"></div>
+                                                                    <div class="col-md-2 control-label">
+                                                                        Note<span style="color:#000000;">&nbsp;:</span>
+                                                                    </div>
+                                                                    <div class="col-md-7">
+                                                                        @Html.TextBoxFor(one => one.lstFindersFee[p].Notes, new { @class = "form-control input-sm edit-txtbx" })
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                }
+
+
+
+                                            }
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-actions">
+                                        <div class="col-md-12">
+
+                                            <!--onclick="OnClick_ApprovalCustomerTransfer(@Model.CustomerrTransferPendingDetail.MaintenanceTempId)"-->
+                                            <button type="button" id="saveApproveButton" class="btn btn-primary pull-right" style="margin-left: 10px;">Approve</button>
+                                            <button type="button" id="saveRejectButton" class="btn btn-primary pull-right" style="margin-left: 10px;">Reject</button>
+
+
+
+                                            @*<button type="button" class="btn btn-primary pull-right" style="margin-left: 10px;">Save</button>*@
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade custom-model custom-form-design" id="modal_customercontractdetailschedule" tabindex="-1" role="basic" aria-hidden="true" style="display: none;margin-top: 100px;">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                        Contract Detail Service
+                    </h4>
+                </div>
+                <div class="modal-body" style="padding: 0px 30px 15px 30px;">
+                    <section>
+                        <div class="row">
+                            <div style="max-width: 98%;margin: 0px auto;">
+                                <div class="custom-form portlet light">
+                                    <div class="portlet-body form">
+
+                                        <div class="form-body-outer" style="padding: 0px;">
+                                            <div style="overflow:auto;width: 100%; margin: 0em auto;">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-4">
+                                                    </label>
+                                                    <div class="col-md-3">
+                                                        <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                            <input type="checkbox" id="chkTRScheduleMonday" class="i-checks editcheck">Monday
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-4">
+                                                    </label>
+                                                    <div class="col-md-3">
+                                                        <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                            <input type="checkbox" id="chkTRScheduleTuesday" class="i-checks editcheck">Tuesday
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-4">
+                                                    </label>
+                                                    <div class="col-md-3">
+                                                        <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                            <input type="checkbox" id="chkTRScheduleWednesday" class="i-checks editcheck">Wednesday
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-4">
+                                                    </label>
+                                                    <div class="col-md-3">
+                                                        <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                            <input type="checkbox" id="chkTRScheduleThursday" class="i-checks editcheck">Thursday
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-4">
+                                                    </label>
+                                                    <div class="col-md-3">
+                                                        <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                            <input type="checkbox" id="chkTRScheduleFriday" class="i-checks editcheck">Friday
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-4">
+                                                    </label>
+                                                    <div class="col-md-3">
+                                                        <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                            <input type="checkbox" id="chkTRScheduleSaturday" class="i-checks editcheck">Saturday
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-4">
+                                                    </label>
+                                                    <div class="col-md-3">
+                                                        <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                            <input type="checkbox" id="chkTRScheduleSunday" class="i-checks editcheck">Sunday
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </section>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+        </div>
+    </div>
+}
+<div class="modal fade custom-model custom-form-design" id="modal_CTDistribution" tabindex="-1" role="basic" aria-hidden="true" style="display: none;margin-top: 100px;">
+    <div class="modal-dialog modal-sm" style="width: 400px;">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Fee
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px">
+                <section>
+                    <div class="row">
+                        <div style="max-width: 98%;margin: 0px auto;">
+                            <div class="custom-form portlet light">
+                                <div class="portlet-body form">
+                                    <input type="hidden" name="hdfDestributionFee_FranchiseeId" id="hdfCTDestributionFee_FranchiseeId" value="" />
+                                    <input type="hidden" name="hdfDestributionFee_ContractDetailId" id="hdfCTDestributionFee_ContractDetailId" value="" />
+                                    <input type="hidden" name="hdfDestributionFee_DestributionId" id="hdfCTDestributionFee_DestributionId" value="" />
+                                    <input type="hidden" name="hdfDestributionFee_Linenumber" id="hdfCTDestributionFee_Linenumber" value="" />
+                                    <div class="form-body-outer" style="padding: 0px;">
+                                        <div style="overflow:auto;width: 100%; margin: 0em auto;">
+                                            <div class="form-group">
+                                                <table class="table table-striped table-bordered table-hover order-column" id="CTfeelist">
+                                                    <thead>
+                                                        <tr style="background-color: #e8e8e8;font-weight: bold;">
+                                                            <td>
+                                                                Fee Name
+                                                            </td>
+                                                            <td>
+                                                                Type
+                                                            </td>
+                                                            <td style="width:50px;">
+                                                                Amount
+                                                            </td>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </section>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+
+    var DistributionfeeList = [];
+    var DistributionfeeListFinal = [];
+    function DistributionfeeBindData(DistributionfeeList) {
+        $('#CTfeelist>tbody').html('');
+        $.each(DistributionfeeList, function (index, value) {
+
+            tempRow = "";
+            tempRow += '<tr relDistributionFeeId="' + value.FranchiseeId + '_' + value.ContractDetailId + '_' + value.FeeId + '">';
+            tempRow += '<td style="vertical-align: middle;">' + value.FeeName + '</td>';
+            tempRow += '<td style="vertical-align: middle;">' + value.FeeRateTypeName + '</td>';
+            tempRow += '<td><input type="text" id="DistributionFeeAmount_' + value.FranchiseeId + '_' + value.ContractDetailId + '_' + value.FeeId + '" class="form-control input-sm pp" value="' + value.Amount + '" /></td>';
+            tempRow += '</tr>';
+            $('#CTfeelist>tbody').append(tempRow);
+
+            $('#DistributionFeeAmount_' + value.FranchiseeId + '_' + value.ContractDetailId + '_' + value.FeeId).change(function () {
+                var new_arr = $.grep(DistributionfeeList, function (n, i) { return (n.FranchiseeId == value.FranchiseeId && n.ContractDetailId == value.ContractDetailId && n.FeeId == value.FeeId); });
+                if (new_arr.length > 0) {
+                    var amt = parseFloat($(this).val());
+                    new_arr[0].Amount = amt;
+                }
+            });
+        });
+    }
+    function TransferDistributionfee(fid, ContractDetailId, DistributionId, ln, isReadonly) {
+        $('#hdfCTDestributionFee_FranchiseeId').val(fid);
+        $('#hdfCTDestributionFee_ContractDetailId').val(ContractDetailId);
+        $('#hdfCTDestributionFee_DestributionId').val(DistributionId);
+        $('#hdfCTDestributionFee_Linenumber').val($('#fdt_ddldetaillinenumber' + ln).val());
+
+        var sURL = '@Url.Action("FranchiseeDistributionFeeData", "Customer", new { area = "Portal" })?FranchiseeId=' + fid + '&ContractDetailId=' + ContractDetailId + '&DistributionId=' + DistributionId;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#CTfeelist>tbody').html('');
+                DistributionfeeList = data;
+                DistributionfeeBindData(DistributionfeeList);
+
+                if (DistributionfeeList.ContractDetailId != undefined) {
+                    DistributionfeeList.push({
+                        DistributionFeesId: DistributionfeeList.DistributionFeesId, DistributionId: DistributionfeeList.DistributionId, CustomerId: $('#hdftransfer_customerid').val(), ContractDetailId: DistributionfeeList.ContractDetailId,
+                        FranchiseeId: DistributionfeeList.FranchiseeId, DetailLineNumber: DistributionfeeList.DetailLineNumber, FeeId: DistributionfeeList.FeeId, Amount: DistributionfeeList.Amount
+                    });
+                }
+
+
+
+                $("#modal_CTDistribution").modal({ backdrop: 'static' });
+
+            }
+        });
+
+    }
+
+
+    $("#saveApproveButton").click(function () {
+        swal('Transfer Approved.')
+        $('#hdftransfer_Callfor').val('Approve')
+        $("#frmCustomerDetailTransferApprovalSubmit").submit();
+    });
+
+    $("#saveRejectButton").click(function () {
+        swal('Transfer Rejected.')
+        $('#hdftransfer_Callfor').val('Reject')
+        $("#frmCustomerDetailTransferApprovalSubmit").submit();
+    });
+
+
+
+    function showContractDetailSchedule(mo, tu, we, th, fr, sa, su) {
+
+        $("#chkTRScheduleMonday").prop('checked', false);
+        $("#chkTRScheduleTuesday").prop('checked', false);
+        $("#chkTRScheduleWednesday").prop('checked', false);
+        $("#chkTRScheduleThursday").prop('checked', false);
+        $("#chkTRScheduleFriday").prop('checked', false);
+        $("#chkTRScheduleSaturday").prop('checked', false);
+        $("#chkTRScheduleSunday").prop('checked', false);
+
+
+        if (mo == 1)
+            $("#chkTRScheduleMonday").prop('checked', true);
+        if (tu == 1)
+            $("#chkTRScheduleTuesday").prop('checked', true);
+        if (we == 1)
+            $("#chkTRScheduleWednesday").prop('checked', true);
+        if (th == 1)
+            $("#chkTRScheduleThursday").prop('checked', true);
+        if (fr == 1)
+            $("#chkTRScheduleFriday").prop('checked', true);
+        if (sa == 1)
+            $("#chkTRScheduleSaturday").prop('checked', true);
+        if (su == 1)
+            $("#chkTRScheduleSunday").prop('checked', true);
+
+        $("#modal_customercontractdetailschedule").modal({ backdrop: 'static' });
+    }
+
+
+    function OnClick_ApprovalCustomerTransfer(id) {
+        $.blockUI();
+        var sURL = '@Url.Action("CustomerDetailTransferApproval", "Customer", new { area = "Portal" })?Id=' + id;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $("#modal_CTFranchiseeDistribution").modal('hide');
+                $.unblockUI();
+            },
+            error: function () {
+                alert("Content load failed.");
+                $.unblockUI();
+            }
+        });
+
+        $("#modal_CTFranchiseeDistribution").modal('hide');
+    }
+
+    $(document).ready(function () {
+
+
+        $('.crInput').each(function () {
+            applyMaskCurrency('#' + $(this).attr("id"));
+        });
+        $('.txamt').each(function () {
+            applyMaskCurrency('#' + $(this).attr("id"));
+        });
+
+
+    })
+    function applyMaskCurrency(id) {
+        $(id).inputmask("currency", {
+            alias: 'currency',
+            prefix: '$ ',
+            digits: 2,
+            autoUnmask: true,
+            removeMaskOnSubmit: true,
+            unmaskAsNumber: true,
+            allowPlus: false,
+            allowMinus: false,
+            autoGroup: true,
+            groupSeparator: ",",
+        });
+    }
+
+</script>

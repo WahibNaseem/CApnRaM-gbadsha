@@ -1,0 +1,333 @@
+﻿@model JKViewModels.Franchise.ManageFranchiseViewModel
+@{
+    ViewBag.Title = "Franchise Recurring Transaction";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section styles{
+    <style type="text/css">
+        .form-group.form-md-line-input {
+            position: relative;
+            margin: 0 0 15px;
+            padding-top: 20px;
+        }
+    </style>
+}
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="portlet box bg-blue-dark-opacity">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="icon-layers"></i>
+                    <span class="caption-subject sbold uppercase">Franchise Recurring Transaction</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="form-body">
+                    <div class="row">
+                        <form action="#">
+                            <input type="hidden" id="hdnfranchiseeid" name="hdnfranchiseeid" value="0">
+                            <div class="col-lg-offset-3 col-md-6">
+                                <!-- BEGIN VALIDATION STATES-->
+                                <div class="portlet box blue-dark">
+                                    <div class="portlet-title">
+                                        <div class="caption">
+                                            <i class="icon-layers"></i>
+                                            <span class="caption-subject sbold uppercase">Main Information</span>
+                                        </div>
+                                    </div>
+                                    <div class="portlet-body">
+                                        <!-- BEGIN FORM-->
+                                        <div class="form-body">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group form-md-line-input">
+                                                        @Html.TextBoxFor(one => one.txteinssn, new { @class = "form-control required", @id = "txtfranchiseenumber", placeholder = "Franchisee Number", onblur = "loadFranchisee()" })
+                                                        <label for="form_control_1">
+                                                            Franchisee Number
+                                                            <span class="required">*</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-8" id="divfranchiseename">
+                                                    <div class="form-group form-md-line-input">
+                                                        <input type="text" name="txtfranchiseename" id="txtfranchiseename" disabled="disabled" value="" class = "form-control required"/>
+                                                        
+                                                        <label for="txtfranchiseename">
+                                                            Franchisee Name
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group form-md-line-input">
+                                                        @Html.DropDownList("TransactionType", null, "Select One", htmlAttributes: new { @class = "form-control", @id = "ddlType" })
+                                                        <label for="lstplantype">
+                                                            Type
+                                                            <span class="required">*</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group form-md-line-input">
+                                                        @Html.TextBoxFor(one => one.txteinssn, new { @class = "form-control date-picker", @id = "txtdate", placeholder = "Date" })
+                                                        <label for="lstplantype">
+                                                            Date
+                                                            <span class="required">*</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4" style="padding-top:15px;">
+                                                    <div class="md-checkbox-inline">
+                                                        <div class="md-checkbox">
+                                                            <input type="checkbox" id="chkCradit" name="chkCradit" value="-1000" class="md-check">
+                                                            <label for="chkCradit">
+                                                                <span></span>
+                                                                <span class="check"></span>
+                                                                <span class="box"></span> Cradit
+                                                            </label>
+                                                        </div>
+                                                        <div class="md-checkbox">
+                                                            <input type="checkbox" id="chkResell" name="chkResell" value="-1000" class="md-check">
+                                                            <label for="chkResell">
+                                                                <span class="inc"></span>
+                                                                <span class="check"></span>
+                                                                <span class="box"></span> Resell
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group form-md-line-input">
+                                                        @Html.DropDownList("Status", null, null, htmlAttributes: new { @class = "form-control", @id = "ddlstatus" })
+                                                        <label for="lstplantype">
+                                                            Status
+                                                            <span class="required">*</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group form-md-line-input">
+                                                        @Html.TextBoxFor(one => one.txteinssn, new { @class = "form-control date-picker", @id = "txtstartdate", placeholder = "Date" })
+                                                        <label for="lstplantype">
+                                                            Start Date
+                                                            <span class="required">*</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group form-md-line-input">
+                                                        @Html.TextBoxFor(one => one.txteinssn, new { @class = "form-control", @id = "txtnoofpayments", placeholder = "0" })
+                                                        <label for="lstplantype">
+                                                            No of Payments
+                                                            <span class="required">*</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group form-md-line-input">
+                                                        @Html.TextBoxFor(one => one.txteinssn, new { @class = "form-control", @id = "txtpaymentbiiled", placeholder = "0" })
+                                                        <label for="lstplantype">
+                                                            Payment Biiled
+                                                            <span class="required">*</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group form-md-line-input">
+                                                        @Html.TextBoxFor(one => one.txteinssn, new { @class = "form-control", @id = "txtgrosstotal", placeholder = "0" })
+                                                        <label for="lstplantype">
+                                                            Gross Total
+                                                            <span class="required">*</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="row" ">
+                                                <div class="col-md-12">
+                                                    <div class="form-group form-md-line-input">
+                                                        @Html.TextBoxFor(one => one.txteinssn, new { @class = "form-control", @id = "txtdescription", placeholder = "Description" })
+                                                        <label for="lstplantype">
+                                                            Description
+                                                            <span class="required">*</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <div class="form-group form-md-line-input">
+                                                        @Html.TextBoxFor(one => one.txteinssn, new { @class = "form-control", @id = "txtquantity", placeholder = "1" })
+                                                        <label for="lstplantype">
+                                                            Quantity
+                                                            <span class="required">*</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group form-md-line-input">
+                                                        @Html.TextBoxFor(one => one.txteinssn, new { @class = "form-control", @id = "txtitemamount", placeholder = "$0.00" })
+                                                        <label for="lstplantype">
+                                                            Item Amount
+                                                            <span class="required">*</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group form-md-line-input">
+                                                        @Html.TextBoxFor(one => one.txteinssn, new { @class = "form-control", @id = "txtsubtotal", placeholder = "$0.00" })
+                                                        <label for="lstplantype">
+                                                            Sub-Total
+                                                            <span class="required">*</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group form-md-line-input">
+                                                        @Html.TextBoxFor(one => one.txteinssn, new { @class = "form-control", @id = "txttax", placeholder = "$0.00" })
+                                                        <label for="lstplantype">
+                                                            Tax
+                                                            <span class="required">*</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group form-md-line-input">
+                                                        @Html.TextBoxFor(one => one.txteinssn, new { @class = "form-control", @id = "txttotal", placeholder = "$0.00" })
+                                                        <label for="lstplantype">
+                                                            Total
+                                                            <span class="required">*</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+
+                                        </div>
+                                        <div class="form-actions row">
+                                            <div class="col-md-12">
+                                                <div class="btn-set pull-right">
+                                                    <button type="submit" class="btn green">Submit</button>
+                                                    <button type="button" class="btn default">Cancel</button>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                        <!-- END FORM-->
+                                    </div>
+                                </div>
+                                <!-- END VALIDATION STATES-->
+                            </div>
+                        </form>
+                    </div>
+                    <div class="row" id="divfranchisetransList">
+                        <div class="col-md-12">
+                            <!-- BEGIN VALIDATION STATES-->
+                            <div class="portlet box blue-dark">
+                                <div class="portlet-title">
+                                    <div class="caption">
+                                        <i class="icon-layers"></i>
+                                        <span class="caption-subject sbold uppercase">Transactions</span>
+                                    </div>
+                                </div>
+                                <div class="portlet-body">
+                                    <table class="table table-striped table-bordered table-hover" id="franchisetransList">
+                                        <thead>
+                                            <tr>
+                                                <th>Type</th>
+                                                <th style="width:10%">No of Payments</th>
+                                                <th style="width:10%">Payment Amount</th>
+                                                <th style="width:10%">Sub-Total</th>
+                                                <th style="width:10%">Tax</th>
+                                                <th style="width:10%">Total</th>
+                                                <th style="width:5%">Status</th>
+                                                <th style="width:50px"></th>
+                                                <th style="width:50px"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- END VALIDATION STATES-->
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+@section pageplugins{
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/clockface/js/clockface.js")" type="text/javascript"></script>
+}
+
+@section scripts{
+
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        $("#divfranchiseename").hide();
+        $("#divfranchisetransList").hide();
+
+        function loadFranchisee() {
+            var str = $("#txtfranchiseenumber").val();
+            var baseurl = '@Url.Action("GetFranchiseeDetail", "Franchise",new {area= "Portal" })?franchiseeid=' + str
+            $("#hdnfranchiseeid").val("0");
+            $.ajax({
+                url:baseurl,
+                cache: false,
+                success: function (result) {
+                    if (result.length > 0)
+                    {
+                        $("#divfranchiseename").show();
+                        $("#hdnfranchiseeid").val(result[0].x.id);
+                        $("#txtfranchiseename").val(result[0].x.name);
+
+                        if (result[0].lstT.length > 0) {
+                            ($("#franchisetransList tbody")).empty();
+                            for (var i = 0; i < result[0].lstT.length; i++) {
+                                var transObject = result[0].lstT[i];
+                                var transRow = '<tr class="odd gradeX"><td>' + transObject.trxname + '</td><td>0 of ' + transObject.noofpayments + '</td><td>$ ' + transObject.extendedprice + '</td><td>$ ' + transObject.subtotal + '</td><td>$ ' + transObject.tax + '</td><td>$ ' + transObject.total + '</td><td>' + transObject.statusname + '</td><td><i class="fa fa-pencil-square-o" aria-hidden="true"></i></td><td><i class="fa fa-trash" aria-hidden="true"></i></td></tr>';
+                                ($("#franchisetransList tbody")).append(transRow);
+                            }
+                            $("#divfranchisetransList").show();
+                        }
+                        else
+                            $("#divfranchisetransList").hide();
+                        
+
+                    }
+                   
+                }
+            });
+        }
+    </script>
+}
+

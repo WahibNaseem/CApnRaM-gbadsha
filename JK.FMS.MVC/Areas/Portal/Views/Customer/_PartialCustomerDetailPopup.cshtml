@@ -1,0 +1,261 @@
+﻿@model JKViewModels.Customer.FullCustomerViewModel1
+
+
+<div class="modal-content" style="border-radius: 8px;">
+    <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+        <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+            Customer Detail
+        </h4>
+    </div>
+ 
+    <div class="modal-body" style="padding: 0px 30px 15px 30px;">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-8 ">
+                    @Html.HiddenFor(c => c.CustomerDetail.CustomerId, new { @id = "hdfCustomerId" })
+                    @Html.HiddenFor(c => c.CustomerDetail.MaintenanceId, new { @id = "hdfCustomerMaintenanceId" })
+                    @Html.HiddenFor(c => c.CustomerDetail.MaintenanceTypeName, new { @id = "hdfCustomerMaintenanceTypeName" })
+                    Customer Name : <b> @Html.DisplayFor(one => one.CustomerDetail.CustomerName) </b>
+                </div>
+                <div class="col-md-4"> Total Contract Amount: <label id="lblamount" style="font-weight: bold;"><b>@Html.DisplayFor(one => one.CustomerDetail.Amount) </b></label></div> <div class="clearfix"> </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-3">Customer #: <b> @Html.DisplayFor(one => one.CustomerViewModel.CustomerNo) </b></div>
+            </div>
+        </div>         
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-12" style="padding-right:0px;padding-left:0px;">
+                    <div class="table-responsive">
+                        <table class="table-striped table-bordered order-column" style="width:100%;">
+                            <tr>
+                                <td>
+                                    <div class="col-md-12">
+                                        <div class="form-horizontal" style="width: 100%;">
+                                            <div class="form-body" style="padding: 5px;padding-top:0px;margin-top:-5px;margin-bottom:-5px;">
+                                                <div class="form-group mr0" style="margin-top:8px;">
+                                                    <label class="col-md-3 control-label" style="padding-left: 4px;padding-right: 4px;padding-top:2px;"><b>Status:</b></label>
+                                                    <div class="col-md-3" style="padding-top:0px;padding-left: 10px;padding-right:4px;">
+                                                        <label class="control-label" style="text-align:left!important;padding-top: 2px;"><b>@Html.DisplayFor(one => one.CustomerDetail.StatusName) </b></label>
+                                                    </div>
+                                                    @*@if (Model.CustomerDetail.StatusName == "Cancelled")
+                                                        {*@
+                                                    <label class="col-md-3 control-label" style="padding-left: 4px;padding-right: 4px;padding-top:2px;"><b>Status Date:</b></label>
+                                                    <div class="col-md-3" style="padding-top:0px;padding-left: 10px;padding-right:4px;">
+                                                        <label class="control-label" style="text-align:left!important;padding-top: 2px;">
+                                                            @if (Model.CustomerDetail.StatusDate != null)
+                                                            {
+                                                                try
+                                                                {
+                                                                    @Html.Raw(String.Format("{0:MM/dd/yyyy}", Convert.ToDateTime(DateTime.ParseExact(Model.CustomerDetail.StatusDate, "dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture))))
+                                                                }
+                                                                catch
+                                                                {
+
+                                                                }
+                                                            }
+                                                        </label>
+                                                    </div>
+                                                    @* }*@
+                                                </div>
+                                                @if (Convert.ToString((Model.CustomerDetail.StatusName != null ? Model.CustomerDetail.StatusName.ToLower().Trim() : "")) == "suspended")
+                                                {
+                                                    <div class="form-group mr0">
+                                                        <label class="col-md-3 control-label" style="padding-left: 4px;padding-right: 4px;padding-top:2px;"></label>
+                                                        <div class="col-md-3" style="padding-top:0px;padding-left: 10px;padding-right:4px;"></div>
+                                                        <label class="col-md-3 control-label" style="padding-left: 4px;padding-right: 4px;padding-top:2px;"><b>Resume Date:</b></label>
+                                                        <div class="col-md-3" style="padding-top:0px;padding-left: 10px;padding-right:4px;">
+                                                            <label class="control-label" style="text-align:left!important;padding-top: 2px;">
+                                                                @if (Model.CustomerDetail.ResumeDate != null)
+                                                                {
+                                                                    try
+                                                                    {
+                                                                        @Html.Raw(String.Format("{0:MM/dd/yyyy}", Convert.ToDateTime(DateTime.ParseExact(Model.CustomerDetail.ResumeDate, "dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture))))
+                                                                    }
+                                                                    catch
+                                                                    {
+                                                                    }
+                                                                }
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                <div class="form-group mr0">
+                                                    <label class="col-md-3 control-label" style="padding-top: 2px;padding-left: 4px;padding-right: 4px;"><b>Contract Type:</b></label>
+                                                    <div class="col-md-9" style="padding-top: 0px;padding-left: 10px;padding-right: 4px;">
+                                                        <label class="control-label" style="text-align:left!important;padding-top: 2px;">
+                                                            @Html.DisplayFor(one => one.CustomerDetail.ContractTypeList)
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mr0">
+                                                    <label class="col-md-3 control-label" style="padding-top: 2px;padding-left: 4px;padding-right: 4px;"><b>Account Type:</b></label>
+                                                    <div class="col-md-9" style="padding-top: 0px;padding-left: 10px;padding-right: 4px;">
+                                                        <label class="control-label" style="text-align:left!important;padding-top: 2px;">@Html.DisplayFor(one => one.CustomerDetail.Account_Type) </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mr0">
+                                                    <label class="col-md-3 control-label" style="padding-top: 2px;padding-left: 4px;padding-right: 4px;"><b>Contact Name:</b></label>
+                                                    <div class="col-md-9" style="padding-top: 0px;padding-left: 10px;padding-right: 4px;">
+                                                        <label class="control-label" style="text-align:left!important;padding-top: 2px;">@Html.DisplayFor(one => one.CustomerDetail.ContactName)</label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mr0">
+                                                    <label class="col-md-3 control-label" style="padding-left: 4px;padding-right: 4px;padding-top:2px;"><b>Phone:</b></label>
+                                                    <div class="col-md-9" style="padding-left: 10px;padding-right: 4px;padding-top:0px;">
+                                                        <label class="control-label" style="text-align:left!important;padding-top: 2px;padding-bottom: 0px;"> @Html.DisplayFor(one => one.CustomerDetail.Phone) </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mr0">
+                                                    <label class="col-md-3 control-label" style="padding-left: 4px;padding-right: 4px;padding-top:2px;"><b>Email:</b></label>
+                                                    <div class="col-md-9" style="padding-left: 10px;padding-right: 4px;padding-top:0px;">
+                                                        <label class="control-label" style="text-align:left!important;padding-top: 2px;padding-bottom: 0px;">@Html.DisplayFor(one => one.CustomerDetail.CustomerEmail)</label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mr0">
+                                                    <label class="col-md-3 control-label" style="padding-left: 4px;padding-right: 4px;padding-top:2px;"><b>Address:</b></label>
+                                                    <div class="col-md-9" style="padding-left: 10px;padding-right: 4px;padding-top:0px;">
+                                                        <label class="control-label" style="text-align:left!important;padding-top: 2px;">
+                                                            @Html.DisplayFor(one => one.CustomerDetail.Address) @Html.DisplayFor(one => one.CustomerDetail.Address2)
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-md-2 over-payment">
+                    @if (Model.CustomerDetail.Balance != 0)
+                    {
+                        <div style="width:150px; padding-left:0px; border:solid 2px; background-color:coral; color:white; text-align:center;">
+                            <label>OverPayment/Credit</label>
+                            <br />
+                            <label style="font-weight:bold;">$@Model.CustomerDetail.Balance</label>
+                            <br />
+                            <label class="mt-checkbox">
+                                <input type="checkbox" id="chkApplyCredit">Apply Credit
+                                <span style="background-color: white;border: 1px solid black;"></span>
+                            </label>
+                        </div>
+                    }
+
+
+                    @if (Model.CustomerDetail.LogId > 0)
+                    {
+                        <div style="width: 509px;padding-left: 0px;border: solid 2px;background-color: coral;@Model.CustomerDetail.LogMessageColor: black;padding: 3px;text-align: left;font-weight: 600;">
+                            <label style="font-size:14px;">@Model.CustomerDetail.LogMessage</label>
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    <div class="table-responsive">
+                        <table class="table-striped table-bordered order-column">
+                            <tr>
+                                <td class="col-md-3" style="padding-right: 6px;padding-left: 7px;padding-bottom: 8px;">
+                                    <div class="form-group mr0" style="margin-top: 2px;">
+                                        <input type="button" @(ViewBag.CustomerID > 0 ? "" : "disabled") value="Edit Customer Info" class="btn-custom btn btn-primary col-md-12" style="font-size: 11px;margin-bottom:6px;" onclick="showEditCustomerInfo()" />
+                                    </div>
+                                    <div class="form-group mr0">
+                                        <input type="button" @(ViewBag.CustomerID > 0 ? "" : "disabled") value="Customer Contract" class="btn-custom btn btn-primary col-md-12" style="font-size: 11px;margin-bottom:6px;" onclick="OpenCustomerContractPopup('@(ViewBag.CustomerID != null ? ViewBag.CustomerID : 0)')" />
+                                    </div>
+                                    <div class="form-group mr0">
+                                        @*<input type="button" @(ViewBag.CustomerID > 0 ? "" : "disabled") value="Distribution" class="btn-custom btn btn-primary col-md-12" style="font-size: 11px;" onclick="FranchiseeDistribution(@Html.DisplayFor(one => one.CustomerDetail.CustomerId))" />*@
+                                        @if (ViewBag.Distributions != null)
+                                        {
+                                            <a class="btn-custom btn btn-primary col-md-12" style="font-size: 11px;margin-bottom:6px;" onclick="BindFranchiseeCustomerDistribution(@Model.CustomerDetail.CustomerId,@ViewBag.DistributionFranchiseeId)">Distribution</a>
+                                        }
+                                        else
+                                        {
+                                            <a class="btn-custom btn btn-primary col-md-12" style="font-size: 11px;background-color:#d64e56;margin-bottom:6px;" onclick="ShowCustomerSuggetionBox()">Distribution</a>
+                                        }
+                                    </div>
+                                    @*<div class="form-group mr0">
+                                        <input type="button" @(ViewBag.CustomerID > 0 ? "" : "disabled") value="Account Offering" class="btn-custom btn btn-primary col-md-12" style="font-size: 11px;margin-bottom:6px;" onclick="AccountOffringModel()" />
+                                    </div>*@
+                                </td>
+                                <td class="col-md-3" style="padding-left: 3px;padding-right: 4.2px;padding-bottom: 8px;">
+                                    <div class="form-group mr0" style="margin-top: 2px;">
+                                        <input type="button" @(ViewBag.CustomerID > 0 ? "" : "disabled") value="Maintenance" class="btn-custom btn btn-primary col-md-12" style="font-size: 11px;margin-bottom:6px;" onclick="hasExistManintenance(@ViewBag.CustomerID,'cancel')" id="btncust_cancel" />
+                                    </div>
+                                    @*<div class="form-group mr0">
+                                        <input type="button" @(ViewBag.CustomerID > 0 ? "" : "disabled") value="Customer Service Log" class="btn-custom btn btn-primary col-md-12" style="font-size: 11px;padding-left: 0px;padding-right: 0px;margin-bottom:6px;" onclick="showServiceLog(@Html.DisplayFor(one => one.CustomerDetail.CustomerId))" />
+                                    </div>
+                                    <div class="form-group mr0">
+                                        <input type="button" @(ViewBag.CustomerID > 0 ? "" : "disabled") value="Collection Call Log" class="btn-custom btn btn-primary col-md-12" style="font-size: 11px;margin-bottom:6px;" onclick="showCollectionLog(@Html.DisplayFor(one => one.CustomerDetail.CustomerId))" />
+                                    </div>*@
+                                    <div class="form-group mr0">
+                                        <input type="button" @(ViewBag.CustomerID > 0 ? "" : "disabled") value="Finders Fee" class="btn-custom btn btn-primary col-md-12" style="font-size: 11px;margin-bottom:6px;" onclick="showFeeFinderList(@ViewBag.CustomerID)" />
+                                    </div>
+                                    <div class="form-group mr0">
+                                        <input type="button" @(ViewBag.CustomerID > 0 ? "" : "disabled") value="Account Offering" class="btn-custom btn btn-primary col-md-12" style="font-size: 11px;margin-bottom:6px;" onclick="AccountOffringModel()" />
+                                    </div>
+                                </td>
+                                <td class="col-md-3" style="padding-left: 3px;padding-right: 4.2px;padding-bottom: 8px;">
+
+                                    @*<div class="form-group mr0" style="margin-top: 2px;">
+                                            <input type="button" @(ViewBag.CustomerID > 0 ? "" : "disabled") value="Manual Invoice" class="btn-custom btn btn-primary col-md-12" style="font-size: 11px;margin-bottom:6px;" onclick="showManualInvoice(@Html.DisplayFor(one => one.CustomerDetail.CustomerId),'')" />
+                                        </div>
+                                        <div class="form-group mr0">
+                                            <input type="button" @(ViewBag.CustomerID > 0 ? "" : "disabled") value="Credit Transaction" class="btn-custom btn btn-primary col-md-12" style="font-size: 11px;margin-bottom:6px;" onclick="showCreditTransaction(@Html.DisplayFor(one => one.CustomerDetail.CustomerId))" />
+                                        </div>
+                                        <div class="form-group mr0">
+                                            <input type="button" @(ViewBag.CustomerID > 0 ? "" : "disabled") value="Manual Payment" class="btn-custom btn btn-primary col-md-12 manualpayment" style="font-size: 11px;margin-bottom:6px;" onclick="showManualPayment(@Html.DisplayFor(one => one.CustomerDetail.CustomerId))" />
+                                        </div>*@
+                                    <div class="form-group mr0">
+                                        <input type="button" @(ViewBag.CustomerID > 0 ? "" : "disabled") value="Statements" class="btn-custom btn btn-primary col-md-12" style="font-size: 11px;margin-bottom:6px;" onclick="showStatements(@Html.DisplayFor(one => one.CustomerDetail.CustomerId))" />
+                                    </div>
+                                    <div class="form-group mr0">
+                                        <input type="button" @(ViewBag.CustomerID > 0 ? "" : "disabled") value="Documents" class="btn-custom btn btn-primary col-md-12" style="font-size: 11px;margin-bottom:6px;" onclick="OpenCustomerUploadDocumentPopup(@Html.DisplayFor(one => one.CustomerDetail.CustomerId))" />
+                                    </div>
+                                    <div class="form-group mr0">
+                                        @*<input type="button" @(ViewBag.CustomerID > 0 ? "" : "disabled") value="Account History" onclick="showAccountHistoryPopup(@Html.DisplayFor(one => one.CustomerDetail.CustomerId))" class="btn-custom btn btn-primary col-md-12" style="font-size: 11px;" />*@
+                                        <div class="btn-group dropdown" style="display:inherit;">
+                                            <a target="_blank" dropdown-toggle'="" data-toggle="dropdown" @(ViewBag.CustomerID > 0 ? "" : "disabled") class="btn-custom btn btn-primary col-md-12">Reports</a>
+                                            <ul class="dropdown-menu pull-right">
+                                                <li><a href="#" onclick="showAccountHistoryPopup(@Html.DisplayFor(one => one.CustomerDetail.CustomerId))"><i class="fa fa-plus"></i> Account History </a></li>
+                                                <li><a href="#" onclick="showIncreaseDecreasePopup(@Html.DisplayFor(one => one.CustomerDetail.CustomerId))"><i class="fa fa-plus"></i> Increase/Decrease </a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                     
+                                </td>
+                                <td class="col-md-3" style="padding-left: 3px;padding-right: 4.2px;padding-bottom: 8px;">
+                                    @*<div class="form-group mr0" style="margin-top: 2px;">
+                                            <input type="button" @(ViewBag.CustomerID > 0 ? "" : "disabled") value="Transfer" class="btn-custom btn btn-primary col-md-12" style="font-size: 11px;margin-bottom:6px;" onclick="hasExistManintenance(@Html.DisplayFor(one => one.CustomerDetail.CustomerId),'transfer')" id="btncust_trans" />
+                                        </div>
+                                        <div class="form-group mr0">
+                                            <input type="button" @(ViewBag.CustomerID > 0 ? "" : "disabled") value="Increase/Decrease" class="btn-custom btn btn-primary col-md-12" style="font-size: 11px;padding-left: 0px;padding-right: 0px;margin-bottom:6px;" onclick="hasExistManintenance(@ViewBag.CustomerID,'increase')" id="btncust_increase" />
+                                        </div>*@
+                                   
+                                    <div class="form-group mr0" style="margin-top:-42px !important;">                                       
+                                        <div class="btn-group dropdown" style="display:inherit;">
+                                            <a dropdown-toggle'="" data-toggle="dropdown" @(ViewBag.CustomerID > 0 ? "" : "disabled") class="btn-custom btn btn-primary col-md-12">Inspection</a>
+                                            <ul class="dropdown-menu pull-right">
+                                                <li><a href="#" onclick="openCustomerInspectionHistoryPopup(@Html.DisplayFor(one => one.CustomerDetail.CustomerId))"><i class="fa fa-plus"></i> Inspection History </a></li>
+                                                <li><a href="#" onclick="openCustomerInspectionFormPopup(@Html.DisplayFor(one => one.CustomerDetail.CustomerId))"><i class="fa fa-plus"></i> Inspection Form </a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+        </div>
+        <div class="clearfix"> </div>
+    </div>
+</div>

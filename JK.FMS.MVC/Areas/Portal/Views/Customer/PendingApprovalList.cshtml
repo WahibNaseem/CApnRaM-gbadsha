@@ -1,0 +1,1512 @@
+﻿@model JKViewModels.Customer.CustomerSearchResultViewModelListModel
+@{
+    ViewBag.Title = "PendingApprovalList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section styles{
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")' rel="stylesheet" type="text/css" />
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")' rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+
+}
+<style>
+    .close {
+        background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+        height: 12px !important;
+        width: 12px !important;
+        margin-top: 0px !important;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .multiselect-container.dropdown-menu {
+        text-transform: none;
+        font-size: 14px;
+    }
+
+    #ui-datepicker-div {
+        z-index: 99999 !important;
+    }
+
+    .row {
+        margin: 0;
+        padding: 3px 0;
+    }
+
+    #CustomerList_length {
+        padding-left: 16px;
+    }
+
+    #modal_RegionModel .modal-content {
+        width: 55% !important;
+        margin-left: 30% !important;
+    }
+    .tablebox .table-responsive {
+    min-height:600px;    
+    }
+</style>
+
+
+
+@using (Html.BeginForm("SearchList", "Customer", FormMethod.Post, new { @id = "form_wizard_1", @role = "form", @class = "form " }))
+{
+
+    <div class="col-md-12">
+        <div class="form-group">
+            <div class="row" style="background-color: #4b85cc;color:#fff; padding-top:8px;padding-bottom:8px">
+                <div class="col-md-12">
+                    <div class="col-md-10" style="text-align:center">
+                        <span style="font-size:20px;">Pending Approval List</span>
+                    </div>
+                    <div class="col-md-2 pull-right">
+                        <div style="display:table-cell;padding-right: 5px;">
+                            Region
+                        </div>
+                        <div style="display:table-cell;width:100%;">
+                            @if (ViewBag.regionlist != null)
+                            {
+                                <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                                    @foreach (var item in (SelectList)ViewBag.regionlist)
+                                    {
+                                        <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="background-color: #fff;padding-top:5px;"></div>
+            <div class="row" style="background-color: #4b85cc;padding-top:8px;padding-bottom:8px">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <div class="portlet-input input-inline input-small">
+                            <div class="input-icon">
+                                <select name="CustomerList_length" id="CustomerList_length" aria-controls="CustomerList" class="form-control input-sm input-xsmall input-inline">
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                    <option value="-1">All</option>
+                                </select>
+                            </div>
+                            <div id="container">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="portlet-input input-inline input-small">
+                            <div class="input-icon">
+                                <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                                <input type="text" placeholder="Search..." class="form-control input-inline input-small input-sm search-field" id="input_Search" style="width:250px!important" />
+                            </div>
+                            <div id="container">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-listbox" style="max-width:100%;" id="divcustomerList">
+        <div class="tablebox">
+            <table class="table table-striped table-bordered table-hover order-column" id="CustomerList" style="display:none">
+                <thead>
+                    <tr>
+                        <th style="width:30px;text-align:center;">
+                            Region
+                        </th>
+                        <th style="width:7px;text-align:center;">
+                            Customer ID
+                        </th>
+                        <th style="text-align:center;width:160px;">
+                            Customer Name
+                        </th>
+                        <th style="text-align:center;width:220px;">
+                            Full Address
+                        </th>
+                        <th style="text-align:center;width:40px;">
+                            Phone
+                        </th>
+                        <th style="text-align:center;width:70px;">
+                            Account Type
+                        </th>
+                        <th style="text-align:center;width:10px;">
+                            Status
+                        </th>
+                        <th style="text-align:center;width:10px;">
+                            Contract Amount
+                        </th>
+                        <th style="text-align:center;width:10px;">
+                            Created By
+                        </th>
+                        <th style="text-align:center;width:4px;">
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.lstCustomerSearchResultViewModel)
+                    {
+                        <tr class="odd gradeX">
+                            <td style="text-align:center">
+                                <span>@Html.DisplayFor(modelItem => item.RegionName)</span>
+                            </td>
+                            <td style="text-align:center">
+                                @Html.DisplayFor(modelItem => item.CustomerNo)
+
+                            </td>
+                            <td>
+                                <a href="javascript:void(0)" onclick="showDetailPopup(@item.CustomerId)">@Html.DisplayFor(one => item.CustomerName)</a>
+                                @*<a href="@Url.Action(" CustomerDetail", "Customer" , new { area="Portal" , id=item.CustomerId })">
+                                        @Html.DisplayFor(one => item.CustomerName)
+                                    </a>*@
+                            </td>
+                            <td style="font-size:13px">
+                                <span>@Html.DisplayFor(modelItem => item.Address),</span>
+                                <span>@Html.DisplayFor(modelItem => item.City),</span>
+                                <span>@Html.DisplayFor(modelItem => item.StateName)&nbsp;</span>
+                                <span>@Html.DisplayFor(modelItem => item.PostalCode)</span>
+                            </td>
+                            <td style="text-align:center">
+                                @if (item.Phone != null)
+                                {
+                                    string phoneFormat = item.Phone;
+                                    if (item.Phone != null)
+                                    {
+                                        if (phoneFormat.Length == 10)
+                                        {
+                                            @Html.Label("(" + phoneFormat.Substring(0, 3) + ")" + " " + phoneFormat.Substring(3, 3) + "-" + phoneFormat.Substring(6, 4));
+                                        }
+                                        else
+                                        {
+                                            @Html.Label(phoneFormat);
+                                        }
+                                    }
+                                }
+                            </td>
+                            <td style="text-align:center">
+                                @if (item.AccountTypeListId != null && !string.IsNullOrEmpty(item.AccountTypeListName))
+                                {
+                                    @Html.DisplayFor(modelItem => item.AccountTypeListName)
+                                }
+                            </td>
+                            <td style="text-align:right">@item.StatusName</td>
+                            <td style="text-align:right">
+                                @if (item.Amount != null)
+                                {
+                                    @*<text> @string.Format("{0:c}", item.Amount)</text>*@
+
+                                    <a onclick="OpenCustomerDistributionPopup(@item.CustomerId)">@string.Format("{0:c}", item.Amount)</a>
+                                }
+                            </td>
+                            <td style="text-align:center">@item.CreatedBy</td>
+                            <td style="text-align:center">
+                                @*<a href="@Url.Action(" MaintenanceStepOne", "Customer" , new { area="Portal" , id=item.Customer.CustomerId })"><i class="fa fa-user"></i></a>*@
+                                @*<a onclick="OpenCustomerDistributionPopup(@item.CustomerId)"><i class="fa fa-user"></i></a>*@
+                                @*<a><i class="fa fa-user"></i></a>*@
+                                <div class="btn-group dropdown">
+                                    <a href="_blank" dropdown-toggle' data-toggle="dropdown"><i class="fa fa-hand-o-right" aria-hidden="true"></i></a>
+                                    <ul class="dropdown-menu pull-right">
+                                        <li><a href="javascript:void(0);" onclick="showEditCustomerInfo(@item.CustomerId)"><i class="fa fa-plus"></i> Edit Customer Info </a></li>
+                                        <li><a href="javascript:void(0);" onclick="OpenCustomerContractPopup(@item.CustomerId)"><i class="fa fa-plus"></i> Customer Contract </a></li>
+                                        <li><a href="javascript:void(0);" onclick="OpenCustomerUploadDocumentPopup(@item.CustomerId)"><i class="fa fa-plus"></i> Documents </a></li>
+                                        @*<li><a javascript:void(0);><i class="fa fa-plus"></i> Maintenance </a></li>*@
+                                        <li><a href="javascript:void(0);" onclick="FranchiseeDistribution(@item.CustomerId)"><i class="fa fa-plus"></i> Distribution </a></li>
+
+                                        @*<li><a href="javascript:void(0);" onclick="OpenCustomerContractPopup(@item.CustomerId)"><i class="fa fa-plus"></i> Customer Contract </a></li>
+                                            <li><a href="javascript:void(0);" onclick="showServiceLog(@item.CustomerId , @item.CustomerName ,@item.Phone ,@item.CustomerNo)"><i class='fa fa-plus'></i>Customer Service log</a></li>
+                                            <li><a href="javascript:void(0);" onclick="showCollectionLog(@item.CustomerId, @item.CustomerName ,@item.Phone ,@item.CustomerNo)"><i class="fa fa-plus"></i>Collection Call Log</a></li>
+                                            <li><a href="javascript:void(0);" onclick="location.href = '@Url.Action(" ManualInvoice", "AccountReceivable" , new { area="Portal" , id=@item.CustomerId })'"><i class="fa fa-external-link-square"></i>Manual Invoice</a></li>
+                                            <li><a href="javascript:void(0);" onclick="location.href = '@Url.Action(" MaintenanceStepThree", "Customer" , new { area="Portal" , id=@item.CustomerId })'"><i class="fa fa-external-link-square"></i>Credit Transaction</a></li>*@
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade custom-model custom-form-design" id="ModalCustomerDistributionPopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" style="width:645px">
+            <div class="modal-content" style="border-radius: 8px;" id="RenderCustomerDistribution">
+            </div>
+        </div>
+    </div>
+    <!--Customer Contract Modal-->
+    @*<div class="modal fade custom-model custom-form-design" id="modal_CustomerContractPopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog" style="width:1120px">
+                <div class="modal-content" style="border-radius: 8px;" id="RenderCustomerContractDetails">
+                </div>
+            </div>
+        </div>*@
+
+    <div class="modal fade custom-model custom-form-design" id="modal_CustomerContractPopupModal" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" style="width:785px">
+            <div class="modal-content" style="border-radius: 8px;" id="RenderCustomerContractDetailsModal">
+            </div>
+        </div>
+    </div>
+
+    <!--Customer Service log-->
+    <div class="modal fade in" id="modal_ServiceCallLog" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                        CUSTOMER SERVICE CALL LOG
+                    </h4>
+                </div>
+                <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                    <div class="form-body" style="padding-top: 0px;">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-3 control-label">
+                                    <span>Customer No.<span style="color:#000000;">&nbsp;:</span></span>
+                                </div>
+                                <div class="col-md-2" style="padding-top: 8px;">
+                                    <span id="service_customerno"></span>
+                                </div>
+                                <div class="col-md-2">
+                                </div>
+                                <div class="col-md-2 control-label">
+                                    <span>Contact<span style="color:#000000;">&nbsp;:</span></span>
+                                </div>
+                                <div class="col-md-3" style="padding-top: 8px;">
+                                    <span id="service_contact"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-3 control-label" style="padding-top: 0px;">
+                                    <span>Customer Name<span style="color:#000000;">&nbsp;:</span></span>
+                                </div>
+                                <div class="col-md-4" style="">
+                                    <span id="service_name"></span>
+                                </div>
+                                <div class="col-md-2 control-label" style="padding-top: 0px;">
+                                    <span>Phone No.<span style="color:#000000;">&nbsp;:</span></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <span id="service_phone"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label">
+                                    Initiated By<span style="color:#000000;"> &nbsp;:</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-control input-sm"><option></option></select>
+                                </div>
+                                <div class="col-md-2 control-label">
+                                    Area<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-control input-sm"><option></option></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label">
+                                    Spoke With<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" class="input-sm form-control" />
+                                </div>
+                                <div class="col-md-2 control-label">
+                                    Type<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="input-sm form-control">
+                                        <option>Claim / Incident</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label">
+                                    Action<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-10">
+                                    <input type="text" class="input-sm form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label">
+                                    Comments<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-10">
+                                    <textarea class="input-sm form-control" rows="5" style="min-width: 556px;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label">
+                                    Status<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-control input-sm"><option></option></select>
+                                </div>
+                                <div class="col-md-2 control-label">
+                                    Call Back<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group input-medium date date-picker" data-date-format="dd-mm-yyyy" data-date-start-date="+0d">
+                                        <input type="text" class="form-control input-sm" />
+                                        <span class="input-group-btn">
+                                            <button class="btn default" type="button">
+                                                <i class="fa fa-calendar"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label">
+                                    Follow By<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="input-sm form-control">
+                                        <option>Option1</option>
+                                        <option>Option2</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 control-label">
+                                    Email Call Notes to<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="input-sm form-control">
+                                        <option>Option1</option>
+                                        <option>Option2</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                            <div class="col-md-12 text-right" style="padding-right:30px;">
+                                <input type="reset" class="btn btn-primary btn-default" value="Cancel" />
+                                <input type="submit" class="btn btn-primary btn-default" id="SaveCloseForm" value="Save & Close" />
+                                <input type="submit" class="btn btn-primary btn-default" id="SaveAndNewForm" value="Save & New" />
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:5px">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover" id="tblServiceCall">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:70px;text-align:center;background-color: #4b85cc;color:white" class="tblServiceCall_CustNo">
+                                                    Date/Time
+                                                </th>
+                                                <th style="text-align:center;width:30px;background-color: #4b85cc;color:white" class="tblServiceCall_Status">
+                                                    Status
+                                                </th>
+                                                <th style="text-align:center;width:60px;background-color: #4b85cc;color:white" class="tblServiceCall_Spoke">
+                                                    Spoke With
+                                                </th>
+                                                <th style="text-align:center;width:60px;background-color: #4b85cc;color:white" class="tblServiceCall_Action">
+                                                    Action
+                                                </th>
+                                                <th style="text-align:center;width:70px;background-color: #4b85cc;color:white" class="tblServiceCall_CallBack">
+                                                    Call Back
+                                                </th>
+                                                <th style="text-align:center;width:200px;background-color: #4b85cc;color:white" class="tblServiceCall_Comment">
+                                                    Comment
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @*
+                                                <tr>
+                                                    <td style="text-align:center;">10/26/2017<br />5:55:24 AM</td>
+                                                    <td style="text-align:center;">Other</td>
+                                                    <td style="text-align:center;"></td>
+                                                    <td style="text-align:center;">Email Invoice</td>
+                                                    <td style="text-align:center;"></td>
+                                                    <td>System emailed invoice 101702016 to EGARD@PAULTBIDDLEMD.COM via eBill function --> jillbean</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="text-align:center;">9/21/2017<br />2:04:15 AM</td>
+                                                    <td style="text-align:center;">Other</td>
+                                                    <td style="text-align:center;"></td>
+                                                    <td style="text-align:center;">Email Invoice</td>
+                                                    <td style="text-align:center;"></td>
+                                                    <td>System emailed invoice 101702015 to EGARD@PAULTBIDDLEMD.COM via eBill function --> jillbean</td>
+                                                </tr>*@
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Collection Call log-->
+    <div class="modal fade in" id="modal_CollectionCallLog" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                        COLLECTION CALL LOG
+                    </h4>
+                </div>
+                <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                    <div class="form-body" style="padding-top: 0px;">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-3 control-label">
+                                    <span>Customer No.<span style="color:#000000;">&nbsp;:</span></span>
+                                </div>
+                                <div class="col-md-2" style="padding-top:8px;">
+                                    <span><span id="collection_customerno"></span></span>
+                                </div>
+                                <div class="col-md-2">
+                                </div>
+                                <div class="col-md-2 control-label">
+                                    <span>Contact<span style="color:#000000;">&nbsp;:</span></span>
+                                </div>
+                                <div class="col-md-3" style="padding-top:8px;">
+                                    <span id="collection_contact"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-3 control-label" style="padding-top: 0px;">
+                                    <span>Customer Name<span style="color:#000000;">&nbsp;:</span></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <span id="collection_name"></span>
+                                </div>
+                                <div class="col-md-2 control-label" style="padding-top: 0px;">
+                                    <span>Phone No.<span style="color:#000000;">&nbsp;:</span></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <span id="collection_phone"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row" style="padding-left:25px;padding-right:25px;">
+                                <div class="col-md-12" style="border: 1px solid #b1acac;">
+                                    <div class="col-md-12" style="padding-top: 0px;padding-bottom: 12px;">
+                                        <center>AR Status Effective: 12/08/2017</center>
+                                    </div>
+                                    <div class="col-md-12" style="padding-top: 0px;padding-bottom: 12px;">
+                                        <div class="col-md-3">Aging Current: $0.00</div>
+                                        <div class="col-md-2">30 Days: $0.00</div>
+                                        <div class="col-md-2">60 Days: $0.00</div>
+                                        <div class="col-md-2">90 Days: $0.00</div>
+                                        <div class="col-md-3">120 Days: $0.00</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label">
+                                    Call Date/Time<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-3 control-label" style="text-align:left;">
+                                    @DateTime.Now.ToString("MM/dd/yyyy hh:mm tt")
+                                </div>
+                                <div class="col-md-3 control-label">
+                                    <input type="checkbox" name="InternalNote" value="true" class="checkbox-inline" />&nbsp;Internal Note
+                                </div>
+                                <div class="col-md-2 control-label">Staus<span style="color:#000000;">&nbsp;:</span></div>
+                                <div class="col-md-2">
+                                    <select class="form-control input-sm"><option>Busy</option></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label">
+                                    Spoke With<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="text" class="input-sm form-control" />
+                                </div>
+                                <div class="col-md-2 control-label" style="padding: 5px 27px 0px 0px;">
+                                    Action<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2" style="padding:0px;">
+                                    <input type="text" class="input-sm form-control" />
+                                </div>
+                                <div class="col-md-2 control-label">
+                                    Followup By<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-2">
+                                    <select class="input-sm form-control dropdown">
+                                        <option>Option1</option>
+                                        <option>Option2</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-2 control-label">
+                                    Comments<span style="color:#000000;">&nbsp;:</span>
+                                </div>
+                                <div class="col-md-10">
+                                    <textarea class="input-sm form-control" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-4">
+                                    Followup By@*style="margin:0 88px 0px -20px!important"*@
+                                    Call Back<span style="color:#000000;">&nbsp;:</span>
+                                    <div class="input-group input-medium date date-picker" data-date-format="dd-mm-yyyy" data-date-start-date="+0d">
+                                        <input type="text" class="input-sm form-control" />
+                                        <span class="input-group-btn">
+                                            <button class="btn default" type="button">
+                                                <i class="fa fa-calendar"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    Email Comment to<span style="color:#000000;">&nbsp;:</span>
+                                    @*@Html.DropDownListFor(x => x.EmailNotesTo, new SelectList(ViewBag.Franchisees, "Key", "Value"), new { @class = "form-control input-sm", required = "required", @multiple = "multiple" })*@
+                                    <select class="form-control input-sm" multiple>
+                                        <option value="Maria">Maria</option>
+                                        <option value="Stacy">Stacy</option>
+                                        <option value="Andrea">Andrea</option>
+                                        <option value="Andrea">Bob Miller</option>
+                                        <option value="Andrea"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    Relate To Franchise<span style="color:#000000;">&nbsp;:</span>
+                                    <select class="input-sm form-control dropdown" multiple="multiple">
+                                        <option>Option1</option>
+                                        <option>Option2</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                            <div class="col-md-12 text-right" style="padding-right:30px;">
+                                <input type="reset" class="btn btn-primary btn-default" value="Cancel" />
+                                <input type="button" class="btn btn-primary btn-default" id="SaveForm" value="Save" />
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:5px">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover" id="tblCollectionCall">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:70px;text-align:center;background-color: #4b85cc;color:white" class="tblServiceCall_CustNo">
+                                                    Date/Time
+                                                </th>
+                                                <th style="text-align:center;width:30px;background-color: #4b85cc;color:white" class="tblServiceCall_Status">
+                                                    Status
+                                                </th>
+                                                <th style="text-align:center;width:60px;background-color: #4b85cc;color:white" class="tblServiceCall_Spoke">
+                                                    Spoke With
+                                                </th>
+                                                <th style="text-align:center;width:60px;background-color: #4b85cc;color:white" class="tblServiceCall_Action">
+                                                    Action
+                                                </th>
+                                                <th style="text-align:center;width:70px;background-color: #4b85cc;color:white" class="tblServiceCall_CallBack">
+                                                    Call Back
+                                                </th>
+                                                <th style="text-align:center;width:200px;background-color: #4b85cc;color:white" class="tblServiceCall_Comment">
+                                                    Comment
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @*
+                                                <tr>
+                                                    <td style="text-align:center;">10/26/2017<br />5:55:24 AM</td>
+                                                    <td style="text-align:center;">Other</td>
+                                                    <td style="text-align:center;"></td>
+                                                    <td style="text-align:center;">Email Invoice</td>
+                                                    <td style="text-align:center;"></td>
+                                                    <td>System emailed invoice 101702016 to EGARD@PAULTBIDDLEMD.COM via eBill function --> jillbean</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="text-align:center;">9/21/2017<br />2:04:15 AM</td>
+                                                    <td style="text-align:center;">Other</td>
+                                                    <td style="text-align:center;"></td>
+                                                    <td style="text-align:center;">Email Invoice</td>
+                                                    <td style="text-align:center;"></td>
+                                                    <td>System emailed invoice 101702015 to EGARD@PAULTBIDDLEMD.COM via eBill function --> jillbean</td>
+                                                </tr>*@
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="form-horizontal" action="" id="form_ModelCustomerDetailsPopup"></div>
+
+<form class="form-horizontal" action="" id="form_Billingsetting" method="POST">
+    @*<div class="modal fade custom-model custom-form-design" id="ModalEditCustomerInfo" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" style="width:869px" id="RenderEditCustomerInfoPopup">
+        </div>
+    </div>*@
+</form>
+
+<div class="modal fade custom-model custom-form-design" id="modal_CustomerContractPopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:785px">
+        <div class="modal-content" style="border-radius: 8px;" id="RenderCustomerContractDetails">
+        </div>
+    </div>
+</div>
+
+<div class="form-horizontal" action="" id="form_FranchiseeDistribution"></div>
+
+<div class="form-horizontal" action="" id="form_FranchiseeIncreaseDistribution"></div>
+
+<div class="modal fade in" id="ModelCustomerUploadDocumentPopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:750px">
+        <div class="modal-content" style="border-radius: 8px;" id="RenderCustomerUploadDocumentPopup">
+        </div>
+    </div>     
+</div>
+
+<div class="modal fade in" id="modal_RegionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Select Region
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Select Region</label>
+                                @if (ViewBag.regionlist != null)
+                                {
+                                <select class="form-control input-sm" id="selectregionlist">
+                                    <option value="">Select Region</option>
+                                    @foreach (var item in (SelectList)ViewBag.regionlist)
+                                        {
+                                        <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                        }
+                                </select>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div class="col-md-12">
+                        <button type="button" name="SaveNew" id="btnRegion" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:0px;">Select Region</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section pageplugins{
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/chosen.css")" />
+    <script src="@Url.Content("~/Scripts/chosen.jquery.min.js")" type="text/javascript"></script>
+    <script src="~/Scripts/jquery.uniform.min.js"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+}
+
+
+
+@section scripts{
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+
+
+    <script>
+        var flagForCreatedUser = '@Convert.ToString(JKApi.Core.Common.ClaimView.Instance.GetCLAIM_ROLE_TYPE() == "Accounting-User" || JKApi.Core.Common.ClaimView.Instance.GetCLAIM_ROLE_TYPE() == "Marketing" ? true : false)'
+        var CustomerId = parseInt(@TempData["CustomerID"])
+        $(window).load(function () {
+            if ('@ViewBag.selectedRegionId' == 0) {
+                $("#modal_RegionModel").modal({ backdrop: 'static' });
+            }
+        });
+        $(document).ready(function () {
+            if (!isNaN(CustomerId)) {
+                showDetailPopup(CustomerId);
+            }
+            $("#btnRegion").click(function () {
+                if ($("#selectregionlist").val() != "") {
+                    $("#regionlist option[value='" + $("#selectregionlist").val() + "']").attr("selected", 1);
+                    $("#regionlist").multiselect("refresh");
+                    //initTable();
+                    $(".close").click();
+                }
+            });
+
+            $("#regionlist").multiselect({
+                includeSelectAllOption: true,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2
+            });
+
+            if ('@ViewBag.selectedRegionId' > 0) {
+
+                $("#regionlist option[value='" + '@ViewBag.selectedRegionId' + "']").attr("selected", 1);
+                $("#regionlist").multiselect("refresh");
+            }
+
+            $(".chosen-select").chosen({ no_results_text: "Oops, nothing found!" });
+
+            $('#ddlStatus').chosen();
+
+            $("#ddlStatus").change(function () {
+                $("#hdnStatusIds").val($(this).val());
+                $("#btnSubmit").click();
+                //var table = $("#CustomerList").DataTable();
+                //table.search($("#ddlStatus option:selected").text()).draw();
+            });
+
+            @if (Model != null && Model.StatusIds != null) {
+                <text>
+            $("#hdnStatusIds").val('@Model.StatusIds');
+            $("#ddlStatus").val($("#hdnStatusIds").val().split(','));
+            $("#ddlStatus").trigger("chosen:updated");
+            </text>
+            }
+
+            $('#divcustomerList').hide();
+            $.fn.dataTableExt.afnFiltering.push(function (oSettings, aData, iDataIndex) {
+               
+                return true;
+            });
+            var oTable = $('#CustomerList').DataTable({
+                "paging": true,
+                "ordering": true,
+                "info": true,
+                "bProcessing": true,
+                "iDisplayLength": 25,
+                "dom": "<'table-responsive't><'bottom'ip><'clear'>"
+            });
+
+            $("#input_Search").keyup(function () {
+                var table = $("#CustomerList").DataTable();
+                table.search($(this).val()).draw();
+            });
+
+            $("#CustomerList_length").change(function () {
+                var table = $("#CustomerList").DataTable();
+                if ($(this).val() > 0) {
+                    table.page.len($(this).val()).draw();
+                }
+                else if ($(this).val() == -1) {
+                    table.page.len(table.rows().count()).draw();
+                }
+                else {
+                    table.page.page.len(25).draw();
+                }
+            })
+
+
+            $("#regionlist").change(function () {
+                var table = $("#CustomerList").DataTable();
+                table.search($("#regionlist option:selected").text()).draw();
+            })
+
+            $('#regionlist').change(function () {
+                _bindCustomer($('#regionlist').val());
+            });
+
+            //$('#chkActive').on("click", function (e) {
+            //    console.log('click');
+            //    oTable.draw();
+            //});
+            //$('#chkInActive').on("click", function (e) {
+            //    console.log('click');
+            //    oTable.draw();
+            //});
+
+            $('#CustomerList').show();
+            $('#divcustomerList').show();
+
+            $('.modal-dialog').draggable();
+        });
+
+
+        function _bindCustomer(regionid) {
+            var sURL = '@Url.Action("CustomerDetailListByRegion", "Customer", new { area = "Portal" })?RegionId=' + regionid;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+        function OpenCustomerDistributionPopup(Id) {
+            var sURL = '@Url.Action("RenderCustomerDistributionDetailPopup", "Customer", new { area = "Portal" })?id=' + Id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#RenderCustomerDistribution').html(data);
+                    $("#ModalCustomerDistributionPopup").modal({ resizable: true, draggable: true });
+
+
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+            //$("#modal_CustomerContractPopup").modal({ backdrop: 'static' });
+        }
+
+        function OpenCustomerContractPopup(Id) {
+
+            var sURL = '@Url.Action("RenderCustomerContractDetails", "Customer", new { area = "Portal" })?id=' + Id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#RenderCustomerContractDetails').html(data);
+                    //$('#Contract_StartDate').inputmask("mm/dd/yyyy", {});
+                    //$('#Contract_StartDate').inputmask("mm/dd/yyyy", {});
+                    //$('#Contract_SignDate').inputmask("mm/dd/yyyy", {});
+                    //$('#Contract_StatusDate').inputmask("mm/dd/yyyy", {});
+                    //$('#Contract_ExpirationDate').inputmask("mm/dd/yyyy", {});
+                    //$('#Contract_ResumeDate').inputmask("mm/dd/yyyy", {});
+                    $(".date-picker").datepicker();
+                    $(".input-group-btn").click(function () {
+                        $(this).prev().trigger("focus");
+                        $(this).prev().trigger("focus");
+                    });
+                    $("#modal_CustomerContractPopup").modal({ backdrop: 'static' });
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+            //$("#modal_CustomerContractPopup").modal({ backdrop: 'static' });
+        }
+        //Customer Contract Popup
+        var OpenCustomerContractPopupOld = function (Id) {
+
+            //$.blockUI();
+            var sURL = '@Url.Action("PendingApprovalCustomerContractDetailPopup", "Customer", new { area = "Portal" })?id=' + Id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#RenderCustomerContractDetails').html(data);
+                    $('#Contract_StartDate').inputmask("mm/dd/yyyy", {});
+                    $('#Contract_StartDate').inputmask("mm/dd/yyyy", {});
+                    $('#Contract_SignDate').inputmask("mm/dd/yyyy", {});
+                    $('#Contract_StatusDate').inputmask("mm/dd/yyyy", {});
+                    $('#Contract_ExpirationDate').inputmask("mm/dd/yyyy", {});
+                    $('#Contract_ResumeDate').inputmask("mm/dd/yyyy", {});
+                    //$.unblockUI();
+                    $(".date-picker").datepicker();
+                    //$("#Contract_ExpirationDate").datepicker();
+                    $(".input-group-btn").click(function () {
+                        $(this).prev().trigger("focus");
+                        $(this).prev().trigger("focus");
+                    });
+                    $("#modal_CustomerContractPopup").modal({ backdrop: 'static' });
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+            //$("#modal_CustomerContractPopup").modal({ backdrop: 'static' });
+        }
+
+
+        /* Show Service Log in Modal*/
+        var showServiceLog = function (id, name, phone, no) {
+
+            /*Set the name , phone , customer number field*/
+            $("#service_name").html("<b>" + name + "</b>");
+            $("#service_phone").html("<b>" + phone + "</b>");
+            $("#service_customerno").html("<b>" + no + "</b>");
+
+            if (id != null) {
+                var CurrentLink = '@Url.Action("GetServiceLog", "Customer", new { area = "Portal" })?id=' + id;
+                var dtable = $('#tblServiceCall').dataTable({
+                    "bAutoWidth": false,
+                    cache: false,
+                    "order": false,
+                    "bDestroy": true,
+                    "bLengthMenu": false,
+                    "bPaginate": false,
+                    "bLengthChange": false,
+                    "dom": '<"top">rt<"bottom"lp><"clear">',
+                    "aaSorting": [[0, "desc"]],
+                    "sAjaxSource": CurrentLink,
+                    "sAjaxDataProp": "aadata",  // Internationalisation. For more info refer to http://datatables.net/manual/i18n
+                    "rowCallback": function (nRow, data) {
+                    },
+
+                    "aoColumns": [
+                        {
+                            "sName": "Date/Time",
+                            "bSortable": true,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                var datetime = "<span>" + full.CallDate + "<br />" + formatJSONTime(full.CallTime) + "</span>";
+                                return datetime;
+                            }
+                        },
+                        {
+                            "sName": "Status",
+                            "bSortable": true,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                var status = getstatus(full.Status);
+                                return full.Status;
+                            }
+                        },
+                        {
+                            "sName": "SpokeWith",
+                            "bSortable": true,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                return full.SpokeWith;
+                            }
+                        },
+                        {
+                            "sName": "Action",
+                            "bSortable": true,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                return full.Action;
+                            }
+                        },
+                        {
+                            "sName": "CallBack",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+                                var date = formatJSONDate(full.CallBack);
+                                return date;
+                            }
+                        },
+                        {
+                            "sName": "Comments",
+                            "bSortable": true,
+                            "sClass": "alignleft",
+                            "mRender": function (data, type, full) {
+                                return full.Comments;
+                            }
+                        },
+                    ],
+                });
+            }
+            $("#modal_ServiceCallLog").modal({ backdrop: 'static' });
+        }
+
+
+
+        /*Show Collection Call log */
+        function showCollectionLog(id, name, phone, no) {
+
+            /*Set the name , phone , customer number field*/
+            $("#collection_name").html("<b>" + name + "</b>");
+            $("#collection_phone").html("<b>" + phone + "</b>");
+            $("#collection_customerno").html("<b>" + no + "</b>");
+
+            if (id != null) {
+                var CurrentLink = '@Url.Action("GetCollectionLog", "Customer", new { area = "Portal" })?id=' + id;
+                var dtable = $('#tblCollectionCall').dataTable({
+                    "bAutoWidth": false,
+                    cache: false,
+                    "order": false,
+                    "bDestroy": true,
+                    "bLengthMenu": false,
+                    "dom": '<"top">rt<"bottom"lp><"clear">',
+                    "aaSorting": [[0, "desc"]],
+                    "sAjaxSource": CurrentLink,
+                    "sAjaxDataProp": "aadata",  // Internationalisation. For more info refer to http://datatables.net/manual/i18n
+                    "rowCallback": function (nRow, data) {
+                    },
+
+                    "aoColumns": [
+                        {
+                            "sName": "Date/Time",
+                            "bSortable": true,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                var datetime = "<span>" + full.CallDate + "<br />" + formatJSONTime(full.CallTime) + "</span>";
+                                return datetime;
+                            }
+                        },
+                        {
+                            "sName": "Status",
+                            "bSortable": true,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                return full.Status;
+                            }
+                        },
+                        {
+                            "sName": "SpokeWith",
+                            "bSortable": true,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                return full.SpokeWith;
+                            }
+                        },
+                        {
+                            "sName": "Action",
+                            "bSortable": true,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                return full.Action;
+                            }
+                        },
+                        {
+                            "sName": "CallBack",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+                                var date = formatJSONDate(full.CallBack);
+                                return date;
+                            }
+                        },
+                        {
+                            "sName": "Comments",
+                            "bSortable": true,
+                            "sClass": "alignleft",
+                            "mRender": function (data, type, full) {
+                                return full.Comments;
+                            }
+                        },
+                    ],
+                });
+            }
+            $("#modal_CollectionCallLog").modal({ backdrop: 'static' });
+        }
+
+
+    </script>
+
+
+    <script>
+        var c_typeaheadSource = [];
+        function showDetailPopup(Id) {
+            $(".PendingMessage").remove();
+            var sURL = '@Url.Action("PendingApprovalListCustomerDetailPopup", "Customer", new { area = "Portal" })?id=' + Id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_ModelCustomerDetailsPopup').html(data);
+
+                    $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("GetAllFranchisees", "Franchise", new { area = "Portal" })',
+                        data: {},
+                        success: function (data) {
+                            c_typeaheadSource = [];
+                            $.each(data, function (key, value) {
+                                c_typeaheadSource.push({ id: value.FranchiseeId, name: value.FranchiseeNo + ' ' + value.Name })
+                            });
+                        }
+                    });
+
+                    $("#ModelCustomerDetailsPopup").modal({ backdrop: 'static' });
+                    if (flagForCreatedUser != null && flagForCreatedUser != undefined && flagForCreatedUser != "") {
+                        if (flagForCreatedUser == "True") {
+                            $(".MainAdmins").hide();
+                            $(".ActionPenidng").show();
+                        }
+                    }
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+        function showEditCustomerInfo(Id) {
+
+            var sURL = '@Url.Action("PendingApprovalListEditCustomerPopup", "Customer", new { area = "Portal" })?id=' + Id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_Billingsetting').html(data);
+                    $("#ModalEditCustomerInfo").modal({ backdrop: 'static' });
+                    $(".input-group-btn").click(function () {
+                        $(this).prev().trigger("focus");
+                        $(this).prev().trigger("focus");
+                    });
+                    $(".date-picker").datepicker();
+                    $(".edit").attr("disabled", "disabled");
+                    $(".edit").attr("readonly", "readonly");
+
+                    $("#btnSave").prop("disabled", "false");
+                    $("#btnSave").prop("readonly", "true");
+                    $("#btnCancel").prop("disabled", "false");
+                    $("#btnCancel").prop("readonly", "true");
+                    $("#btnSave").hide();
+                    $("#btnCancel").hide();
+
+                    $(".editmain1").attr("disabled", "disabled");
+                    $(".editmain1").attr("readonly", "readonly");
+                    $(".editmain").attr("disabled", "disabled");
+                    $(".editmain").attr("readonly", "readonly");
+
+                    $(".editbill1").attr("disabled", "disabled");
+                    $(".editbill1").attr("readonly", "readonly");
+                    $(".editbill").attr("disabled", "disabled");
+                    $(".editbill").attr("readonly", "readonly");
+
+                    $(".EditBtn").show();
+                    $(".SaveBtn").hide();
+                    $(".CancelBtn").hide();
+
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+        }
+        function OpenCustomerContractPopupModal(Id) {
+            var sURL = '@Url.Action("RenderCustomerContractDetails", "Customer", new { area = "Portal" })?id=' + Id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#RenderCustomerContractDetailsModal').html(data);
+                    $(".date-picker").datepicker();
+                    $("#modal_CustomerContractPopupModal").modal({ backdrop: 'static' });
+                    $('#Contract_StartDate').inputmask("mm/dd/yyyy", {});
+                    $('#Contract_StartDate').inputmask("mm/dd/yyyy", {});
+                    $('#Contract_SignDate').inputmask("mm/dd/yyyy", {});
+                    $('#Contract_StatusDate').inputmask("mm/dd/yyyy", {});
+                    $('#Contract_ExpirationDate').inputmask("mm/dd/yyyy", {});
+                    $('#Contract_ResumeDate').inputmask("mm/dd/yyyy", {});
+                    //$("#Contract_ExpirationDate").datepicker();
+                    $(".input-group-btn").click(function () {
+                        $(this).prev().trigger("focus");
+                        $(this).prev().trigger("focus");
+                    });
+                    //$("#ModelCustomerDetailsPopup").modal('hide');
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+    </script>
+    <script>
+        var editFranchiseeDistribution = function () {
+
+            $(".editvalue").addClass("editvaluetext");
+            $(".editvalue").removeClass("editmode");
+            //$("#btnSaveDistribution").show();
+            //$("#btnEditDistribution").hide();
+            $(".editvalue").removeAttr("disabled").removeAttr("readonly");
+            $(".editcheck").removeAttr("disabled").removeAttr("readonly");
+        };
+        function FranchiseeDistribution(id) {
+            var sURL = '@Url.Action("CustomerDetailFranchiseeDistribution", "Customer", new { area = "Portal" })?Id=' + id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_FranchiseeDistribution').html(data);
+
+                    $(".editvalue").removeClass("editvaluetext");
+                    $(".editvalue").addClass("editmode");
+                    $(".editvalue").attr("readonly", "readonly");
+                    //$("#btnSaveDistribution").hide();
+                    //$("#btnEditDistribution").show();
+                    $(".editcheck").attr("disabled", "disabled");
+                    $(".editcheck").attr("readonly", "readonly");
+
+                    FranchiseeDistributionData(id);
+                    bindcustomerDetailDisLoad(id);
+                    $('.modal-dialog').draggable();
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+        function IncreaseDistribution() {
+            var id = 272;
+            var sURL = '@Url.Action("CustomerDetailIncreaseDistribution", "Customer", new { area = "Portal" })?Id=' + id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_FranchiseeIncreaseDistribution').html(data);
+
+                    $(".editvalue").removeClass("editvaluetext");
+                    $(".editvalue").addClass("editmode");
+                    $(".editvalue").attr("readonly", "readonly");
+                    //$("#btnSaveDistribution").hide();
+                    //$("#btnEditDistribution").show();
+                    $(".editcheck").attr("disabled", "disabled");
+                    $(".editcheck").attr("readonly", "readonly");
+
+                    FranchiseeDistributionData(id);
+                    bindcustomerDetailDisLoad(id);
+                    $('.modal-dialog').draggable();
+                    $('#modalDataCusContractPopup').modal('hide');
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+        function bindcustomerDetailDisLoad(customerid) {
+
+        }
+        var editFranchiseeDistribution = function () {
+
+            $(".editvalue").addClass("editvaluetext");
+            $(".editvalue").removeClass("editmode");
+            //$("#btnSaveDistribution").show();
+            //$("#btnEditDistribution").hide();
+            $(".editvalue").removeAttr("disabled").removeAttr("readonly");
+            $(".editcheck").removeAttr("disabled").removeAttr("readonly");
+        };
+
+        function FranchiseeDistribution(id) {
+            var sURL = '@Url.Action("CustomerDetailFranchiseeDistribution", "Customer", new { area = "Portal" })?Id=' + id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_FranchiseeDistribution').html(data);
+
+                    $(".editvalue").removeClass("editvaluetext");
+                    $(".editvalue").addClass("editmode");
+                    $(".editvalue").attr("readonly", "readonly");
+                    //$("#btnSaveDistribution").hide();
+                    //$("#btnEditDistribution").show();
+                    $(".editcheck").attr("disabled", "disabled");
+                    $(".editcheck").attr("readonly", "readonly");
+
+                    FranchiseeDistributionData(id);
+                    bindcustomerDetailDisLoad(id);
+                    $('.modal-dialog').draggable();
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+
+        function IncreaseDistribution() {
+            var id = 272;
+            var sURL = '@Url.Action("CustomerDetailIncreaseDistribution", "Customer", new { area = "Portal" })?Id=' + id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_FranchiseeIncreaseDistribution').html(data);
+
+                    $(".editvalue").removeClass("editvaluetext");
+                    $(".editvalue").addClass("editmode");
+                    $(".editvalue").attr("readonly", "readonly");
+                    //$("#btnSaveDistribution").hide();
+                    //$("#btnEditDistribution").show();
+                    $(".editcheck").attr("disabled", "disabled");
+                    $(".editcheck").attr("readonly", "readonly");
+
+                    FranchiseeDistributionData(id);
+                    bindcustomerDetailDisLoad(id);
+                    $('.modal-dialog').draggable();
+                    $('#modalDataCusContractPopup').modal('hide');
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+
+        function bindcustomerDetailDisLoad(customerid) {
+
+        }
+
+        function viewDistributionFee() {
+            $("#modal_Distribution").modal({ backdrop: 'static' });
+        }
+        function Franchiseeservice(mo, tu, we, th, fr, sa, su) {
+
+            $("#chkScheduleMonday").prop('checked', false);
+            $("#chkScheduleTuesday").prop('checked', false);
+            $("#chkScheduleWednesday").prop('checked', false);
+            $("#chkScheduleThursday").prop('checked', false);
+            $("#chkScheduleFriday").prop('checked', false);
+            $("#chkScheduleSaturday").prop('checked', false);
+            $("#chkScheduleSunday").prop('checked', false);
+
+
+            if (mo == 1)
+                $("#chkScheduleMonday").prop('checked', true);
+            if (tu == 1)
+                $("#chkScheduleTuesday").prop('checked', true);
+            if (we == 1)
+                $("#chkScheduleWednesday").prop('checked', true);
+            if (th == 1)
+                $("#chkScheduleThursday").prop('checked', true);
+            if (fr == 1)
+                $("#chkScheduleFriday").prop('checked', true);
+            if (sa == 1)
+                $("#chkScheduleSaturday").prop('checked', true);
+            if (su == 1)
+                $("#chkScheduleSunday").prop('checked', true);
+
+
+
+
+            $("#modal_service").modal({ backdrop: 'static' });
+        }
+        //function FranchiseeserviceDestribution() {
+        //    $("#modal_Distribution").modal({ backdrop: 'static' });
+        //}
+        var FeeDataForDistribution = [];
+        function FranchiseeserviceAddDestribution() {
+
+            $.ajax({
+                url: '@Url.Action("GetFeeData", "Customer","Portal")',
+                success: function (res) {
+                    console.log(res);
+                    FeeDataForDistribution = res;
+                    var tempRow = "";
+                    $('#feeListAdd tbody').html('');
+                    $.each(res, function (index, value) {
+                        tempRow = "";
+                        tempRow += '<tr>';
+                        tempRow += '    <td><input type="checkbox" rel="feeid_distribution" value="' + value.FeeId + '" /></td>';
+                        tempRow += '    <td>' + value.FeeName + '</td>';
+                        tempRow += '    <td>' + value.FeeRateTypeName + '</td>';
+                        tempRow += '    <td style="text-align: right;">' + (value.FeeRateTypeListId == 1 ? (value.Amount + '%') : ('$ ' + value.Amount)) + '</td>';
+                        tempRow += '</tr>';
+                        $('#feeListAdd tbody').append(tempRow);
+                    });
+
+                    $("#modal_AddDistribution").modal({ backdrop: 'static' });
+                },
+                error: function () { }
+            });
+        }
+
+    </script>
+
+    <script>
+        function OpenCustomerUploadDocumentPopup(Id) {
+
+            var sURL = '@Url.Action("CustomerUploadDocumentPopup", "Customer", new { area = "Portal" })?id=' + Id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#RenderCustomerUploadDocumentPopup').html(data);
+                    $("#ModelCustomerUploadDocumentPopup").modal({ backdrop: 'static' });
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+    </script>
+
+}
+
+
+@*
+    <script>
+            $(window).load(function () {
+
+                $(".chosen-select").chosen({ no_results_text: "Oops, nothing found!" });
+
+                $('#ddlRegionIds').chosen();
+            });
+    </script>>*@

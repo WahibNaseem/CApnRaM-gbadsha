@@ -1,0 +1,1482 @@
+﻿@model JKViewModels.Customer.FullCustomerViewModel1
+@{
+    if (Model.MainAddress == null)
+    {
+        Model.MainAddress = new JKViewModels.Customer.AddressViewModel();
+    }
+}
+<div class="modal fade custom-model custom-form-design" id="ModalEditCustomerInfo" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:869px" id="RenderEditCustomerInfoPopup">
+
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Customer Maintenance
+                    @*<a href="Javascrpit:void(0)" onclick=Editfunction(); style="color:red"><b>Edit</b></a>*@
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px 30px 15px 30px;">
+                @Html.HiddenFor(one => one.CustomerDetail.CustomerId, new { id = "hdfCustomerId" })
+                @Html.HiddenFor(one => one.CustomerViewModel.CustomerNo, new { id = "CustomerNo" })
+                @Html.HiddenFor(one => one.CustomerDetail.CustomerName, new { id = "hdnCustomerName" })
+                @Html.HiddenFor(one => one.ContactInformation.FirstName, new { id = "hdnFirstName" })
+                @Html.HiddenFor(one => one.CustomerDetail.Phone, new { id = "hdnCustomerPhone" })
+                @Html.Hidden("PaymentProfileID")
+                @Html.Hidden("Last4CC")
+                @Html.HiddenFor(one => one.CustomerViewModel.CustomerId)
+                @Html.HiddenFor(one => one.CustomerViewModel.CreatedBy)
+                @Html.HiddenFor(one => one.CustomerViewModel.CreatedDate)
+                @Html.HiddenFor(one => one.CustomerViewModel.CustomerNo)
+                @Html.HiddenFor(one => one.MainAddress.IsActive)
+                @Html.HiddenFor(one => one.MainAddress.CreatedBy)
+                @Html.HiddenFor(one => one.MainAddress.CreatedDate)
+                @Html.HiddenFor(one => one.BillSetting.CustomerId)
+                @Html.HiddenFor(one => one.BillSetting.BillSettingsId)
+
+                @Html.HiddenFor(one => one.EBill_Emails, new { id = "hdfEBill_Emails" })
+                <section>
+                    <div class="row">
+                        <div style="max-width: 98%;margin: 0px auto;">
+                            <div class="custom-form portlet light " id="form_wizard_1">
+                                <div class="portlet-body form">
+                                    @*<form class="form-horizontal" action="#" id="submit_form" method="POST">
+                                    *@
+                                    <div>
+                                        <div class="form-body-outer" style="padding: 0px;">
+                                            <div style="overflow:auto;width: 100%; margin: 0em auto;">
+                                                <div class="tab-content">
+                                                    <div class="tab-pane active" id="tb_fr_page1">
+                                                        <div class="form-group">
+                                                            <div class="col-md-6" style="padding: 10px;">
+                                                                <div class="row" style="padding: 3px;margin-top:-10px;"><b>Customer Name: @Html.DisplayFor(one => one.CustomerViewModel.Name)</b></div>
+                                                                <div class="row" style="padding: 3px;"><b>Customer No: @Html.DisplayFor(one => one.CustomerViewModel.CustomerNo)</b></div>
+                                                            </div>
+                                                            <div class="col-md-6 text-right" style="padding-right:30px;text-align:right">
+                                                                <div class="row" style="padding: 3px;"><b>Address</b> @(Model.MainAddress.Address1 ), </div>
+                                                                <div class="row" style="padding: 3px;">@Html.DisplayFor(one => one.MainAddress.City), @Html.DisplayFor(one => one.MainAddress.StateName) @Html.DisplayFor(one => one.MainAddress.PostalCode)</div>
+                                                            </div>
+                                                        </div>
+
+
+                                                        @*<h4 class="blocktop"></h4>*@
+                                                        <div style="width: 50%;float:left;">
+                                                            @Html.HiddenFor(one => one.MainAddress.AddressId)
+                                                            @Html.HiddenFor(one => one.MainAddress.StateName)
+                                                            @Html.HiddenFor(one => one.MainPhone.PhoneId)
+                                                            <h4 class="subblock">
+                                                                Main Information
+                                                                <button type="button" class="btn btn-primary button-next  pull-right CancelBtn" id="btnContactCancel1" style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <button type="button" class="btn btn-primary  pull-right SaveBtn" id="btnContactSave1" style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Save</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <button type="button" class="btn btn-primary  pull-right EditBtn" id="EditContact1" onclick=EditContactfunction1(); style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Edit</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                            </h4>
+
+                                                            <div class="form-group" style="padding-top:0px;">
+                                                                <label id="lblCustomerID" hidden>@Html.HiddenFor(one => one.CustomerDetail.CustomerId) </label>
+                                                                <label class="control-label col-md-3">
+                                                                    Name
+                                                                    <span class="required"> * </span>
+                                                                </label>
+                                                                <div class="col-md-9">
+                                                                    @Html.TextBoxFor(one => one.CustomerViewModel.Name, new { @class = "form-control input-sm editmain1", required = "required", placeholder = "Required" })
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3">
+                                                                    Address
+                                                                    <span class="required"> * </span>
+                                                                </label>
+                                                                <div class="col-md-5">
+                                                                    @Html.TextBoxFor(one => one.MainAddress.Address1, new { @class = "form-control input-sm editmain1", required = "required", placeholder = "Required" })
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    @Html.TextBoxFor(one => one.MainAddress.Address2, new { @class = "form-control input-sm editmain1", placeholder = "" })
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group" style="margin-left:5px !important;margin-right:0px !important;">
+                                                                <label class="control-label col-md-3">
+                                                                    City/State/Zip
+                                                                    <span class="required"> * </span>
+                                                                </label>
+                                                                <div class="col-md-3" style="width: 115px;">
+                                                                    @Html.TextBoxFor(one => one.MainAddress.City, new { @class = "form-control input-sm editmain1", required = "required", placeholder = "Required" })
+                                                                </div>
+                                                                <div class="col-md-4" style="width: 108px;">
+                                                                    @Html.DropDownList("MainStatesList", null, "Select", new { @class = "form-control input-sm editmain1", required = "required", @id = "MainStatesList", style = "width: 97px;" })
+                                                                </div>
+                                                                <div class="col-md-2" style="width:65px;margin-left:-7px;">
+                                                                    @Html.TextBoxFor(one => one.MainAddress.PostalCode, new { @class = "form-control input-sm editmain1", required = "required", placeholder = "Required", maxlength = "5" })
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3">
+                                                                    Phone
+                                                                    <span class="required"> * </span>
+                                                                </label>
+                                                                <div class="col-md-4">
+                                                                    @Html.TextBoxFor(one => one.MainPhone.Phone1, new { @class = "form-control input-sm editmain1", placeholder = "Required" })
+                                                                </div>
+                                                                <label class="control-label col-md-1">
+                                                                    Fax
+                                                                </label>
+                                                                <div class="col-md-4">
+                                                                    @Html.TextBoxFor(one => one.MainPhone.Fax, new { @class = "form-control input-sm editmain1", placeholder = "" })
+                                                                </div>
+                                                            </div>
+                                                            <h4 class="subblock">
+                                                                Customer Billing Info
+
+                                                                <button type="button" class="btn btn-primary button-next  pull-right CancelBtn" id="btnBContactCancel1" style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <button type="button" class="btn btn-primary  pull-right SaveBtn" id="btnBContactSave1" style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Save</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <button type="button" class="btn btn-primary  pull-right EditBtn" id="EditBContact1" onclick=EditBContactfunction1(); style="margin-left: 0px;padding-top:0px;margin-top:-5px;">Edit</button>
+                                                            </h4>
+                                                            @Html.HiddenFor(one => one.BillingContact.ContactId)
+                                                            @Html.HiddenFor(one => one.BillingAddress.AddressId)
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3">
+                                                                </label>
+                                                                <div class="col-md-8">
+                                                                    <label class="mt-checkbox">
+                                                                        <input type="checkbox" name="chkbillingsameas" id="chkbillingsameas" class="editbill1">Same as Main Address
+                                                                        <span></span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3">
+                                                                    Name
+                                                                    <span class="required"> * </span>
+                                                                </label>
+                                                                <div class="col-md-9">
+                                                                    @Html.TextBoxFor(one => one.BillingContact.Name, new { @class = "form-control input-sm editbill1", required = "required", placeholder = "Required" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3">
+                                                                    Attention
+                                                                </label>
+                                                                <div class="col-md-9">
+                                                                    @Html.TextBoxFor(one => one.BillingContact.Attention, new { @class = "form-control input-sm editbill1", placeholder = "" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+
+                                                                <label class="control-label col-md-3">
+                                                                    Address<span class="required"> * </span>
+                                                                </label>
+                                                                <div class="col-md-5">
+                                                                    @Html.TextBoxFor(one => one.BillingAddress.Address1, new { @class = "form-control input-sm editbill1", placeholder = "Required" })
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    @Html.TextBoxFor(one => one.BillingAddress.Address2, new { @class = "form-control input-sm editbill1", placeholder = "" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group" style="margin-left:5px !important;margin-right:0px !important;">
+                                                                <label class="control-label col-md-3">
+                                                                    City/State/Zip
+                                                                    <span class="required"> * </span>
+                                                                </label>
+                                                                <div class="col-md-3" style="width: 115px;">
+                                                                    @Html.TextBoxFor(one => one.BillingAddress.City, new { @class = "form-control input-sm editbill1", required = "required", placeholder = "Required" })
+                                                                </div>
+                                                                <div class="col-md-4" style="width: 108px;">
+                                                                    @Html.DropDownList("BillingStatesList", null, "Select", new { @class = "form-control input-sm editbill1", required = "required", @id = "BillingStatesList", style = "width: 97px;" })
+                                                                </div>
+                                                                <div class="col-md-2" style="width:65px;margin-left:-7px;">
+                                                                    @Html.TextBoxFor(one => one.BillingAddress.PostalCode, new { @class = "form-control input-sm editbill1", required = "required", placeholder = "Required", maxlength = "5" })
+                                                                </div>
+                                                            </div>
+
+                                                            <h4 class="subblock">Bill Setting</h4>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3">
+                                                                    Effective Date<span class="required"> * </span>
+                                                                </label>
+                                                                <div class="col-md-6">
+                                                                    <div class="input-group date" data-date-format="mm/dd/yyyy">
+                                                                        @*@Html.TextBoxFor(one => one.BillSetting.EffectiveDate, new { @class = "form-control input-sm date-picker edit", disabled = "disabled", @readonly = "readonly" })*@
+                                                                        @if (Model.BillSetting != null)
+                                                                        {
+                                                                            if (Model.BillSetting.EffectiveDate != null)
+                                                                            {
+
+                                                                                <input id="BillSetting_EffectiveDate" name="BillSetting.EffectiveDate" class="form-control input-sm date-picker edit" disabled="disabled" readonly="readonly" value="@Convert.ToDateTime(Model.BillSetting.EffectiveDate).ToString("MM/dd/yyyy")" />
+                                                                                <span class="input-group-btn cal-btn">
+                                                                                    <button class="btn default cal-btn" readonly="true" type="button">
+                                                                                        <i class="fa fa-calendar"></i>
+                                                                                    </button>
+                                                                                </span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <input id="BillSetting_EffectiveDate" name="BillSetting.EffectiveDate" class="form-control input-sm date-picker edit" disabled="disabled" readonly="readonly" />
+                                                                                <span class="input-group-btn cal-btn">
+                                                                                    <button class="btn default cal-btn" readonly="true" type="button">
+                                                                                        <i class="fa fa-calendar"></i>
+                                                                                    </button>
+                                                                                </span>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input id="BillSetting_EffectiveDate" name="BillSetting.EffectiveDate" class="form-control input-sm date-picker edit" disabled="disabled" readonly="readonly" />
+                                                                            <span class="input-group-btn cal-btn">
+                                                                                <button class="btn default cal-btn" readonly="true" type="button">
+                                                                                    <i class="fa fa-calendar"></i>
+                                                                                </button>
+                                                                            </span>
+                                                                        }
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3">
+                                                                    Invoice Date
+                                                                </label>
+                                                                <div class="col-md-6">
+                                                                    @Html.DropDownList("InvoiceDate", null, new { @class = "form-control input-sm edit ddlInvoiceDate", required = "required", @id = "InvoiceDateList", disabled = "disabled", @readonly = "readonly" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3">
+                                                                    Term
+                                                                </label>
+                                                                <div class="col-md-6">
+                                                                    @Html.DropDownList("TermDate", null, new { @class = "form-control input-sm edit ddlTermDate", required = "required", @id = "TermDateList", disabled = "disabled", @readonly = "readonly" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3">
+                                                                    AR Status
+                                                                </label>
+                                                                <div class="col-md-6">
+                                                                    <input type="hidden" id="hdnARStatusId" value="@(Model.BillSetting != null ? Convert.ToString(Model.BillSetting.ARStatus):"" )" />
+                                                                    @Html.DropDownList("ARStatus", null, "Select", new { @class = "form-control input-sm edit ddlArStatus", @id = "statusList", disabled = "disabled", @readonly = "readonly" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3">
+                                                                    Notes
+                                                                </label>
+                                                                <div class="col-md-8">
+                                                                    @Html.TextAreaFor(one => one.BillSetting.Notes, new { @class = "form-control input-sm edit", row = 3, disabled = "disabled", @readonly = "readonly" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div style="width: 50%;margin:0px; padding: 0em; background: white;float:right; border-left:solid #95A5A6 1px; ">
+                                                            <h4 class="subblock">
+                                                                Contact Information
+                                                                <button type="button" class="btn btn-primary button-next  pull-right CancelBtn" id="btnContactCancel" style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <button type="button" class="btn btn-primary  pull-right SaveBtn" id="btnContactSave" style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Save</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <button type="button" class="btn btn-primary  pull-right EditBtn" id="EditContact" onclick=EditContactfunction(); style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Edit</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                            </h4>
+                                                            @Html.HiddenFor(one => one.MainContact.ContactId)
+                                                            @Html.HiddenFor(one => one.MainPhone2.PhoneId)
+                                                            @Html.HiddenFor(one => one.MainEmail.EmailId)
+
+
+                                                            @Html.HiddenFor(one => one.ContactInformation.ContactId)
+                                                            @Html.HiddenFor(one => one.ContactInformationEmail.EmailId)
+                                                            @Html.HiddenFor(one => one.ContactInformationPhone.PhoneId)
+                                                            <div class="form-group" style="padding-top:0px; text-wrap:none">
+                                                                <label class="control-label col-md-2">
+                                                                    Name<span class="required"> * </span>
+                                                                </label>
+                                                                <div class="col-md-9">
+                                                                    @Html.TextBoxFor(one => one.MainContact.Name, new { @class = "form-control input-sm editmain", required = "required", placeholder = "Required" })
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-2">
+                                                                    Title
+                                                                </label>
+                                                                <div class="col-md-9">
+                                                                    @Html.TextBoxFor(one => one.MainContact.Title, new { @class = "form-control input-sm editmain", placeholder = "" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-2">
+                                                                    Phone <span class="required"> * </span>
+                                                                </label>
+                                                                <div class="col-md-4" style="width: 113px;">
+                                                                    @Html.TextBoxFor(one => one.MainPhone2.Phone1, new { @class = "form-control input-sm editmain", placeholder = "Required" })
+                                                                </div>
+                                                                <div class="col-md-2" style="padding-left:0px;">
+                                                                    @Html.TextBoxFor(one => one.MainPhone2.PhoneExt, new { @class = "form-control input-sm editmain", placeholder = "Ext", maxlength = "5" })
+                                                                </div>
+                                                                @*<label class="control-label col-md-1">
+                                                                    Cell
+                                                                    </label>*@
+                                                                <div class="col-md-4" style="width: 105px;padding-left:0px;">
+                                                                    @Html.TextBoxFor(one => one.MainPhone2.Cell, new { @class = "form-control input-sm editmain", placeholder = "Cell" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3" style="display:none;">
+                                                                    Fax
+                                                                </label>
+                                                                <div class="col-md-3" style="display:none;">
+                                                                    @Html.TextBoxFor(one => one.MainPhone2.Fax, new { @class = "form-control input-sm editmain", placeholder = "" })
+                                                                </div>
+                                                                <label class="control-label col-md-2">
+                                                                    Email
+                                                                </label>
+                                                                <div class="col-md-9">
+                                                                    @Html.TextBoxFor(one => one.MainEmail.EmailAddress, new { @class = "form-control input-sm editmain", placeholder = "" })
+                                                                </div>
+                                                            </div>
+
+                                                            <h4 class="subblock">
+                                                                Billing Contact Information
+                                                                <button type="button" class="btn btn-primary button-next  pull-right CancelBtn" id="btnBContactCancel" style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <button type="button" class="btn btn-primary  pull-right SaveBtn" id="btnBContactSave" style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Save</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <button type="button" class="btn btn-primary  pull-right EditBtn" id="EditBContact" onclick=EditBContactfunction(); style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Edit</button>
+                                                            </h4>
+                                                            @Html.HiddenFor(one => one.BillingContactInformation2.ContactId)
+                                                            @Html.HiddenFor(one => one.BillingPhone.PhoneId)
+                                                            @Html.HiddenFor(one => one.BillingEmail.EmailId)
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-2">
+                                                                </label>
+                                                                <div class="col-md-8">
+                                                                    <label class="mt-checkbox">
+                                                                        <input type="checkbox" name="chkbillingcontactsameas" id="chkbillingcontactsameas" class="editbill">Same as Contact Information
+                                                                        <span></span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group" style="padding-top:0px;">
+                                                                <label class="control-label col-md-2">
+                                                                    Name
+                                                                    <span class="required"> * </span>
+                                                                </label>
+                                                                <div class="col-md-9">
+                                                                    @Html.TextBoxFor(one => one.BillingContactInformation2.Name, new { @class = "form-control input-sm editbill", required = "required", placeholder = "Required" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-2">
+                                                                    Title
+                                                                </label>
+                                                                <div class="col-md-9">
+                                                                    @Html.TextBoxFor(one => one.BillingContactInformation2.Title, new { @class = "form-control input-sm editbill", placeholder = "" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-2">
+                                                                    Phone <span class="required"> * </span>
+                                                                </label>
+                                                                <div class="col-md-4" style="width:113px;">
+                                                                    @Html.TextBoxFor(one => one.BillingPhone.Phone1, new { @class = "form-control input-sm editbill", placeholder = "Required" })
+                                                                </div>
+                                                                <div class="col-md-2" style="padding-left:0px;">
+                                                                    @Html.TextBoxFor(one => one.BillingPhone.PhoneExt, new { @class = "form-control input-sm editbill", placeholder = "Ext", maxlength = "5" })
+                                                                </div>
+                                                                <div class="col-md-4" style="width:105px;padding-left:0px;">
+                                                                    @Html.TextBoxFor(one => one.BillingPhone.Cell, new { @class = "form-control input-sm editbill", placeholder = "Cell" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3" style="display:none;">
+                                                                    Fax
+                                                                </label>
+                                                                <div class="col-md-3" style="display:none;">
+                                                                    @Html.TextBoxFor(one => one.BillingPhone.Fax, new { @class = "form-control input-sm editbill", placeholder = "" })
+                                                                </div>
+
+                                                                <label class="control-label col-md-2">
+                                                                    Email
+                                                                </label>
+                                                                <div class="col-md-9">
+                                                                    @Html.TextBoxFor(one => one.BillingEmail.EmailAddress, new { @class = "form-control input-sm editbill", placeholder = "" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div style="width: 50%;margin:0px; padding: 0em; background: white;float:right;">
+                                                            <h4 class="subblock">
+                                                                @*Bill Setting*@
+                                                                <button type="button" class="btn btn-primary button-next  pull-right CancelBtn" id="btnCancel" style="margin-left: 10px;padding-top:0px;margin-top:-4px;">
+                                                                    Cancel
+                                                                </button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <button type="button" class="btn btn-primary  pull-right SaveBtn" id="btnSave" style="margin-left: 10px;padding-top:0px;margin-top:-4px;">
+                                                                    Save
+                                                                </button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <button type="button" class="btn btn-primary  pull-right EditBtn" id="EditBSetting" onclick=Editfunction(); style="margin-left: 10px;padding-top:0px;margin-top:-4px;">
+                                                                    Edit
+                                                                </button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                            </h4>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3">
+                                                                </label>
+                                                                <div class="col-md-4">
+                                                                    <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                                        @Html.CheckBoxFor(one => one.BillSetting.CreateInvoice, new { @class = "i-checks edit", disabled = "disabled", @readonly = "readonly" }) Create Invoice @*Create Invoice*@
+                                                                        <span></span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group" style="display:none" id="Errmsg">
+                                                                <span style="color:red;padding-left:42px;">Print Invoice Or E-Bill only one required </span>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3" style="margin-top:-7px;width:100px;">
+                                                                    <label class="mt-checkbox" id="lblPBill">
+                                                                        @Html.CheckBoxFor(one => one.BillSetting.PBill, new { @class = "i-checks edit", disabled = "disabled", @readonly = "readonly" }) Print Invoice@*P-Bill*@
+                                                                        <span></span>
+                                                                    </label>
+                                                                </label>
+                                                                <div class="col-md-4" id="lblEBill">
+                                                                    <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                                        @Html.CheckBoxFor(one => one.BillSetting.EBill, new { @class = "i-checks edit", disabled = "disabled", @readonly = "readonly" }) E-Bill
+                                                                        <span></span>
+                                                                    </label>
+                                                                </div>
+                                                                <input type="button" name="btnshowbillingcontactemail" value="Add/View Email" id="btnshowbillingcontactemail" class="btn btn-primary button-next edit" disabled="disabled" />
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3">
+                                                                </label>
+                                                                <div class="col-md-4">
+                                                                    <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                                        @Html.CheckBoxFor(one => one.BillSetting.PrintPastDue, new { @class = "i-checks edit", disabled = "disabled", @readonly = "readonly" }) Print Past Due
+                                                                        <span></span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3">
+                                                                </label>
+                                                                <div class="col-md-8">
+                                                                    <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                                        @Html.CheckBoxFor(one => one.BillSetting.TaxExcempt, new { @class = "i-checks edit", disabled = "disabled", @readonly = "readonly" }) Tax Exempt
+                                                                        <span></span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3">
+                                                                </label>
+                                                                <div class="col-md-5">
+                                                                    <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                                        @Html.CheckBoxFor(one => one.BillSetting.ConsolidatedInvoice, new { @class = "i-checks edit", disabled = "disabled", @readonly = "readonly" }) Consolidated Invoice
+                                                                        <span></span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div style="overflow:auto;width: 100%; margin: 0em auto;padding-left:200px;padding-top:20px;display:none;">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    <label class="mt-checkbox">
+                                                                        @Html.CheckBoxFor(one => one.CustomerViewModel.Reference, new { @class = "i-checks", @checked = "true" })  Reference
+                                                                        <span></span>
+                                                                    </label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <label class="mt-checkbox">
+                                                                        @Html.CheckBoxFor(one => one.CustomerViewModel.NationalAccount, new { @class = "i-checks", @checked = "true" }) National Account
+                                                                        <span></span>
+                                                                    </label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <label class="mt-checkbox">
+                                                                        <input type="checkbox" name="chkChildAccount" data-toggle="modal" id="chkChildAccount">Child Account
+                                                                        @*@Html.CheckBoxFor(one => one.CustomerViewModel.Parent, new { @class = "i-checks", @checked = "true" }) Child Account*@
+                                                                        <span></span>
+                                                                    </label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <label style="text-align:left;" id="lblParentName"></label>
+                                                                    <label style="text-align:left;" id="lblParentid" hidden></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-actions">
+                                            </div>
+                                            <div class="modal fade custom-model custom-form-design" id="modalData" tabindex="-1" role="basic" aria-hidden="true" style="display: none;"></div>
+                                        </div>
+                                    </div>
+                                    @*
+                                        </form>*@
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </section>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    </div>
+</div>
+<div class="modal fade bs-modal-sm in" id="mdlAppendemail" aria-hidden="true">
+    <div class="modal-dialog modal-sm" style="width:300px;">
+        <div class="modal-content">
+            <div class="modal-header" id="mdlAppendemail_header" style="padding-top: 7px;padding-bottom: 7px;background: #3598DC !important;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title" style="font-weight: bold;color:white;font-size: 12px;">Add Emails</h4>
+            </div>
+            <div class="modal-body" id="mdlAppendemail_body" style="padding: 0;">
+                <form action="#" id="mdlAppendemail_form">
+                    <div class="col-md-12" id="divEBill_Emails"></div>
+                    <div class="col-md-9"><input type="email" name="txtemailaddress_ebill" id="txtemailaddress_ebill" value="" class="form-control input-sm" /></div>
+                    <div class="col-md-2"><input type="button" name="btnaddemailaddress_ebill" id="btnaddemailaddress_ebill" value="Add" class="btn btn-primary button-next" style="padding: 3px 8px;font-size: 12px;" /></div>
+                </form>
+
+            </div>
+
+            <div class="modal-footer" id="childmodal_modalview_footer">
+                &nbsp;
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>
+<script>
+    function ValidateEmail(email) {
+        // Validate email format
+        var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        return expr.test(email);
+    };
+    $('#btnaddemailaddress_ebill').click(function () {
+
+        if (!ValidateEmail($("#txtemailaddress_ebill").val())) {
+            alert("Invalid email address.");
+        }
+        else {
+            var strEmail = $('#hdfEBill_Emails').val();
+            ebill_email.push($('#txtemailaddress_ebill').val());
+            $('#divEBill_Emails').append('<span style="padding:3px;float:left;width:100%">' + $('#txtemailaddress_ebill').val() + '</span><br />');
+            strEmail += (strEmail != "" ? "," : "") + $('#txtemailaddress_ebill').val();
+            $('#hdfEBill_Emails').val(strEmail);
+            $('#txtemailaddress_ebill').val('')
+        }
+    });
+
+    //$("#btnCloseModel").click(function () {
+    //    var isvalid = true;
+    //    if ($('#MainAddress_Address1').val().trim() == '') { $('#MainAddress_Address1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainAddress_Address1').css('border-color', ''); }
+    //    if ($('#MainAddress_City').val().trim() == '') { $('#MainAddress_City').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainAddress_City').css('border-color', ''); }
+    //    if ($('#MainStatesList').val().trim() == '') { $('#MainStatesList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainStatesList').css('border-color', ''); }
+    //    if ($('#MainAddress_PostalCode').val().trim() == '') { $('#MainAddress_PostalCode').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainAddress_PostalCode').css('border-color', ''); }
+    //    if ($('#CustomerViewModel_Name').val().trim() == '') { $('#CustomerViewModel_Name').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#CustomerViewModel_Name').css('border-color', ''); }
+
+    //    if ($('#MainPhone_Phone1').val().trim() == '' || $('#MainPhone_Phone1').val() == NaN || parseInt($("#MainPhone_Phone1").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+    //        $('#MainPhone_Phone1').css('border-color', 'red');
+    //        if (isvalid == true) {
+    //            isvalid = false;
+    //        }
+    //    }
+    //    else {
+    //        $('#MainPhone_Phone1').css('border-color', '');
+    //    }
+
+
+    //    if ($('#BillingContact_Name').val().trim() == '') { $('#BillingContact_Name').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingContact_Name').css('border-color', ''); }
+    //    if ($('#BillingAddress_Address1').val().trim() == '') { $('#BillingAddress_Address1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingAddress_Address1').css('border-color', ''); }
+    //    if ($('#BillingAddress_City').val().trim() == '') { $('#BillingAddress_City').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingAddress_City').css('border-color', ''); }
+    //    if ($('#BillingStatesList').val().trim() == '') { $('#BillingStatesList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingStatesList').css('border-color', ''); }
+    //    if ($('#BillingAddress_PostalCode').val().trim() == '') { $('#BillingAddress_PostalCode').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingAddress_PostalCode').css('border-color', ''); }
+
+
+    //    if ($('#MainContact_Name').val().trim() == '') { $('#MainContact_Name').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainContact_Name').css('border-color', ''); }
+    //    if ($('#MainPhone2_Phone1').val().trim() == '' || $('#MainPhone2_Phone1').val() == NaN || parseInt($("#MainPhone2_Phone1").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+    //        $('#MainPhone2_Phone1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; }
+    //    } else { $('#MainPhone2_Phone1').css('border-color', ''); }
+
+    //    if ($('#MainEmail_EmailAddress').val().trim() != '') {
+    //        if (!ValidateEmail($('#MainEmail_EmailAddress').val())) {
+    //            if (isvalid == true) { isvalid = false; }
+    //            $('#MainEmail_EmailAddress').css('border-color', 'red');
+    //        } else { $('#MainEmail_EmailAddress').css('border-color', ''); }
+    //    }
+    //    if ($('#MainPhone2_Cell').val().trim() != '') {
+    //        if (parseInt($("#MainPhone2_Cell").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+    //            $('#MainPhone2_Cell').css('border-color', 'red'); if (isvalid == true) { isvalid = false; }
+    //            $('#MainPhone2_Cell').css('border-color', 'red');
+    //        } else { $('#MainPhone2_Cell').css('border-color', ''); }
+    //    }
+
+
+    //    if ($('#BillingContactInformation2_Name').val().trim() == '') { $('#BillingContactInformation2_Name').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingContactInformation2_Name').css('border-color', ''); }
+    //    if ($('#BillingPhone_Phone1').val().trim() == '' || $('#BillingPhone_Phone1').val() == NaN || parseInt($("#BillingPhone_Phone1").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+    //        $('#BillingPhone_Phone1').css('border-color', 'red');
+    //        if (isvalid == true) { isvalid = false; }
+    //    }
+    //    else {
+    //        $('#BillingPhone_Phone1').css('border-color', '');
+    //    }
+    //    if ($('#BillingEmail_EmailAddress').val().trim() != '') {
+    //        if (!ValidateEmail($('#BillingEmail_EmailAddress').val())) {
+    //            if (isvalid == true) { isvalid = false; }
+    //            $('#BillingEmail_EmailAddress').css('border-color', 'red');
+    //        } else { $('#BillingEmail_EmailAddress').css('border-color', ''); }
+    //    }
+    //    if ($('#BillingPhone_Cell').val().trim() != '') {
+    //        if (parseInt($("#BillingPhone_Cell").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+    //            $('#BillingPhone_Cell').css('border-color', 'red'); if (isvalid == true) { isvalid = false; }
+    //            $('#BillingPhone_Cell').css('border-color', 'red');
+    //        } else { $('#BillingPhone_Cell').css('border-color', ''); }
+    //    }
+
+    //    if ($('#BillSetting_EffectiveDate').val().trim() == '') { $('#BillSetting_EffectiveDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillSetting_EffectiveDate').css('border-color', ''); }
+
+
+    //    if (isvalid == true) {
+    //        $("#ModalEditCustomerInfo").modal("hide");
+    //    }
+
+    //})
+
+    function bindEBillEmails() {
+        ebill_email = [];
+        var strEma = $('#hdfEBill_Emails').val();
+        $('#divEBill_Emails').html('');
+        if (strEma.length > 0) {
+            $.each(strEma.split(','), function (index, value) {
+                console.log(value);
+                ebill_email.push(value);
+            });
+        }
+        else {
+            if ($('#BillingEmail_EmailAddress').val() != '') {
+                $('#divEBill_Emails').append('<span style="padding:3px;float:left;width:100%">' + $('#BillingEmail_EmailAddress').val() + '</span><br />');
+                ebill_email.push($('#txtemailaddress_ebill').val());
+            }
+        }
+    }
+    $('#btnshowbillingcontactemail').click(function () {
+
+        bindEBillEmails();
+        $('#divEBill_Emails').html('');
+        $('#txtemailaddress_ebill').val('')
+        var strEmail = '';
+        $.each(ebill_email, function (index, value) {
+            $('#divEBill_Emails').append('<span style="padding:3px;float:left;width:100%">' + value + '</span><br />');
+            strEmail += (strEmail != "" ? "," : "") + value;
+        });
+        $('#mdlAppendemail').modal({ backdrop: 'static' });
+
+    });
+
+    $(document).ready(function () {
+
+        $(".date-picker").datepicker();
+
+        $('#MainPhone_Phone1').inputmask("mask", {
+            "mask": "(999) 999-9999", removeMaskOnSubmit: true,
+        });
+        $('#MainPhone_Fax').inputmask("mask", {
+            "mask": "(999) 999-9999", removeMaskOnSubmit: true,
+        });
+        $('#MainPhone2_Phone1').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+        $('#MainPhone2_Fax').inputmask("mask", {
+            "mask": "(999) 999-9999", removeMaskOnSubmit: true,
+        });
+        $('#MainPhone2_Cell').inputmask("mask", {
+            "mask": "(999) 999-9999", removeMaskOnSubmit: true,
+        });
+
+        $('#BillingPhone_Phone1').inputmask("mask", {
+            "mask": "(999) 999-9999", removeMaskOnSubmit: true,
+        });
+        $('#BillingPhone_Fax').inputmask("mask", {
+            "mask": "(999) 999-9999", removeMaskOnSubmit: true,
+        });
+        $('#BillingPhone_Cell').inputmask("mask", {
+            "mask": "(999) 999-9999", removeMaskOnSubmit: true,
+        });
+
+        if ($("#hdnARStatusId").val() != "" && $("#hdnARStatusId").val() != "0" && $("#hdnARStatusId").val() != undefined) {
+            $("#statusList").val($("#hdnARStatusId").val());
+        }
+    });
+
+    $('#chkbillingsameas').click(function () {
+        var checked = $('#chkbillingsameas').is(':checked');
+
+        var MainAddress_Name = $('#BillingContact_Name'),
+            MainAddress_Address1 = $('#BillingAddress_Address1'),
+            MainAddress_Address2 = $('#BillingAddress_Address2'),
+            MainAddress_City = $('#BillingAddress_City'),
+            MainAddress_State = $('#BillingStatesList'),
+            MainAddress_PostalCode = $('#BillingAddress_PostalCode');
+
+        if (checked) {
+            MainAddress_Name.val($('#CustomerViewModel_Name').val());
+            MainAddress_Address1.val($('#MainAddress_Address1').val());
+            MainAddress_Address2.val($('#MainAddress_Address2').val());
+            MainAddress_City.val($('#MainAddress_City').val());
+            MainAddress_State.val($('#MainStatesList').val());
+            MainAddress_PostalCode.val($('#MainAddress_PostalCode').val());
+
+            MainAddress_Name.attr("readonly", "readonly");
+            MainAddress_Address1.attr("readonly", "readonly");
+            MainAddress_Address2.attr("readonly", "readonly");
+            MainAddress_City.attr("readonly", "readonly");
+            MainAddress_State.attr("readonly", "readonly");
+            MainAddress_PostalCode.attr("readonly", "readonly");
+
+        }
+        else {
+            MainAddress_Name.val('');
+            MainAddress_Address1.val('');
+            MainAddress_Address2.val('');
+            MainAddress_City.val('');
+            MainAddress_State.val('');
+            MainAddress_PostalCode.val('');
+
+            MainAddress_Name.removeAttr("readonly");
+            MainAddress_Address1.removeAttr("readonly");
+            MainAddress_Address2.removeAttr("readonly");
+            MainAddress_City.removeAttr("readonly");
+            MainAddress_State.removeAttr("readonly");
+            MainAddress_PostalCode.removeAttr("readonly");
+        }
+    });
+    $('#chkbillingcontactsameas').click(function () {
+        var MainContactAddress_FName = $('#BillingContactInformation2_Name'),
+            //MainContactAddress_LastName = $('#BillingContact_LastName'),
+            MainContactAddress_Title = $('#BillingContactInformation2_Title'),
+            MainContactAddress_Phone = $('#BillingPhone_Phone1'),
+            MainContactAddress_PhoneExt = $('#BillingPhone_PhoneExt'),
+            MainContactAddress_Cell = $('#BillingPhone_Cell'),
+            MainContactAddress_Fax = $('#BillingPhone_Fax'),
+            MainContactAddress_Email = $('#BillingEmail_EmailAddress');
+        if ($(this).prop('checked')) {
+            MainContactAddress_FName.val($('#MainContact_Name').val());
+            // MainContactAddress_LastName.val($('#ContactInformation_LastName').val());
+            MainContactAddress_Title.val($('#MainContact_Title').val());
+            MainContactAddress_Phone.val($('#MainPhone2_Phone1').val());
+            MainContactAddress_PhoneExt.val($('#MainPhone2_PhoneExt').val());
+            MainContactAddress_Cell.val($('#MainPhone2_Cell').val());
+            MainContactAddress_Fax.val($('#MainPhone2_Fax').val());
+            MainContactAddress_Email.val($('#MainEmail_EmailAddress').val());
+
+            MainContactAddress_FName.attr("readonly", "readonly");
+            //MainContactAddress_LastName.attr("readonly", "readonly");
+            MainContactAddress_Title.attr("readonly", "readonly");
+            MainContactAddress_Phone.attr("readonly", "readonly");
+            MainContactAddress_PhoneExt.attr("readonly", "readonly");
+            MainContactAddress_Cell.attr("readonly", "readonly");
+            MainContactAddress_Fax.attr("readonly", "readonly");
+            MainContactAddress_Email.attr("readonly", "readonly");
+        }
+        else {
+            MainContactAddress_FName.val('');
+            //MainContactAddress_LastName.val('');
+            MainContactAddress_Title.val('');
+            MainContactAddress_Phone.val('');
+            MainContactAddress_PhoneExt.val('');
+            MainContactAddress_Cell.val('');
+            MainContactAddress_Fax.val('');
+            MainContactAddress_Email.val('');
+
+            MainContactAddress_FName.removeAttr("readonly");
+            //MainContactAddress_LastName.removeAttr("readonly");
+            MainContactAddress_Title.removeAttr("readonly");
+            MainContactAddress_Phone.removeAttr("readonly");
+            MainContactAddress_PhoneExt.removeAttr("readonly");
+            MainContactAddress_Cell.removeAttr("readonly");
+            MainContactAddress_Fax.removeAttr("readonly");
+            MainContactAddress_Email.removeAttr("readonly");
+        }
+    });
+
+    //$("btnCloseModel").click(function () {
+    //    var isvalid = true;
+    //    if ($('#MainAddress_Address1').val().trim() == '') { $('#MainAddress_Address1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainAddress_Address1').css('border-color', ''); }
+    //    if ($('#MainAddress_City').val().trim() == '') { $('#MainAddress_City').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainAddress_City').css('border-color', ''); }
+    //    if ($('#MainStatesList').val().trim() == '') { $('#MainStatesList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainStatesList').css('border-color', ''); }
+    //    if ($('#MainAddress_PostalCode').val().trim() == '') { $('#MainAddress_PostalCode').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainAddress_PostalCode').css('border-color', ''); }
+    //    if ($('#CustomerViewModel_Name').val().trim() == '') { $('#CustomerViewModel_Name').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#CustomerViewModel_Name').css('border-color', ''); }
+
+    //    if ($('#MainPhone_Phone1').val().trim() == '' || $('#MainPhone_Phone1').val() == NaN || parseInt($("#MainPhone_Phone1").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+    //        $('#MainPhone_Phone1').css('border-color', 'red');
+    //        if (isvalid == true) {
+    //            isvalid = false;
+    //        }
+    //    }
+    //    else {
+    //        $('#MainPhone_Phone1').css('border-color', '');
+    //    }
+
+
+    //    if ($('#BillingContact_Name').val().trim() == '') { $('#BillingContact_Name').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingContact_Name').css('border-color', ''); }
+    //    if ($('#BillingAddress_Address1').val().trim() == '') { $('#BillingAddress_Address1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingAddress_Address1').css('border-color', ''); }
+    //    if ($('#BillingAddress_City').val().trim() == '') { $('#BillingAddress_City').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingAddress_City').css('border-color', ''); }
+    //    if ($('#BillingStatesList').val().trim() == '') { $('#BillingStatesList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingStatesList').css('border-color', ''); }
+    //    if ($('#BillingAddress_PostalCode').val().trim() == '') { $('#BillingAddress_PostalCode').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingAddress_PostalCode').css('border-color', ''); }
+
+
+    //    if ($('#MainContact_Name').val().trim() == '') { $('#MainContact_Name').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainContact_Name').css('border-color', ''); }
+    //    if ($('#MainPhone2_Phone1').val().trim() == '' || $('#MainPhone2_Phone1').val() == NaN || parseInt($("#MainPhone2_Phone1").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+    //        $('#MainPhone2_Phone1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; }
+    //    } else { $('#MainPhone2_Phone1').css('border-color', ''); }
+
+    //    if ($('#MainEmail_EmailAddress').val().trim() != '') {
+    //        if (!ValidateEmail($('#MainEmail_EmailAddress').val())) {
+    //            if (isvalid == true) { isvalid = false; }
+    //            $('#MainEmail_EmailAddress').css('border-color', 'red');
+    //        } else { $('#MainEmail_EmailAddress').css('border-color', ''); }
+    //    }
+    //    if ($('#MainPhone2_Cell').val().trim() != '') {
+    //        if (parseInt($("#MainPhone2_Cell").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+    //            $('#MainPhone2_Cell').css('border-color', 'red'); if (isvalid == true) { isvalid = false; }
+    //            $('#MainPhone2_Cell').css('border-color', 'red');
+    //        } else { $('#MainPhone2_Cell').css('border-color', ''); }
+    //    }
+
+
+    //    if ($('#BillingContactInformation2_Name').val().trim() == '') { $('#BillingContactInformation2_Name').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingContactInformation2_Name').css('border-color', ''); }
+    //    if ($('#BillingPhone_Phone1').val().trim() == '' || $('#BillingPhone_Phone1').val() == NaN || parseInt($("#BillingPhone_Phone1").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+    //        $('#BillingPhone_Phone1').css('border-color', 'red');
+    //        if (isvalid == true) { isvalid = false; }
+    //    }
+    //    else {
+    //        $('#BillingPhone_Phone1').css('border-color', '');
+    //    }
+    //    if ($('#BillingEmail_EmailAddress').val().trim() != '') {
+    //        if (!ValidateEmail($('#BillingEmail_EmailAddress').val())) {
+    //            if (isvalid == true) { isvalid = false; }
+    //            $('#BillingEmail_EmailAddress').css('border-color', 'red');
+    //        } else { $('#BillingEmail_EmailAddress').css('border-color', ''); }
+    //    }
+    //    if ($('#BillingPhone_Cell').val().trim() != '') {
+    //        if (parseInt($("#BillingPhone_Cell").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+    //            $('#BillingPhone_Cell').css('border-color', 'red'); if (isvalid == true) { isvalid = false; }
+    //            $('#BillingPhone_Cell').css('border-color', 'red');
+    //        } else { $('#BillingPhone_Cell').css('border-color', ''); }
+    //    }
+
+    //    if ($('#BillSetting_EffectiveDate').val().trim() == '') { $('#BillSetting_EffectiveDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillSetting_EffectiveDate').css('border-color', ''); }
+
+
+    //    if (isvalid == true)
+    //    {
+    //        $("#ModalEditCustomerInfo").modal("hide");
+    //    }
+
+    //})
+
+    $("#btnSave").click(function () {
+
+        var isvalid = true;
+
+        if ($('#BillSetting_EffectiveDate').val().trim() == '') { $('#BillSetting_EffectiveDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillSetting_EffectiveDate').css('border-color', ''); }
+
+        if ($("#BillSetting_PrintInvoice").is(':checked')) {
+
+            if ($("#BillSetting_EBill").is(':checked') == false && $("#BillSetting_PBill").is(':checked') == false) {
+                if (isvalid == true) { isvalid = false; }
+                $("#Errmsg").show();
+            }
+            else {
+                $("#Errmsg").hide();
+            }
+            //if (!$("#BillSetting_EBill").is(':checked')) {
+            //    if (isvalid == true) { isvalid = false; }
+            //    $('#lblEBill').css('color', 'red');
+            //}
+            //else {
+            //    $('#lblEBill').css('color', '');
+            //}
+            //if (!$("#BillSetting_PBill").is(':checked')) {
+            //    if (isvalid == true) { isvalid = false; }
+            //    $('#lblPBill').css('color', 'red');
+            //}
+            //else {
+            //    $('#lblPBill').css('color', '');
+            //}
+        }
+        else {
+            //$('#lblEBill').css('color', '');
+            // $('#lblPBill').css('color', '');
+            $("#Errmsg").hide();
+        }
+
+        if (isvalid == true) {
+
+            var BillSettingsId = 0;
+            var EBill = 0;
+            //var PrintInvoice = 0;
+            var PrintPastDue = 0;
+            var TaxExcempt = 0;
+            var ConsolidatedInvoice = 0;
+            var PBill = 0;
+            var CreateInvoice = 0;
+
+            if ($("#BillSetting_BillSettingsId").val() != undefined && $("#BillSetting_BillSettingsId").val() != "") {
+                BillSettingsId = $("#BillSetting_BillSettingsId").val();
+            }
+            if ($("#BillSetting_EBill").is(':checked')) {
+                EBill = 1;
+            }
+            if ($("#BillSetting_PBill").is(':checked')) {
+                PBill = 1;
+            }
+            //if ($("#BillSetting_PrintInvoice").is(':checked')) {
+            //    PrintInvoice = 1;
+            //}
+            if ($("#BillSetting_PrintPastDue").is(':checked')) {
+                PrintPastDue = 1;
+            }
+            if ($("#BillSetting_TaxExcempt").is(':checked')) {
+                TaxExcempt = 1;
+            }
+            if ($("#BillSetting_ConsolidatedInvoice").is(':checked')) {
+                ConsolidatedInvoice = 1;
+            }
+            if ($("#BillSetting_CreateInvoice").is(':checked')) {
+                CreateInvoice = 1;
+            }
+            var CustBillSettings = { CustomerId: $("#CustomerViewModel_CustomerId").val(), BillSettingsId: BillSettingsId, ArStatus: $(".ddlArStatus").val(), EffectiveDate: $("#BillSetting_EffectiveDate").val(), InvoiceDateListId: $(".ddlInvoiceDate").val(), InvoiceTermListId: $(".ddlTermDate").val(), EBill: EBill, PrintPastDue: PrintPastDue, TaxExcempt: TaxExcempt, ConsolidatedInvoice: ConsolidatedInvoice, Note: $("#BillSetting_Notes").val(), EBillEmails: $("#hdfEBill_Emails").val(), PBill: PBill, CreateInvoice: CreateInvoice };
+
+            $.ajax({
+                /**/
+                url: '@Url.Action("SaveBillSettings", "Customer")',
+                /**/
+                dataType: "json",
+                data: CustBillSettings,
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+                        $("#BillSetting_BillSettingsId").val(data.BillSettingsId);
+                    }
+                    $(".SaveBtn").hide();
+                    $(".CancelBtn").hide();
+                    $("#EditBSetting").show();
+                    $(".edit").attr("disabled", "disabled");
+                    $(".edit").attr("readonly", "readonly");
+                },
+                error: function () { }
+            });
+            //$("#ModalEditCustomerInfo").modal('hide');
+            //window.location.href = window.location.href;
+        }
+
+    });
+
+    $('#btnCancel').click(function () {
+
+        $(".edit").attr("disabled", "disabled");
+        $(".edit").attr("readonly", "readonly");
+        $("#btnSave").prop("disabled", "false");
+        $("#btnSave").prop("readonly", "true");
+
+        $("#btnCancel").prop("disabled", "false");
+        $("#btnCancel").prop("readonly", "true");
+
+        $("#EditBSetting").show();
+        $("#btnSave").hide();
+        $("#btnCancel").hide();
+
+        //$('#modal_Billingsetting').hide();
+        //$("#modal_Billingsetting").close();
+        //$('.modal-backdrop').remove();
+        // $('#modal_Billingsetting').dismiss('Cancel');
+
+    });
+
+    $('#btnContactSave1').click(function () {
+        
+        var isvalid = true;
+
+        //if ($('#MainContact_FirstName').val().trim() == '') { $('#MainContact_FirstName').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainContact_FirstName').css('border-color', ''); }
+        if ($('#MainAddress_Address1').val().trim() == '') { $('#MainAddress_Address1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainAddress_Address1').css('border-color', ''); }
+        if ($('#MainAddress_City').val().trim() == '') { $('#MainAddress_City').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainAddress_City').css('border-color', ''); }
+        if ($('#MainStatesList').val().trim() == '') { $('#MainStatesList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainStatesList').css('border-color', ''); }
+        if ($('#MainAddress_PostalCode').val().trim() == '' || $('#MainAddress_PostalCode').val().length != 5) { $('#MainAddress_PostalCode').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainAddress_PostalCode').css('border-color', ''); }
+        if ($('#CustomerViewModel_Name').val().trim() == '') { $('#CustomerViewModel_Name').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#CustomerViewModel_Name').css('border-color', ''); }
+
+        if ($('#MainPhone_Phone1').val().trim() == '' || $('#MainPhone_Phone1').val() == NaN || parseInt($("#MainPhone_Phone1").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+            $('#MainPhone_Phone1').css('border-color', 'red');
+            if (isvalid == true) {
+                isvalid = false;
+            }
+        }
+        else {
+            $('#MainPhone_Phone1').css('border-color', '');
+        }
+
+        if (isvalid == true) {
+
+            var AddressId = 0;
+            var PhoneId = 0;
+
+            if ($("#MainAddress_AddressId").val() != undefined && $("#MainAddress_AddressId").val() != "") {
+                AddressId = $("#MainAddress_AddressId").val();
+            }
+            if ($("#MainPhone_PhoneId").val() != undefined && $("#MainPhone_PhoneId").val() != "") {
+                PhoneId = $("#MainPhone_PhoneId").val();
+            }
+
+            var EditCustM1data = { CustomerId: $("#CustomerViewModel_CustomerId").val(), AddressId: AddressId, Address1: $("#MainAddress_Address1").val(), Address2: $("#MainAddress_Address2").val(), City: $("#MainAddress_City").val(), StateId: $("#MainStatesList").val(), PostalCode: $("#MainAddress_PostalCode").val(), PhoneId: PhoneId, Phone1: $("#MainPhone_Phone1").val(), Fax: $("#MainPhone_Fax").val(), CustName: $("#CustomerViewModel_Name").val() };
+
+            $.ajax({
+                /**/
+                url: '@Url.Action("EditCustomerPopupMainContactTab1", "Customer")',
+                /**/
+                dataType: "json",
+                data: EditCustM1data,
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+                        $("#MainAddress_AddressId").val(data.AddressId);
+                        $("#MainPhone_PhoneId").val(data.PhoneId)
+                    }
+                    $(".SaveBtn").hide();
+                    $(".CancelBtn").hide();
+                    $("#EditContact1").show();
+                    $(".editmain1").attr("disabled", "disabled");
+                    $(".editmain1").attr("readonly", "readonly");
+                },
+                error: function () { }
+            });
+            //$("#ModalEditCustomerInfo").modal('hide');
+            //window.location.href = window.location.href;
+        }
+    });
+
+    $('#btnContactCancel1').click(function () {
+        $(".editmain1").attr("disabled", "disabled");
+        $(".editmain1").attr("readonly", "readonly");
+
+        $("#btnContactSave1").prop("disabled", "false");
+        $("#btnContactSave1").prop("readonly", "true");
+
+        $("#btnContactCancel1").prop("disabled", "false");
+        $("#btnContactCancel1").prop("readonly", "true");
+
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+    });
+
+    $('#btnContactSave').click(function () {
+
+        var isvalid = true;
+
+        if ($('#MainContact_Name').val().trim() == '') { $('#MainContact_Name').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainContact_Name').css('border-color', ''); }
+        if ($('#MainPhone2_Phone1').val().trim() == '' || $('#MainPhone2_Phone1').val() == NaN || parseInt($("#MainPhone2_Phone1").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+            $('#MainPhone2_Phone1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; }
+        } else { $('#MainPhone2_Phone1').css('border-color', ''); }
+
+        if ($('#MainEmail_EmailAddress').val().trim() != '') {
+            if (!ValidateEmail($('#MainEmail_EmailAddress').val())) {
+                if (isvalid == true) { isvalid = false; }
+                $('#MainEmail_EmailAddress').css('border-color', 'red');
+            } else { $('#MainEmail_EmailAddress').css('border-color', ''); }
+        }
+        if ($('#MainPhone2_Cell').val().trim() != '') {
+            if (parseInt($("#MainPhone2_Cell").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+                $('#MainPhone2_Cell').css('border-color', 'red'); if (isvalid == true) { isvalid = false; }
+                $('#MainPhone2_Cell').css('border-color', 'red');
+            } else { $('#MainPhone2_Cell').css('border-color', ''); }
+        }
+
+
+        if (isvalid == true) {
+
+            var ContactId = 0;
+            var PhoneId = 0;
+            var EmailId = 0;
+
+            if ($("#MainContact_ContactId").val() != undefined && $("#MainContact_ContactId").val() != "") {
+                ContactId = $("#MainContact_ContactId").val();
+            }
+            if ($("#MainPhone2_PhoneId").val() != undefined && $("#MainPhone2_PhoneId").val() != "") {
+                PhoneId = $("#MainPhone2_PhoneId").val();
+            }
+            if ($("#MainEmail_EmailId").val() != undefined && $("#MainEmail_EmailId").val() != "") {
+                EmailId = $("#MainEmail_EmailId").val();
+            }
+
+            var EditCustM2data = { CustomerId: $("#CustomerViewModel_CustomerId").val(), ContactId: ContactId, Name: $("#MainContact_Name").val(), Title: $("#MainContact_Title").val(), PhoneId: PhoneId, Phone1: $("#MainPhone2_Phone1").val(), PhoneExt: $("#MainPhone2_PhoneExt").val(), Cell: $("#MainPhone2_Cell").val(), Fax: $("#MainPhone2_Fax").val(), EmailId: EmailId, EmailAddress: $("#MainEmail_EmailAddress").val() };
+
+            $.ajax({
+                /**/
+                url: '@Url.Action("EditCustomerPopupMainContactTab2", "Customer")',
+                /**/
+                dataType: "json",
+                data: EditCustM2data,
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+                        $("#MainContact_ContactId").val(data.ContactId);
+                        $("#MainEmail_EmailId").val(data.EmailId);
+                        $("#MainPhone2_PhoneId").val(data.PhoneId)
+
+                    }
+                    $(".SaveBtn").hide();
+                    $(".CancelBtn").hide();
+                    $("#EditContact").show();
+                    $(".editmain").attr("disabled", "disabled");
+                    $(".editmain").attr("readonly", "readonly");
+                },
+                error: function () { }
+            });
+            //window.location.href = window.location.href;
+            //$("#ModalEditCustomerInfo").modal('hide');
+        }
+
+
+    });
+    $('#btnContactCancel').click(function () {
+        $(".editmain").attr("disabled", "disabled");
+        $(".editmain").attr("readonly", "readonly");
+
+        $("#btnContactSave").prop("disabled", "false");
+        $("#btnContactSave").prop("readonly", "true");
+
+        $("#btnContactCancel").prop("disabled", "false");
+        $("#btnContactCancel").prop("readonly", "true");
+
+
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+    });
+
+    $('#btnBContactSave1').click(function () {
+
+        var isvalid = true;
+        if ($('#BillingContact_Name').val().trim() == '') { $('#BillingContact_Name').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingContact_Name').css('border-color', ''); }
+        if ($('#BillingAddress_Address1').val().trim() == '') { $('#BillingAddress_Address1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingAddress_Address1').css('border-color', ''); }
+        if ($('#BillingAddress_City').val().trim() == '') { $('#BillingAddress_City').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingAddress_City').css('border-color', ''); }
+        if ($('#BillingStatesList').val().trim() == '') { $('#BillingStatesList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingStatesList').css('border-color', ''); }
+        if ($('#BillingAddress_PostalCode').val().trim() == '' || $('#BillingAddress_PostalCode').val().length != 5) { $('#BillingAddress_PostalCode').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingAddress_PostalCode').css('border-color', ''); }
+
+        if (isvalid == true) {
+
+            var ContactId = 0;
+            var BAddressId = 0;
+
+            if ($("#BillingContact_ContactId").val() != undefined && $("#BillingContact_ContactId").val() != "") {
+                ContactId = $("#BillingContact_ContactId").val();
+            }
+            if ($("#BillingAddress_AddressId").val() != undefined && $("#BillingAddress_AddressId").val() != "") {
+                BAddressId = $("#BillingAddress_AddressId").val();
+            }
+
+            var EditCustB1data = { CustomerId: $("#CustomerViewModel_CustomerId").val(), ContactId: ContactId, Name: $("#BillingContact_Name").val(), Attention: $("#BillingContact_Attention").val(), AddressId: BAddressId, Address1: $("#BillingAddress_Address1").val(), Address2: $("#BillingAddress_Address2").val(), City: $("#BillingAddress_City").val(), StateId: $("#BillingStatesList").val(), PostalCode: $("#BillingAddress_PostalCode").val() };
+
+            $.ajax({
+                /**/
+                url: '@Url.Action("EditCustomerPopupBillingTab1", "Customer")',
+                /**/
+                dataType: "json",
+                data: EditCustB1data,
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+                        $("#BillingContact_ContactId").val(data.ContactId);
+                        $("#BillingAddress_AddressId").val(data.AddressId);
+                    }
+                    $(".SaveBtn").hide();
+                    $(".CancelBtn").hide();
+                    $("#EditBContact1").show();
+                    $(".editbill1").attr("disabled", "disabled");
+                    $(".editbill1").attr("readonly", "readonly");
+                },
+                error: function () { }
+            });
+            //window.location.href = window.location.href;
+            //$("#ModalEditCustomerInfo").modal('hide');
+        }
+    });
+    $('#btnBContactCancel1').click(function () {
+        $(".editbill1").attr("disabled", "disabled");
+        $(".editbill1").attr("readonly", "readonly");
+
+        $("#btnBContactSave1").prop("disabled", "false");
+        $("#btnBContactSave1").prop("readonly", "true");
+
+        $("#btnBContactCancel1").prop("disabled", "false");
+        $("#btnBContactCancel1").prop("readonly", "true");
+
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+
+    });
+
+    $('#btnBContactSave').click(function () {
+
+        //var data = $("form").serialize();
+        //alert(data);
+
+        var isvalid = true;
+
+        if ($('#BillingContactInformation2_Name').val().trim() == '') { $('#BillingContactInformation2_Name').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingContactInformation2_Name').css('border-color', ''); }
+        if ($('#BillingPhone_Phone1').val().trim() == '' || $('#BillingPhone_Phone1').val() == NaN || parseInt($("#BillingPhone_Phone1").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+            $('#BillingPhone_Phone1').css('border-color', 'red');
+            if (isvalid == true) { isvalid = false; }
+        }
+        else {
+            $('#BillingPhone_Phone1').css('border-color', '');
+        }
+        if ($('#BillingEmail_EmailAddress').val().trim() != '') {
+            if (!ValidateEmail($('#BillingEmail_EmailAddress').val())) {
+                if (isvalid == true) { isvalid = false; }
+                $('#BillingEmail_EmailAddress').css('border-color', 'red');
+            } else { $('#BillingEmail_EmailAddress').css('border-color', ''); }
+        }
+        if ($('#BillingPhone_Cell').val().trim() != '') {
+            if (parseInt($("#BillingPhone_Cell").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+                $('#BillingPhone_Cell').css('border-color', 'red'); if (isvalid == true) { isvalid = false; }
+                $('#BillingPhone_Cell').css('border-color', 'red');
+            } else { $('#BillingPhone_Cell').css('border-color', ''); }
+        }
+
+        if (isvalid == true) {
+
+            var ContactId = 0;
+            var BPhoneId = 0;
+            var BEmailId = 0;
+
+            if ($("#BillingContactInformation2_ContactId").val() != undefined && $("#BillingContactInformation2_ContactId").val() != "") {
+                ContactId = $("#BillingContactInformation2_ContactId").val();
+            }
+            if ($("#BillingPhone_PhoneId").val() != undefined && $("#BillingPhone_PhoneId").val() != "") {
+                BPhoneId = $("#BillingPhone_PhoneId").val();
+            }
+            if ($("#BillingEmail_EmailId").val() != undefined && $("#BillingEmail_EmailId").val() != "") {
+                BEmailId = $("#BillingEmail_EmailId").val();
+            }
+
+            var EditCustB2data = { CustomerId: $("#CustomerViewModel_CustomerId").val(), ContactId: ContactId, Name: $("#BillingContactInformation2_Name").val(), Title: $("#BillingContactInformation2_Title").val(), PhoneId: BPhoneId, Phone1: $("#BillingPhone_Phone1").val(), PhoneExt: $("#BillingPhone_PhoneExt").val(), Cell: $("#BillingPhone_Cell").val(), Fax: $("#BillingPhone_Fax").val(), EmailId: BEmailId, EmailAddress: $("#BillingEmail_EmailAddress").val() };
+
+            $.ajax({
+                /**/
+                url: '@Url.Action("EditCustomerPopupBillingTab2", "Customer")',
+                /**/
+                dataType: "json",
+                data: EditCustB2data,
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+                        $("#BillingContactInformation2_ContactId").val(data.ContactId);
+                        $("#BillingPhone_PhoneId").val(data.PhoneId);
+                        $("#BillingEmail_EmailId").val(data.EmailId);
+                    }
+                    $(".SaveBtn").hide();
+                    $(".CancelBtn").hide();
+                    $("#EditBContact").show();
+                    $(".editbill").attr("disabled", "disabled");
+                    $(".editbill").attr("readonly", "readonly");
+                },
+                error: function () { }
+            });
+            //window.location.href = window.location.href;
+            //$("#ModalEditCustomerInfo").modal('hide');
+        }
+    });
+    $('#btnBContactCancel').click(function () {
+        $(".editbill").attr("disabled", "disabled");
+        $(".editbill").attr("readonly", "readonly");
+
+        $("#btnBContactSave").prop("disabled", "false");
+        $("#btnBContactSave").prop("readonly", "true");
+
+        $("#btnBContactCancel").prop("disabled", "false");
+        $("#btnBContactCancel").prop("readonly", "true");
+
+        $("#EditBContact").show();
+        $("#btnBContactSave").hide();
+        $("#btnBContactCancel").hide();
+    });
+
+    function onlyDecimal(id) {
+        $(id).keydown(function (event) {
+            if (event.shiftKey == true) { event.preventDefault(); }
+            if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105) || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 190 || event.keyCode == 110) { }
+            else { event.preventDefault(); }
+            if ($(this).val().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110)) event.preventDefault();
+        });
+    }
+    function OnlyNumber(id) {
+        $(id).keydown(function (event) {
+            if (event.shiftKey == true) { event.preventDefault(); }
+            if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105) || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46) { }
+            else { event.preventDefault(); }
+        });
+    }
+    function applyMaskCurrency(id) {
+        $(id).inputmask("currency", {
+            alias: 'currency',
+            prefix: '$ ',
+            digits: 2,
+            autoUnmask: true,
+            removeMaskOnSubmit: true,
+            unmaskAsNumber: true,
+            allowPlus: false,
+            allowMinus: false,
+            autoGroup: true,
+            groupSeparator: ",",
+        });
+    }
+    function OnClickContractDetailCancel() {
+        $('#modal_CustomerContractPopup').modal("hide");
+    }
+    function ValidateEmail(email) {
+        // Validate email format
+        var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        return expr.test(email);
+    };
+
+    //Edit Button
+    function Editfunction() {
+        $(".edit").removeAttr("disabled").removeAttr("readonly");
+        $("#btnSave").removeAttr("disabled");
+        $("#btnCancel").removeAttr("disabled");
+
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+
+        $("#EditBSetting").hide();
+        $("#btnSave").show();
+        $("#btnCancel").show();
+
+
+        $(".editmain1").attr("disabled", "disabled");
+        $(".editmain1").attr("readonly", "readonly");
+
+        $(".editmain").attr("disabled", "disabled");
+        $(".editmain").attr("readonly", "readonly");
+
+        $(".editbill").attr("disabled", "disabled");
+        $(".editbill").attr("readonly", "readonly");
+
+    }
+    function EditContactfunction1() {
+        $(".editmain1").removeAttr("disabled").removeAttr("readonly");
+        $("#btnContactSave1").removeAttr("disabled");
+        $("#btnContactCancel1").removeAttr("disabled");
+
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+
+        $("#EditContact1").hide();
+        $("#btnContactSave1").show();
+        $("#btnContactCancel1").show();
+
+
+        $(".editmain").attr("disabled", "disabled");
+        $(".editmain").attr("readonly", "readonly");
+
+        $(".edit").attr("disabled", "disabled");
+        $(".edit").attr("readonly", "readonly");
+
+        $(".editbill1").attr("disabled", "disabled");
+        $(".editbill1").attr("readonly", "readonly");
+
+        $(".editbill").attr("disabled", "disabled");
+        $(".editbill").attr("readonly", "readonly");
+    }
+    function EditContactfunction() {
+
+        $(".editmain").removeAttr("disabled").removeAttr("readonly");
+        $("#btnContactSave").removeAttr("disabled");
+        $("#btnContactCancel").removeAttr("disabled");
+        //$(".edit").removeAttr("disabled").removeAttr("readonly");
+
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+
+        $("#EditContact").hide();
+        $("#btnContactSave").show();
+        $("#btnContactCancel").show();
+
+        $(".editmain1").attr("disabled", "disabled");
+        $(".editmain1").attr("readonly", "readonly");
+
+        $(".edit").attr("disabled", "disabled");
+        $(".edit").attr("readonly", "readonly");
+
+        $(".editbill1").attr("disabled", "disabled");
+        $(".editbill1").attr("readonly", "readonly");
+
+        $(".editbill").attr("disabled", "disabled");
+        $(".editbill").attr("readonly", "readonly");
+    }
+    function EditBContactfunction1() {
+        $(".editbill1").removeAttr("disabled").removeAttr("readonly");
+        $("#btnBContactSave1").removeAttr("disabled");
+        $("#btnBContactCancel1").removeAttr("disabled");
+        //$(".edit").removeAttr("disabled").removeAttr("readonly");
+
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+
+        $("#EditBContact1").hide();
+        $("#btnBContactSave1").show();
+        $("#btnBContactCancel1").show();
+
+
+        $(".editbill").attr("disabled", "disabled");
+        $(".editbill").attr("readonly", "readonly");
+
+        $(".edit").attr("disabled", "disabled");
+        $(".edit").attr("readonly", "readonly");
+
+        $(".editmain1").attr("disabled", "disabled");
+        $(".editmain1").attr("readonly", "readonly");
+
+        $(".editmain").attr("disabled", "disabled");
+        $(".editmain").attr("readonly", "readonly");
+    }
+    function EditBContactfunction() {
+        $(".editbill").removeAttr("disabled").removeAttr("readonly");
+        $("#btnBContactSave").removeAttr("disabled");
+        $("#btnBContactCancel").removeAttr("disabled");
+        // $(".edit").removeAttr("disabled").removeAttr("readonly");
+
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+
+        $("#EditBContact").hide();
+        $("#btnBContactSave").show();
+        $("#btnBContactCancel").show();
+
+
+        $(".editbill1").attr("disabled", "disabled");
+        $(".editbill1").attr("readonly", "readonly");
+
+        $(".edit").attr("disabled", "disabled");
+        $(".edit").attr("readonly", "readonly");
+
+        $(".editmain1").attr("disabled", "disabled");
+        $(".editmain1").attr("readonly", "readonly");
+
+        $(".editmain").attr("disabled", "disabled");
+        $(".editmain").attr("readonly", "readonly");
+    }
+</script>

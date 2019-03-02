@@ -1,0 +1,382 @@
+﻿@using JKViewModels
+@model SaveMenuModel
+
+@{
+    string btnTitle = "Save";
+    if (Model.MenuId > 0)
+    {
+        ViewBag.Title = "UpdateMenu";
+        btnTitle = "btnUpdate";
+    }
+    else
+    {
+        ViewBag.Title = "AddMenu";
+    }
+    //bool isWriteAccess = Convert.ToBoolean(Session["IsWriteAccess"]);
+    bool isWriteAccess = true;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/chosen.css" rel="stylesheet" />
+<div class="row">
+    <div class="col-md-12">
+        <h3 class="page-title">@ViewBag.Title</h3>
+        <ul class="page-breadcrumb breadcrumb">
+            <li> <i class="fa fa-home"></i> <a href="~/Home/Index"> Home </a> <i class="fa fa-angle-right"></i> </li>
+            <li> <a href="~/Menu"> Menu List </a> <i class="fa fa-angle-right"></i> </li>
+            <li>@ViewBag.Title</li>
+        </ul>
+    </div>
+</div>
+@using (Html.BeginForm("SaveMenu", "Menu", null, FormMethod.Post, new { @id = "frmMenu", enctype = "multipart/form-data" }))
+{
+
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    @Html.HiddenFor(model => model.MenuId)
+    @Html.HiddenFor(m => m.MenuImageUrl, new { @id = "hdnMenuImageUrl" })
+    @Html.HiddenFor(m => m.Message, new { @id = "hdnMessage", Value = Model.Message })
+    @Html.HiddenFor(m => m.MessageType, new { @id = "hdnMessageType", Value = Model.MessageType })
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet box blue recruitmentpage">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="marL7px">@ViewBag.Title</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="floating-label">
+                                @Html.TextBoxFor(model => model.MenuName, new { @id = "txtMenuName", @class = "form-control", @maxLength = 100 })
+                                <label class="control-label mandatory">MenuName</label>
+                                @Html.ValidationMessageFor(model => model.MenuName)
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="floating-label">
+                                @Html.DropDownListFor(model => model.ParentMenuId, (SelectList)(ViewBag.ParentMenuList == null ? new SelectList(new List<MenuModel>()) : ViewBag.ParentMenuList), "--Select--", new { id = "ddlParentMenu", @class = "form-control" })
+                                <label class="control-label mandatory">ParentMenu</label>
+                                @Html.ValidationMessageFor(model => model.ParentMenuId)
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="floating-label">
+                                @Html.TextBoxFor(model => model.MenuUrl, new { @id = "txtMenuUrl", @class = "form-control", @maxLength = 500 })
+                                @*@Html.DropDownListFor(model => model.MenuUrl, (SelectList)(ViewBag.MenuURLList == null ? new SelectList(new List<String>()) : ViewBag.MenuURLList), "--Select--", new { @id = "ddlMenuUrl", @class = "form-control" })*@
+                                <label class="control-label mandatory">MenuUrl</label>
+                                @Html.ValidationMessageFor(model => model.MenuUrl)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="floating-label">
+                                @Html.TextBoxFor(model => model.MenuLevel, new { @id = "txtMenuLevel", @class = "numeric form-control" })
+                                <label class="control-label mandatory">MenuLevel</label>
+                                @Html.ValidationMessageFor(model => model.MenuLevel)
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="floating-label">
+                                @Html.TextBoxFor(model => model.MenuOrder, new { @id = "txtMenuOrder", @class = "numeric form-control" })
+                                <label class="control-label mandatory">MenuOrder</label>
+                                @Html.ValidationMessageFor(model => model.MenuOrder)
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="floating-label">
+                                @Html.ListBox(
+                                  "Menu111",
+                            ViewBag.PageNameList as MultiSelectList,
+        new { @id = "lstPageName", @class = "chosenMultiple form-control-dummy", @CausesValidation = "false" }
+                                 )
+                                <label class="control-label mandatory">PageName </label>
+                                <span id="lblvaidlidationPageName" class="field-validation-error" style="display:none">
+                                    PageName
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="floating-label">
+                                @Html.CheckBoxFor(model => model.IsDisplay, new { @class = "form-control" })
+                                <label class="control-label">Display </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="floating-label focused">
+                                <div class="radio-btn">
+                                    @Html.RadioButtonFor(model => model.IsEnable, "true") IsActive
+                                    @Html.RadioButtonFor(model => model.IsEnable, "false") InActive
+                                </div>
+                                <label class="control-label">Status </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="floating-label focused">
+                                <input id="fileUpload" name="fileUpload" type="file" accept='image/*'>
+                                <label class="control-label">MenuImage</label>
+                                <span class="field-validation-error" id="MenuImageError" style="display: none"><span class="">ImageFileOnly</span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>&nbsp;</label>
+                            <div class="menu-icon-bg">
+                                @if (!String.IsNullOrEmpty(Model.MenuImageUrl))
+                                {
+                                    <i id="savedIcon" class="icon" style="background:url(@Model.MenuImageUrl) no-repeat; background-position: center center;"></i>
+                                    <a href="javascript:void(0);" id="btnDelete" class="abc-close-upload btnDelete" title="Delete" onclick="deleteMenuImage(@Model.MenuId)"><i class="fa fa-close" aria-hidden="true"></i></a>
+                                }
+
+                                <img id="imagePreview" class="icon" src="" />
+                                <a href="javascript:void(0);" id="btnDeletePreview" class="abc-close-upload btnDelete" title="Delete" onclick="deleteMenuImagePreview(@Model.MenuId)"><i class="fa fa-close" aria-hidden="true"></i></a>
+                            </div>
+                        </div>
+
+                    </div>
+                    @Html.HiddenFor(model => model.SelectedPageName)
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="abc-buttons text-center">
+                                @if(isWriteAccess)
+                                { 
+                                <input id="btnSave" class="btn btn-sm btn-primary" type="button" value="@btnTitle" onclick="SaveMenu('savemenu');" />
+                                <input id="btnSubmit" type="submit" value="Save" style="display: none" />
+                                }
+                                else
+                                {
+                                    <input id="btnDisableSave" class="btn btn-primary disabled" type="button" value="@btnTitle" />
+                                }
+                                <input type="button" class="btn btn-sm btn-default" value="Cancel" onclick="CancelMenu();" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+}
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/jquery.popconfirm.js"></script>
+    <script src="~/Scripts/jquery.numeric.js"></script>
+    <script src="~/Scripts/chosen.jquery.min.js"></script>
+    @if(isWriteAccess)
+    { 
+    <script type="text/javascript">
+        function SaveMenu(actionType) {
+            $("select").uniform();
+            $("#MenuImageError").hide();
+            var settings = $.data($('#frmMenu')[0], 'validator').settings;
+            settings.ignore += ':not(.chzn-done)';
+            var isSave = true;
+            $("#frmMenu").valid();
+            $("#ddlParentMenu").valid();
+            if (isValidPageName() && $("#frmMenu").valid()) {
+
+                if ($("#fileUpload").val() != "") {
+                    var fileExtension = ['jpg', 'png', 'bmp', 'gif', 'jpeg', 'jpe', 'jfif', 'tif', 'tiff', 'svg'];
+                    if ($.inArray($("#fileUpload").val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+
+                        $("#fileUpload").replaceWith($("#fileUpload").clone(true))
+                        $("#fileUpload").val("");
+                        $(".filename").text("No file selected");
+                        isSave = false;
+                        $("#MenuImageError").show();
+                    }
+                }
+                if (isSave) {
+                    $("#btnSubmit").click();
+                }
+            }
+
+        }
+    </script>
+    }
+    else
+    {
+        <script type="text/javascript">
+            $().ready(function () {
+                UnAuthorizedPopup('Menu');
+            });
+        </script>
+    }
+    <script type="text/javascript">
+        var control = $("#fileUpload");
+        $(document).ready(function () {
+
+            if ($("#hdnMessage").val() != "" && $("#hdnMessageType").val() != "") {
+                showMessagePopup("divMessage", $("#hdnMessageType").val(), $("#hdnMessage").val());
+            }
+            $("#imagePreview").hide();
+            $("#btnDeletePreview").hide();
+            $('#lstPageName').chosen({ placeholder_text_multiple: " " });
+            //$("#ddlParentMenu").chosen();
+
+            $("#ddlParentMenu").change(function () {
+                $("#ddlParentMenu").valid();
+            });
+            $("#lstPageName").change(function () {
+                var PageName1 = $("#lstPageName").val();
+
+                $("#SelectedPageName").val(PageName1);
+
+                if ($("#lstPageName").val() != null && $("#lstPageName").val() != "") {
+                    $("#lblvaidlidationPageName").hide();
+                }
+                else {
+                    $("#lblvaidlidationPageName").show();
+                }
+            });
+            //$("select").uniform();
+
+            $("input.numeric").numeric({ decimal: false, negative: false }, function () { this.value = ""; this.focus(); });
+            AddValidation();
+
+            $(".btnDelete").popConfirm({
+                title: "Confirmation",
+                content: "Are you sure to delete Menu Image?",
+                placement: "top"
+            });
+        });
+
+
+        function deleteMenuImagePreview(menuId) {
+            $("#imagePreview").hide();
+            $("#btnDeletePreview").hide();
+            control.replaceWith(control = control.clone(true));
+            $("#fileUpload").val("");
+            $(".filename").text("No file selected");
+        }
+        function deleteMenuImage(menuId) {
+            $("#hdnMenuImageUrl").val("");
+            $("#savedIcon").hide();
+            $("#btnDelete").hide();
+        }
+        function AddValidation() {
+
+            $("#txtMenuName").rules("add", {
+                required: true,
+                messages: {
+                    required: 'MenuName'
+                }
+            });
+            //$("#ddlMenuUrl").rules("add", {
+            $("#txtMenuUrl").rules("add", {
+                required: true,
+                messages: {
+                    required: 'MenuUrl'
+                }
+            });
+            $("#txtMenuLevel").rules("add", {
+                required: true,
+                messages: {
+                    required: 'MenuLevel'
+                }
+            });
+            $("#txtMenuOrder").rules("add", {
+                required: true,
+                messages: {
+                    required: 'MenuOrder'
+                }
+            });
+
+
+            $("#ddlParentMenu").rules("add", {
+                required: true,
+                messages: {
+                    required: 'ParentMenu'
+                }
+            });
+        }
+
+
+
+
+        function isValidPageName() {
+            var isvalid = true;
+            var mIds = $("#lstPageName").val();
+            var parentIds = $("#ddlParentMenu").val();
+            if (mIds == null || mIds == "") {
+                isvalid = false;
+                $("#lblvaidlidationPageName").show();
+            }
+            else {
+                $("#lblvaidlidationPageName").hide();
+            }
+            if (parentIds == null || parentIds == "") {
+                isvalid = false;
+            }
+
+
+            return isvalid;
+        }
+
+        function save(sender) {
+        }
+
+        $("#fileUpload").change(function () {
+            $("#MenuImageError").hide();
+            if ($("#fileUpload").val() != "") {
+                var fileName = $("#fileUpload").val().replace(/^.*[\\\/]/, '');
+                if (fileName != '') {
+                    var fileExtension = ['jpg', 'png', 'bmp', 'gif', 'jpeg', 'jpe', 'jfif', 'tif', 'tiff','svg'];
+                    if ($.inArray(fileName.split('.').pop().toLowerCase(), fileExtension) == -1) {
+                        $("#MenuImageError").show();
+                        $("#fileUpload").replaceWith($("#fileUpload").clone(true))
+                        $("#fileUpload").val("");
+                        $(".filename").text("No file selected");
+                        $("#imagePreview").hide();
+                        $("#btnDelete").hide();
+                        $("#btnDeletePreview").hide();
+                        $("#savedIcon").hide();
+                    }
+                    else {
+                        var reader = new FileReader();
+
+                        reader.onload = function (e) {
+                            // get loaded data and render thumbnail.
+                            document.getElementById("imagePreview").src = e.target.result;
+                            $("#imagePreview").show();
+                            $("#btnDelete").hide();
+                            $("#btnDeletePreview").show();
+                        };
+                        $("#savedIcon").hide();
+                        // read the image file as a data URL.
+                        reader.readAsDataURL(this.files[0]);
+                    }
+                }
+            }
+            $(".filename").text('');
+        });
+        
+        function CancelMenu() {
+            window.location.href = "/Menu/Menu";
+        }
+
+        var onSuccess = function (result) {
+            if (result.messageType == "success") {
+                if (result.url) {
+                    // if the server returned a JSON object containing an url
+                    // property we redirect the browser to that url
+                    window.location.href = result.url;
+                    endRequest();
+                }
+            }
+            else {
+                showMessagePopup("divMessage", result.messageType, result.message);
+            }
+
+        }
+    </script>
+}

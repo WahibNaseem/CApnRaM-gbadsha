@@ -1,0 +1,248 @@
+﻿
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+    </style>
+}
+
+<div class="modal fade custom-model custom-form-design" id="ModalCreditDetailsPopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:980px">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Edit Credit Detail
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px 15px 15px 20px;">
+                <input type="hidden" id="invoiceId" name="invoiceId" value="">
+                <input type="hidden" id="numLineItems" value="">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-1 text-right" style="width: 10%;"><b>Customer No:</b></div>
+                        <div class="col-md-1">229042</div>
+                        <div class="col-md-1 text-right" style="margin-left: -18px;"><b>Name:</b></div>
+                        <div class="col-md-3"><label for="lblCustomerName" id="lblCustomerName">CARL'S GOLFLAND</label> </div>
+                        <div class="col-md-1 text-right"><b>Date:</b></div>
+                        <div class="col-md-2">
+                            <div class="input-group" data-date-format="mm/dd/yyyy" style="width:81px;">
+                                <input type="text" name="creditDate" value="" class="form-control input-sm date-picker hasDatepicker" style="margin-top: 0px;width:81px;" id="creditDate">
+                                <span class="input-group-btn">
+                                    <button class="btn default" type="button">
+                                        <i class="fa fa-calendar"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-1 text-right" style="padding-top: 6px;"><b>Inv. Amt:</b></div>
+                        <div class="col-md-2 form-inline"><span style="padding-top: 6px;"></span><input class="form-control input-sm credit-field creditfieldcurrency" id="invAmt" name="invAmt" readonly="readonly" style="text-align: right;margin-left:2px;" type="text" value=""></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1 text-right"><b>Invoice No:</b></div>
+                        <div class="col-md-1">05180023                 </div>
+                        <div class="col-md-1 text-right"><b>Inv. Date:</b></div>
+                        <div class="col-md-1">5/1/2018</div>
+                        <div class="col-md-3 text-right"><b>Due Date:</b></div>
+                        <div class="col-md-1">5/31/2018</div>
+                        <div class="col-md-2 text-right " style="padding-top: 6px;"><b>Open Balance:</b></div>
+                        <div class="col-md-2 form-inline "><span style="padding-top: 6px;"></span><input class="form-control input-sm credit-field creditfieldcurrency" id="oldBalance" name="oldBalance" readonly="readonly" style="text-align: right;" type="text" value=""></div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1 text-right"><b>Reason:</b></div>
+                        <div class="col-md-3">
+                            <select class="form-control input-sm" id="select_ReasonList" name="slReasonList" required="required">
+                                <option value="">-Select-</option>
+                                <option value="15">Adjustment                                        </option>
+                                <option value="8">Billing Error                                     </option>
+                                <option value="1">Cancelled                                         </option>
+                                <option value="11">Catastrophic Event                                </option>
+                                <option value="14">Client Discount                                   </option>
+                                <option value="3">Client Request                                    </option>
+                                <option value="12">Closed                                            </option>
+                                <option value="4">Contract Decrease                                 </option>
+                                <option value="5">Holiday                                           </option>
+                                <option value="7">Incomplete Service                                </option>
+                                <option value="9">Missed Cleans                                     </option>
+                                <option value="13">Other                                             </option>
+                                <option value="10">Poor Service                                      </option>
+                                <option value="2">Suspended                                         </option>
+                                <option value="6">Weather Related                                   </option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 text-right"><b>Amount Credit Request: </b></div>
+                        <div class="col-md-1">
+                            <input class="form-control input-sm credit-field creditfieldcurrency" id="requestCreditAmt" name="requestCreditAmt" required="required" style="text-align: right;" type="text" value="0.00">
+
+                        </div>
+                        <div class="col-md-2 text-right" style="padding-top: 6px;"><b>Credit:</b></div>
+                        <div class="col-md-2 form-inline"><span style="padding-top: 6px;"></span><input class="form-control input-sm credit-field creditfieldcurrency" id="creditAmt" name="creditAmt" readonly="readonly" style="text-align: right;" type="text" value=""></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1 text-right"><b>Description:</b></div>
+                        <div class="col-md-7">
+                            <input class="form-control input-sm" id="creditDesc" name="creditDesc" required="required" type="text" value="">
+                        </div>
+                        <div class="col-md-2 text-right " style="padding-top: 6px;"><b>New Balance:</b></div>
+                        <div class="col-md-2 form-inline "><span style="padding-top: 6px;"></span><input class="form-control input-sm credit-field creditfieldcurrency" id="newBalance" name="newBalance" readonly="readonly" style="text-align: right;" type="text" value="0.00"></div>
+                    </div>
+                    <hr style="margin-top: 6px;margin-bottom: 6px;">
+                </div>
+                <div class="row">
+                    <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                        <tbody>
+                            <tr>
+                                <th class="text-center text-bottom" style="width:100px">Line No.</th>
+                                <th class="text-center text-bottom" style="width:200px">Service Desc.</th>
+                                <th class="text-center text-bottom" style="width:120px">Open Balance</th>
+                                <th class="text-center text-bottom" style="width:120px"><input type="radio" class="bigger-radio" name="rdApplyAmtType" value="amt" checked="checked"><br>Apply Amt.</th>
+                                <th class="text-center text-bottom" style="width:80px">Tax</th>
+                                <th class="text-center text-bottom" style="width:100px"><input type="radio" class="bigger-radio" name="rdApplyAmtType" value="total"><br>Amt. w/o Tax</th>
+                                <th class="text-center text-bottom " style="width:120px">New Balance</th>
+                            </tr>
+                            <input id="item0_taxRate" name="item0_taxRate" type="hidden" value="0.00">
+                            <tr>
+
+
+                                <td class="text-center">1</td>
+                                <td class="text-center"></td>
+                                <td class="text-center form-inline"><input class="form-control input-sm credit-field creditfieldcurrency" id="item0_oldBalance" name="item0_oldBalance" readonly="readonly" style="text-align: right;" type="text" value="0.00"></td>
+                                <td class="text-center form-inline"><input class="form-control input-sm credit-field credit-line-item-autoapply credit-line-item-amt-field creditfieldcurrency" id="item0_creditAmt" name="item0_creditAmt" readonly="" style="text-align: right;" type="text" value=""></td>
+                                <td class="text-center form-inline"><input class="form-control input-sm credit-field creditfieldcurrency" id="item0_tax" name="item0_tax" readonly="readonly" style="text-align: right;" type="text" value="0.00"></td>
+                                <td class="text-center form-inline"><input class="form-control input-sm credit-field credit-line-item-autoapply credit-line-item-total-field creditfieldcurrency" id="item0_total" name="item0_total" readonly="" style="text-align: right;" type="text" value="0.00"></td>
+                                <td class="text-center form-inline "><input class="form-control input-sm credit-field creditfieldcurrency" id="item0_newBalance" name="item0_newBalance" readonly="readonly" style="text-align: right;" type="text" value="0.00"></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Detail Section -->
+                <div class="row" id="modeldetail_Below">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="portlet light bordered" style="margin-right: 27px;margin-left: 30px; margin-bottom: -6px; height: 40px">
+                                <div class="col-md-1 text-right" style="margin-top: -7px;"><b>Line No:</b></div>
+                                <div class="col-md-2" style="margin-top: -7px;">
+                                    <select class="form-control input-sm" id="select_LineNo" name="LineNoList">
+                                        <option value="1">1</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 text-center" style="margin-top: -7px;">
+                                    <label class="mt-checkbox">
+                                        <input type="checkbox" id="chkAutoApply" checked="checked">Auto Apply
+                                        <span></span>
+                                    </label>
+                                </div>
+                                <div class="col-md-2" style="margin-top: -7px;">
+                                    <label class="mt-radio">
+                                        <input type="radio" id="chkAmount" name="rdCreditUnit" value="amt" checked="checked">Amount
+                                        <span></span>
+                                    </label>
+                                </div>
+                                <div class="col-md-2" style="margin-top: -7px;">
+                                    <label class="mt-radio">
+                                        <input type="radio" id="chkPercentage" name="rdCreditUnit" value="pct">Percentage
+                                        <span></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                        <tbody>
+                            <tr>
+
+                                <th style="width:120px;text-align:center">Name</th>
+                                <th style="width:100px;text-align:center">Number</th>
+                                <th style="width:100px;text-align:center">Open Balance</th>
+                                <th class="franchisee-amt-col" style="width: 100px; text-align: center; display: table-cell;">Apply Amt</th>
+                                <th class="franchisee-pct-col" style="width: 100px; text-align: center; display: none;">Apply Pct</th>
+                                <th class="" style="width:100px;text-align:center">New Balance</th>
+                            </tr>
+                            <input class="franchisee-row-key" id="bp68579_key" name="bp68579_key" type="hidden" value="0.00">
+                            <input class="franchisee-row-item" id="bp68579_item" name="bp68579_item" type="hidden" value="item0">
+                            <tr class="franchisee-row franchisee-row-line1" style="display: table-row;">
+                                <td class="text-center">ZOELEICE, LLC</td>
+                                <td class="text-center">201229</td>
+                                <td class="text-center form-inline"><input class="form-control input-sm credit-field creditfieldcurrency" id="bp68579_oldBalance" name="bp68579_oldBalance" readonly="readonly" style="text-align: right;" type="text" value="0.00"></td>
+                                <td class="text-center franchisee-amt-col form-inline" style="display: table-cell;"><input class="form-control input-sm credit-field credit-franchisee-field creditfieldcurrency" id="bp68579_creditAmt" name="bp68579_creditAmt" readonly="readonly" style="text-align: right;" type="text" value=""></td>
+                                <td class="text-center franchisee-pct-col form-inline" style="display: none;"><input class="form-control input-sm credit-field" id="bp68579_creditPct" name="bp68579_creditPct" type="text" value=""><span>%</span></td>
+                                <td class="text-center form-inline "><input class="form-control input-sm credit-field creditfieldcurrency" id="bp68579_newBalance" name="bp68579_newBalance" readonly="readonly" style="text-align: right;" type="text" value="0.00"></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <!-- Action buttons -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-8"></div>
+                        <div class="col-md-2 control-label">
+                            @*<button type="button" class="btn btn-primary submit-button" id="" name="">Save &amp; Close</button>*@
+                        </div>
+                        <div class="col-md-2 control-label">
+                            <button type="button" class="btn btn-primary submit-button" id="" name="">Update</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

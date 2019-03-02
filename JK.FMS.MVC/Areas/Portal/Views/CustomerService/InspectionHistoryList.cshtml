@@ -1,0 +1,540 @@
+﻿
+@{
+    ViewBag.Title = "InspectionHistoryList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+
+    <style type="text/css">
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+            font-weight: normal;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        #modal_RegionModel .modal-content {
+            width: 55% !important;
+            margin-left: 30% !important;
+        }
+    </style>
+
+}
+
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    Inspection History List
+                </div>
+                <div class="col-md-2 pull-right" style="padding-right:5px;">
+                    <div style="display:table-cell;padding-right: 5px;">
+                       @* Region*@
+                    </div>
+                    <div style="display:table-cell;width:100%;">
+                        @if (ViewBag.regionlist != null)
+                        {
+                            <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                                @foreach (var item in (SelectList)ViewBag.regionlist)
+                                {
+                                    <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="custom-listbox" id="divInsList" style="margin-top:4px;margin-bottom:3px;">
+    <div class="headerbox">
+        <div class="row no-padding">
+            <div class="col-sm-1 page-size">
+                <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                    <option value="-1">All</option>
+                    <option value="100" selected>100</option>
+                    <option value="50">50</option>
+                    <option value="25">25</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <div class="input-icon">
+                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                    <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search" value="" class="form-control input-sm typeahead" />
+                </div>
+            </div>
+
+            <div class="col-md-5 pull-right no-padding">
+
+                <div class="col-md-10 pull-right no-padding" style="text-align:center;">
+                    <div class="col-md-6 no-padding" style="margin-left:30px;">
+                        <select id="select_timeduration" class="form-control input-sm">
+                            <option value="1">This Week</option>
+                            <option value="2">This Week-to-date</option>
+                            <option value="3" selected="selected">This Month</option>
+                            <option value="4">This Month-to-date</option>
+                            <option value="5">This Quarter</option>
+                            <option value="6">This Quarter-to-date</option>
+                            <option value="7">This Fiscal Year</option>
+                            <option value="8">This Fiscal Year-to-date</option>
+                            <option value="9">Today</option>
+                            <option value="10">Yesterday</option>
+                            <option value="11">Last Week</option>
+                            <option value="12">Last Month</option>
+                            <option value="13">Last Quarter</option>
+                            <option value="14">Last Year</option>
+                            <option value="15">Custom Date</option>
+                        </select>
+                    </div>
+                    <div class="col-md-5 divspandate no-padding" style="margin-top: 3px; margin-left: 0px; display: block; float: right;" id="divspandate">
+                        <span id="spnStartDate"></span> - <span id="spnEndtDate"></span>
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divSD">
+                        <input type="text" name="txtStartDate" id="txtStartDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divED">
+                        <input type="text" name="txtEndtDate" id="txtEndtDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="tablebox">
+    <div class="row padding-tb1">
+        <div class="row no-padding">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover" id="InspectionHistoryList">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center;width:6%;">
+                                Customer no
+                            </th>
+                            <th style="text-align:center;width:20%;">
+                                Customer Name
+                            </th>
+                            <th style="text-align:center;width:9%;">
+                                Total Inspections
+                            </th>
+                            <th style="text-align:center;width:7%;">
+                                Total Scores
+                            </th>
+                            <th style="text-align:center;width:7%;">
+                                Total Failure
+                            </th>
+                            <th style="text-align:center;width:7%;">
+                                Total Passed
+                            </th>
+                            <th style="text-align:center;width:10%;">
+                                Last Inspection Date
+                            </th>
+                            <th style="text-align:center;width:12%;">
+                                Last Inspector
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section pageplugins{
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+}
+@section scripts{
+    <script>
+
+        var inspectionHistoryList;
+
+        function getTableURL() {
+            var date = $('#spnStartDate').html() + '-' + $('#spnEndtDate').html();
+            var sURL = '@Url.Action("inspectionHistoryListResultData", "CustomerService", new { area = "Portal" })?date=' + date;
+            return sURL;
+        }
+
+        function inspectionHistoryListrefreshTable() {
+            var url = getTableURL();
+            $.blockUI();
+            inspectionHistoryList.DataTable().ajax.url(url).load(function () { $.unblockUI(); });
+        }
+
+        function refreshTable() {
+            var url = getTableURL();
+            $.blockUI();
+            inspectionHistoryList.DataTable().ajax.url(url).load(function () { $.unblockUI(); });
+        }
+
+        $(window).load(function () {
+            refreshTable();
+        });
+
+        jQuery(document).ready(function () {
+            
+            $("#pageSize").change(function () {
+                setPaging();
+            });
+
+            $('#divspandate').show();
+            $('#divSD').hide();
+            $('#divED').hide();
+
+            firstDay = moment().subtract(0, 'month').startOf('month').toString();
+            lastDay = moment().subtract(0, 'month').endOf('month').toString();
+
+            $('#spnStartDate').html(moment(firstDay).format('L'));
+            $('#spnEndtDate').html(moment(lastDay).format('L'));
+
+            var ps = $('#pageSize').val();
+            inspectionHistoryList = $('#InspectionHistoryList').dataTable({
+                "bAutoWidth": false,
+                cache: false,
+                "order": false,
+                "iDisplayLength": ps == '-1' ? 25 : ps,
+                "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                "aaSorting": [[0, "desc"]],
+                "sAjaxDataProp": "aadata",  // Internationalisation. For more info refer to http://datatables.net/manual/i18n
+                "rowCallback": function (nRow, data) {
+
+                },
+
+                "aoColumns": [
+                    {
+                        "sName": "CustomerNo",
+                        "bSortable": true,
+                        "sClass": "alignCenter",
+                        "mRender": function (data, type, full) {
+                            return full.CustomerNumber;
+                        }
+                    },
+                    {
+                        "sName": "CustomerName",
+                        "bSortable": true,
+                        "sClass": "alignCenter",
+                        "mRender": function (data, type, full) {
+                            var html = "<a href='@Url.Action("InspectionHistory", "CustomerService", new { @area = "Portal" })?id=" + full.CustomerId + "' >" + full.CustomerName + "</a>";
+                            return html;
+                        }
+                    },
+                    {
+                        "sName": "TotalInspection",
+                        "bSortable": true,
+                        "sClass": "alignCenter",
+                        "mRender": function (data, type, full) {
+                            
+                            return full.TotalInspections;
+                        }
+                    },
+                    {
+                        "sName": "TotalScore",
+                        "bSortable": true,
+                        "sClass": "alignCenter",
+                        "mRender": function (data, type, full) {
+                            return full.AverageScorePercent;
+                        }
+                    },
+                    {
+                        "sName": "TotalFailure",
+                        "bSortable": true,
+                        "sClass": "alignCenter",
+                        "mRender": function (data, type, full) {
+                            return full.FailCount;
+                        }
+                    },
+                    {
+                        "sName": "TotalPassed",
+                        "bSortable": true,
+                        "sClass": "alignCenter",
+                        "mRender": function (data, type, full) {
+                            return full.PassCount;
+                        }
+                    },
+                    {
+                        "sName": "LastInspectionDate",
+                        "bSortable": true,
+                        "sClass": "alignCenter",
+                        "mRender": function (data, type, full) {
+                            var date = formatJSONDateUtc(full.LastInspectionDate);
+                            return date;
+                        }
+                    },
+                    {
+                        "sName": "LastInspector",
+                        "bSortable": true,
+                        "sClass": "alignCenter",
+                        "mRender": function (data, type, full) {
+                            return full.LastInspectedBy;
+                        }
+
+                    }
+                ],
+
+            });
+
+            $("#input_Search").keyup(function () {
+                var table = $("#InspectionHistoryList").DataTable();
+                table.search($(this).val()).draw();
+            });
+
+            $('#InspectionHistoryList').show();
+
+        })
+
+        function setPaging() {
+            var z = $("#pageSize").val();
+            var table = $("#InspectionHistoryList").DataTable();
+            if (z > 0) {
+                table.page.len(z).draw();
+            }
+            else if (z == -1) {
+                table.page.len(table.rows().count()).draw();
+            }
+            else {
+                table.page.page.len(25).draw();
+            }
+        }
+
+        var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+        var firstDay;
+        var lastDay;
+        Date.prototype.getWeek = function (start) {
+            //Calcing the starting point
+            start = start || 0;
+            var today = new Date(this.setHours(0, 0, 0, 0));
+            var day = today.getDay() - start;
+            var date = today.getDate() - day;
+
+            // Grabbing Start/End Dates
+            var StartDate = new Date(today.setDate(date));
+            var EndDate = new Date(today.setDate(date + 6));
+            return [StartDate, EndDate];
+        }
+
+        $('#txtStartDate').change(function () {
+            $('#spnStartDate').html($(this).val());
+            if ($('#txtStartDate').val() != '' && $('#txtEndtDate').val() != '')
+                refreshTable();
+        });
+        $('#txtEndtDate').change(function () {
+            $('#spnEndtDate').html($(this).val());
+            if ($('#txtStartDate').val() != '' && $('#txtEndtDate').val() != '')
+                refreshTable();
+        });
+
+        $('#select_timeduration').change(function () {
+            //alert($(this).val());
+            $('#spnStartDate').html('');
+            $('#spnEndtDate').html('');
+            $('#divspandate').show();
+            $('#divSD').hide();
+            $('#divED').hide();
+            switch (parseInt($(this).val())) {
+                case 1:
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = moment().endOf('isoWeek').toString();
+                    break;
+                case 2:
+                    //code block
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 3:
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                    break;
+                case 4:
+                    //code block
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 5:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = moment().endOf('quarter').toString();
+                    break;
+                case 6:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 7:
+                    //code block
+                    firstDay = moment().startOf('year').toString();;
+                    lastDay = moment().endOf('year').toString();
+                    break;
+                case 8:
+                    //code block
+                    firstDay = moment().startOf('year').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 9:
+                    //code block
+                    firstDay = moment().toString();
+                    lastDay = moment().toString();
+                    break;
+                case 10:
+                    //code block
+                    firstDay = moment().add(-1, 'days').toString();
+                    lastDay = moment().add(-1, 'days').toString();
+                    break;
+                case 11:
+                    //code block
+                    firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                    lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                    break;
+                case 12:
+                    //code block
+                    firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                    break;
+                case 13:
+                    //code block
+                    firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                    lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                    break;
+                case 14:
+                    //code block
+                    firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                    lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                    break;
+                case 15:
+                    //code block
+                    $('#divspandate').hide();
+                    $('#divSD').show();
+                    $('#divED').show();
+                    $('#txtStartDate').val('');
+                    $('#txtEndtDate').val('')
+                    break;
+                default:
+                    //code block
+            }
+            $('#spnStartDate').html(moment(firstDay).format('L'));
+            $('#spnEndtDate').html(moment(lastDay).format('L'));
+
+            if (parseInt($(this).val())!=15)
+                refreshTable();
+
+        });
+
+        function formatJSONDate(jsonDate) {
+            if (jsonDate != null) {
+                var dateString = jsonDate.substr(6);
+                var currentTime = new Date(parseInt(dateString));
+                var month = currentTime.getMonth() + 1;
+                var day = currentTime.getDate();
+                var year = currentTime.getFullYear();
+                var date = month + "/" + day + "/" + year;
+                return date;
+            }
+            return null;
+        }
+
+        function formatJSONDateUtc(jsonDate) {
+            if (jsonDate != null) {
+                var dtstr = jsonDate.substr(6);
+                var dateString = dtstr.substring(0, dtstr.length - 2);
+                var currentTime = new Date(parseInt(dateString)).toUTCString();
+                var date = moment.utc(currentTime).format("MM/DD/YYYY");
+                return date;
+            }
+            return null;
+        }
+
+        function btnInvoicePopupClose() {
+            $("#modal_invoicedetail").modal('hide');
+        }
+    </script>
+}

@@ -1,0 +1,163 @@
+﻿
+@model IEnumerable<JKViewModels.Franchise.portal_spGet_F_ChargebackListForFranchiseeViewModel>
+@{  
+    var request = HttpContext.Current.Request;
+    var _siteUrl = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Authority);
+    string imgpath = _siteUrl + "/Content/admin/assets/layouts/layout2/img/lg_jklogo.jpg";
+
+
+    var modelData = new JKViewModels.Franchise.portal_spGet_F_ChargebackListForFranchiseeViewModel();
+    if (Model != null)
+    {
+        modelData = Model.FirstOrDefault();
+    }
+}
+
+<!DOCTYPE html>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+    <title></title>
+    <style type="text/css">
+        thead th { background:#6fb7ff; color:white}
+    </style>
+</head>
+<body>
+    <div class="row">
+        <div class="col-md-12">
+            <table style="font-size:20px; font-weight: bold;" class="table">
+                <thead>
+                    <tr style="text-align:center;">
+                        <th colspan="10" style="text-align:center;">CHARGEBACK DETAIL</th>
+                    </tr>
+                    <tr>
+                        <td valign="top" class="t1col1">
+                            <img src="@imgpath" alt="logo" width="90" height="60" />
+                        </td>
+                        <td align="left" valign="top" class="t1col2">
+                            <table width="480" style="font-size:15px;font-weight: bold;" class="tabborder">
+                                <tr>
+                                    <td><strong>Franchisee No: :</strong></td>
+                                    <td><strong>@modelData.FranchiseeNo</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Franchisee Name:</strong></td>
+                                    <td><strong>@modelData.FranchiseeName</strong></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td width="80" class="t1col3"></td>
+                        <td class="t1col4">
+                            <table width="380" style="font-size:15px;font-weight: bold;" class="tabborder">
+                                <tr>
+                                    <td class="text-right">Transaction No.</td>
+                                    <td class="text-center"><span>@modelData.TransactionNumber</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">Date</td>
+                                    <td class="text-center"><span>@String.Format("{0:d}", modelData.InvoiceDate)</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">Status</td>
+                                    <td class="text-center"><span>@modelData.StatusName</span></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                <thead>
+                    <tr>
+                        <th style="width:110px;text-align:center;font-weight: bold;">Chargeback Period</th>
+                        <th style="width:200px;text-align:center;font-weight: bold;">Description</th>
+                        <th style="text-align:center;font-weight: bold;">Invoice No</th>
+                        <th style="width:100px;text-align:center;font-weight: bold;">Amount Chargeback</th>
+                        <th style="width:100px;text-align:center;font-weight: bold;">Total Fees</th>
+                        <th style="width:100px;text-align:center;font-weight: bold;">Final Amount Chargeback</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (Model != null)
+            {
+                foreach (var item in Model)
+                {
+                            <tr>
+                                <td style="text-align:center;">@item.ChargeBackPeriod</td>
+                                <td style="text-align:center;">@item.InvoiceDescription</td>
+                                <td style="white-space:pre-line;text-align:center;">@item.InvoiceNo</td>
+                                <td style="text-align:right;">$@string.Format("{0:N}",item.ChargeBackAmount)</td>
+                                <td style="text-align:right;">$@string.Format("{0:N}",item.TotalFee)</td>
+                                <td style="text-align:right;">$@string.Format("{0:N}",item.FinalAmountChargeBack)</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="font-weight: bold;"> NOTE:</td>
+                        <td><textarea class="form-control input-sm" style="min-width:100%" rows="3"></textarea></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <br />
+        <br />
+        <div class="col-md-12">
+            <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                <thead>
+                    <tr>
+                        <th colspan="7" style="text-align:center;font-weight: bold;">CHARGEBACK TRANSACTION INFO</th>
+                    </tr>
+                    <tr>
+                        <th style="width:110px;text-align:center;font-weight: bold;">Invoice No</th>
+                        <th style="width:50px;text-align:center;font-weight: bold;">Invoice Date</th>
+                        <th style="width:80px;text-align:center;font-weight: bold;">Customer No</th>
+                        <th style="width:120px;text-align:center;font-weight: bold;">Customer Name</th>
+                        <th style="width:70px;text-align:center;font-weight: bold;">Invoice Amount</th>
+                        <th style="width:50px;text-align:center;font-weight: bold;">Payment/Credit Amount</th>
+                        <th style="width:100px;text-align:center;font-weight: bold;">Invoice Amount Due</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+            {
+                foreach (var item in Model)
+                {
+                            <tr>
+                                <td style="text-align:center">@item.InvoiceNo</td>
+                                <td style="text-align:center">@String.Format("{0:d}", item.InvoiceDate)</td>
+                                <td style="text-align:center">@item.CustomerNo</td>
+                                <td style="text-align:center">@item.CustomerName</td>
+                                <td style="text-align:right">$@string.Format("{0:N}", item.InvoiceAmount)</td>
+                                <td style="text-align:right">$@string.Format("{0:N}", item.InvoiceBalance)</td>
+                                <td style="text-align:right">$@string.Format("{0:N}", item.AmountDue)</td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+
+
+
+        </div>
+    </div>
+</body>
+
+</html>
+

@@ -1,0 +1,99 @@
+﻿
+@model IEnumerable<JKViewModels.Administration.System.ConfigSettingViewModel>
+
+@using JKApi.Service.Helper;
+
+@{
+    ViewBag.Title = "System Configuration";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+
+
+    <div class="form-horizontal panel ">
+        <table class="table table-striped table-bordered table-hover table-checkable order-column" style="width: 50%;" align="center">
+            <thead>
+                <tr style="background-color:cornflowerblue;">
+                    <th>
+                        Name
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+
+                @foreach (var item in Model)
+                {
+
+                    int required = Constants.Required;
+                    if (item.Id == Constants.sysBCCEmailAddress)
+                    {
+                        required = Constants.Optional;
+                    }
+
+
+                    if (item.ValueType != Constants.ConfigurationValueTypeMessage)
+                    {
+                        <tr class="odd gradeX">
+                            <td width="50%" style="text-align:left">@item.Name</td>
+                            <td style="text-align:center">
+                                @if (item.ValueType == Constants.ConfigurationValueTypeYesNo)
+                                {
+                                    <label><input type="checkbox" id="chkconfig@(item.Id)" name="chkconfig@(item.Id)" value="@item.Value" checked="@(item.Value == "1" ? true : false)" /></label>
+                                }
+                                else
+                                {
+                                    if (item.ValueType == Constants.ConfigurationValueTypeCurrency)
+                                    {
+                                        <input type="text" class="form-control" id="txtconfig@(item.Id)" name="txtconfig@(item.Id)" value="@item.Value" />
+                                    }
+                                    else if (item.ValueType == Constants.ConfigurationValueTypePercentage)
+                                    {
+                                        <input type="text" class="form-control" id="txtconfig@(item.Id)" name="txtconfig@(item.Id)" value="@item.Value" />
+                                    }
+                                    else if (item.ValueType == Constants.ConfigurationValueTypeNumeric)
+                                    {
+                                        <input type="text" class="form-control" id="txtconfig@(item.Id)" name="txtconfig@(item.Id)" value="@item.Value" />
+                                    }
+                                    else if (item.ValueType == Constants.ConfigurationValueTypeString)
+                                    {
+                                        <input type="text" class="form-control" id="txtconfig@(item.Id)" name="txtconfig@(item.Id)" value="@item.Value" />
+                                    }
+                                    else if (item.ValueType == Constants.ConfigurationValueTypeLink)
+                                    {
+                                        <a id="lnkprinttestcheck" href="/acctpayable/checkGenerate.aspx?test=1&generatecheck=1&lstchecktype=6&lstbank=1">Print Test Check</a>
+                                    }
+                                }
+
+                            </td>
+                        </tr>
+
+
+
+                    }
+                }
+
+
+                <tr class="odd gradeX">
+                    <td style="text-align:center;" colspan="2">
+                        <input type="submit" value="Save" name="Save" class="btn btn-default" />
+                        <input type="button" value="Cancel" class="btn btn-default" />
+                    </td>
+                </tr>
+
+
+            </tbody>
+        </table>
+
+
+    </div>
+}

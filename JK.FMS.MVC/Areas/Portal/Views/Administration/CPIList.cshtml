@@ -1,0 +1,105 @@
+﻿@model IEnumerable<JKApi.Data.DAL.tbl_sys_CPI>
+
+@{
+    ViewBag.Title = "CPIList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <link href="@Url.Content("~//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+
+    <style type="text/css">
+        .jkcustom-page-title {
+            font-size: 18px;
+            padding: 3px;
+            color: #fff !important;
+            background: #3598dc !important;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .tr-HeaderStyle {
+            background-color: #336699;
+            color: #fff;
+        }
+    </style>
+
+}
+@Html.ActionLink("Create CPI", "CreateCPI", "Administration", new { Area = "Portal", @class = "btn btn-primary" })
+<div class="row">
+    <div class="col-md-12">
+        <div class="jkcustom-page-title">
+            CPI List
+        </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <section class="col-md-12 col-md-push-0">
+        <div class="portlet light ">
+            <div class="portlet-body">
+                <table class="table table-condensed" id="leasesList">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.billmonth)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.billyear)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.percent)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.applied)
+                            </th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.billmonth)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.billyear)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.percent)
+                                </td>
+                                <td>
+                                    @if (item.applied == 1)
+                                    {
+                                        <p>Yes</p>
+                                    }
+                                    else
+                                    {
+                                        <p>No</p>
+                                    }
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "EditCPI", "Administration",new {ids = item.id })
+                                    @Html.ActionLink("Delete", "CPIDelete", "Administration", new { Area = "Portal", id = item.id })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+@section scripts{
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+
+    <script src="@Url.Content("//code.jquery.com/jquery-1.12.4.js")" type="text/javascript"></script>
+    <script src="@Url.Content("https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("https://cdn.datatables.net/responsive/2.1.1/js/dataTables.responsive.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("https://cdn.datatables.net/responsive/2.1.1/js/responsive.bootstrap.min.js")" type="text/javascript"></script>
+   
+}

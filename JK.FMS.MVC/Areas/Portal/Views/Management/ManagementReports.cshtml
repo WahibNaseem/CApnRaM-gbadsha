@@ -1,0 +1,503 @@
+﻿
+@{
+    ViewBag.Title = "ManagementReports";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    tr > td {
+        font-size: 12px !important;
+        padding: 4px !important;
+    }
+
+    /*tr > th {
+        font-size: 11px !important;
+        text-transform: uppercase;
+    }*/
+
+    .row {
+        margin: 0;
+        padding: 3px 0;
+    }
+
+    .right {
+        text-align: right;
+    }
+
+    .personlink {
+        text-align: center;
+    }
+
+    .close {
+        background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+        height: 12px !important;
+        width: 12px !important;
+        margin-top: 0px !important;
+    }
+
+    .page-size {
+        padding-left: 0;
+        padding-right: 0;
+        width: 62px;
+    }
+
+    .topheader {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFF !important;
+        text-transform: uppercase;
+        margin-top: 3px;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+
+    .alignCenter {
+        text-align: center;
+    }
+
+    #NewCustomerList th {
+        vertical-align: middle;
+    }
+
+    .no-padding {
+        padding: 0;
+    }
+
+    .no-margin {
+        margin: 0;
+    }
+
+    .padding-tb1 {
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+
+    .margin-tb1 {
+        margin-top: 1px;
+        margin-bottom: 1px;
+    }
+
+    .custom-listbox .headerbox {
+        padding: 3px 0px 3px 5px;
+    }
+
+    .custom-listbox {
+        margin-top: 4px;
+        margin-bottom: 0px;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .multiselect-container.dropdown-menu {
+        text-transform: none;
+        font-size: 14px;
+        padding-left: 24px;
+    }
+</style>
+
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+}
+
+<div class="custom-listbox" style="margin-top:4px;margin-bottom:3px;">
+    <div class="headerbox">
+        <div class="row" style="background-color: #3598DC;color: #fff;">
+            <div class="col-md-12 no-padding">
+                <div class="alignCenter">
+                    <div class="col-md-12 text-center">
+                        Management Reports
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tablebox">
+        <div class="row" style="padding-top: 50px;padding-bottom: 20px;">
+            <div class="col-md-12">
+                <div class="col-md-3">
+                    <input type="button" class="btn btn-primary  col-md-8" value="Corporate Dues Report" onclick="openCorporationDuesReport();" style="margin-left: 20px;" />
+                </div>
+                <div class="col-md-3">
+                    <input type="button" class="btn btn-primary  col-md-8" value="Percent Paid By Date" onclick="openPercentPaidByDate();" style="margin-left: 20px;" />
+                </div>
+                <div class="col-md-3">
+                    <input type="button" class="btn btn-primary  col-md-8" value="DRO Report" onclick="openDROReport();" style="margin-left: 20px;" />
+                </div>
+                <div class="col-md-3">
+                    <input type="button" class="btn btn-primary  col-md-8" value="Tax Liability Report" style="margin-left: 20px;" />
+                </div>
+            </div>
+        </div>
+        <div class="row" style="padding-bottom: 20px;">
+            <div class="col-md-12">
+                <div class="col-md-3">
+                    <input type="button" class="btn btn-primary  col-md-8" value="Negative Due History" onclick="openNegative();" style="margin-left: 20px;" />
+                </div>
+                <div class="col-md-3">
+                    <input type="button" class="btn btn-primary  col-md-8" value="Customer Revenues" onclick="clickCustomerRevenues();" style="margin-left: 20px;" />                    
+                </div>
+                <div class="col-md-3">
+                    <input type="button" class="btn btn-primary  col-md-8" value="Franchisee Revenues" onclick="clickFranchiseeRevenues();" style="margin-left: 20px;" />
+                </div>
+                <div class="col-md-3">
+                    <input type="button" class="btn btn-primary  col-md-8" value="Franchiess Supply Recap" onclick="openFranchiessSupplyRecap();" style="margin-left: 20px;" />
+                </div>
+            </div>
+        </div>
+        <div class="row" style="padding-bottom: 20px;">
+            <div class="col-md-12">
+                <div class="col-md-3">
+                    <input type="button" class="btn btn-primary  col-md-8" value="Lease Bill Report" onclick="openLeaseBillReport();" style="margin-left: 20px;" />
+                </div>
+                <div class="col-md-3">
+                    <input type="button" class="btn btn-primary  col-md-8" value="Finder Fee Report" onclick="openFinderFeeReport();" style="margin-left: 20px;" />
+                </div>
+                <div class="col-md-3">
+                    <input type="button" class="btn btn-primary  col-md-8" value="Deductions Report" onclick="openDeductionsReport();" style="margin-left: 20px;" />
+                </div>
+                <div class="col-md-3">
+                    <input type="button" class="btn btn-primary col-md-8" value="1099 Report" onclick="click1099Report();" style="margin-left: 20px;" />
+                </div>
+            </div>
+        </div>
+        <div class="row" style="padding-bottom: 20px;">
+            <div class="col-md-12">
+                <div class="col-md-3">
+                    <input type="button" class="btn btn-primary  col-md-8" value="Obligation Report" onclick="openObligationReport();" style="margin-left: 20px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal_RegionReport" class="modal fade custom-model  in" role="dialog" aria-hidden="true" style="padding-top:90px;">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px;margin-bottom: 4px;padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    <span id="title"></span>
+                </h4>
+            </div>
+            <div class="modal-body" id="modalresetRegBody">
+                <div class="row">
+                    <div class="form-horizontal">
+                        <form id="regresetForm" method="post">
+                            <div class="form-body-outer">
+
+                                <div class="form-group col-lg-12">
+                                    <label class="col-sm-4 control-label font-sm">Select Region:</label>
+                                    <div class="col-sm-7">
+                                        @if (ViewBag.regionlist != null)
+                                        {
+                                            <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                                                @foreach (var item in (SelectList)ViewBag.regionlist)
+                                                {
+                                                    <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                                }
+                                            </select>
+                                        }
+
+                                    </div>
+                                </div> 
+                                <div class="form-group col-lg-12 clsNegativeDueCollected" id="divNegativeDueHistory">
+                                    <div class="col-sm-2"></div>
+                                    <label class="col-sm-1 control-label font-sm">From</label>
+                                    <div  class="col-sm-2">
+                                        <select class="form-control input-sm" id="ddlFromMonth" style="width:70px;">
+                                            @*<option value="0">Select</option>*@
+                                            <option value="1">Jan</option>
+                                            <option value="2">Feb</option>
+                                            <option value="3">Mar</option>
+                                            <option value="4" selected>Apr</option>
+                                            <option value="5">May</option>
+                                            <option value="6">Jun</option>
+                                            <option value="7">Jul</option>
+                                            <option value="8">Aug</option>
+                                            <option value="9">Sep</option>
+                                            <option value="10">Oct</option>
+                                            <option value="11">Nov</option>
+                                            <option value="12">Des</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-2" style="padding-left:0px;">
+                                        <select class="form-control input-sm" id="ddlFromYear" style="width:70px;">
+                                            @*<option value="">Select</option>*@
+                                            @for (int i = 2000; i < 2030; i++)
+                                            {
+                                                <option value="@i">@i</option>
+                                            }
+                                        </select>                                    
+                                    </div>
+                                    <label class="col-sm-1 control-label font-sm">To</label>
+                                    <div class="col-sm-2"  >
+                                        <select class="form-control input-sm" id="ddlToMonth" style="width:70px;">
+                                            @*<option value="0">Select</option>*@
+                                            <option value="1">Jan</option>
+                                            <option value="2">Feb</option>
+                                            <option value="3">Mar</option>
+                                            <option value="4" selected>Apr</option>
+                                            <option value="5">May</option>
+                                            <option value="6">Jun</option>
+                                            <option value="7">Jul</option>
+                                            <option value="8">Aug</option>
+                                            <option value="9">Sep</option>
+                                            <option value="10">Oct</option>
+                                            <option value="11">Nov</option>
+                                            <option value="12">Des</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-2" style="padding-left:0px;">
+                                        <select class="form-control input-sm" id="ddlToYear" style="width:70px;">
+                                            @*<option value="0">Select</option>*@
+                                            @for (int i = 2000; i < 2030; i++)
+                                            {
+                                                <option value="@i">@i</option>
+                                            }                                             
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group col-lg-12 clsmonthddl" >
+                                    <label class="col-sm-4 control-label font-sm">Select Month:</label>
+                                    <div class="col-sm-7">
+                                        @if (ViewBag.periodlist != null)
+                                        {
+                                            <select class="form-control input-sm" id="ddlMonth">
+
+
+                                                @foreach (var item in (SelectList)ViewBag.periodlist)
+                                                {
+                                                    var length = item.Text.Length;
+                                                    if (length == 6)
+                                                    {
+                                                        <option @(item.Selected ? "selected" : "") value="@item.Value">0 @item.Text</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                                    }
+                                                }
+                                            </select>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-11 text-right" id="divButtonCorporationDuesReport">
+                    <input type="button" value="Submit" class="btn btn-primary" onclick="getCorporationDues()" />
+                </div>
+                <div class="col-sm-11 text-right" id="divButtonPercentPaidByDateReport">
+                    <input type="button" value="Submit" class="btn btn-primary" onclick="redirectToReport()" />
+                </div>
+                <div class="col-sm-11 text-right" id="divButtonFranchiessSupplyRecap">
+                    <input type="button" value="Submit" class="btn btn-primary" onclick="location.href='@Url.Action("FranchiessSupplyRecap", "Management", new { area = "Portal"})'" />
+                </div>
+                <div class="col-sm-11 text-right" id="divButtonNegativeDueCollected">
+                    @*<input type="button" value="Submit" class="btn btn-primary" onclick="location.href='@Url.Action("NegativeDueCollected", "Management", new { area = "Portal"})'"  />*@
+                    <input type="button" value="Submit" class="btn btn-primary" onclick="ClickNegativeDueCollected()" />
+                </div>
+                <div class="col-sm-11 text-right" id="divButtonDROReport">
+                    <input type="button" value="Submit" class="btn btn-primary" onclick="location.href='@Url.Action("DROReport", "Management", new { area = "Portal"})'" />
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+<script type="text/javascript">
+        $(document).ready(function () {
+            $("#ddlMonth option").each(function () {
+                $(this).text($(this).text().replace(' ', ''))
+                var splt = $(this).text().split('/');
+                if (parseInt(splt[0]) > @DateTime.Now.Month && parseInt(splt[1]) == @DateTime.Now.Year)
+                    $(this).remove();
+                if (parseInt(splt[0]) == @DateTime.Now.Month && parseInt(splt[1]) == @DateTime.Now.Year) {
+                    $(this).attr("selected", "selected");
+            }
+            });
+        });
+        function redirectToReport() {
+            if ($("#regionlist").val() != null && $("#regionlist").val() != "") {
+                var Surl = '@Url.Action("PercentPaidByDateReport", "Management", new { area = "Portal" })' + "?RegionIds=" + $('#regionlist').val() + "&MonthYear=" + $("#ddlMonth option:selected").text();
+                location.href = Surl;
+            }
+            else {
+                alert("Please select at least one region from region list.");
+            }
+        }
+
+    function getCorporationDues() {
+
+            var _regionId = $("#regionlist").val();
+            var periodid = $('#ddlMonth').val();
+
+            var sURL = '@Url.Action("CorporationDuesReportdata", "Management", new { area = "Portal" })?RegionIds=' + _regionId + '&Periodid=' + periodid ;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    var url = '@Url.Action("CorporationDuesReport", "Management", new { area = "Portal", RegionId=-1, Periodid =-2})';
+                    var path = url.replace("-1", _regionId);
+                    path = path.replace("-2", periodid);
+                    path = path.replace("&amp;", "&");
+                    location.href = path;
+                },
+
+            });
+
+        }
+    function ClickNegativeDueCollected() {
+
+            var _regionId = $("#regionlist").val();
+
+            var _fromMonth = $('#ddlFromMonth').val();
+            var _fromYear = $('#ddlFromYear').val();
+
+            var _toMonth = $('#ddlFromMonth').val();
+            var _toYear = $('#ddlFromYear').val();
+
+            var sURL = '@Url.Action("NegativeDueCollected", "Management", new { area = "Portal" })?RegionIds=' + _regionId + '&fromMonth=' + _fromMonth + "&fromYear=" + _fromYear + '&toMonth=' + _toMonth + '&toYear=' + _toYear;
+            location.href = sURL;
+        }
+
+
+        $(function () {
+            $("#regionlist").multiselect({
+                includeSelectAllOption: true,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2
+            });
+            $("#ddlFromMonth").val('@System.DateTime.Now.Month');
+            $("#ddlFromYear").val('@System.DateTime.Now.Year');
+
+            $("#ddlToMonth").val('@System.DateTime.Now.AddMonths(1).Month');
+            $("#ddlToYear").val('@System.DateTime.Now.Year');
+
+        });
+        function openCorporationDuesReport() {
+            $('#divButtonCorporationDuesReport').show();
+            $('#divButtonPercentPaidByDateReport').hide();
+            $('#divButtonFranchiessSupplyRecap').hide();
+            $('#divButtonNegativeDueCollected').hide();
+            $(".clsmonthddl").show();
+            $(".clsNegativeDueCollected").hide();
+            $('#divButtonDROReport').hide();
+            $('#title').text('Corporation Dues Report');
+            $('#modal_RegionReport').modal('show');
+        }
+
+        function openPercentPaidByDate() {
+            $('#divButtonCorporationDuesReport').hide();
+            $('#divButtonPercentPaidByDateReport').show();
+            $('#divButtonFranchiessSupplyRecap').hide();
+            $('#divButtonNegativeDueCollected').hide();
+            $(".clsmonthddl").show();
+            $(".clsNegativeDueCollected").hide();
+            $('#divButtonDROReport').hide();
+            $('#title').text('Percent Paid By Date Report');
+            $('#modal_RegionReport').modal('show');
+        }
+
+        function openFranchiessSupplyRecap() {
+            $('#divButtonCorporationDuesReport').hide();
+            $('#divButtonPercentPaidByDateReport').hide();
+            $('#divButtonFranchiessSupplyRecap').show();
+            $('#divButtonNegativeDueCollected').hide();
+            $(".clsmonthddl").show();
+            $(".clsNegativeDueCollected").hide();
+            $('#divButtonDROReport').hide();
+            $('#title').text('Franchiess Supply Recap Report');
+            $('#modal_RegionReport').modal('show');
+        }
+
+
+        function openNegative() {
+            $('#divButtonCorporationDuesReport').hide();
+            $('#divButtonPercentPaidByDateReport').hide();
+            $('#divButtonFranchiessSupplyRecap').hide();
+            $('#divButtonDROReport').hide();
+            $('#divButtonNegativeDueCollected').show();
+            $(".clsmonthddl").hide();
+            $(".clsNegativeDueCollected").show();
+            $('#title').text('Negative Due Collected Report');
+            $('#modal_RegionReport').modal('show');
+        }
+
+        function openDROReport() {
+            $('#divButtonCorporationDuesReport').hide();
+            $('#divButtonPercentPaidByDateReport').hide();
+            $('#divButtonFranchiessSupplyRecap').hide();
+            $('#divButtonNegativeDueCollected').hide();
+            $('#divButtonDROReport').show();
+            $(".clsmonthddl").show();
+            $(".clsNegativeDueCollected").hide();
+            $('#title').text('DRO Report(');
+            $('#modal_RegionReport').modal('show');
+        }
+        function clickFranchiseeRevenues()
+        {
+            var pageurl = '@Url.Action("FranchiseeRevenues", "Management", new { area = "Portal"})';
+            window.location.href = pageurl;
+        }
+        function click1099Report()
+        {
+            var pageurl = '@Url.Action("Report1099", "Management", new { area = "Portal"})';
+            window.location.href = pageurl;
+        }
+        function clickCustomerRevenues()
+        {
+            var pageurl = '@Url.Action("CustomerRevenues", "Management", new { area = "Portal"})';
+            window.location.href = pageurl;
+        }
+
+        function openLeaseBillReport()
+        {
+            var pageurl = '@Url.Action("LeaseBillReport", "Management", new { area = "Portal"})';
+            window.location.href = pageurl;
+        }
+        function openFinderFeeReport()
+        {
+            var pageurl = '@Url.Action("FinderFeeReport", "Management", new { area = "Portal"})';
+            window.location.href = pageurl;
+        }
+        function openDeductionsReport()
+        {
+            var pageurl = '@Url.Action("DeductionsReport", "Management", new { area = "Portal"})';
+            window.location.href = pageurl;
+    }
+
+    function openObligationReport()
+    {
+         var pageurl = '@Url.Action("ObligationReport", "Management", new { area = "Portal"})';
+            window.location.href = pageurl;
+    }
+
+</script>
+}

@@ -1,0 +1,284 @@
+﻿@using JK.Resources
+@model JKViewModels.CRM.CRMAccountFranchiseDetailViewModel
+
+<form action="#" id="form_summary" class="form-horizontal">
+    <div class="form-body">
+        <div class="row">
+            @Html.HiddenFor(x => x.CRM_AccountId)
+            @Html.HiddenFor(x => x.CRM_AccountFranchiseDetailId)
+            <div class="col-md-2">
+                <button type="button" name="previous" onclick="getPreviousLead(@Model.CRM_AccountId)" class="btn blue btn-sm">Previous</button>
+            </div>
+            <!-- Lead Status -->
+            <div class="col-md-6 col-md-offset-1">
+                <div class="form-group">
+                    <label for="select_stagestatus" class="control-label col-md-4">@JKCRMResource.leadstatus:</label>
+                    <div class="col-md-6">
+                        @Html.DropDownList("stagestatus", (SelectList)ViewBag.LeadStageStatusList, new { @class = "form-control input-sm", @id = "select_stagestatus" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-2 col-md-offset-1">
+                <button type="button" name="next" onclick="getNextLead(@Model.CRM_AccountId)" class="btn blue btn-sm pull-right" style="width:70px;">Next</button>
+            </div>
+
+        </div>
+        @*<h5 class="form-section sbold uppercase"><b>@JKCRMResource.lead:</b></h5>*@
+
+        <div class="row">
+
+            <!-- Lead Source -->
+            <div class="col-lg-4 col-md-12">
+                <div class="form-group">
+                    <label for="select_providertype" class="control-label col-lg-4 col-md-4 reference-label" style="padding-right:5px;">@JKCRMResource.leadsource:</label>
+                    <div class="col-lg-8 col-md-6" style="padding-left:0px; padding-right:0px;">
+                        @Html.DropDownList("providertype", (SelectList)ViewBag.ProviderTypeList, new { @class = "form-control input-sm", @id = "select_providertype" })
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Provider -->
+            <div class="col-lg-4 col-md-12">
+                
+                <div class="form-group">
+                    <label for="select_providertype" class="control-label col-lg-5 col-md-4 reference-label" style="padding-right:5px;">@JKCRMResource.currentprovider:</label>
+                    <div class="col-lg-7 col-md-6" style="padding-left:0px; padding-right:0px;">
+                        @Html.DropDownList("providersource", (SelectList)ViewBag.ProviderSourceList, "Select...", new { @class = "form-control input-sm", @id = "select_providersource" })
+                    </div>
+                </div>
+            </div>
+
+            <!-- Budget Amount -->
+            <div class="col-lg-4 col-md-12">
+                <div class="form-group">
+                    <label for="input_budgetamount" class="control-label col-lg-5 col-md-4 reference-label" style="padding-right:5px;">@JKCRMResource.budget:</label>
+                    <div class="col-lg-7 col-md-6" style="padding-left:0px; padding-right:0px;">
+                        @Html.TextBox("number", Model.AmtToInvest, new { @class = "form-control input-sm", @id = "input_investamount", @name = "number" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-2  col-md-3 pull-right" style="margin-top: 5px;">
+                <button id="updatesummary_button" type="button" class="btn green btn-block" onclick="updatevalidateContactInfo();">@CommonResource.btnUpdate</button>
+            </div>
+
+        </div>
+
+        @*<h1 class="form-section sbold uppercase"></h1>*@
+
+        <div class="row" style="width:100%; margin-left:1px; padding-bottom:12px; padding-top:8px;margin-top:12px; border: 2px solid lightgray;">
+
+            <!-- Call Result -->
+            <div class="col-lg-4 col-md-12">
+                <div class="form-group">
+                    <label for="select_callresulttype" class="control-label col-lg-4 col-md-4 reference-label" style="padding-right:5px;">Call Result<span class="required">*</span>:</label>
+                    <div class="col-lg-8 col-md-6" style="padding-left:0px; padding-right:0px;">
+                        @Html.DropDownList("select", (SelectList)ViewBag.CallResultList, "Select...", new { @class = "form-control select2 input-sm", @id = "callresult_Type", @name = "select" })
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spoke With -->
+            <div class="col-lg-4 col-md-12">
+                <div class="form-group">
+                    <label for="input_spokewith" class="control-label col-lg-5 col-md-4 reference-label" style="padding-right:5px;">Spoke With:</label>
+                    <div class="col-lg-7 col-md-6" style="padding-left:0px; padding-right:0px;">
+                        @Html.TextBox("spokewith", Model.SpokeWith, new { @class = "form-control input-sm", @id = "input_speakwith", @style = "padding-left:5px;" })
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call Back -->
+            <div class="col-lg-4 col-md-12">
+                <div class="form-group">
+                    <div class="row">
+                        <label for="input_callback" class="control-label col-lg-3 col-md-4 reference-label" style="padding-right:0px;">Call Back:</label>
+                        <div class="col-lg-4 col-md-3" style="padding-right:5px; padding-left:8px;">
+                            @*<input type="text" class="form-control input-sm  date-picker RemovePeriodvalidation" value="@(Model.CallBack != null ? Convert.ToDateTime(Model.CallBack).ToString("MM/dd/yyyy") : string.Empty)" />*@
+                            @Html.TextBox("callbackdate", (Model.CallBack != null ? Convert.ToDateTime(Model.CallBack).ToString("MM/dd/yyyy") : string.Empty), new { @class = "form-control input-sm  date-picker RemovePeriodvalidation",  @id = "calllog_date" })
+                            @*@Html.TextBox("callbackdate", (Model.CallBack != null ? Convert.ToDateTime(Model.CallBack).ToString("MM/dd/yyyy") : string.Empty), new { @class = "form-control input-sm date date-picker RemovePeriodvalidation", @data_date_format = "mm/dd/yyyy", @id = "calllog_date" })*@
+                        </div>
+                        <div class="col-lg-5 col-md-3" style="padding-left:0px; padding-right:18px;">
+                            @*<input type="text" class="form-control input-sm timepicker" id="calllog_time" value="@(Model.CallBack !=null? Convert.ToDateTime(Model.CallBack).ToString("hh:mm tt"):string.Empty)">*@
+                            @Html.TextBox("callbacktime", (Model.CallBack != null ? Convert.ToDateTime(Model.CallBack).ToString("hh:mm tt") : string.Empty), new { @class = "form-control input-sm timepicker timepicker-default",  @id = "calllog_time" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12 col-md-12">
+                <div class="row">
+
+                    <!-- NoteType -->
+                    <div class="col-lg-7 col-md-6">
+                        <div class="form-group">
+                            <label for="select_callresulttype" class="control-label col-lg-1 col-md-4 reference-label" style="padding-left:5px;">Notes:</label>
+                            <div class="col-lg-11 col-md-8">
+                                @Html.DropDownList("select", (SelectList)ViewBag.NoteType, "Select...", new { @class = "form-control select2 input-sm", @id = "select_notetype", @name = "select" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5 col-md-6">
+                        <div class="form-group">
+                            <div class="col-lg-12 col-md-12" style="padding-left:0px;">
+                                @*<textarea class="form-control select2 input-sm" rows="2" id="txt_calllognote"></textarea>*@
+                                @Html.TextArea("note", Model.CRM_Note, new { @class = "form-control select2 input-sm", rows = "2", @id = "txt_calllognote" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="lead_generation" style="display:none; margin-top:10px; border:2px solid lightgray">
+
+            <h5 class="form-section sbold uppercase"><b>Lead Generation:</b></h5>
+
+            <!--Reach Contact Person-->
+            <div class="form-group">
+                <label for="reach_contactperson" class="control-label col-md-4">Person Spoken To<span class="required">*</span>:</label>
+                <div class="col-md-4">
+                    @Html.TextBox("name", Model.ContactPerson, new { @class = "form-control input-sm clscontactperson", @id = "input_contactperson", @name = "name" })
+                </div>
+                <div class="col-md-2" style="padding-left:0px;width:130px;">
+                    <input type="checkbox" id="chksameascontactdetail" class="clschksameascontactdetail" /> Same as Contact
+                </div>
+            </div>
+
+            <!-- Interested In Proposal -->
+            <div class="form-group">
+                <label for="select_interestedinproposal" class="control-label col-md-4">Interested In Proposal<span class="required">*</span>:</label>
+                <div class="col-md-4">
+                    <select id="select_interestedinproposal" class="form-control input-sm input-sm" name="select">
+                        <option value="">Select...</option>
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="select_asignee" class="control-label col-md-4">@JKCRMResource.assignee<span class="required">*</span>:</label>
+                <div class="col-md-4">
+                    @Html.DropDownList("select", (SelectList)ViewBag.UserList, "Select...", new { @class = "form-control input-sm", @id = "select_asignee" })
+                </div>
+            </div>
+
+            <div class="form-group" style="display:none; text-align:center" id="scheduleConflictMsg">
+                <span style="color:red;">Assignee has a schedule conflict at the selected time.</span>
+            </div>
+
+            <!--Start Date/Time-->
+            <div class="form-group">
+
+
+                <div class="col-md-8">
+                    <div class="row">
+                        <label for="schedule_start" class="control-label col-md-6">Start Date/Time<span class="required">*</span>:</label>
+                        <div class="col-md-3" >
+                            <input type="text" class="form-control input-group input-group-sm input-sm date date-picker RemovePeriodvalidation" name="datepicker" data-date-format="mm/dd/yyyy"
+                                   id="input_schedulestartdate" value="@Model.datestart" />
+                            <!--Start Time-->
+
+                        </div>
+                        <div class="col-md-3" style="padding-left:0px;">
+                            <div class="input-icon">
+                                <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                                <input type="text" class="form-control input-group input-group-sm input-sm  timepicker timepicker-default" id="input_schedulestarttime" value="@(Model.timestart != null ? Convert.ToDateTime(Model.timestart).ToString("hh:mm tt") : string.Empty)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label for="schedule_start" class="control-label col-md-6">End Date/Time<span class="required">*</span>:</label>
+
+                        <div class="col-md-3">
+                            <input type="text" class="form-control input-group input-group-sm input-sm date date-picker RemovePeriodvalidation" name="datepicker" data-date-format="mm/dd/yyyy" id="input_scheduleenddate" value="@Model.dateend" />
+                        </div>
+                        <!--End Time-->
+                        <div class="col-md-3" style="padding-left:0px;">
+                            <div class="input-icon">
+                                <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                                <input type="text" class="form-control input-group input-group-sm input-sm  timepicker timepicker-default" id="input_scheduleendtime" value="@(Model.timeend !=null ?Convert.ToDateTime(Model.timeend).ToString("hh:mm tt"):String.Empty)" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <a class="btn green btn-block" data-toggle="modal" id="calendar_schedules" style="height: 57px; line-height: 57px; padding: 0px; width: 100px">Schedules</a>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label for="select_schedulepurpose" class="control-label col-md-4">Purpose<span class="required">*</span>:</label>
+                <div class="col-md-4">
+                    @Html.DropDownList("select", (SelectList)ViewBag.PurposeType, new { @class = "form-control input-sm", @id = "select_schedulepurpose" })
+                </div>
+            </div>
+
+            <h5 class="form-section sbold uppercase"><b>@JKCRMResource.note:</b></h5>
+
+            <!-- Note -->
+            <div class="form-group">
+                <div class="col-md-12" style="width:98%;">
+                    @Html.TextArea("note", Model.Notes, new { @class = "form-control autosizeme", rows = "4", style = "font-size: 11px; margin-left:5px;", @id = "text_leadgeneralnote" })
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    @*<div class="form-actions">
+            <div class="row" id="summary_action">
+                <div class="col-md-3 pull-right">
+                    <button id="savesummary_button" type="button" class="btn green btn-block" onclick="validateContactInfo();">@CommonResource.btnSave</button>
+                </div>
+            </div>
+        </div>*@
+
+    <div @*class="form-actions"*@ style="padding-top:5px;">
+
+        <div class="row" style="padding-bottom:5px;">
+            <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
+                <button type="button" class="btn green btn-sm btn-callresulttype" name="wrongnumber" id="btn_wrongnumber">Wrong Number</button>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12" style="margin-left:5px;">
+                <button type="button" class="btn green btn-sm btn-callresulttype" style="width:108px;" name="busy" id="btn_busy">Busy</button>
+            </div>
+        </div>
+
+        <div class="row" id="summary_action">
+            <div class="col-lg-2 col-md-3 col-sm-3">
+                <button type="button" class="btn green btn-sm btn-callresulttype" style="width:108px;" name="noanswer" id="btn_noanswer">No Answer</button>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-3" style="margin-left:5px;">
+                <button type="button" class="btn green btn-sm btn-callresulttype" style="width:108px;" name="hangup" id="btn_hangup">Hang up</button>
+            </div>
+
+            <div class="col-lg-2  col-md-3 pull-right">
+                <button id="savesummary_button" type="button" class="btn green btn-block" onclick="validateContactInfo();">@CommonResource.btnSave</button>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+
+@*<script type="text/javascript">
+
+    function init() {
+
+        $("#calllog_date").datepicker('options', {
+            minDate: null,
+            maxDate:null,
+        });
+    }
+
+    window.onload = init;
+</script>*@
+

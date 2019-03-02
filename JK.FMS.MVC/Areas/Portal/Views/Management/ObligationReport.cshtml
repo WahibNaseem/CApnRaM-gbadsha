@@ -1,0 +1,541 @@
+﻿
+
+@{
+    ViewBag.Title = "Obligation Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var filters = ViewBag.ObligationReportFilters as JKViewModels.Management.ObligationReportViewModel;
+
+}
+@section styles{
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")' rel="stylesheet" type="text/css" />
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")' rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+}
+<style>
+    .table td {
+        font-size: 12px !important;
+    }
+
+    .close {
+        background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+        height: 12px !important;
+        width: 12px !important;
+        margin-top: 0px !important;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .row {
+        margin: 0;
+        padding: 3px 0;
+    }
+
+    .page-size {
+        padding-left: 0;
+        padding-right: 0;
+        width: 62px;
+    }
+
+    .topheader {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFF !important;
+        text-transform: uppercase;
+        margin-top: 3px;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+
+    .alignCenter {
+        text-align: center;
+    }
+
+    #ObligationList th {
+        vertical-align: middle;
+    }
+
+    .no-padding {
+        padding: 0;
+    }
+
+    .no-margin {
+        margin: 0;
+    }
+
+    .padding-tb1 {
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+
+    .margin-tb1 {
+        margin-top: 1px;
+        margin-bottom: 1px;
+    }
+
+    .custom-listbox .headerbox {
+        padding: 3px 0px 3px 5px;
+    }
+
+    .custom-listbox {
+        margin-top: 4px;
+        margin-bottom: 0px;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .multiselect-container.dropdown-menu {
+        text-transform: none;
+        font-size: 14px;
+    }
+
+    .td1 {
+        text-align: center;
+        width: 4px;
+        background: #337ab7;
+        color: white;
+        font-size: 11px !important;
+    }
+
+    .td2 {
+        width: 30px;
+        text-align: center;
+        background: #337ab7;
+        color: white;
+        font-size: 11px !important;
+    }
+
+    .td3 {
+        width: 7px;
+        text-align: center;
+        background: #337ab7;
+        color: white;
+        font-size: 11px !important;
+    }
+
+    .td4 {
+        text-align: center;
+        width: 55px;
+        background: #337ab7;
+        color: white;
+        font-size: 11px !important;
+    }
+
+    .td5 {
+        text-align: center;
+        width: 100px;
+        background: #337ab7;
+        color: white;
+        font-size: 11px !important;
+    }
+
+    .td6 {
+        text-align: center;
+        width: 50px;
+        background: #337ab7;
+        color: white;
+        font-size: 11px !important;
+    }
+
+    .td7 {
+        text-align: center;
+        width: 74px;
+        background: #337ab7;
+        color: white;
+        font-size: 11px !important;
+    }
+
+    .td8 {
+        text-align: center;
+        width: 72px;
+        background: #337ab7;
+        color: white;
+        font-size: 11px !important;
+    }
+
+    .td9 {
+        text-align: center;
+        width: 10px;
+        background: #337ab7;
+        color: white;
+        font-size: 11px !important;
+    }
+
+    .td10 {
+        text-align: center;
+        width: 68px;
+        background: #337ab7;
+        color: white;
+        font-size: 11px !important;
+    }
+
+    .span-left {
+        padding-left: 10px;
+    }
+</style>
+
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    Obligation REPORT
+                </div>
+                <div class="col-md-4" style="padding-right:5px;">
+                    <div class="col-md-7 pull-right no-padding">
+                        <div style="display:table-cell;padding-right: 5px;">
+                            Region
+                        </div>
+                        <div style="display:table-cell;width:100%;">
+                            @if (ViewBag.regionlist != null)
+                            {
+                                <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                                    @foreach (var item in (SelectList)ViewBag.regionlist)
+                                    {
+                                        <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="custom-listbox">
+    <div class="headerbox">
+        <div class="row no-padding">
+            <div class="col-md-1 page-size">
+                <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                    <option value="-1">All</option>
+                    <option value="100" selected>100</option>
+                    <option value="50">50</option>
+                    <option value="25">25</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <div class="input-icon">
+                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                    <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search..." value="" class="form-control input-sm typeahead" />
+                </div>
+            </div>
+            <div class="col-md-8">
+                <input type="button" class="btn btn-primary pull-right" id="btnPrint" onclick="onclickPrint()" value="Print" style="margin-left:10px;margin-right:15px !important">
+            </div>
+            <div class="col-md-4 pull-right" style="padding-right:5px;">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="tablebox">
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover" id="ObligationList" style="margin-top:0 !important;">
+            <thead>
+                <tr>
+                    <td class="td1">
+                        Status
+                    </td>
+                    <td class="td2">
+                        CustomerNo
+                    </td>
+                    <td class="td3">
+                        Offered Date
+                    </td>
+                    <td class="td4">
+                        Days Kept
+                    </td>
+                    <td class="td5">
+                        Customer Name
+                    </td>
+                    <td class="td6">
+                        Sales Rep
+                    </td>
+                    <td class="td7">
+                        Contract Amount
+                    </td>
+                    <td class="td8">
+                        Original Amount
+                    </td>
+                    <td class="td9">
+                        Legal Balance
+                    </td>
+                    <td class="td10">
+                        Other Balance
+                    </td>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts{
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+    <script type="text/javascript">
+        var dtable;
+
+        $(document).ready(function () {
+            $(document).on('init.dt', function (e, settings) {
+                var api = new $.fn.dataTable.Api(settings);
+                if ($(api.table().node()).attr('id') == 'ObligationList') {
+                    setPaging();
+                }
+            });
+
+            $("#regionlist").multiselect({
+                includeSelectAllOption: true,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2
+            });
+
+            $("#regionlist").change(function () {
+                reloadTable();
+            })
+
+            $("#input_Search").keyup(function () {
+
+                if ($(this).val() != '') {
+                    $("#ObligationList tbody>tr").hide()
+                    $("#ObligationList tbody>tr[relcusn*='" + $(this).val().toUpperCase() + "']").show()
+                } else {
+                    $("#ObligationList tbody>tr").show()
+                }
+
+
+                //var table = $("#ObligationList").DataTable();
+                //table.search($(this).val()).draw();
+            });
+
+            $("#pageSize").change(function () {
+                setPaging();
+            });
+
+            $('#btnExportInExcel').click(function (e) {
+
+                var tab_text = "<table border='2px'><tr bgcolor='#87AFC6'>";
+                var textRange; var j = 0;
+                tab = document.getElementById('ObligationList'); // id of table
+
+                for (j = 0; j < tab.rows.length; j++) {
+                    tab_text = tab_text + tab.rows[j].innerHTML + "</tr>";
+                    //tab_text=tab_text+"</tr>";
+                }
+                tab_text = tab_text + "</table>";
+                tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+                tab_text = tab_text.replace(/<img[^>]*>/gi, ""); // remove if u want images in your table
+                tab_text = tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+                var ua = window.navigator.userAgent;
+                var msie = ua.indexOf("MSIE ");
+
+                var dt = new Date();
+                var day = dt.getDate();
+                var month = dt.getMonth() + 1;
+                var year = dt.getFullYear();
+                var hour = dt.getHours();
+                var mins = dt.getMinutes();
+                var postfix = month + "." + day + "." + year;
+                //creating a temporary HTML link element (they support setting file names)
+                var a = document.createElement('a');
+                //getting data from our div that contains the HTML table
+                var data_type = 'data:application/vnd.ms-excel';
+                //var table_div = document.getElementById('dvData');
+                //var table_html = table_div.outerHTML.replace(/ /g, '%20');
+                a.href = data_type + ', ' + encodeURIComponent(tab_text);
+                //setting the file name
+                a.download = 'Aging_' + postfix + '.xls';
+                //triggering the function
+                a.click();
+                //just in case, prevent default behaviour
+                e.preventDefault();
+
+            });
+            reloadTable();
+        });
+
+
+        function fnExcelReport() {
+
+            var tab_text = "<table border='2px'><tr bgcolor='#87AFC6'>";
+            var textRange; var j = 0;
+            tab = document.getElementById('ObligationList'); // id of table
+
+            for (j = 0; j < tab.rows.length; j++) {
+                tab_text = tab_text + tab.rows[j].innerHTML + "</tr>";
+                //tab_text=tab_text+"</tr>";
+            }
+
+            tab_text = tab_text + "</table>";
+            tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+            tab_text = tab_text.replace(/<img[^>]*>/gi, ""); // remove if u want images in your table
+            tab_text = tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+            var ua = window.navigator.userAgent;
+            var msie = ua.indexOf("MSIE ");
+            if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+            {
+                txtArea1 = window.open();
+                txtArea1.document.open("txt/html", "replace");
+                txtArea1.document.write(tab_text);
+                txtArea1.document.close();
+                txtArea1.focus();
+                sa = txtArea1.document.execCommand("SaveAs", true, "aging report.xls");
+            }
+            else                 //other browser not tested on IE 11
+                sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
+
+            return (sa);
+        };
+
+        function setPaging() {
+            var z = $("#pageSize").val();
+            var table = $("#ObligationList").DataTable();
+            if (z > 0) {
+                table.page.len(z).draw();
+            }
+            else if (z == -1) {
+                table.page.len(table.rows().count()).draw();
+            }
+            else {
+                table.page.page.len(25).draw();
+            }
+        }
+
+        function formatCurrency(total, dollar) {
+            dollar = (dollar == true ? true : false);
+            var neg = false;
+            if (total < 0) {
+                neg = true;
+                total = Math.abs(total);
+            }
+            return (neg ? "-" : '') + (dollar ? "$" : "") + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        }
+
+
+
+        function onclickPrint() {
+            var rgId = $('#regionlist').val();
+            var sURL = '@Url.Action("ObligationReportPrint", "Franchise", new { area = "Portal" })?regionId=' + rgId;
+
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    var tUrl = data;
+                    printJS({ printable: document.location.origin + tUrl, type: 'pdf', showModal: false });
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+
+        }
+
+        function getDetailTableURL() {
+            var rgId = $('#regionlist').val();
+            var sURL = '@Url.Action("GetObligationReport", "Management", new { area = "Portal" })?regionId=' + rgId
+            return sURL;
+        }
+
+        function formatJSONDate(jsonDate) {
+            if (jsonDate != null) {
+                //var dateString = jsonDate.substr(6);
+                var dtstr = jsonDate.substr(6);
+                var dateString = dtstr.substring(0, dtstr.length - 2);
+                var currentTime = new Date(parseInt(dateString)).toUTCString();
+
+                var date = moment(currentTime).format("MM/DD/YYYY")
+                if (date == "01/01/2001") {
+                    return "";
+                }
+                else {
+                    return date;
+                }
+
+                
+            }
+            return null;
+        }
+
+
+        function reloadTable() {
+
+            $.blockUI();
+
+            $('#ObligationList tbody').html('');
+
+            $.ajax({
+                type: "GET",
+                url: getDetailTableURL(),
+                success: function (data) {
+                    var frId = 0;
+                    var sec_frid = 0;
+                    data.forEach(function (item) {
+                        if (item != null) {
+                            frId = item.FranchiseeId
+                            trObligationList = "";
+                            if (sec_frid != frId) {
+                                trObligationList += '<tr relcusn="' + item.FranchiseeNo + ' ' + item.FranchiseeName + '">';
+                                trObligationList += '<td style="font-size:12px" colspan="10"><b>' + item.FranchiseeNo + '</b>-<span style="color: blue;"> <b>' + item.FranchiseeName + '</b></span><span class="span-left">Sign: <b>' + formatJSONDate(item.DateSign) + '</b></span><span class="span-left">Plan Type: <b>' + item.PlanType + '</b></span><span class="span-left">Plan Amount: <b>' + formatCurrency(parseFloat(item.PlanAmount), true) + '</b></span><span class="span-left">IB Amount: <b>' + formatCurrency(parseFloat(item.IBAmount), true) + '</b></span><span class="span-left">Legal Obl Begins: <b>' + formatJSONDate(item.LegalObligationStartDate) + '</b></span><span class="span-left">End: <b>' + formatJSONDate(item.LegalObligationEndDate) + '</b></span></td></tr>';
+                                sec_frid = item.FranchiseeId;
+                            }
+                            trObligationList += '<tr relcusn="' + item.FranchiseeNo + ' ' + item.FranchiseeName + '">';
+                            trObligationList += '<td style="text-align:center;">' + item.Status + '</td>';
+                            trObligationList += '<td style="text-align:center;">' + item.CustomerNo + '</td>';
+                            trObligationList += '<td style="text-align:center;">' + formatJSONDate(item.OfferedDate) + '</td>';
+                            if (item.DaysKept == null)
+                                item.DaysKept = "";
+                            trObligationList += '<td style="text-align:center;">' + item.DaysKept + '</td>';
+                            trObligationList += '<td style="text-align:center;">' + item.CustomerName + '</td>';
+                            trObligationList += '<td style="text-align:center;">' + item.SalesRep + '</td>';
+                            trObligationList += '<td style="text-align:right;">' + formatCurrency(parseFloat(item.ContractAmount), true) + '</td>';
+                            trObligationList += '<td style="text-align:right;">' + formatCurrency(parseFloat(item.OriginalContractAmount), true) + '</td>';
+                            trObligationList += '<td style="text-align:right;">' + formatCurrency(parseFloat(item.LegalBalanceAmount), true) + '</td>';
+                            trObligationList += '<td style="text-align:right;">' + formatCurrency(parseFloat(item.OtherBalanceAmount), true) + '</td>';
+                            trObligationList += '</tr>';
+                            $('#ObligationList tbody').append(trObligationList);
+                        }
+                    });
+
+                    $.unblockUI();
+                },
+                error: function (err) {
+                    $.unblockUI();
+                   console.log(err);
+                }
+            });
+        }
+    </script>
+}

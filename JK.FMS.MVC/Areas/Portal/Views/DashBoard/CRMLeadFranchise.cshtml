@@ -1,0 +1,574 @@
+﻿@model JKViewModels.DashboardViewModel
+@{
+    ViewBag.Title = "Dash Board";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = null;
+}
+<link href="~/Content/crmstyle/app.css" rel="stylesheet" />
+<link href="@Url.Content("~/Areas/CRM/Content/crmstyles.css")" rel="stylesheet" media="all" />
+
+<style>
+    .panel-title-fd {
+        color: #e4681c;
+        font-weight: 600;
+        font-size: 13px;
+        margin: 0;
+    }
+
+    .panel-heading-fd {
+        background: #39b1cc;
+        background: -moz-linear-gradient(top, #f2f3f4 0%, #d7dbdd 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f2f3f4), color-stop(100%, #d7dbdd));
+        background: -webkit-linear-gradient(top, #f2f3f4 0%, #d7dbdd 100%);
+        background: -o-linear-gradient(top, #f2f3f4 0%, #d7dbdd 100%);
+        background: -ms-linear-gradient(top, #f2f3f4 0%, #d7dbdd 100%);
+        background: linear-gradient(to bottom, #f2f3f4 0%, #d7dbdd 100%);
+        color: #ffffff;
+        padding: 5px 17px 8px;
+    }
+
+    .panel-body.border {
+        border: 1px solid #e9ecef !important;
+    }
+
+    .panel-body.border-secondary {
+        border-color: #868e96 !important;
+    }
+
+    .quicklinks .padding0 {
+        padding: 0;
+    }
+
+    .quicklinks .item-count > h3 {
+        font-weight: 700;
+        font-size: 19px;
+        text-align: right;
+        margin-top: 9px;
+    }
+
+    .quicklinks .media-heading > a {
+        color: #000;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .quicklinks .media-body {
+        color: #999;
+    }
+
+    .amcharts-chart-div, .amChartsLegend.amcharts-legend-div, .amcharts-chart-div {
+        margin-left: 15%;
+    }
+
+    .fc-button .fc-icon-right-single-arrow {
+        font-family: FontAwesome;
+        font-size: 16px;
+        display: contents;
+    }
+
+    .fc-toolbar {
+        position: static;
+        left: 0;
+        right: 0;
+        z-index: 5;
+        height: 38px;
+    }
+
+    .portlet.calendar .fc-button .fc-icon-right-single-arrow {
+        font-family: FontAwesome;
+        font-size: 16px;
+        display: none;
+    }
+
+    .portlet.calendar .fc-button .fc-icon-left-single-arrow, .portlet.calendar .fc-button .fc-icon-right-single-arrow {
+        font-family: FontAwesome;
+        font-size: 16px;
+        display: none;
+    }
+
+    .fc-toolbar .fc-left {
+        float: left;
+        margin-left: -11px;
+    }
+
+    .fc-toolbar .fc-right {
+        float: right;
+        margin-left: -10px;
+    }
+</style>
+<style>
+    .form-actions {
+        padding-top: 10px;
+        margin-top: 20px;
+        border-top: 1px solid #e7ecf1;
+    }
+
+    .form-section {
+        margin-top: 10px;
+        padding: 5px;
+        border-bottom: 1px solid #e7ecf1;
+    }
+
+    .forminput {
+        text-align: left;
+        margin-left: -20px;
+        border: none;
+        background: transparent;
+    }
+
+    .portlet-bottom {
+        margin-bottom: 10px;
+    }
+
+    .portlet-align {
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+
+    .modal-custom-content {
+        padding: 0px;
+        border-radius: 20px;
+    }
+
+    .modal-custom-header {
+        background: #3598DC;
+        padding: 8px;
+        border-top-left-radius: 18px;
+        border-top-right-radius: 18px;
+    }
+
+    .modal-close-button {
+        margin-top: 10px;
+        margin-right: 10px;
+    }
+
+    .fc-toolbar .fc-left {
+        float: right;
+    }
+
+    .fc-button-group {
+        margin-right: -100px;
+    }
+
+    .col-md-8 {
+        width: 98.66667%;
+    }
+
+    .dd-item > button {
+        margin-top: 1px;
+    }
+
+    .selectbox {
+        font-weight: bold;
+        font-size: 15px;
+    }
+</style>
+<div class="custom-form portlet light">
+    <div class="portlet-body form">
+        <div class="form-body" style="padding-top:0px !important;margin-top: 0px !important;background: #f7f9f9;">
+            @*<div class="form-group" style="margin-top: 0px !important;">
+                    <div class="row" style="background-color: #fff;background-color: #fff !important;margin-left:-18px !important;margin-right:-18px;">
+                        <div class="col-md-12 text-center" style="background: #2a8aa9;font-size: 28px;position: relative;z-index: 2; color: #fff;padding: 4px 0 0;">
+                            <span class="title">ngdangh2000</span>
+                        </div>
+                        <div class="col-md-12" style="background: #2a8aa9;">
+                            <div class="col-md-4">
+                                <a href="javascript:void(0);" style="color:#f2f3f4;font-size: 15px;padding-right: 10px;">All</a>
+                                <a href="javascript:void(0);" style="color:#f2f3f4;font-size: 15px;padding-right: 10px;">My</a>
+                                <a href="javascript:void(0);" style="color:#f2f3f4;font-size: 15px;padding-right: 10px;">User</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+
+            <div class="form-group">
+                <div class="row" style="padding-bottom: 10px;padding-top: 10px;text-align:center">
+                    <div style="margin: 0 auto;display:inline-block;text-align:left">
+                        <div class="col-md-12" style="background: #42b9de;width: inherit">
+                            <div class="" style="min-width:170px;width:170px;display:inline-block;vertical-align:top">
+                                <div class="conversion-chart__custom-status conversion-chart__status" data-id="" style="border-color:white;background:#42b9de;min-width:170px;">
+                                    <div class="conversion-chart__status-color" style="background-color: #567ca5;"></div>
+                                    <div class="conversion-chart__status-inner" style="padding-top: 20px;">
+                                        <div class="conversion-chart__status-title" style="font-size: 15px;white-space: normal;color: white;">Potential</div>
+                                        <div class="conversion-chart__transfer-wrapper">
+                                            <div class="conversion-chart__leads-transfer leads-transfer leads-transfer_first" style="top: 0px;left: -21px;">
+                                                <div class="leads-transfer__body">
+                                                    <div class="leads-transfer__tail"></div>
+                                                    <div class="leads-transfer__inner">
+                                                        <div class="leads-transfer__count"><a href="javascript:void(0);" class="js-navigate-link"><span class="leads-transfer__count-value">@Model.crmdashboardModel.InitialCommunication</span> </a></div>
+                                                        <div class="leads-transfer__percentage">
+                                                            <a href="javascript:void(0);" class="js-navigate-link"><span class="leads-transfer__percentage-value">@(Model.crmdashboardModel.InitialCommunicationAmount.HasValue ? String.Format("{0:c}", Model.crmdashboardModel.InitialCommunicationAmount.Value) : "$0")</span></a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="leads-transfer__nose"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="" style="min-width:170px;width:170px;display:inline-block;vertical-align:top">
+                                <div class="conversion-chart__custom-status conversion-chart__status" data-id="" style="border-color:white;background:#42b9de;min-width:170px;">
+                                    <div class="conversion-chart__status-color" style="background-color: #b3b36f;"></div>
+                                    <div class="conversion-chart__status-inner" style="padding-top: 20px;">
+                                        <div class="conversion-chart__status-title" style="font-size: 15px;color: white;">Franchise Contract</div>
+                                        <div class="conversion-chart__transfer-wrapper">
+                                            <div class="conversion-chart__leads-transfer leads-transfer" style="top: 18px;left: -21px;">
+                                                <div class="leads-transfer__body">
+                                                    <div class="leads-transfer__tail">
+                                                    </div>
+                                                    <div class="leads-transfer__inner">
+                                                        <div class="leads-transfer__count">
+                                                            <a href="javascript:void(0);" class="js-navigate-link"><span class="leads-transfer__count-value">@Model.crmdashboardModel.FvPresentation</span> </a>
+                                                        </div>
+                                                        <div class="leads-transfer__percentage">
+                                                            <a href="javascript:void(0);" class="js-navigate-link"><span class="leads-transfer__percentage-value">@(Model.crmdashboardModel.FvPresentationAmount.HasValue ? String.Format("{0:c}", Model.crmdashboardModel.FvPresentationAmount.Value) : "$0")</span></a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="leads-transfer__nose"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="" style="min-width:170px;width:170px;display:inline-block;vertical-align:top">
+                                <div class="conversion-chart__custom-status conversion-chart__status" data-id="" style="border-color:white;background: #42b9de;min-width:170px;">
+                                    <div class="conversion-chart__status-color" style="background-color: #8a7447;"></div>
+                                    <div class="conversion-chart__status-inner" style="padding-top: 20px;">
+                                        <div class="conversion-chart__status-title" style="font-size: 15px;color: white;">Follow-up</div>
+                                        <div class="conversion-chart__transfer-wrapper"><div class="conversion-chart__leads-transfer leads-transfer" style="top: 18px;left: -21px;"><div class="leads-transfer__body"><div class="leads-transfer__tail"></div><div class="leads-transfer__inner"><div class="leads-transfer__count"><a href="javascript:void(0);" class="js-navigate-link"><span class="leads-transfer__count-value">@Model.crmdashboardModel.Bidding</span> </a></div><div class="leads-transfer__percentage"><a href="javascript:void(0);" class="js-navigate-link"><span class="leads-transfer__percentage-value">@(Model.crmdashboardModel.BiddingAmount.HasValue ? String.Format("{0:c}", Model.crmdashboardModel.BiddingAmount.Value) : "$0")</span></a></div></div><div class="leads-transfer__nose"></div></div></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="" style="min-width:170px;width:170px;display:inline-block;vertical-align:top">
+                                <div class="conversion-chart__custom-status conversion-chart__status" data-id="" style="border-color:white;background: #42b9de;min-width:170px;">
+                                    <div class="conversion-chart__status-color" style="background-color: #f3f352;"></div>
+                                    <div class="conversion-chart__status-inner" style="padding-top: 20px;">
+                                        <div class="conversion-chart__status-title" style="font-size: 15px;color: white;">Sign Agreement</div>
+                                        <div class="conversion-chart__transfer-wrapper"><div class="conversion-chart__leads-transfer leads-transfer" style="top: 18px;left: -21px;"><div class="leads-transfer__body"><div class="leads-transfer__tail"></div><div class="leads-transfer__inner"><div class="leads-transfer__count"><a href="javascript:void(0);" class="js-navigate-link"><span class="leads-transfer__count-value">@Model.crmdashboardModel.PdAppointment</span> </a></div><div class="leads-transfer__percentage"><a href="javascript:void(0);" class="js-navigate-link"><span class="leads-transfer__percentage-value">@(Model.crmdashboardModel.PdAppointmentAmount.HasValue ? String.Format("{0:c}", Model.crmdashboardModel.PdAppointmentAmount.Value) : "$0")</span></a></div></div><div class="leads-transfer__nose"></div></div></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                            @*<div class="" style="min-width:170px;width:170px;display:inline-block;vertical-align:top">
+                                <div class="conversion-chart__custom-status conversion-chart__status" data-id="" style="border-color:white;background: #42b9de;min-width:170px;">
+                                    <div class="conversion-chart__status-color" style="background-color: #e67070;"></div>
+                                    <div class="conversion-chart__status-inner" style="padding-top: 20px;">
+                                        <div class="conversion-chart__status-title" style="font-size: 15px;color: white;">Follow-Up</div>
+                                        <div class="conversion-chart__transfer-wrapper"><div class="conversion-chart__leads-transfer leads-transfer" style="top: 18px;left: -21px;"><div class="leads-transfer__body"><div class="leads-transfer__tail"></div><div class="leads-transfer__inner"><div class="leads-transfer__count"><a href="javascript:void(0);" class="js-navigate-link"><span class="leads-transfer__count-value">@Model.crmdashboardModel.Followup</span> </a></div><div class="leads-transfer__percentage"><a href="javascript:void(0);" class="js-navigate-link"><span class="leads-transfer__percentage-value">@(Model.crmdashboardModel.FollowupAmount.HasValue ? String.Format("{0:c}", Model.crmdashboardModel.FollowupAmount.Value) : "$0")</span></a></div></div><div class="leads-transfer__nose"></div></div></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="" style="min-width:170px;width:170px;display:inline-block;vertical-align:top">
+                                <div class="conversion-chart__custom-status conversion-chart__status" data-id="" style="border-color:white;background: #42b9de;min-width:170px;">
+                                    <div class="conversion-chart__status-color" style="background-color: #75923a;"></div>
+                                    <div class="conversion-chart__status-inner" style="padding-top: 20px;">
+                                        <div class="conversion-chart__status-title" style="font-size: 15px;color: white;">Sold</div>
+                                        <div class="conversion-chart__transfer-wrapper"><div class="conversion-chart__leads-transfer leads-transfer" style="top: 18px;left: -21px;"><div class="leads-transfer__body"><div class="leads-transfer__tail"></div><div class="leads-transfer__inner"><div class="leads-transfer__count"><a href="javascript:void(0);" class="js-navigate-link"><span class="leads-transfer__count-value">@Model.crmdashboardModel.Sold</span> </a></div><div class="leads-transfer__percentage"><a href="javascript:void(0);" class="js-navigate-link"><span class="leads-transfer__percentage-value">@(Model.crmdashboardModel.SoldAmount.HasValue ? String.Format("{0:c}", Model.crmdashboardModel.SoldAmount.Value) : "$0")</span></a></div></div><div class="leads-transfer__nose"></div></div></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="" style="min-width:170px;width:170px;display:inline-block;vertical-align:top">
+                                <div class="conversion-chart__custom-status conversion-chart__status" data-id="" style="border-color:white;background: #42b9de;min-width:170px;">
+                                    <div class="conversion-chart__status-color" style="background-color: #75923a;"></div>
+                                    <div class="conversion-chart__status-inner" style="padding-top: 20px;">
+                                        <div class="conversion-chart__status-title" style="font-size: 15px;color: white;">Close</div>
+                                        <div class="conversion-chart__transfer-wrapper"><div class="conversion-chart__leads-transfer leads-transfer" style="top: 18px;left: -21px;"><div class="leads-transfer__body"><div class="leads-transfer__tail"></div><div class="leads-transfer__inner"><div class="leads-transfer__count"><a href="javascript:void(0);" class="js-navigate-link"><span class="leads-transfer__count-value">@Model.crmdashboardModel.Closing</span> </a></div><div class="leads-transfer__percentage"><a href="javascript:void(0);" class="js-navigate-link"><span class="leads-transfer__percentage-value">@(Model.crmdashboardModel.ClosingAmount.HasValue ? String.Format("{0:c}", Model.crmdashboardModel.ClosingAmount.Value) : "$0")</span></a></div></div><div class="leads-transfer__nose"></div></div></div></div>
+                                    </div>
+                                </div>
+                            </div>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 0px !important;">
+                <div class="row" style="padding-bottom: 10px;">
+                    <div class="col-md-12">
+                        <div class="col-lg-3 col-sm-6 col-xs-12" style="min-width: 240px;">
+                            <section class="dashboard-tile__item dashboard-todo-tile__item dashboard-todo-tile__item--expired dashboard-todo-tile-task" style="height: 94px;">
+                                <i class="icon icon-v-dots tile__drag-icon js-tile-drag-icon"></i>
+                                <h4 class="dashboard-tile__title dashboard-tile__editable-area"><span class="dashboard-tile__title-txt">Overdue Tasks</span><i class="icon icon-dashboard-todo-tile-danger"></i></h4>
+                                <div class="dashboard-tile__wrapper dashboard-tile__editable-area">
+                                    <div class="dashboard-tile__quantity js-resize-txt" data-font-size="72" data-task="task" style="font-size: 62px; opacity: 1;">
+                                        <svg>
+                                            <a href="javascript:void(0);" class="js-navigate-link"><text y="60">1</text></a>
+                                        </svg>
+                                    </div><div class="dashboard-tile__i"><div class="dashboard-tile__perc"><i class="dashboard-tile-arrow dashboard-tile-arrow__type-zero dashboard-tile-arrow--type-zero-red"></i><span class="dashboard-tile__number dashboard-tile__number--down">2%</span></div><a href="javascript:void(0);" class="js-navigate-link"><span class="dashboard-tile__descr-txt">Last month : 0</span></a></div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-xs-12" style="min-width: 240px;">
+                            <section class="dashboard-tile__item dashboard-todo-tile__item dashboard-todo-tile__item--is-process dashboard-todo-tile-task" style="height: 94px;">
+                                <h4 class="dashboard-tile__title dashboard-tile__editable-area">
+                                    <span class="dashboard-tile__title-txt">Current to-dos</span>
+                                    <i class="dashboard-tile__icon-danger"></i>
+                                </h4>
+                                <div class="dashboard-tile__wrapper dashboard-tile__editable-area"><div class="dashboard-tile__quantity js-resize-txt" data-font-size="72" data-task="task" style="font-size: 62px; opacity: 1;"><svg><a class="js-navigate-link" javascript:void(0);><text y="60">16</text></a></svg></div><div class="dashboard-tile__i"><div class="dashboard-tile__perc"><i class="dashboard-tile-arrow dashboard-tile-arrow__type-zero dashboard-tile-arrow--type-zero-blue"></i><span class="dashboard-tile__number dashboard-tile__number--type-zero">50%</span></div><a href="javascript:void(0);" class="js-navigate-link"><span class="dashboard-tile__descr-txt">Last month : 34</span></a></div></div>
+                            </section>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-xs-12" style="min-width: 240px;">
+                            <section class="dashboard-tile__item dashboard-todo-tile__item dashboard-todo-tile__item--completed dashboard-todo-tile-task" style="height: 94px;">
+                                <h4 class="dashboard-tile__title dashboard-tile__editable-area"><span class="dashboard-tile__title-txt">Completed To-dos</span><i class="dashboard-tile__icon-danger"></i></h4><div class="dashboard-tile__wrapper dashboard-tile__editable-area"><div class="dashboard-tile__quantity js-resize-txt" data-font-size="72" data-task="task" style="font-size: 62px; opacity: 1;"><svg><a href="javascript:void(0);" class="js-navigate-link"><text y="60">17</text></a></svg></div><div class="dashboard-tile__i"><div class="dashboard-tile__perc"><span class="dashboard-tile__number dashboard-tile__number--type-zero">50%</span></div><a href="javascript:void(0);" class="js-navigate-link"><span class="dashboard-tile__descr-txt">Last month : 31</span></a></div></div>
+                            </section>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-xs-12" style="min-width: 240px;">
+                            <section class="dashboard-tile__item dashboard-todo-tile__item dashboard-todo-tile__item--not-tasks dashboard-todo-tile-task" style="height: 94px;">
+                                <h4 class="dashboard-tile__title dashboard-tile__editable-area">
+                                    <span class="dashboard-tile__title-txt">Leads without a to-do</span>
+                                </h4><div class="dashboard-tile__wrapper dashboard-tile__editable-area"><div class="dashboard-tile__quantity js-resize-txt" data-font-size="72" data-task="task" style="font-size: 62px; opacity: 1;"><svg><a class="js-navigate-link" javascript:void(0);><text y="60">2</text></a></svg></div><div class="dashboard-tile__i"><div class="conversion-chart__summary-arrow summary-arrow dashboard-tile__editable-area"><div class="summary-arrow__outer"><div class="summary-arrow__inner"><div class="summary-arrow__body">Now</div></div></div></div></div></div>
+                            </section>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 0px !important;">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-lg-8 col-xs-12 col-sm-12">
+                            <div class="portlet light calendar bordered">
+                                <div class="portlet-title ">
+                                    <div class="caption">
+                                        <i class="icon-calendar font-dark hide"></i>
+                                        <span class="caption-subject font-dark bold uppercase">Feeds</span>
+                                    </div>
+                                </div>
+                                <div class="portlet-body">
+                                    <div id="calendar" class="fc fc-ltr fc-unthemed">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-xs-12 col-sm-12">
+                            <div class="col-lg-12 col-xs-12 col-sm-12" style="padding-left:0px;padding-right:0px;">
+                                <div class="portlet light bordered">
+                                    <div class="portlet-title tabbable-line" style="background-color: #a3efd9;">
+                                        <div class="caption">
+                                            <i class="icon-social-twitter font-dark hide"></i>
+                                            <span class="caption-subject font-dark bold uppercase">Today's Schedule</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-body">
+                                        <div class="scroller" style="height: 250px;" data-always-visible="1" data-rail-visible1="0" data-handle-color="#333">
+                                            <div class="general-item-list">
+                                                <div class="mt-comments">
+                                                    <div class="mt-comments" id="content_schedule">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row">
+
+
+
+</div>
+
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap/js/bootstrap.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/fullcalendar/fullcalendar.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/pages/scripts/ui-blockui.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery.blockui.min.js")" type="text/javascript"></script>
+
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/clockface/js/clockface.js")" type="text/javascript"></script>
+
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+@*<script src="@Url.Content("~/Content/admin/assets/pages/scripts/ui-nestable.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-nestable/jquery.nestable.js")" type="text/javascript"></script> *@
+
+<script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+
+<script>
+    $(document).ready(function () {
+        var scheduleCalendar = $("#calendar");
+        scheduleCalendar.fullCalendar('destroy');
+        scheduleCalendar.fullCalendar({
+            header: {
+                left: 'title',
+                center: '',
+                right: 'prev,next,today,month,agendaWeek'
+            },
+            defaultView: 'month'
+        });
+
+        reCreateCalendar();
+        getSalesSchedules();
+        getTodaySchedules();
+    });
+
+    function reCreateCalendar() {
+        var scheduleCalendar = $("#calendar");
+        scheduleCalendar.fullCalendar('destroy');
+        scheduleCalendar.fullCalendar({
+            header: {
+                left: 'title',
+                center: '',
+                right: 'prev,next,today,month,agendaWeek,agendaDay'
+            },
+            defaultView: 'month'
+        });
+    }
+
+    function getTodaySchedules() {
+
+        $.ajax({
+            url: "/CRM/CustomerSales/GetSchedulesForToday",
+            type: "GET",
+            dataType: "json",
+            cache: false,
+            success: function (response) {
+                refreshSchedule(response);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+
+    var refreshSchedule = function (data) {
+
+        if (data != null) {
+
+            //Empty the Schedule html
+            $("#content_schedule").empty();
+
+            $.each(data.schedule, function (key, item) {
+
+                var contentSchedule = '<div class="mt-comment">';
+                contentSchedule += '<div class="mt-comment-img">';
+                contentSchedule += '<h3 class="mt-date-text text-center">' + ScheduleDate(item.StartDate) + '</h3>';
+                contentSchedule += '<h5 class="mt-date-text text-center mt-schedule-monthSpace">' + ScheduleMonth(item.StartDate) + '</h5>';
+                contentSchedule += '</div>';
+                contentSchedule += '<div class="mt-comment-body">';
+                contentSchedule += '<div class="mt-comment-info">';
+                contentSchedule += '<span class="mt-title">' + item.Title + '</span>';
+                contentSchedule += '</div>';
+                contentSchedule += '<div class="mt-comment-info">';
+                contentSchedule += '<span class="mt-scheduletime">' + ScheduleTime(item.StartDate) + ' - ' + ScheduleTime(item.EndDate) + '</span>';
+                contentSchedule += '</div>';
+                contentSchedule += '<div class="mt-Note-text">' + ((item.Description != "" && item.Description != null) ? item.Description : "") + '</div>';
+                contentSchedule += '</div>';
+                contentSchedule += '</div>';
+                contentSchedule += '<h5 style="border-bottom: 1px solid #e7ecf1;"></h5>';
+                $("#content_schedule").append(contentSchedule);
+            });
+
+        }
+
+        resetAddScheduleForm();
+        JK.CRM.CRMApp.hideActivity("#schedule_modalview_footer");
+
+
+    }
+
+   function getSalesUrl() {
+         var types = "2";
+         var users = "";
+        return '@Url.Action("GetSalesSchedule", "CRMSchedules", new { area = "CRM" })?types=' + types + '&users=' + users;
+    }
+
+    function getSalesSchedules() {
+
+        var u = getSalesUrl();
+
+        $.ajax({
+            url: u,
+            type: "GET",
+            dataType: "json",
+            cache: false,
+            success: function (response) {
+                refreshcalendar(response);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+
+        });
+
+    }
+
+    function refreshcalendar(data) {
+        var scheduleCalendar = $("#calendar");
+        scheduleCalendar.fullCalendar('destroy');
+        scheduleCalendar.fullCalendar({
+            header: {
+                left: 'title',
+                center: '',
+                right: 'prev,next,today,month,agendaWeek,agendaDay'
+            },
+            eventClick: function (calEvent, jsEvent, view) {
+
+                $("#input_scheduletitle").val(calEvent.title);
+                $("#input_schedulelocation").val(calEvent.Location);
+                //  calEvent.IsAllDay == true ? $("#checkbox_alldayevent").prop("checked", true) : $("#checkbox_alldayevent").prop("checked", false);
+                $("#input_scheduledescription").val(calEvent.Description);
+
+                $("#input_schedulestartdate").val(calEvent.StartDate);
+                $("#input_scheduletype").val(calEvent.CRM_ScheduleTypeId);
+                $("#input_scheduleenddate").val(calEvent.EndDate);
+                $("#input_schedulestarttime").val(calEvent.StartTime);
+                $("#input_scheduleendtime").val(calEvent.EndTime);
+                $("#newschedule_modalview").modal('show');
+
+            },
+            defaultView: 'month',
+
+            events: data.result
+        });
+    }
+
+    function addNewSchedule() {
+
+        var addnewSchedule = $("#form_addnewschedule");
+
+        $.ajax({
+            url: "/CRM/CRMSchedules/AddNewSchedule",
+            type: "POST",
+            dataType: "json",
+            data: $("#form_addnewschedule").serialize(),
+            cache: false,
+            success: function (response) {
+                resetAddScheduleForm();
+                getSchedules();
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+
+    }
+
+    function resetAddScheduleForm() {
+
+        $("#input_scheduletitle").val("");
+        $("#input_schedulelocation").val("");
+        $("#input_schedulestartdate").val("");
+        //$("#checkbox_alldayevent").prop("checked", false);
+        $("#input_scheduleenddate").val("");
+        $("#input_scheduledescription").val("");
+    }
+</script>

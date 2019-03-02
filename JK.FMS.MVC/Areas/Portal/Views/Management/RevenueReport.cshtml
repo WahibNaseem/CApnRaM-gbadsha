@@ -1,0 +1,1643 @@
+﻿
+@{
+    ViewBag.Title = "Revenue Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" />
+<link rel="stylesheet" href="@Url.Content("https://www.amcharts.com/lib/3/plugins/export/export.css")" type="text/css" media="all" />
+<style>
+    .topheader {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFF !important;
+        text-transform: uppercase;
+        margin-top: 3px;
+    }
+
+
+    .lbl-p5 {
+        padding: 5px;
+    }
+
+        .lbl-p5.red {
+            color: red;
+        }
+
+
+        .lbl-p5.green {
+            color: lightgreen;
+        }
+
+    input[type="text"].txtcolon:before {
+        content: ": ";
+    }
+
+    .credit-field {
+        width: 80px !important;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+
+    .alignCenter {
+        text-align: center;
+    }
+
+    .close {
+        background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+        height: 12px !important;
+        width: 12px !important;
+        margin-top: 0px !important;
+    }
+
+    .custom-listbox .headerbox {
+        padding: 3px 0px 3px 5px;
+        font-weight: normal;
+    }
+
+    .custom-listbox {
+        margin-top: 4px;
+        margin-bottom: 0px;
+    }
+
+    .row {
+        margin: 0;
+        padding: 3px 0;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .multiselect-container.dropdown-menu {
+        text-transform: none;
+        font-size: 14px;
+    }
+
+    .no-padding {
+        padding: 0;
+    }
+
+    #modal_RegionModel .modal-content {
+        width: 55% !important;
+        margin-left: 30% !important;
+    }
+
+
+    .amcharts-pie-slice {
+        transform: scale(1);
+        transform-origin: 50% 50%;
+        transition-duration: 0.3s;
+        transition: all .3s ease-out;
+        -webkit-transition: all .3s ease-out;
+        -moz-transition: all .3s ease-out;
+        -o-transition: all .3s ease-out;
+        cursor: pointer;
+        box-shadow: 0 0 30px 0 #000;
+    }
+
+        .amcharts-pie-slice:hover {
+            transform: scale(1.1);
+            filter: url(#shadow);
+        }
+
+
+
+    .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12 {
+        padding: 0px 1px 0px 1px;
+    }
+
+        .col-lg-2:after, .col-lg-3:after, .col-lg-4:after, .col-lg-5:after, .col-lg-6:after, .col-lg-7:after, .col-lg-8:after, .col-lg-9:after, .col-lg-10:after, .col-lg-11:after, .col-lg-12:after {
+            content: none !important;
+        }
+
+    .row {
+        padding: 0px 1px 0px 1px;
+    }
+
+        .row:before {
+            content: none;
+        }
+
+    .dashboard-stat:before, .dashboard-stat:after {
+        content: none !important;
+    }
+
+
+</style>
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff; min-height:40px;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter" style="padding-top:5px;">
+                <div class="col-md-4 collapse" style="text-align:left;  padding-left:2px;">
+                    <div class="col-md-6">
+                        <select id="select_timeduration" class="form-control input-sm">
+                            <option value="1">This Week</option>
+                            <option value="2">This Week-to-date</option>
+                            <option value="3">This Month</option>
+                            <option value="4">This Month-to-date</option>
+                            <option value="5">This Quarter</option>
+                            <option value="6">This Quarter-to-date</option>
+                            <option value="7" selected="selected">This Fiscal Year</option>
+                            <option value="8">This Fiscal Year-to-date</option>
+                            <option value="9">Today</option>
+                            <option value="10">Yesterday</option>
+                            <option value="11">Last Week</option>
+                            <option value="12">Last Month</option>
+                            <option value="13">Last Quarter</option>
+                            <option value="14">Last Year</option>
+                            @*<option value="15">Custom Date</option>*@
+                            <option value="16">Period</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 divspandate no-padding" style="margin-top: 3px; margin-left: 0px; display: block; float: left;">
+                        <span id="spnStartDate"></span> - <span id="spnEndtDate"></span>
+                    </div>
+                    <div class="col-md-4 no-padding" style="display: none;" id="divSD">
+                        <input type="text" name="txtStartDate" id="txtStartDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" />
+                    </div>
+                    <div class="col-md-4 no-padding" style="display: none;" id="divED">
+                        <input type="text" name="txtEndtDate" id="txtEndtDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" />
+                    </div>
+                </div>
+                <div class="col-lg-4"></div>
+                <div class="col-md-4 topheader alignCenter">
+                    Revenue Report
+                </div>
+                <div class="col-md-4 pull-right" style="padding-right:5px;">
+                    <div class="col-lg-6"></div>
+                    <div class="col-lg-6">
+                        <div style="display:table-cell;padding-right: 5px;">
+                            Region
+                        </div>
+                        <div style="display:table-cell;width:100%;">
+                            @if (ViewBag.regionlist != null)
+                            {
+                                <select class="form-control input-sm" multiple="multiple" id="regionlist">
+                                    @foreach (var item in (SelectList)ViewBag.regionlist)
+                                    {
+                                        <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="col-lg-6 col-xs-12 col-sm-12">
+            <div class="portlet light ">
+                <div class="portlet-title">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <label style="float:right;"><strong>Number Of Years Report&nbsp; &nbsp;&nbsp;</strong> </label>
+                        </div>
+                        <div class="col-lg-4">
+                            <select class="form-control input-sm" id="YearsToShow" style="float:left;">
+                                @for (int i = 2; i <= 10; i++)
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="row">
+                        <div id="GrossAndContractBillingRevenueChart" style="width:100%;height:400px"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <table class="table table-responsive table-borderd" id="tblGrossAndContractBillingRevenueChart" style="width:100%;height:110px">
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-xs-12 col-sm-12">
+            <div class="portlet light ">
+                <div class="portlet-title">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <label style="float:right;"><strong>Number Of Years Report&nbsp;&nbsp;</strong> </label>
+                        </div>
+                        <div class="col-lg-4">
+                            <select class="form-control input-sm" id="YearToAdd" style="float:left;">
+                                @for (int i = 2; i <= 5; i++)
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-lg-4">
+                            <button class="form-control input-sm btn btn-sm btn-success" onclick="getRegionWiseYearlyRevenue()"><i class="fa fa-list"> Show Region Wise Yearly Revenue</i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="row">
+                        <div id="RevenueByYearChart" style="width:100%;height:400px"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12" style="width:100%;height:113px">
+                            <table class="table table-responsive table-borderd" id="tblRevenueByYearChart">
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12 col-xs-12 col-sm-12">
+        <div class="portlet light ">
+            <div class="portlet-title">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label style="float:right;"><strong>Number Of Months Report&nbsp; &nbsp;&nbsp;</strong> </label>
+                    </div>
+                    <div class="col-lg-2">
+                        <select class="form-control input-sm" id="MonthToAdd" style="float:left;">
+                            @for (int i = 2; i <= 36; i++)
+                            {
+
+                                <option value="@i">@i</option>
+
+
+                            }
+                        </select>
+                    </div>
+                    <div class="col-lg-2">
+                        <button class="form-control input-sm btn btn-sm btn-success" onclick="getRegionWiseMonthlyRevenue()"><i class="fa fa-list"> Show Region Wise Monthly Revenue</i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="row">
+                    <div id="RevenueByMonthChart" style="width:100%;height:400px"></div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <table class="table table-responsive table-borderd" id="tblRevenueByMonthChart">
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-lg-12 col-xs-12 col-sm-12">
+        <div class="portlet light ">
+            <div class="portlet-body">
+                <div class="row">
+                    <div id="RevenueAndPaymentChart" style="width:100%;height:400px"></div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="table-responsive">
+                            <table class="table table-responsive table-borderd" id="tblRevenueAndPaymentChart">
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade custom-model custom-form-design" id="modal_YearlyDetailsChartPopUp" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:1000px">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;" onclick="btnYearlyDetailsChartPopUpModalClose()"></button>
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Yearly Revenue Breakdown
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div id="YearlyChartPopUp" style="width:100%;height:400px;" ></div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div id="MonthlyChartPopUp"  style="width:100%;height:400px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary button-next  pull-right" onclick="btnYearlyDetailsChartPopUpModalClose()">
+                    Close
+                    <i class="fa fa-close"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade custom-model custom-form-design" id="modal_MonthlyDetailsChartPopUp" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:1000px">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;" onclick="btnMonthlyDetailsChartPopUpModalClose()"></button>
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Monthly Revenue Details
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12 alignCenter">
+                        @*<input type="hidden" id="RecentFlag"/>
+                        <div class="form-group radio-inline">
+                            <label class="radio-inline"><input type="radio" name="DetailsType" checked value="1">By Customer</label>
+                            <label class="radio-inline"><input type="radio" name="DetailsType" value="2">By Account Type</label>
+                        </div>*@
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#ByCustomer">By Customer</a></li>
+                            <li><a data-toggle="tab" href="#ByAccountType ">By Account Type</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="ByCustomer" class="tab-pane fade in active">
+                                <div class="col-lg-12"  style="width:100%">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-bordered table-hover order-column" id="tblMonthlyRevenueDetailsByCustomerPopup" style="margin-top:0 !important;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="text-align:center;width:5%;">SL</th>
+                                                    <th style="text-align:center;width:20%;">
+                                                        Region Name
+                                                    </th>
+                                                    <th style="text-align:center;width:10%;">
+                                                        Selected Month
+                                                    </th>
+                                                    <th style="text-align:center;width:20%;">
+                                                        Customer No
+                                                    </th>
+                                                    <th style="text-align:center;width:40%;">
+                                                        Customer Name
+                                                    </th>
+                                                    <th style="text-align:center;width:15%;">
+                                                        Total Revenues
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                            <tfoot>
+                                                <tr style="background:#95a5a6;color:white;">
+                                                    <td colspan="5" style="width:85%;text-align:center;"><strong>Total:</strong> </td>
+                                                    <td style="text-align:center;width:15%;"><strong><span id="totalAmount1" style="float: right"></span> </strong> </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="ByAccountType" class="tab-pane fade">
+                                <div class="col-lg-12" style="width:100%">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-bordered table-hover order-column" id="tblMonthlyRevenueDetailsByAccountTypePopup" style="margin-top:0 !important;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="text-align:center;width:10%;">SL</th>
+                                                    <th style="text-align:center;width:20%;">
+                                                        Region Name
+                                                    </th>
+                                                    <th style="text-align:center;width:10%;">
+                                                        Selected Month
+                                                    </th>
+                                                    <th style="text-align:center;width:40%;">
+                                                        Account Type Name
+                                                    </th>
+                                                    <th style="text-align:center;width:20%;">
+                                                        Total Revenues
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                            <tfoot>
+                                                <tr style="background:#95a5a6;color:white;">
+                                                    <td colspan="4" style="width:80%;text-align:center;"><strong>Total:</strong> </td>
+                                                    <td style="text-align:center;width:20%;"><strong><span id="totalAmount2" style="float: right"></span> </strong> </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary button-next  pull-right" onclick="btnMonthlyDetailsChartPopUpModalClose()">
+                    Close
+                    <i class="fa fa-close"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade custom-model custom-form-design" id="modal_MonthlyAccountTypeDetailsChartPopUp" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:1000px">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;" onclick="btnMonthlyAccountTypeDetailsChartPopUpModalClose()"></button>
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Monthly Revenue Details (Account Type wise customer)
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover order-column" id="tblMonthlyAccountTypeRevenueDetailsWithCustomerPopup" style="margin-top:0 !important;">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:center;width:10%;">SL</th>
+                                    <th style="text-align:center;width:10%;">
+                                        Region Name
+                                    </th>
+                                    <th style="text-align:center;width:10%;">
+                                        Selected Month
+                                    </th>
+                                    <th style="text-align:center;width:15%;">
+                                        Selected Account Type
+                                    </th>
+                                    <th style="text-align:center;width:10%;">
+                                       Customer No
+                                    </th>
+                                    <th style="text-align:center;width:25%;">
+                                        Customer Name
+                                    </th>
+
+                                    <th style="text-align:center;width:20%;">
+                                        Total Revenues
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                            <tfoot>
+                                <tr style="background:#95a5a6;color:white;">
+                                    <td colspan="6" style="width:80%;text-align:center;"><strong>Total:</strong> </td>
+                                    <td style="text-align:center;width:20%;"><strong><span id="totalAmount3" style="float: right"></span> </strong> </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary button-next  pull-right" onclick="btnMonthlyAccountTypeDetailsChartPopUpModalClose()">
+                    Close
+                    <i class="fa fa-close"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/clockface/js/clockface.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+
+
+<script src="@Url.Content("~/Scripts/fusioncharts/js/fusioncharts.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/fusioncharts/js/fusioncharts.charts.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/fusioncharts/js/themes/fusioncharts.theme.fint.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/fusioncharts/js/themes/fusioncharts.theme.ocean.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/fusioncharts/js/themes/fusioncharts.theme.zune.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/fusioncharts/js/themes/fusioncharts.theme.carbon.js")" type="text/javascript"></script>
+
+<script>
+
+    $(document).ready(function () {
+        $('#MonthToAdd').val(12);
+        $('#YearToAdd').val(3);
+        $('#YearsToShow').val(4);
+        //$('#txtStartDate').inputmask("mm/dd/yyyy", {});
+        //$('#txtEndtDate').inputmask("mm/dd/yyyy", {});
+        applyDurationFilter(7);
+        $("#regionlist").multiselect({
+            includeSelectAllOption: true,
+            selectAllText: 'Select all',
+            buttonWidth: '100%',
+            nonSelectedText: 'Select region..',
+            dropRight: true,
+            numberDisplayed: 2
+        });
+        $("#regionlist").change(function () {
+            getRevenueByMonthChartData();
+            getRevenueByYearChartData();
+            getRevenueAndPaymentChart();
+            getGrossAndContractBillingRevenueChartData();
+        });
+
+        $('#select_timeduration').change(function () {
+            applyDurationFilter(parseInt($(this).val()));
+        });
+
+        $('#txtStartDate').blur(function () {
+            $("#spnStartDate").text($(this).val())
+            var spnStartDate = $("#spnStartDate").text();
+            var spnEndDate = $("#spnEndtDate").text();
+            if (spnStartDate && spnEndDate) {
+                getRevenueByMonthChartData();
+                getRevenueByYearChartData();
+                getRevenueAndPaymentChart();
+                getGrossAndContractBillingRevenueChartData();
+            }
+        });
+        $('#txtEndtDate').blur(function () {
+            $("#spnEndtDate").text($(this).val())
+            var spnStartDate = $("#spnStartDate").text();
+            var spnEndDate = $("#spnEndtDate").text();
+            if (spnStartDate && spnEndDate) {
+                getRevenueByMonthChartData();
+                getRevenueByYearChartData();
+                getRevenueAndPaymentChart();
+                getGrossAndContractBillingRevenueChartData();
+            }
+        });
+        $('#MonthToAdd').change(function () {
+            getRevenueByMonthChartData();
+            getRevenueAndPaymentChart();
+        });
+
+        $('#YearToAdd').change(function () {
+            getRevenueByYearChartData();
+        });
+        $('#YearsToShow').change(function () {
+            getGrossAndContractBillingRevenueChartData();
+        });
+        $('input[Type=radio][name=DetailsType]:checked').change(function () {
+            var val=parseInt($(this).val());
+            if (val == 2) {
+                $('#ByAccountType').show();
+            } else {
+                $('#ByCustomer').show();
+            }
+        });
+    });
+
+    function btnYearlyDetailsChartPopUpModalClose() {
+        $("#modal_YearlyDetailsChartPopUp").modal('hide');
+    }
+    function btnMonthlyDetailsChartPopUpModalClose() {
+        $("#modal_MonthlyDetailsChartPopUp").modal('hide');
+    }
+
+    function getRevenueByYearChartDataPopup(flag) {
+        $("#modal_YearlyDetailsChartPopUp").modal('show');
+
+        var yearToAdd = $('#YearToAdd').val();
+        var regionIds = $("#regionlist").val();
+        var spnStartDate = $("#spnStartDate").text();
+        var spnEndDate = $("#spnEndtDate").text();
+        $('#YearlyChartPopUp').empty();
+
+        var sURL = '@Url.Action("GetRevenueByYearChartData", "Management", new { area = "Portal" })?yearToAdd=' + yearToAdd + '&regionIds=' + regionIds + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (res) {
+                loadRevenueByYearChartDataTable(res);
+                var data = [];
+                $.each(res, function (index, value) {
+
+                    var objData = {
+                        link: "JavaScript:getRevenueByMonthlyChartDataPopup(" + value.RangeName + ");",
+                        label: value.RangeName,
+                        value: value.TotalAccountReceivable,
+                        color: value.ColorCode
+                    }
+                    data.push(objData);
+
+                });
+
+                FusionCharts.ready(function () {
+                    var revenueChart = new FusionCharts({
+                        type: 'column3d',
+                        renderAt: 'YearlyChartPopUp',
+                        width: '100%',
+                        height: '400',
+                        dataFormat: 'json',
+                        dataSource: {
+                            "chart": {
+                                "caption": "Yearly Revenue",
+                                "subCaption": "",
+                                "xAxisName": "Year",
+                                "yAxisName": "Revenues($)",
+                                "paletteColors": "#0075c2",
+                                "valueFontColor": "#ffffff",
+                                "baseFont": "Helvetica Neue,Arial",
+                                "captionFontSize": "14",
+                                "subcaptionFontSize": "14",
+                                "subcaptionFontBold": "0",
+                                "placeValuesInside": "1",
+                                "rotateValues": "1",
+                                "showShadow": "0",
+                                "divlineColor": "#999999",
+                                "divLineIsDashed": "1",
+                                "divlineThickness": "1",
+                                "divLineDashLen": "1",
+                                "divLineGapLen": "1",
+                                "canvasBgColor": "#ffffff"
+                            },
+
+                            "data": data
+                        }
+                    });
+                    revenueChart.render();
+                });
+
+
+            },
+            error: function () {
+
+            }
+        });
+
+        getRevenueByMonthlyChartDataPopup(flag);
+    };
+    function getRevenueByMonthlyChartDataPopup(flag) {
+        var regionIds = $("#regionlist").val();
+        var spnStartDate = $("#spnStartDate").text();
+        var spnEndDate = $("#spnEndtDate").text();
+        $('#MonthlyChartPopUp').empty();
+
+        var sURL = '@Url.Action("GetMonthlyDataForASelectedYearChartData", "Management", new { area = "Portal" })?flag=' + flag + '&regionIds=' + regionIds + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (res) {
+                loadRevenueByMonthChartTable(res);
+                var data = [];
+                $.each(res, function (index, value) {
+
+                    var objData = {
+                        label: value.RangeName,
+                        value: value.TotalAccountReceivable,
+                        color: value.ColorCode
+                    }
+                    data.push(objData);
+
+                });
+
+                FusionCharts.ready(function () {
+                    var revenueChart = new FusionCharts({
+                        type: 'column3d',
+                        renderAt: 'MonthlyChartPopUp',
+                        width: '100%',
+                        height: '400',
+                        dataFormat: 'json',
+                        dataSource: {
+                            "chart": {
+                                "caption": "Monthly Revenue",
+                                "subCaption": "",
+                                "xAxisName": "Months/Year",
+                                "yAxisName": "Revenues($)",
+                                "paletteColors": "#0075c2",
+                                "valueFontColor": "#ffffff",
+                                "baseFont": "Helvetica Neue,Arial",
+                                "captionFontSize": "14",
+                                "subcaptionFontSize": "14",
+                                "subcaptionFontBold": "0",
+                                "placeValuesInside": "1",
+                                "labelDisplay": "rotate",
+                                "rotateValues": "1",
+                                "showShadow": "0",
+                                "divlineColor": "#999999",
+                                "divLineIsDashed": "1",
+                                "divlineThickness": "1",
+                                "divLineDashLen": "1",
+                                "divLineGapLen": "1",
+                                "canvasBgColor": "#ffffff"
+                            },
+
+                            "data": data
+                        }
+                    });
+                    revenueChart.render();
+                });
+
+            },
+            error: function () {
+
+            }
+        });
+    };
+
+    function getGrossAndContractBillingRevenueChartData() {
+        $('#GrossAndContractBillingRevenueChart').empty();
+        var yearToAdd = $('#YearsToShow').val();
+        var regionIds = $("#regionlist").val();
+        var spnStartDate = $("#spnStartDate").text();
+        var spnEndDate = $("#spnEndtDate").text();
+
+        var sURL = '@Url.Action("GetGrossAndContractBillingRevenueChartData", "Management", new { area = "Portal" })?yearToAdd=' + yearToAdd + '&regionIds=' + regionIds + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (res) {
+                loadGrossAndContractBillingRevenueChartDataTable(res);
+                var category = [];
+                var gross = [];
+                var contractBilling = [];
+                $.each(res, function (index, value) {
+                    var objCategory = {
+                        label: value.RangeName
+                    }
+                    category.push(objCategory);
+
+                    var objGross = {
+                        value: value.TotalGross
+                    }
+                    gross.push(objGross);
+
+                    var objContractBilling = {
+                        value: value.TotalContractBilling
+                    }
+                    contractBilling.push(objContractBilling);
+
+                });
+                FusionCharts.ready(function () {
+                    var salesChart = new FusionCharts({
+                        type: 'MSColumn3D',
+                        renderAt: 'GrossAndContractBillingRevenueChart',
+                        width: '100%',
+                        height: '400',
+                        dataFormat: 'json',
+                        dataSource: {
+                            "chart": {
+                                "caption": "Total Revenue VS Contract Billing",
+                                "subCaption": "",
+                                "xAxisName": "Years",
+                                "yAxisName": "Revenues($)",
+                                "paletteColors": "#0075c2",
+                                "valueFontColor": "#ffffff",
+                                "baseFont": "Helvetica Neue,Arial",
+                                "captionFontSize": "14",
+                                "subcaptionFontSize": "14",
+                                "subcaptionFontBold": "0",
+                                "placeValuesInside": "1",
+                                "rotateValues": "1",
+                                "showShadow": "0",
+                                "divlineColor": "#999999",
+                                "divLineIsDashed": "1",
+                                "divlineThickness": "1",
+                                "divLineDashLen": "1",
+                                "divLineGapLen": "1",
+                                "canvasBgColor": "#ffffff"
+                            },
+                            "categories": [{
+                                "category": category
+                            }],
+                            "dataset": [{
+                                "seriesname": "Total Revenue",
+                                "data": gross,
+                                "color": "a1c74a"
+                            },
+                                {
+                                    "seriesname": "Contract Billing",
+                                    "data": contractBilling,
+                                    "color": "005476"
+                                }
+                            ]
+                        }
+                    })
+                    .render();
+                });
+            },
+            error: function () {
+
+            }
+        });
+    };
+    function loadGrossAndContractBillingRevenueChartDataTable(data) {
+        var elem = $('#tblGrossAndContractBillingRevenueChart tbody');
+        var tempRowHeader = "";
+        var tempRowFristRow = "";
+        var tempRowSecondRow = "";
+
+        $(elem).html('');
+
+        $.each(data, function (index, value) {
+            tempRowHeader += '<td style="text-align: right;font-size: 10px;">' + value.RangeName + '</td>';
+            tempRowFristRow += '<td style="text-align: right;font-size: 10px;">' + formatCurrency(value.TotalGross, true) + '</td>';
+            tempRowSecondRow += '<td style="text-align: right;font-size: 10px;">' + formatCurrency(value.TotalContractBilling, true) + '</td>';
+        });
+
+        tempRow = "";
+        tempRow += '<tr>';
+        tempRow += '<td></td>';
+        tempRow += '' + tempRowHeader + '';
+        tempRow += '</tr>';
+
+        tempRow += '<tr>';
+        tempRow += '<td style="text-align: left;font-size: 10px;">Total Revenue</td>';
+        tempRow += '' + tempRowFristRow + '';
+        tempRow += '</tr>';
+
+        tempRow += '<tr>';
+        tempRow += '<td style="text-align: left;font-size: 10px;">Contract Billing</td>';
+        tempRow += '' + tempRowSecondRow + '';
+        tempRow += '</tr>';
+
+        $(elem).append(tempRow);
+    }
+
+    function getRevenueByMonthChartData() {
+        var monthToAdd = $('#MonthToAdd').val();
+        var regionIds = $("#regionlist").val();
+        var spnStartDate = $("#spnStartDate").text();
+        var spnEndDate = $("#spnEndtDate").text();
+        $('#RevenueByMonthChart').empty();
+
+        var sURL = '@Url.Action("GetRevenueByMonthChartData", "Management", new { area = "Portal" })?monthToAdd=' + monthToAdd + '&regionIds=' + regionIds + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (res) {
+                loadRevenueByMonthChartTable(res);
+                var data = [];
+                $.each(res, function (index, value) {
+                    var flag = value.RangeName.replace("-",":");
+                    var objData = {
+                        link: "JavaScript:getMonthlyRevenueDetailsByCustomerPopup(" + flag + ");",
+                        label: value.RangeName,
+                        value: value.TotalAccountReceivable,
+                        color: value.ColorCode
+                    }
+                    data.push(objData);
+
+                });
+
+                FusionCharts.ready(function () {
+                    var revenueChart = new FusionCharts({
+                        type: 'column3d',
+                        renderAt: 'RevenueByMonthChart',
+                        width: '100%',
+                        height: '400',
+                        dataFormat: 'json',
+                        dataSource: {
+                            "chart": {
+                                "caption": "Monthly Revenue",
+                                "subCaption": "",
+                                "xAxisName": "Months/Years",
+                                "yAxisName": "Revenues($)",
+                                "paletteColors": "#0075c2",
+                                "valueFontColor": "#ffffff",
+                                "baseFont": "Helvetica Neue,Arial",
+                                "captionFontSize": "14",
+                                "subcaptionFontSize": "14",
+                                "subcaptionFontBold": "0",
+                                "placeValuesInside": "1",
+                                "labelDisplay": "rotate",
+                                "rotateValues": "1",
+                                "showShadow": "0",
+                                "divlineColor": "#999999",
+                                "divLineIsDashed": "1",
+                                "divlineThickness": "1",
+                                "divLineDashLen": "1",
+                                "divLineGapLen": "1",
+                                "canvasBgColor": "#ffffff"
+                            },
+
+                            "data": data
+                        }
+                    });
+                    revenueChart.render();
+                });
+
+            },
+            error: function () {
+
+            }
+        });
+    };
+
+    function getMonthlyRevenueDetailsByAccountTypePopup(flag) {
+        var keepFlag = flag;
+        flag = flag.replace(":", "-");
+        var monthToAdd = $('#MonthToAdd').val();
+        var regionIds = $("#regionlist").val();
+        var spnStartDate = $("#spnStartDate").text();
+        var spnEndDate = $("#spnEndtDate").text();
+        var billYear = $('#BillYear').val();
+        var billMonth = $('#BillMonth').val();
+        var elem = $('#tblMonthlyRevenueDetailsByAccountTypePopup tbody');
+        $('#tblMonthlyRevenueDetailsByAccountTypePopup tbody').empty('');
+        var sl = 0;
+        $(elem).html('');
+        $.ajax({
+            url: '@Url.Action("GetMonthlyRevenueDetailsByAccountTypeData", "Management", new { area = "Portal" })?flag=' + flag + '&monthToAdd=' + monthToAdd + '&regionIds=' + regionIds + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate + '&billMonth=' + billMonth + '&billYear=' + billYear,
+            success: function (res) {
+                var tempRow = "";
+                var totalAmount = 0.0;
+                var sl = 0;
+                $('#totalAmount2').text('');
+
+                $.each(res, function (index, value) {
+
+                    tempRow = "";
+
+                    totalAmount = totalAmount + parseFloat(value.Total);
+                    sl = sl + 1;
+                    tempRow += '<tr>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + sl + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.RegionName + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.RangeName + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;"><a onclick="getMonthlyRevenueDetailsByAccountTypeAndCustomerData(\'' + value.AccountTypeListId + '\',\'' + keepFlag + '\')">' + value.AccountTypeListName + '</a></td>';
+                    tempRow += '<td style="text-align: right;font-size: 12px;">' + formatCurrency(value.Total, true) + '</td>';
+                    tempRow += '</tr>';
+
+                    $(elem).append(tempRow);
+                });
+
+                $('#totalAmount2').text(formatCurrency(totalAmount, true));
+            },
+            error: function () { }
+
+        });
+
+    };
+    function btnMonthlyAccountTypeDetailsChartPopUpModalClose()
+    {
+        $("#modal_MonthlyAccountTypeDetailsChartPopUp").modal('hide');
+    }
+
+    function getMonthlyRevenueDetailsByAccountTypeAndCustomerData(accountTypeListId,flag) {
+      
+        flag = flag.replace(":", "-");
+        $("#modal_MonthlyAccountTypeDetailsChartPopUp").modal('show');
+        var monthToAdd = $('#MonthToAdd').val();
+        var regionIds = $("#regionlist").val();
+        var spnStartDate = $("#spnStartDate").text();
+        var spnEndDate = $("#spnEndtDate").text();
+        var billYear = $('#BillYear').val();
+        var billMonth = $('#BillMonth').val();
+        var elem = $('#tblMonthlyAccountTypeRevenueDetailsWithCustomerPopup tbody');
+        $('#tblMonthlyAccountTypeRevenueDetailsWithCustomerPopup tbody').empty('');
+        var sl = 0;
+        $(elem).html('');
+        $.ajax({
+            url: '@Url.Action("GetMonthlyRevenueDetailsByAccountTypeAndCustomerData", "Management", new { area = "Portal" })?flag=' + flag + '&accountTypeListId=' + accountTypeListId + '&monthToAdd=' + monthToAdd + '&regionIds=' + regionIds + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate + '&billMonth=' + billMonth + '&billYear=' + billYear,
+            success: function (res) {
+                var tempRow = "";
+                var totalAmount = 0.0;
+                var sl = 0;
+                $('#totalAmount3').text('');
+
+                $.each(res, function (index, value) {
+
+                    tempRow = "";
+
+                    totalAmount = totalAmount + parseFloat(value.Total);
+                    sl = sl + 1;
+                    tempRow += '<tr>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + sl + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.RegionName + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.RangeName + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.AccountTypeListName + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.CustomerNo + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.CustomerName + '</td>';
+                    tempRow += '<td style="text-align: right;font-size: 12px;">' + formatCurrency(value.Total, true) + '</td>';
+                    tempRow += '</tr>';
+
+                    $(elem).append(tempRow);
+                });
+
+                $('#totalAmount3').text(formatCurrency(totalAmount, true));
+            },
+            error: function () { }
+
+        });
+    };
+    
+    function getMonthlyRevenueDetailsByCustomerPopup(flag) {
+        getMonthlyRevenueDetailsByAccountTypePopup(flag);
+        flag = flag.replace(":", "-");
+        $("#modal_MonthlyDetailsChartPopUp").modal('show');
+        var monthToAdd = $('#MonthToAdd').val();
+        var regionIds = $("#regionlist").val();
+        var spnStartDate = $("#spnStartDate").text();
+        var spnEndDate = $("#spnEndtDate").text();
+        var billYear = $('#BillYear').val();
+        var billMonth = $('#BillMonth').val();
+        var elem = $('#tblMonthlyRevenueDetailsByCustomerPopup tbody');
+        $('#tblMonthlyRevenueDetailsByCustomerPopup tbody').empty('');
+        var sl = 0;
+        $(elem).html('');
+        $.ajax({
+            url: '@Url.Action("GetMonthlyRevenueDetailsByCustomerData", "Management", new { area = "Portal" })?flag=' + flag + '&monthToAdd=' + monthToAdd + '&regionIds=' + regionIds + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate + '&billMonth=' + billMonth + '&billYear=' + billYear,
+            success: function (res) {
+                var tempRow = "";
+                var totalAmount = 0.0;
+                var sl = 0;
+                $('#totalAmount1').text('');
+
+                $.each(res, function (index, value) {
+
+                    tempRow = "";
+
+                    totalAmount = totalAmount + parseFloat(value.Total);
+                    sl = sl + 1;
+                    tempRow += '<tr>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + sl + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.RegionName + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.RangeName + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.CustomerNo + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.CustomerName + '</td>';
+                    tempRow += '<td style="text-align: right;font-size: 12px;">' + formatCurrency(value.Total, true) + '</td>';
+                    tempRow += '</tr>';
+
+                    $(elem).append(tempRow);
+                });
+
+                $('#totalAmount1').text(formatCurrency(totalAmount, true));
+            },
+            error: function () { }
+
+        });
+
+       
+    };
+
+    function loadRevenueByMonthChartTable(data) {
+
+        var elem = $('#tblRevenueByMonthChart tbody');
+        var tempRowHeader = "";
+        var tempRowFristRow = "";
+
+        var tempRowHeaderTwo = "";
+        var tempRowFristRowTwo = "";
+
+        var tempRowHeaderThree = "";
+        var tempRowFristRowThree = "";
+
+        $(elem).html('');
+
+        $.each(data, function (index, value) {
+            if (index < 12) {
+                tempRowHeader += '<td style="text-align: right;font-size: 10px;">' + value.RangeName + '</td>';
+                tempRowFristRow += '<td style="text-align: right;font-size: 10px;">' + formatCurrency(value.TotalAccountReceivable, true) + '</td>';
+            } else if (index >= 12 && index < 24) {
+                tempRowHeaderTwo += '<td style="text-align: right;font-size: 10px;">' + value.RangeName + '</td>';
+                tempRowFristRowTwo += '<td style="text-align: right;font-size: 10px;">' + formatCurrency(value.TotalAccountReceivable, true) + '</td>';
+            } else if (index >= 24) {
+                tempRowHeaderThree += '<td style="text-align: right;font-size: 10px;">' + value.RangeName + '</td>';
+                tempRowFristRowThree += '<td style="text-align: right;font-size: 10px;">' + formatCurrency(value.TotalAccountReceivable, true) + '</td>';
+            }
+        });
+
+        tempRow = "";
+        tempRow += '<tr>';
+        tempRow += '<td></td>';
+        tempRow += '' + tempRowHeader + '';
+        tempRow += '</tr>';
+
+        tempRow += '<tr>';
+        tempRow += '<td style="text-align: left;font-size: 10px;">Revenue</td>';
+        tempRow += '' + tempRowFristRow + '';
+        tempRow += '</tr>';
+
+        if (tempRowHeaderTwo) {
+            tempRow += '<tr><td clospan="12"> </td></tr>'
+            tempRow += '<tr>';
+            tempRow += '<td></td>';
+            tempRow += '' + tempRowHeaderTwo + '';
+            tempRow += '</tr>';
+
+            tempRow += '<tr>';
+            tempRow += '<td style="text-align: left;font-size: 10px;">Revenue</td>';
+            tempRow += '' + tempRowFristRowTwo + '';
+            tempRow += '</tr>';
+        }
+
+        if (tempRowHeaderThree) {
+            tempRow += '<tr><td clospan="12"> </td></tr>'
+            tempRow += '<tr>';
+            tempRow += '<td></td>';
+            tempRow += '' + tempRowHeaderThree + '';
+            tempRow += '</tr>';
+
+            tempRow += '<tr>';
+            tempRow += '<td style="text-align: left;font-size: 10px;">Revenue</td>';
+            tempRow += '' + tempRowFristRowThree + '';
+            tempRow += '</tr>';
+        }
+
+        $(elem).append(tempRow);
+    };
+
+    function getRevenueByYearChartData() {
+        var yearToAdd = $('#YearToAdd').val();
+        var regionIds = $("#regionlist").val();
+        var spnStartDate = $("#spnStartDate").text();
+        var spnEndDate = $("#spnEndtDate").text();
+        $('#RevenueByYearChart').empty();
+
+        var sURL = '@Url.Action("GetRevenueByYearChartData", "Management", new { area = "Portal" })?yearToAdd=' + yearToAdd + '&regionIds=' + regionIds + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (res) {
+                loadRevenueByYearChartDataTable(res);
+                var data = [];
+                $.each(res, function (index, value) {
+
+                    var objData = {
+                        link: "JavaScript:getRevenueByYearChartDataPopup(" + value.RangeName + ");",
+                        label: value.RangeName,
+                        value: value.TotalAccountReceivable,
+                        color: value.ColorCode
+                    }
+                    data.push(objData);
+
+                });
+
+                FusionCharts.ready(function () {
+                    var revenueChart = new FusionCharts({
+                        type: 'column3d',
+                        renderAt: 'RevenueByYearChart',
+                        width: '100%',
+                        height: '400',
+                        dataFormat: 'json',
+                        dataSource: {
+                            "chart": {
+                                "caption": "Yearly Revenue",
+                                "subCaption": "",
+                                "xAxisName": "Year",
+                                "yAxisName": "Revenues($)",
+                                "paletteColors": "#0075c2",
+                                "valueFontColor": "#ffffff",
+                                "baseFont": "Helvetica Neue,Arial",
+                                "captionFontSize": "14",
+                                "subcaptionFontSize": "14",
+                                "subcaptionFontBold": "0",
+                                "placeValuesInside": "1",
+                                "rotateValues": "1",
+                                "showShadow": "0",
+                                "divlineColor": "#999999",
+                                "divLineIsDashed": "1",
+                                "divlineThickness": "1",
+                                "divLineDashLen": "1",
+                                "divLineGapLen": "1",
+                                "canvasBgColor": "#ffffff"
+                            },
+
+                            "data": data
+                        }
+                    });
+                    revenueChart.render();
+                });
+
+
+            },
+            error: function () {
+
+            }
+        });
+    };
+    function loadRevenueByYearChartDataTable(data) {
+        var elem = $('#tblRevenueByYearChart tbody');
+        var tempRowHeader = "";
+        var tempRowFristRow = "";
+
+        $(elem).html('');
+
+        $.each(data, function (index, value) {
+            tempRowHeader += '<td style="text-align: right;font-size: 10px;">' + value.RangeName + '</td>';
+            tempRowFristRow += '<td style="text-align: right;font-size: 10px;">' + formatCurrency(value.TotalAccountReceivable, true) + '</td>';
+
+        });
+
+        tempRow = "";
+        tempRow += '<tr>';
+        tempRow += '<td></td>';
+        tempRow += '' + tempRowHeader + '';
+        tempRow += '</tr>';
+
+        tempRow += '<tr>';
+        tempRow += '<td style="text-align: left;font-size: 10px;">Revenue</td>';
+        tempRow += '' + tempRowFristRow + '';
+        tempRow += '</tr>';
+
+        $(elem).append(tempRow);
+    }
+
+
+    function getRegionWiseMonthlyRevenue() {
+        var monthToShow = $('#MonthToAdd').val();
+        var regionIds = $("#regionlist").val();
+        var sURL = '@Url.Action("MonthlyRevenueReport", "Management", new { area = "Portal" })?monthToShow=' + monthToShow + '&regionIds=' + regionIds;
+        window.location.replace(sURL);
+    }
+    function getRegionWiseYearlyRevenue() {
+        var yearToShow = $('#YearToAdd').val();
+        var regionIds = $("#regionlist").val();
+        var sURL = '@Url.Action("YearlyRevenueReport", "Management", new { area = "Portal" })?yearToShow=' + yearToShow + '&regionIds=' + regionIds;
+        window.location.replace(sURL);
+    }
+    function formatCurrency(total, dollar) {
+        dollar = (dollar == true ? true : false);
+        var neg = false;
+        if (total < 0) {
+            neg = true;
+            total = Math.abs(total);
+        }
+        return (neg ? "-" : '') + (dollar ? "$" : "") + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+    };
+    function getRevenueAndPaymentChart() {
+        $('#RevenueAndPaymentChart').empty();
+        var monthToAdd = $('#MonthToAdd').val();
+        var regionIds = $("#regionlist").val();
+        var spnStartDate = $("#spnStartDate").text();
+        var spnEndDate = $("#spnEndtDate").text();
+
+        var sURL = '@Url.Action("GetRevenueAndPaymentChartData", "Management", new { area = "Portal" })?monthToAdd=' + monthToAdd + '&regionIds=' + regionIds + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (res) {
+                loadRevenueAndPaymentChartTable(res);
+                var category = [];
+                var revenue = [];
+                var payment = [];
+                var currentPayment = [];
+                $.each(res, function (index, value) {
+                    var objCategory = {
+                        label: value.RangeName
+                    }
+                    category.push(objCategory);
+
+                    var objrevenue = {
+                        value: value.TotalRevenue
+                    }
+                    revenue.push(objrevenue);
+
+                    var objpayment = {
+                        value: value.PaymentOthersRevenue
+                    }
+                    payment.push(objpayment);
+
+                    var objcurrentPayment = {
+                        value: value.PaymentForCurrentRevenue
+                    }
+                    currentPayment.push(objcurrentPayment);
+
+                });
+
+                FusionCharts.ready(function () {
+                    var salesChart = new FusionCharts({
+                        type: 'msstackedcolumn2d',
+                        renderAt: 'RevenueAndPaymentChart',
+                        width: '100%',
+                        height: '400',
+                        dataFormat: 'json',
+                        dataSource: {
+                            "chart": {
+                             "caption": "Revenues Vs Payment",
+                            "subcaption": "",
+                            "xaxisname": "Months/Years",
+                            "yaxisname": "Revenues($)",
+                            "paletteColors": "#0075c2,#45AFF5,#2C8A56,#1aaf5d,#50DE90",
+                            "numberPrefix": "$",
+                            "bgColor": "#ffffff",
+                            "borderAlpha": "20",
+                            "showCanvasBorder": "0",
+                            "usePlotGradientColor": "0",
+                            "plotBorderAlpha": "10",
+                            "legendBorderAlpha": "0",
+                            "legendShadow": "0",
+                            "labelDisplay": "rotate",
+                            "placeValuesInside": "1",
+                            "rotateValues": "1",
+                            "valueFontColor": "#ffffff",
+                            "showXAxisLine": "1",
+                            "xAxisLineColor": "#999999",
+                            "divlineColor": "#999999",
+                            "divLineIsDashed": "1",
+                            "showAlternateHGridColor": "0",
+                            "subcaptionFontBold": "0",
+                            "subcaptionFontSize": "14"
+
+                            },
+                            "categories": [{
+                                "category": category
+                            }],
+                            "dataset": [{
+                                "dataset": [{
+                                    "seriesname": "Revenue",
+                                    "data": revenue,
+                                    "color": "069191"
+                                }]
+                            }, {
+                                "dataset": [{
+                                    "seriesname": "Payment For This Revenue",
+                                    "data": currentPayment,
+                                    "color": "50DE90"
+                                }, {
+                                    "seriesname": "Payment For Others",
+                                    "data": payment,
+                                    "color": "d74a4a"
+                                }]
+                            }]
+                        }
+                    })
+                    .render();
+                });
+
+            },
+            error: function () {
+
+            }
+        });
+    };
+
+    function loadRevenueAndPaymentChartTable(data) {
+        var elem = $('#tblRevenueAndPaymentChart tbody');
+        var tempRowHeader = "";
+        var tempRowFristRow = "";
+        var tempRowSecondRow = "";
+        var tempRowThirdRow = "";
+        var tempRowFourRow = "";
+
+        var tempRowHeader2 = "";
+        var tempRowFristRow2 = "";
+        var tempRowSecondRow2 = "";
+        var tempRowThirdRow2 = "";
+        var tempRowFourRow2 = "";
+
+        var tempRowHeader3 = "";
+        var tempRowFristRow3 = "";
+        var tempRowSecondRow3 = "";
+        var tempRowThirdRow3 = "";
+        var tempRowFourRow3 = "";
+
+        $(elem).html('');
+
+        $.each(data, function (index, value) {
+            if (index < 12) {
+                tempRowHeader += '<td style="text-align: right;font-size: 10px;">' + value.RangeName + '</td>';
+                tempRowFristRow += '<td style="text-align: right;font-size: 10px;">' + formatCurrency(value.TotalRevenue, true) + '</td>';
+                tempRowSecondRow += '<td style="text-align: right;font-size: 10px;">' + formatCurrency(value.PaymentOthersRevenue, true) + '</td>';
+                tempRowThirdRow += '<td style="text-align: right;font-size: 10px;">' + formatCurrency(value.PaymentForCurrentRevenue, true) + '</td>';
+                tempRowFourRow += '<td style="text-align: right;font-size: 10px;">' + formatCurrency(value.TotalPayment, true) + '</td>';
+            } else if (index >= 12 && index < 24) {
+                tempRowHeader2 += '<td style="text-align: right;font-size: 10px;">' + value.RangeName + '</td>';
+                tempRowFristRow2 += '<td style="text-align: right;font-size: 10px;">' + formatCurrency(value.TotalRevenue, true) + '</td>';
+                tempRowSecondRow2 += '<td style="text-align: right;font-size: 10px;">' + formatCurrency(value.PaymentOthersRevenue, true) + '</td>';
+                tempRowThirdRow2 += '<td style="text-align: right;font-size: 10px;">' + formatCurrency(value.PaymentForCurrentRevenue, true) + '</td>';
+                tempRowFourRow2 += '<td style="text-align: right;font-size: 10px;">' + formatCurrency(value.TotalPayment, true) + '</td>';
+            } else if (index >= 24) {
+                tempRowHeader3 += '<td style="text-align: right;font-size: 10px;">' + value.RangeName + '</td>';
+                tempRowFristRow3 += '<td style="text-align: right;font-size: 10px;">' + formatCurrency(value.TotalRevenue, true) + '</td>';
+                tempRowSecondRow3 += '<td style="text-align: right;font-size: 10px;">' + formatCurrency(value.PaymentOthersRevenue, true) + '</td>';
+                tempRowThirdRow3 += '<td style="text-align: right;font-size: 10px;">' + formatCurrency(value.PaymentForCurrentRevenue, true) + '</td>';
+                tempRowFourRow3 += '<td style="text-align: right;font-size: 10px;">' + formatCurrency(value.TotalPayment, true) + '</td>';
+            }
+
+        });
+
+        tempRow = "";
+        tempRow += '<tr>';
+        tempRow += '<td></td>';
+        tempRow += '' + tempRowHeader + '';
+        tempRow += '</tr>';
+
+        tempRow += '<tr>';
+        tempRow += '<td style="text-align: left;font-size: 10px;">Revenue</td>';
+        tempRow += '' + tempRowFristRow + '';
+        tempRow += '</tr>';
+
+        tempRow += '<tr>';
+        tempRow += '<td style="text-align: left;font-size: 10px;">Total Payment</td>';
+        tempRow += '' + tempRowFourRow + '';
+        tempRow += '</tr>';
+
+        tempRow += '<tr>';
+        tempRow += '<td style="text-align: left;font-size: 10px;">Payment(This Rev.)</td>';
+        tempRow += '' + tempRowThirdRow + '';
+        tempRow += '</tr>';
+
+
+        tempRow += '<tr>';
+        tempRow += '<td style="text-align: left;font-size: 10px;">Payment(Others)</td>';
+        tempRow += '' + tempRowSecondRow + '';
+        tempRow += '</tr>';
+
+       
+
+
+        if (tempRowHeader2) {
+            tempRow += '<tr><td clospan="12"> </td></tr>'
+            tempRow += '<tr>';
+            tempRow += '<td></td>';
+            tempRow += '' + tempRowHeader2 + '';
+            tempRow += '</tr>';
+
+            tempRow += '<tr>';
+            tempRow += '<td style="text-align: left;font-size: 10px;">Revenue</td>';
+            tempRow += '' + tempRowFristRow2 + '';
+            tempRow += '</tr>';
+
+            tempRow += '<tr>';
+            tempRow += '<td style="text-align: left;font-size: 10px;">Total Payment</td>';
+            tempRow += '' + tempRowFourRow2 + '';
+            tempRow += '</tr>';
+
+            tempRow += '<tr>';
+            tempRow += '<td style="text-align: left;font-size: 10px;">Payment(This Rev.)</td>';
+            tempRow += '' + tempRowThirdRow2 + '';
+            tempRow += '</tr>';
+
+            tempRow += '<tr>';
+            tempRow += '<td style="text-align: left;font-size: 10px;">Payment(Others)</td>';
+            tempRow += '' + tempRowSecondRow2 + '';
+            tempRow += '</tr>';
+
+           
+        }
+        if (tempRowHeader3) {
+            tempRow += '<tr><td clospan="12"> </td></tr>'
+            tempRow += '<tr>';
+            tempRow += '<td></td>';
+            tempRow += '' + tempRowHeader3 + '';
+            tempRow += '</tr>';
+
+            tempRow += '<tr>';
+            tempRow += '<td style="text-align: left;font-size: 10px;">Revenue</td>';
+            tempRow += '' + tempRowFristRow3 + '';
+            tempRow += '</tr>';
+
+            tempRow += '<tr>';
+            tempRow += '<td style="text-align: left;font-size: 10px;">Total Payment</td>';
+            tempRow += '' + tempRowFourRow3 + '';
+            tempRow += '</tr>';
+
+            tempRow += '<tr>';
+            tempRow += '<td style="text-align: left;font-size: 10px;">Payment(This Rev.)</td>';
+            tempRow += '' + tempRowThirdRow3 + '';
+            tempRow += '</tr>';
+
+
+            tempRow += '<tr>';
+            tempRow += '<td style="text-align: left;font-size: 10px;">Payment(Others)</td>';
+            tempRow += '' + tempRowSecondRow3 + '';
+            tempRow += '</tr>';
+
+         
+        }
+
+        $(elem).append(tempRow);
+    }
+
+    function applyDurationFilter(v) {
+        $('#spnStartDate').html('');
+        $('#spnEndtDate').html('');
+        $('.divspandate').show();
+        $('#divSD').hide();
+        $('#divED').hide();
+        switch (v) {
+            case 1:
+                firstDay = moment().startOf('isoWeek').toString();
+                lastDay = moment().endOf('isoWeek').toString();
+                break;
+            case 2:
+                //code block
+                firstDay = moment().startOf('isoWeek').toString();
+                lastDay = new Date().toString();
+                break;
+            case 3:
+                firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                break;
+            case 4:
+                //code block
+                firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                lastDay = new Date().toString();
+                break;
+            case 5:
+                //code block
+                firstDay = moment().startOf('quarter').toString();
+                lastDay = moment().endOf('quarter').toString();
+                break;
+            case 6:
+                //code block
+                firstDay = moment().startOf('quarter').toString();
+                lastDay = new Date().toString();
+                break;
+            case 7:
+                //code block
+                firstDay = moment().startOf('year').toString();;
+                lastDay = moment().endOf('year').toString();
+                break;
+            case 8:
+                //code block
+                firstDay = moment().startOf('year').toString();
+                lastDay = new Date().toString();
+                break;
+            case 9:
+                //code block
+                firstDay = moment().toString();
+                lastDay = moment().toString();
+                break;
+            case 10:
+                //code block
+                firstDay = moment().add(-1, 'days').toString();
+                lastDay = moment().add(-1, 'days').toString();
+                break;
+            case 11:
+                //code block
+                firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                break;
+            case 12:
+                //code block
+                firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                break;
+            case 13:
+                //code block
+                firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                break;
+            case 14:
+                //code block
+                firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                break;
+            case 15:
+                //code block
+                $('.divspandate').hide();
+                $('#divSD').show();
+                $('#divED').show();
+                $('#txtStartDate').val('');
+                $('#txtEndtDate').val('')
+                break;
+            default:
+                //code block
+        }
+        $('#spnStartDate').html(moment(firstDay).format('L'));
+        $('#spnEndtDate').html(moment(lastDay).format('L'));
+
+        getRevenueByMonthChartData();
+        getRevenueByYearChartData();
+        getRevenueAndPaymentChart();
+        getGrossAndContractBillingRevenueChartData();
+    };
+
+</script>

@@ -1,0 +1,337 @@
+﻿@using JKViewModels.Common
+@model JKViewModels.AccountReceivable.PaymentDetailsPopupModel
+
+@{
+    var IsEdit = false;
+    var IsDeletePer = false;
+    JKApi.Core.Common.ClaimView _claim = JKApi.Core.Common.ClaimView.Instance;
+    var getPermission = _claim.GETCLAIM_ED_PERMISSION();
+    if (getPermission != null)
+    {
+        string enumName = EDPermission.Payment_Pending_Approval_Detail_Popup.ToString();
+        var validIsApprove = getPermission.Where(x => x.EnumName == enumName && x.IsEdit).FirstOrDefault();
+        if (validIsApprove != null && validIsApprove.IsEdit)
+        {
+            IsEdit = true;
+        }
+    }
+}
+
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+
+        table.borderClass, td, th {
+            border: 1px solid black;
+        }
+
+        .has-error {
+            border-color: red !important;
+        }
+    </style>
+}
+
+<div class="modal fade custom-model custom-form-design" id="modal_paymentdetail" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:1100px">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Payment Detail
+                </h4>
+            </div>
+            <div class="modal-body" id="printDiv">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <td class="text-right">No.</td>
+                                    <td class="text-center"><span>@Model.TransactionNumber</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">Payment Date</td>
+                                    <td class="text-center"><span>@Convert.ToDateTime(Model.PaymentDate).ToString("MM/dd/yyyy")</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">Payment Type</td>
+                                    <td class="text-center"><span>@Model.PaymentType</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">Payment Amount</td>
+                                    <td class="text-center"><span>@string.Format("{0:C}", Model.PaymentAmount)</span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-4">
+                        @Html.HiddenFor(one => one.CustomerId, new { @id = "ppCustomerId" })
+                        @*<div class="custom-form portlet light" style="max-width:400px;margin: 0px auto;min-height: 100px;">
+            <div class="headerbox">
+                <div class="row">
+                    <div class="col-md-12">
+                        &nbsp;&nbsp;&nbsp;&nbsp;CUSTOMER #: @Html.DisplayFor(one => one.CustomerNo)
+
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-body form" style="border:1px solid #e7ecf1;">
+                <div class="form-body">
+                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.CustomerName)</div>
+                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.Address1),@Html.DisplayFor(one => one.Address2)</div>
+                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.City), @Html.DisplayFor(one => one.StateName) @Html.DisplayFor(one => one.PostalCode)</div>
+                    <div class="row" style="padding: 3px;margin: 0;">@(!String.IsNullOrEmpty(Model.Phone) ? String.Format("{0: (###) ###-####}", Model.Phone) : "")</div>
+                </div>
+            </div>
+        </div>*@
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-bordered table-responsive borderClass" width="100%">
+                            <thead>
+                                <tr style="border:2px solid #b3a9a9;">
+                                    <th style="text-align:center;border:2px solid #b3a9a9;">Type</th>
+                                    <th style="text-align:center;border:2px solid #b3a9a9;">Date</th>
+                                    <th style="text-align:center;border:2px solid #b3a9a9;">Customer No</th>
+                                    <th style="text-align:center;border:2px solid #b3a9a9;">Customer Name</th>
+                                    <th style="text-align:center;border:2px solid #b3a9a9;">Check/Invoice No.</th>
+                                    <th style="text-align:center;border:2px solid #b3a9a9;">Description</th>
+                                    <th style="text-align:center;border:2px solid #b3a9a9;">Inv Amount</th>
+                                    <th style="text-align:center;border:2px solid #b3a9a9;">Trx Amount</th>
+                                    <th style="text-align:center;border:2px solid #b3a9a9;">Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.PaymentDetailType)
+                                {
+                                <tr style="border:2px solid #b3a9a9;">
+                                    <td style="text-align:center;border:2px solid #b3a9a9;">@item.Type </td>
+                                    <td style="text-align:center;border:2px solid #b3a9a9;"> @Convert.ToDateTime(item.Date).ToString("MM/dd/yyyy")  </td>
+                                    <td style="text-align:center;border:2px solid #b3a9a9;"> @item.CustomerNo</td>
+                                    <td style="text-align:left;border:2px solid #b3a9a9;"> @item.CustomerName</td>
+                                    <td style="text-align:center;border:2px solid #b3a9a9;"> @item.TransactionNumber</td>
+                                    <td style="text-align:left;border:2px solid #b3a9a9;">@item.Description </td>
+                                    @if (item.Type == "Payment")
+                                    {
+                                        <td style="text-align:right;border:2px solid #b3a9a9;"></td>
+                                        <td style="text-align:right;color:red;border:2px solid #b3a9a9;">(@string.Format("{0:c}", item.Amount))</td>
+                                        <td style="text-align:right;border:2px solid #b3a9a9;">@string.Format("{0:c}", item.BalanceAmount)</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;border:2px solid #b3a9a9;">@string.Format("{0:c}", item.InvoiceAmount)</td>
+                                        <td style="text-align:right;border:2px solid #b3a9a9;">@string.Format("{0:c}", item.Amount)</td>
+
+                                        if (item.BalanceAmount < 0)
+                                        {
+                                            <td style="text-align:right;color:red;border:2px solid #b3a9a9;">@string.Format("{0:c}", item.BalanceAmount)</td>
+                                        }
+                                        else
+                                        {
+                                            <td style="text-align:right;border:2px solid #b3a9a9;">@string.Format("{0:c}", item.BalanceAmount)</td>
+                                        }
+                                    }
+
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 text-right">
+                        NOTE:
+                    </div>
+                    <div class="col-md-9 text-right">
+                        <textarea class="form-control input-sm" rows="3" readonly="readonly">@Model.Note</textarea>
+                    </div>
+                </div>
+                @if (IsEdit)
+                {
+                    <div class="row">
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-primary button-next" style="margin-right:10px;" onclick="EditPaymentDetailPopup(@Model.PaymentId)">Edit <i class="fa fa-edit"></i></button>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Action buttons -->
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-10"></div>
+
+                        <div class="col-md-2 control-label">
+                            <button type="button" class="btn green btn-block submit-button" data-dismiss="modal" id="btnSaveClose" name="SaveClose">Close</button>
+                            @*<input type="button" id="btnSubmit" class="btn btn-primary col-md-11 submit-button" value="Update" name="SaveClose" style="font-size:11px;padding-left:0px !important;padding-right:0px !important;margin-top:3px;margin-left:-40px !important" />*@
+                        </div>
+
+                        <div class="col-md-2 control-label">
+                            Note :<span class="required"> * </span>
+                        </div>
+                        <div class="col-md-6 control-label">
+                            <textarea class="form-control input-sm PendingMessage" style="resize: none;overflow-x: hidden;" rows="3" id="txtPaymentStatusNote" name="txtPaymentStatusNote"></textarea>
+                        </div>
+                        <div class="col-md-2 control-label MainAdmins" style="margin-top: 30px;">
+                            <input type="button" id="btnReject" class="btn btn-primary col-md-11 submit-button-no-prompt-reject" onclick="btnUpdateApproveReject(2,@Model.PaymentId)" name="SaveReject" value="REJECTED" style="margin-bottom:3px;font-size:11px;margin-top:3px;margin-left:5px !important;width: 100px;    height: 25px;" />
+                        </div>
+                        <div class="col-md-2 control-label MainAdmins" style="margin-top: 30px;">
+                            <input type="button" id="btnApprove" class="btn btn-primary col-md-11 submit-button-no-prompt-approve" onclick="btnUpdateApproveReject(1,@Model.PaymentId)" name="SaveApprove" value="APPROVED" style="font-size:11px;padding-left:0px !important;padding-right:0px !important;margin-top:3px;margin-left:0px !important;width: 100px;    height: 25px;" />
+                        </div>
+                        @*}*@
+                    </div>
+                </div>
+
+            </div>
+            
+        </div>
+    </div>
+</div>
+<div class="form-horizontal" id="RenderEditPaymentDetailsPopup"></div>
+
+@helper DisplayPhone(string phoneStr)
+    {
+        decimal res = 0;
+        if (Decimal.TryParse(Model.Phone, out res))
+        {
+            @String.Format("{0:(###) ###-####}", res);
+        }
+}
+
+<script type="text/javascript">
+
+    function printDiv() {
+
+        var divToPrint = document.getElementById('printDiv');
+
+        var newWin = window.open('', 'Print-Window');
+
+        newWin.document.open();
+
+        newWin.document.write('<html><body onload="window.print()">' + divToPrint.innerHTML + '</body></html>');
+
+        newWin.document.close();
+
+        setTimeout(function () { newWin.close(); }, 10);
+
+    }
+
+    function PrintPayment(paymentId) {
+        if (paymentId != "") {
+            var sURL = '@Url.Action("PaymentDetailPrint", "AccountReceivable", new { area = "Portal" })?paymentId=' + paymentId;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    var tUrl = data;
+                    printJS({ printable: document.location.origin + tUrl, type: 'pdf', showModal: false });
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+        else {
+            alert('Please select payment no to print.')
+        }
+    }
+
+
+    function btnUpdateApproveReject(status, paymentid) {
+        if ($('#txtPaymentStatusNote').val().trim() == '' && status == 2) {
+            $('#txtPaymentStatusNote').addClass("has-error");
+            return false;
+        } else {
+            $('#txtPaymentStatusNote').removeClass("has-error");
+        }
+        _customerId = $('#ppCustomerId').val();
+        _notes = $('#txtPaymentStatusNote').val();
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("UpdatePendingPaymentApproveReject", "AccountReceivable","Portal")',
+            data: { customerid: _customerId, paymentId: paymentid, Note: _notes, Status: status },
+            dataType: 'json',
+            success: function (data) {
+                swal('Payment has been ' + (status==1?'Approved':'Rejected')+'.' )
+                document.location.href = '@Url.Action("PaymentPendingList", "AccountReceivable", new { area = "Portal" })';
+            }
+        });
+    }
+    function EditPaymentDetailPopup(id) {
+        var sURL = '@Url.Action("EditPaymentDetailPopup", "AccountReceivable", new { area = "Portal" })?Id=' + id;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#RenderEditPaymentDetailsPopup').html(data);
+                $("#ModalEDITPaymentDetailsPopup").modal({ backdrop: 'static' });
+            },
+            error: function () {
+                alert("Content load failed.");
+            }
+        });
+    }
+
+</script>

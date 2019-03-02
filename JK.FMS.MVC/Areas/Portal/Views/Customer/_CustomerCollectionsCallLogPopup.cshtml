@@ -1,0 +1,706 @@
+﻿@model JKViewModels.Customer.CollectionsCallLogModel
+@{
+    List<JKViewModels.AccountReceivable.AgingReportViewModel> AginList = new List<JKViewModels.AccountReceivable.AgingReportViewModel>();
+    decimal currentTotal = 0;
+    decimal oneMoTotal = 0;
+    decimal twoMoTotal = 0;
+    decimal threeMoTotal = 0;
+    decimal fourMoTotal = 0;
+    decimal fiveMoTotal = 0;
+    decimal sixMoTotal = 0;
+    if (ViewBag.AgingData != null)
+    {
+        AginList = (List<JKViewModels.AccountReceivable.AgingReportViewModel>)ViewBag.AgingData;
+        foreach (var item in AginList)
+        {
+            currentTotal += Convert.ToDecimal(item.totalAmount);
+            oneMoTotal += Convert.ToDecimal(item.onemo);
+            twoMoTotal += Convert.ToDecimal(item.twomo);
+            threeMoTotal += Convert.ToDecimal(item.threemo);
+            fourMoTotal += Convert.ToDecimal(item.fourmo);
+            fiveMoTotal += Convert.ToDecimal(item.fivemo);
+            sixMoTotal += Convert.ToDecimal(item.sixmo);
+        }
+    }
+}
+
+<div class="modal-content" style="border-radius: 8px;">
+    <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+        <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+            COLLECTION CALL LOG
+        </h4>
+    </div>
+    <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+        <div class="form-body" style="padding-top: 0px; margin-top:-30px;">
+            @using (Html.BeginForm("CollectionCallLog", "Customer", FormMethod.Post, new { @id = "frmCollectionCallLog", @role = "form" }))
+            {
+                if (ViewBag.CustomerDetail != null)
+                {
+                    @Html.HiddenFor(x => x.ClassId, new { @Value = ViewBag.CustomerDetail.CustomerId })
+                    @Html.HiddenFor(x => x.TypeListId, new { @Value = "1" })
+                    @Html.HiddenFor(x => x.RegionId, new { @Value = ViewBag.CustomerDetail.RegionId })
+                    <input type="hidden" id="hdnCustomerId" value="@ViewBag.CustomerDetail.CustomerId" />
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-3 control-label" style="padding-top: 0px;">
+                                    <span>Customer No.<span style="color:#000000;">&nbsp;:</span></span>
+                                </div>
+                                <div class="col-md-2">
+                                    <span><b>@ViewBag.CustomerDetail.CustomerNo</b></span>
+                                </div>
+                                <div class="col-md-2">
+                                </div>
+                                <div class="col-md-2 control-label" style="padding-top: 0px;padding-bottom: 12px;">
+                                    <span>Contact<span style="color:#000000;">&nbsp;:</span></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <span><b>@ViewBag.CustomerDetail.ContactName</b></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:-10px;">
+                            <div class="col-md-12">
+                                <div class="col-md-3 control-label" style="padding-top: 0px;">
+                                    <span>Customer Name<span style="color:#000000;">&nbsp;:</span></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <span><b>@ViewBag.CustomerDetail.CustomerName</b></span>
+                                </div>
+                                <div class="col-md-2 control-label" style="padding-top: 0px;padding-bottom: 12px;">
+                                    <span>Phone No.<span style="color:#000000;">&nbsp;:</span></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <span><b>@ViewBag.CustomerDetail.Phone</b></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="form-group" style="margin-top:-18px;">
+                    <div class="row">
+                        <div class="col-md-12" style="border: 1px solid #b1acac;padding-left:1px !important;padding-right:1px !important;">
+                            <div class="col-md-12" style="padding-top: 0px;padding-bottom: 12px;">
+                                <center><span style="font-weight:bold;">AR Status</span>: @(ViewBag.ARStatus != null ? ViewBag.ARStatus : string.Empty )</center>
+                            </div>
+                            <div class="col-md-12" style="padding-top: 0px;padding-bottom: 12px;padding-left:1px !important;padding-right:1px !important;">
+                                <div class="col-md-2" style="width:118px;   padding-left:2px;padding-right:2px;"><span style="font-weight:bold;">Current:</span> @string.Format("{0:C}", currentTotal) </div>
+                                <div class="col-md-2" style="width:170px;   padding-left:15px;padding-right:2px;"><span style="font-weight:bold;">1 to 30 Days:</span> @string.Format("{0:C}", oneMoTotal)</div>
+                                <div class="col-md-2" style="width:185px;   padding-left:2px;padding-right:2px;"><span style="font-weight:bold;">31 to 60 Days:</span> @string.Format("{0:C}", twoMoTotal)</div>
+                                <div class="col-md-2" style="width:170px;   padding-left:2px;"><span style="font-weight:bold;">61 to 90 Days:</span> @string.Format("{0:C}", threeMoTotal)</div>
+                                <div class="col-md-2" style="width:178px;   padding-left:2px;padding-right:2px;"><span style="font-weight:bold;">91 to 120 Days:</span> @string.Format("{0:C}", fourMoTotal)</div>
+                                @*<div class="col-md-2" style="padding-left:2px;padding-right:2px;width:120px;"><span style="font-weight:bold;">Total:</span> @string.Format("{0:C}", sixMoTotal)</div>*@
+                            </div>
+                            <div class="col-md-12" style="padding-bottom: 12px; margin-top:-6px;">
+                                <center><span style="font-weight:bold;">Total:</span>: @string.Format("{0:C}", sixMoTotal)</center>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <div class="col-md-2 control-label">
+                            Call Date/Time<span style="color:#000000;">&nbsp;:</span>
+                        </div>
+                        <div class="col-md-3 control-label" style="text-align:left;">
+                            @DateTime.Now.ToString("MM/dd/yyyy hh:mm tt")
+                        </div>
+                        <div class="col-md-1 control-label">&nbsp;</div>
+                        <div class="col-md-2 control-label" style="text-align:left;padding-left:0px;">
+                            @*<input type="checkbox" name="InternalNote" value="true" class="checkbox-inline" />&nbsp;Internal Note*@
+                            @Html.CheckBoxFor(x => x.boolInternal, new { @class = "checkbox-inline", @value = "True" }) &nbsp; Internal
+                        </div>
+                        <div class="col-md-2 control-label">Staus<span style="color:#000000;">&nbsp;:</span><span class="required">*</span></div>
+                        <div class="col-md-2">
+                            @Html.DropDownListFor(x => x.StatusResultListId, (IEnumerable<SelectListItem>)ViewBag.StatusResultList, new { @class = "form-control input-sm ddl", required = "required" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <div class="col-md-2 control-label">
+                            Spoke With<span style="color:#000000;">&nbsp;:</span>
+                        </div>
+                        <div class="col-md-2">
+                            @Html.TextBoxFor(x => x.SpokeWith, new { @class = "input-sm form-control" })
+                        </div>
+                        <div class="col-md-2 control-label" style="padding: 5px 27px 0px 0px;">
+                            Action<span style="color:#000000;">&nbsp;:</span><span class="required">*</span>
+                        </div>
+                        <div class="col-md-2" style="padding:0px;">
+                            @Html.TextBoxFor(x => x.Action, new { @class = "input-sm form-control" })
+                        </div>
+                        <div class="col-md-2 control-label">
+                            Followup By<span style="color:#000000;">&nbsp;:</span>
+                        </div>
+                        <div class="col-md-2">
+                            @Html.DropDownListFor(x => x.FollowUpBy, (IEnumerable<SelectListItem>)ViewBag.UserList, new { @class = "form-control input-sm ddl", required = "required" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <div class="col-md-2 control-label">
+                            Comments<span style="color:#000000;">&nbsp;:</span><span class="required">*</span>
+                        </div>
+                        <div class="col-md-10">
+                            @Html.TextAreaFor(x => x.Comments, new { @class = "input-sm form-control", @rows = "5", @style = "min-width: 545px;" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <div class="col-md-4">
+                           @*style="margin:0 88px 0px -20px!important"*@
+                            Call Back<span style="color:#000000;">&nbsp;:</span>
+                            @*<input type="text" class="form-control input-sm date date-picker" data-date-format="mm/dd/yyyy" id=@Model.strCallBack />*@
+                            @*@Html.TextAreaFor(x=>x.strCallBack ,new { @class= "form-control input-sm date date-picker" @data-date- format })*@
+                            <div class="input-group input-medium date" data-date-format="dd-mm-yyyy" data-date-start-date="+0d">
+                                @Html.TextBoxFor(x => x.strCallBack, new { @class = "form-control input-sm" })
+                                <span class="input-group-btn">
+                                    <button class="btn default" type="button">
+                                        <i class="fa fa-calendar"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            Email Comment to<span style="color:#000000;">&nbsp;:</span>
+                            @*@Html.DropDownListFor(x => x.EmailNotesTo, new SelectList(ViewBag.Franchisees, "Key", "Value"), new { @class = "form-control input-sm", required = "required", @multiple = "multiple" })*@
+                            @Html.DropDownListFor(x => x.EmailNotesTo, (IEnumerable<SelectListItem>)ViewBag.UserList, new { @class = "form-control input-sm ddl", required = "required" })
+                        </div>
+                        <div class="col-md-4">
+                            Relate To Franchise<span style="color:#000000;">&nbsp;:</span>
+                            @Html.DropDownListFor(x => x.arrFranchiseIds, new SelectList(ViewBag.Franchisees, "Key", "Value"), new { @class = "form-control input-sm ddl", @multiple = "multiple" })
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <div class="col-md-12 text-right" style="padding-right:30px;">
+                        <input type="button" class="btn btn-primary btn-default" id="SaveForm" value="Save" onclick="return checkMandatoryFields();" />
+                        <input type="button" class="btn btn-primary btn-default" value="Cancel" onclick="onclickCollectionsCallLogCancel()" />
+                    </div>
+                </div>
+            }
+
+            <div class="row" style="padding-bottom:0px;">
+                <div class="col-md-12">
+                    <div class="col-md-12" style="background-color: #67809F;color: #fff;">
+                        <div class="col-md-2 pnd5">
+                            <select class="form-control input-sm" id="collectioncallpageSize" style="padding-left:6px;">
+                                <option value="-1">All</option>
+                                <option value="100" selected>100</option>
+                                <option value="50">50</option>
+                                <option value="25">25</option>
+                            </select>
+
+                        </div>
+                        <div class="col-md-2 pnd5" style="text-align:right;padding-top:8px;">
+                            Date
+                        </div>
+                        <div class="col-md-4 pnd5" style="text-align:right;">
+                            <select id="select_collectioncallpp_timeduration" class="form-control input-sm">
+                                <option value="1">This Week</option>
+                                <option value="2">This Week-to-date</option>
+                                <option value="3" selected="selected">This Month</option>
+                                <option value="4">This Month-to-date</option>
+                                <option value="5">This Quarter</option>
+                                <option value="6">This Quarter-to-date</option>
+                                <option value="7">This Fiscal Year</option>
+                                <option value="8">This Fiscal Year-to-date</option>
+                                <option value="9">Today</option>
+                                <option value="10">Yesterday</option>
+                                <option value="11">Last Week</option>
+                                <option value="12">Last Month</option>
+                                <option value="13">Last Quarter</option>
+                                <option value="14">Last Year</option>
+                                <option value="15">Custom Date</option>
+                                @*<option value="16">Period</option>*@
+                            </select>
+                        </div>
+
+                        <div class="col-md-4 pnd5" style="padding-top: 10px;text-align:right;" id="div_collectioncallpp_spandate">
+                            <span id="spn_collectioncallpp_StartDate">08/01/2017</span> - <span id="spn_collectioncallpp_EndtDate">08/31/2017</span>
+                        </div>
+                        <div class="collapse">
+                            <input type="hidden" id="CustID" name="CustomerID" value="@ViewBag.CustomerID" />
+                        </div>
+                        <div class="col-md-2 pnd5" style="display:none; text-align:center;" id="div_collectioncallpp_SD">
+                            <input type="text" name="txtStartDate" id="txt_collectioncallpp_StartDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                        </div>
+                        <div class="col-md-2 pnd5" style="display:none; text-align:center;" id="div_collectioncallpp_ED">
+                            <input type="text" name="txtEndtDate" id="txt_collectioncallpp_EndtDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                        </div>
+                        <div class="col-md-2 pnd5" style="display: none;" id="div_collectioncallpp_month">
+                            <select id="collectioncallpp_monthlist" class="form-control input-sm">
+                                <option value=""></option>
+                                <option value="1">Jan</option>
+                                <option value="2">Feb</option>
+                                <option value="3">Mar</option>
+                                <option value="4">Apr</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">Aug</option>
+                                <option value="9">Sep</option>
+                                <option value="10">Oct</option>
+                                <option value="11">Nov</option>
+                                <option value="12">Dec</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 pnd5" style="display: none;" id="div_collectioncallpp_year">
+                            <select class="form-control input-sm" id="collectioncallpp_yearlist">
+                                <option value=""></option>
+                                <option value="2018">2018</option>
+                                <option value="2017">2017</option>
+                                <option value="2016">2016</option>
+                                <option value="2015">2015</option>
+                                <option value="2014">2014</option>
+                                <option value="2013">2013</option>
+                                <option value="2012">2012</option>
+                                <option value="2011">2011</option>
+                                <option value="2010">2010</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:5px">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="tblCollectionCall">
+                            <thead>
+                                <tr>
+                                    <th style="width:70px;text-align:center;background-color: #4b85cc;color:white" class="tblServiceCall_CustNo">
+                                        Date/Time
+                                    </th>
+                                    <th style="text-align:center;width:30px;background-color: #4b85cc;color:white" class="tblServiceCall_Status">
+                                        Status
+                                    </th>
+                                    <th style="text-align:center;width:60px;background-color: #4b85cc;color:white" class="tblServiceCall_Spoke">
+                                        Spoke With
+                                    </th>
+                                    <th style="text-align:center;width:60px;background-color: #4b85cc;color:white" class="tblServiceCall_Action">
+                                        Action
+                                    </th>
+                                    <th style="text-align:center;width:70px;background-color: #4b85cc;color:white" class="tblServiceCall_CallBack">
+                                        Call Back
+                                    </th>
+                                    <th style="text-align:center;width:200px;background-color: #4b85cc;color:white" class="tblServiceCall_Comment">
+                                        Comment
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @*
+                                    <tr>
+                                    <td style="text-align:center;">10/26/2017<br />5:55:24 AM</td>
+                                    <td style="text-align:center;">Other</td>
+                                    <td style="text-align:center;"></td>
+                                    <td style="text-align:center;">Email Invoice</td>
+                                    <td style="text-align:center;"></td>
+                                    <td>System emailed invoice 101702016 to EGARD@PAULTBIDDLEMD.COM via eBill function --> jillbean</td>
+                                    </tr>
+                                    <tr>
+                                    <td style="text-align:center;">9/21/2017<br />2:04:15 AM</td>
+                                    <td style="text-align:center;">Other</td>
+                                    <td style="text-align:center;"></td>
+                                    <td style="text-align:center;">Email Invoice</td>
+                                    <td style="text-align:center;"></td>
+                                    <td>System emailed invoice 101702015 to EGARD@PAULTBIDDLEMD.COM via eBill function --> jillbean</td>
+                                    </tr>*@
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var dtable2;
+    function getTableURL() {
+        var _fromDateVal = $('#spn_collectioncallpp_StartDate').html();
+        var _toDateVal = $('#spn_collectioncallpp_EndtDate').html();
+        var sURL2 = '@Url.Action("CollectionCallListResultData", "Customer", new { area = "Portal" })?id=' +$("#hdnCustomerId").val() + '&fd=' + _fromDateVal + '&td=' + _toDateVal + '&st=';
+
+        return sURL2;
+    }
+    function refreshTable() {
+       
+        var surl2 = getTableURL();
+        dtable2.ajax.url(surl2).load();
+    }
+
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var fDay = moment().subtract(0, 'month').startOf('month').toString();
+        var lDay = moment().subtract(0, 'month').endOf('month').toString();
+
+        $('#spn_collectioncallpp_StartDate').html(moment(fDay).format('L'));
+        $('#spn_collectioncallpp_EndtDate').html(moment(lDay).format('L'));
+
+        $("#collectioncallpageSize").change(function () {
+            setPaging();
+        });
+
+        //Datepicker set
+        $('.date-picker').datepicker({ autoclose: true, dateFormat: 'mm/dd/yy' });
+        $('.date-picker').attr("placeholder", "mm/dd/yyyy");
+
+        //List data load
+        //LoadCollectionsCallLogList();
+        LoadDataCollectionList();
+
+        if(@ViewBag.CustomerID > 0)
+            BindCustomercollectionLogList($('#spn_collectioncallpp_StartDate').text(), $('#spn_collectioncallpp_EndtDate').text());
+    });
+
+    function setPaging() {
+        var z = $("#collectioncallpageSize").val();
+        var table = $("#tblCollectionCall").DataTable();
+        if (z > 0) {
+            table.page.len(z).draw();
+        }
+        else if (z == -1) {
+            table.page.len(table.rows().count()).draw();
+        }
+        else {
+            table.page.page.len(25).draw();
+        }
+    }
+
+    //Load list data
+    //function LoadCollectionsCallLogList() {
+    //    var CurrentLink = getTableURL();
+    //    var dtable2 = $('#tblCollectionCall').dataTable({
+    //        "bAutoWidth": false,
+    //        cache: false,
+    //        //"order": false,
+    //        "bDestroy": true,
+    //        "bLengthMenu": false,
+    //        "dom": '<"top">rt<"bottom"lp><"clear">',
+    //        "aaSorting": [[0, "desc"]],
+    //        "sAjaxSource": CurrentLink,
+    //        "sAjaxDataProp": "aadata",  // Internationalisation. For more info refer to http://datatables.net/manual/i18n
+    //        "rowCallback": function (nRow, data) {
+    //        },
+
+    //        "aoColumns": [
+    //            {
+    //                "sName": "Date/Time",
+    //                "bSortable": true,
+    //                "sClass": "alignleft",
+    //                "mRender": function (data, type, full) {
+    //                    var datetime = "<span>" + moment(new Date(parseInt(full.CallDate.substr(6)))).format("MM/DD/YYYY") + "<br />" + full.CallTime + "</span>";
+    //                    return datetime;
+    //                }
+    //            },
+    //            {
+    //                "sName": "Status",
+    //                "bSortable": true,
+    //                "sClass": "alignCenter",
+    //                "mRender": function (data, type, full) {
+    //                    return full.Status;
+    //                }
+    //            },
+    //            {
+    //                "sName": "SpokeWith",
+    //                "bSortable": true,
+    //                "sClass": "alignCenter",
+    //                "mRender": function (data, type, full) {
+    //                    return full.SpokeWith;
+    //                }
+    //            },
+    //            {
+    //                "sName": "Action",
+    //                "bSortable": true,
+    //                "sClass": "alignCenter",
+    //                "mRender": function (data, type, full) {
+    //                    return full.Action;
+    //                }
+    //            },
+    //            {
+    //                "sName": "CallBack",
+    //                "bSortable": true,
+    //                "mRender": function (data, type, full) {
+    //                    if (full.CallBack != null && full.CallBack != "") {
+    //                        return moment(new Date(parseInt(full.CallBack.substr(6)))).format("MM/DD/YYYY");
+    //                    }
+    //                    return "";
+
+    //                }
+    //            },
+    //            {
+    //                "sName": "Comments",
+    //                "bSortable": true,
+    //                "sClass": "alignleft",
+    //                "mRender": function (data, type, full) {
+    //                    return full.Comments;
+    //                }
+    //            },
+    //        ],
+    //    });
+    //}
+
+    function LoadDataCollectionList() {
+        var sURL2 = getTableURL();
+        var ps = $('#collectioncallpageSize').val();
+        dtable2 = $('#tblCollectionCall').DataTable({
+            "bServerSide": false,
+            "sAjaxSource": sURL2,
+            "iDisplayLength": ps == '-1' ? 25 : ps,
+            "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+            "aaSorting": [[0, "desc"]],
+            columnDefs: [
+                {
+                    targets: "tblServiceCall_CustNo",
+                    data: "",
+                    render: function (data, type, row, meta) {
+                        return row.CustomerNo + ' <br />' + moment(new Date(parseInt(row.CallDate.substr(6)))).format("MM/DD/YYYY") + '<br />' + tConvert(row.CallTime);
+                    }
+                },
+                { targets: "tblServiceCall_Status", data: "status", sClass: "clstext-align" },
+                { targets: "tblServiceCall_Spoke", data: "SpokeWith", sClass: "clstext-align" },
+                { targets: "tblServiceCall_Action", data: "Action", sClass: "clstext-align" },
+                {
+                    targets: "tblServiceCall_CallBack",
+                    data: "",
+                    sClass: "alignCenter clstext-align",
+                    render: function (data, type, row, meta) {
+                        if (row.CallBack != null && row.CallBack != "") {
+                            return moment(new Date(parseInt(row.CallBack.substr(6)))).format("MM/DD/YYYY");
+                        }
+                        return "";
+                    }
+                },
+                //{
+                //    targets: "dtable_Completed",
+                //    data: "",
+                //    sClass: "clstext-align",
+                //    render: function (data, type, row, meta) { return "" }
+                //},
+                { targets: "tblServiceCall_Comment", data: "Comments" },
+                //{
+                //    targets: "dtable_ActionHistory", data: "",
+                //    render: function (data, type, row, meta) { return "" }
+                //},
+            ]
+
+        });
+    }
+
+    function checkMandatoryFields() {
+        var Validation = false;
+        if ($('#StatusResultListId').val() == 0) {
+            $('#StatusResultListId').css('border-color', 'red');
+            Validation = false;
+        } else { $('#StatusResultListId').css('border-color', ''); Validation = true }
+        //if ($('#StatusResultListId').val() == 1) {
+        //    $('#SpokeWith').css('border-color', 'red');
+        //    Validation = false;
+        //}
+        if ($('#StatusResultListId').val() == 1 && $('#SpokeWith').val() == "") {
+            $('#SpokeWith').css('border-color', 'red'); Validation = false
+        }
+        else if ($('#StatusResultListId').val() == 1 && $('#SpokeWith').val() != "") {
+            $('#SpokeWith').removeAttr('style', ''); Validation = true
+        }
+        if ($('#Action').val() == "") {
+            $('#Action').css('border-color', 'red');
+            Validation = false;
+        } else { $('#Action').css('border-color', ''); Validation = true }
+        if ($('#Comments').val() == "") {
+            $('#Comments').css('border-color', 'red');
+            Validation = false;
+        } else { $('#Comments').css('border-color', ''); Validation = true }
+
+        if (Validation == true) {
+            $.ajax({
+                url: '@Url.Action("SaveCollectionCallLogDetails", "Customer",new { area = "Portal" })',
+                type: "POST",
+                data: $('#frmCollectionCallLog').serialize(),
+                success: function (res) {
+                    $('input[type=text]').val("");
+                    $('.ddl').val("0");
+                    $('#Comments').val("");
+                    //LoadCollectionsCallLogList();
+                    //LoadDataCollectionList();
+                    refreshTable();
+                },
+                error: function () { }
+            });
+        }
+        return Validation;
+    }
+    function onclickCollectionsCallLogCancel() {
+        $("#modal_CollectionCallLog").modal('hide');
+    }
+
+    var firstDay;
+    var lastDay;
+
+    /*Start Date Change Event*/
+    $('#txt_collectioncallpp_StartDate').change(function () {
+        $('#spn_collectioncallpp_StartDate').html($(this).val());
+        if( $('#txt_collectioncallpp_StartDate').val()!='' &&  $('#txt_collectioncallpp_EndtDate').val()!='' && @ViewBag.CustomerID > 0)
+            BindCustomercollectionLogList($('#spn_collectioncallpp_StartDate').text(), $('#spn_collectioncallpp_EndtDate').text());
+    });
+    /*END Date Change Event*/
+    $('#txt_collectioncallpp_EndtDate').change(function () {
+        $('#spn_collectioncallpp_EndtDate').html($(this).val());
+        if( $('#txt_collectioncallpp_StartDate').val()!='' &&  $('#txt_collectioncallpp_EndtDate').val()!='' && @ViewBag.CustomerID > 0)
+            BindCustomercollectionLogList($('#spn_collectioncallpp_StartDate').text(), $('#spn_collectioncallpp_EndtDate').text());
+    });
+
+    /*Month Change Event*/
+    $('#collectioncallpp_monthlist').change(function () {
+        $('#spn_collectioncallpp_StartDate').html('');
+        if ($('#collectioncallpp_monthlist').val() != '' && $('#collectioncallpp_yearlist').val() != '')
+            BindCustomercollectionLogList($('#spn_collectioncallpp_StartDate').text(), $('#spn_collectioncallpp_EndtDate').text());
+    });
+
+    /*Year Change Event*/
+    $('#collectioncallpp_yearlist').change(function () {
+        $('#spn_collectioncallpp_EndtDate').html('');
+        if ($('#collectioncallpp_monthlist').val() != '' && $('#collectioncallpp_yearlist').val() != '')
+            BindCustomercollectionLogList($('#spn_collectioncallpp_StartDate').text(), $('#spn_collectioncallpp_EndtDate').text());
+    });
+
+    $("#select_collectioncallpp_timeduration").change(function () {
+
+        $('#spn_collectioncallpp_StartDate').html('');
+        $('#spn_collectioncallpp_EndtDate').html('');
+        $('#div_collectioncallpp_spandate').show();
+        $('#div_collectioncallpp_SD').hide();
+        $('#div_collectioncallpp_ED').hide();
+        $('#div_collectioncallpp_month').hide();
+        $('#div_collectioncallpp_year').hide();
+        $('#collectioncallpp_monthlist').val('');
+        $('#collectioncallpp_yearlist').val('');
+
+        switch (parseInt($(this).val())) {
+            case 1:
+                firstDay = moment().startOf('isoWeek').toString();
+                lastDay = moment().endOf('isoWeek').toString();
+                break;
+            case 2:
+                //code block
+                firstDay = moment().startOf('isoWeek').toString();
+                lastDay = new Date().toString();
+                break;
+            case 3:
+                firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                break;
+            case 4:
+                //code block
+                firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                lastDay = new Date().toString();
+                break;
+            case 5:
+                //code block
+                firstDay = moment().startOf('quarter').toString();
+                lastDay = moment().endOf('quarter').toString();
+                break;
+            case 6:
+                //code block
+                firstDay = moment().startOf('quarter').toString();
+                lastDay = new Date().toString();
+                break;
+            case 7:
+                //code block
+                firstDay = moment().startOf('year').toString();;
+                lastDay = moment().endOf('year').toString();
+                break;
+            case 8:
+                //code block
+                firstDay = moment().startOf('year').toString();
+                lastDay = new Date().toString();
+                break;
+            case 9:
+                //code block
+                firstDay = moment().toString();
+                lastDay = moment().toString();
+                break;
+            case 10:
+                //code block
+                firstDay = moment().add(-1, 'days').toString();
+                lastDay = moment().add(-1, 'days').toString();
+                break;
+            case 11:
+                //code block
+                firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                break;
+            case 12:
+                //code block
+                firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                break;
+            case 13:
+                //code block
+                firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                break;
+            case 14:
+                //code block
+                firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                break;
+            case 15:
+                //code block
+                $('#div_collectioncallpp_spandate').hide();
+                $('#div_collectioncallpp_SD').show();
+                $('#div_collectioncallpp_ED').show();
+                $('#txt_collectioncallpp_StartDate').val('');
+                $('#txt_collectioncallpp_EndtDate').val('')
+                break;
+            case 16:
+                //code block
+                $('#div_collectioncallpp_spandate').hide();
+                $('#div_collectioncallpp_SD').hide();
+                $('#div_collectioncallpp_ED').hide();
+                $('#div_collectioncallpp_month').show();
+                $('#div_collectioncallpp_year').show();
+                break;
+            default:
+                //code block
+        }
+        $('#spn_collectioncallpp_StartDate').html(moment(firstDay).format('L'));
+        $('#spn_collectioncallpp_EndtDate').html(moment(lastDay).format('L'));
+
+        refreshTable();
+
+       
+        console.log(moment(firstDay).format('L'));
+        console.log(moment(lastDay).format('L'));
+        if (parseInt($(this).val()) != 15 && parseInt($(this).val()) != 16)
+            BindCustomercollectionLogList(moment(firstDay).format('L'), moment(lastDay).format('L'));
+    });
+
+    function BindCustomercollectionLogList(strdate, enddate) {
+
+        var cusId = $("#hdnCustomerId").val();
+        if (cusId) {
+            var currenturl = '@Url.Action("CollectionCallListResultData", "Customer", new { area = "Portal" })?id=' + $("#hdnCustomerId").val() + '&fd=' + strdate + '&td=' + enddate + '&st=';
+            dtable2.ajax.url(currenturl).load();
+        }
+    }
+
+    function tConvert(time) {
+        var timeString = time;
+        var H = +timeString.substr(0, 2);
+        var h = (H % 12) || 12;
+        var ampm = H < 12 ? " AM" : " PM";
+        timeString = h + timeString.substr(2, 3) + ampm;
+        return timeString;
+    }
+</script>

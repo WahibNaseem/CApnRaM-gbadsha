@@ -1,0 +1,275 @@
+﻿@using JKViewModels.Franchisee;
+@{
+    FranchiseeDetailViewModel FranchiseeModel = new FranchiseeDetailViewModel();
+    if (ViewBag.FranchiseeInfo != null)
+    {
+        FranchiseeModel = (FranchiseeDetailViewModel)ViewBag.FranchiseeInfo;
+    }
+
+    JKViewModels.Customer.FullCustomerViewModel CustModel = new JKViewModels.Customer.FullCustomerViewModel();
+    if (ViewBag.CustomerID != 0)
+    {
+        CustModel = (JKViewModels.Customer.FullCustomerViewModel)ViewBag.CustomerInfo;
+    }
+}    
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+    </style>
+}
+<div class="modal fade custom-model custom-form-design" id="modal_LogCall" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:880px;padding-top: 12px;">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close"   aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;" onclick="closePopupBox()"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Log Call
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px 30px 15px 30px;">
+                <div class="form-group">
+                    <div class="row">
+                        <input type="hidden" name="hdnLogCustomerId" id="hdnLogCustomerId" value="@ViewBag.CustomerId" />
+                        <div class="col-md-12">
+                            <div class="col-md-2 control-label" style="padding-top: 0px;width:141px;"><b>Franchisee No:</b>@FranchiseeModel.FranchiseeNo</div>
+                            <div class="col-md-4 control-label" style="padding-top: 0px;text-align:left;"><b>Name:</b>@FranchiseeModel.Name</div>                            
+                            <div class="col-md-2 control-label" style="padding-top: 0px;"><b>Phone:</b>@FranchiseeModel.Phone</div>                            
+                            <div class="col-md-2 control-label" style="padding-top: 0px;"><b>Cell:</b>@FranchiseeModel.Cell</div>
+                             
+                        </div>
+                    </div>
+                </div>
+                <hr style="margin-bottom: 1px;margin-top:1px;" />
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-2 control-label" style="padding-top: 0px;"><b>Date Sign:</b></div>
+                            <div class="col-md-2" style="padding-top: 1px;">@(FranchiseeModel.DateSign != null ? Convert.ToDateTime(FranchiseeModel.DateSign).ToString("dd-MM-yyyy") : string.Empty)</div>
+                            <div class="col-md-2 control-label" style="padding-top: 0px;"><b>Plan Type:</b></div>
+                            <div class="col-md-2" style="padding-top: 1px;">@FranchiseeModel.PlanType</div>
+                        </div>
+                    </div>
+                </div>
+                <hr style="margin-bottom: 1px;margin-top:1px;" />
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-2 control-label" style="padding-top: 0px;margin-left:-7px;"><b>Customer No:</b>@(CustModel.CustomerViewModel != null ? CustModel.CustomerViewModel.CustomerNo : string.Empty)</div>
+                            <div class="col-md-1 control-label" style="padding-top: 0px;width:112px;"><b>Customer Name:</b></div>
+                            <div class="col-md-4" style="padding-top: 1px;">@(CustModel.CustomerViewModel != null ? CustModel.CustomerViewModel.Name : string.Empty)</div>
+                            <div class="col-md-1 control-label" style="padding-top: 0px;"><b>Phone:</b></div>
+                            <div class="col-md-2" style="padding-top: 1px;width:112px;">@((CustModel.MainPhone != null && CustModel.MainPhone.Phone1 != null && CustModel.MainPhone.Phone1 != "") ? string.Format("{0:(###) ###-####}", Convert.ToDecimal(CustModel.MainPhone.Phone1.Trim().Replace(" ", "").Replace("-", "").Replace(")", "").Replace("(", ""))) : string.Empty)</div>
+                            @*<div class="col-md-1 control-label" style="padding-top: 0px;"><b></b></div>
+                            <div class="col-md-2" style="padding-top: 1px;width:112px;"></div>*@
+                        </div>
+                    </div>
+                </div>
+                @*<hr style="margin-bottom: 1px;margin-top:1px;" />
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-4 control-label" style="padding-top: 0px;"><b>Call Date:</b></div>
+                            <div class="col-md-2" style="padding-top: 1px;"> </div>
+                            <div class="col-md-1 control-label" style="padding-top: 0px;"><b>Time:</b></div>
+                            <div class="col-md-2" style="padding-top: 1px;"></div>
+                        </div>
+                    </div>
+                </div>*@   
+                <br />     
+                <input type="hidden" id="hdnCallLogFranchiseeId" name="hdnCallLogFranchiseeId" value="@FranchiseeModel.FranchiseeId" />
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-2 control-label" style="text-align:right;">
+                                Initiated By<span style="color:#000000;"> &nbsp;:<span class="required">*</span></span>
+                            </div>
+                            <div class="col-md-4">
+                                 @Html.DropDownList("ddlInitiatedBy", new SelectList(ViewBag.InitiatedBy, "Key", "Key"), new { @class = "form-control input-sm", required = "required" })                                    
+                            </div>
+                            <div class="col-md-2 control-label" style="text-align:right;">
+                                Spoke By<span style="color:#000000;">&nbsp;:<span class="required">*</span></span>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control input-sm" id="txtSpokeWith" name="txtSpokeWith" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-2 control-label" style="text-align:right;">
+                                Status<span style="color:#000000;">&nbsp;:<span class="required">*</span></span>
+                            </div>
+                            <div class="col-md-4">
+                                @Html.DropDownList("ddlStatusResultList", (IEnumerable<SelectListItem>)ViewBag.StatusResultList, new { @class = "form-control input-sm", required = "required" })                                                                 
+                            </div>
+                            <div class="col-md-2 control-label" style="text-align:right;">
+                                Call Back &nbsp;
+                                <label class="mt-checkbox" style="margin-bottom: 13px;">
+                                    <input class="i-checks" data-val="true" data-val-required="field is required" id="chkIsCallBack" name="chkIsCallBack" type="checkbox" onclick="OnclickEvent()">
+                                    <input name="hdnIsCallBack" id="hdnIsCallBack" type="hidden" value="">
+                                    <span></span>
+                                </label>                                 
+                            </div>
+                            <div class="col-md-4">
+                                <div class="col-md-6 clsdatetm" style="padding-right:2px; padding-left:0px;display:none;">
+                                    <div class="input-group date" data-date-format="mm/dd/yyyy">
+                                        <input id="txtCallBackDate" name="txtCallBackDate" class="form-control input-sm date date-picker" />
+                                        <span class="input-group-btn cal-btn">
+                                            <button class="btn default cal-btn" type="button">
+                                                <i class="fa fa-calendar"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 clsdatetm" style="padding-right:0px; padding-left:2px;display:none;">
+                                    <div class="input-icon">
+                                        <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                                        <input id="txtCallBackTime" name="txtCallBackTime" class="form-control input-sm timepicker timepicker-default" />
+                                    </div>       
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-2 control-label" style="text-align:right;">
+                                Action<span style="color:#000000;">&nbsp;:</span>
+                            </div>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control input-sm" id="txtAction" name="txtAction" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-2 control-label" style="text-align:right;">
+                                Comments<span style="color:#000000;">&nbsp;:</span>
+                            </div>
+                            <div class="col-md-10">
+                                <textarea class="form-control input-sm" rows="7" id="txtComments"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr style="margin-bottom: 1px;margin-top:1px;" />
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12 text-right" style="padding:25px;">
+                            <input type="button" id="btnFranchiseeLogCall" class="btn btn-primary btn-default" value="Save" onclick="SaveFranchiseeLogCall()">
+                            <input type="reset" class="btn btn-primary btn-default" value="Cancel"  onclick="btnlogcallClose();" Id="btnlogcallClose" data-dismiss="modal">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function SaveFranchiseeLogCall()
+    {
+        var isvalid = true;
+        if ($('#ddlInitiatedBy').val() == '') { $('#ddlInitiatedBy').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ddlInitiatedBy').css('border-color', ''); }
+        if ($('#ddlStatusResultList').val() == '0') { $('#ddlStatusResultList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ddlStatusResultList').css('border-color', ''); }
+        if ($('#txtSpokeWith').val() == '') { $('#txtSpokeWith').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtSpokeWith').css('border-color', ''); }
+
+        if (isvalid == true) {
+
+            var FranchiseeLog = { FranchiseeId: $("#hdnCallLogFranchiseeId").val(), CustomerId: $("#hdnLogCustomerId").val(), InitiatedBy: $("#ddlInitiatedBy").val(), StatusResultListId: $("#ddlStatusResultList").val(), SpokeWith: $("#txtSpokeWith").val(), CallAction: $("#txtAction").val(), CallBack: $("#txtCallBackDate").val(), CallBackTime: $("#txtCallBackTime").val(), Comments: $("#txtComments").val(), IsCallBack: $("#hdnIsCallBack").val() };
+            var sURL = '@Url.Action("SaveFranCallsDetails", "Franchise", new { area = "Portal" })';
+            $.ajax({
+                type: "GET",
+                data: FranchiseeLog,
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $("#modal_LogCall").modal('hide');
+                    $('.modal-backdrop').remove()
+                    if (data != null) {
+                        ShowFranchiseeCall(data, $("#hdnLogCustomerId").val());
+                    }                    
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+    }
+    function btnlogcallClose() {
+        $("#modal_LogCall").modal('hide');
+    }
+    function OnclickEvent() {
+        if ($("#chkIsCallBack").is(":checked")) {
+            $("#hdnIsCallBack").val("1");
+            $(".clsdatetm").show();
+        }
+        else {
+            $("#hdnIsCallBack").val("0");
+            $(".clsdatetm").hide();
+        }
+    }
+    function closePopupBox() {
+        $("#modal_LogCall").modal("hide");
+        //$('.modal-backdrop').remove();
+    }
+</script>

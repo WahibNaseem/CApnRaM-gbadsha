@@ -1,0 +1,165 @@
+﻿@model List<JKViewModels.Management.NegativeDueReportViewModel>
+@{
+    ViewBag.Title = "NegativeDueCollected";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    decimal ReportTotal = 0;    
+}
+
+
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+    </style>
+}
+
+@*<div class="custom-listbox" style="margin-top:4px;margin-bottom:3px;">*@
+<div class="custom-form portlet light form-horizontal" style="max-width:740px;margin: 0px auto;padding:0;min-height: 100px;">
+    <div class="headerbox">
+        <div class="row" style="background-color: #3598DC;color: #fff;">
+            <div class="col-md-12 no-padding">
+                <div class="alignCenter">
+                    <div class="col-md-12 text-center">
+                        Negative Due Collected Report
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="portlet-body form">
+        <div class="form-body" id="printDiv">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6">
+                        <div class="col-md-12" style="text-align:center;">
+                            <h4><b>JANI-KING OF BUFFALO, INC</b></h4>
+                        </div>
+                        <div class="col-md-12" style="text-align:center;padding-left: 0px;">
+                            <b>Negative Due Collected - @ViewBag.billFromDate To @ViewBag.billToDate</b>
+                        </div>
+                    </div>
+                    <div class="col-md-3"><img src="~/Images/janiking_logo.png" /></div>
+                </div>
+                <hr style="margin-bottom: 2px;margin-top: 2px;" />
+                <div class="row">
+                    <div class="col-md-12">
+                        <table width="100%" cellspacing="0" cellpadding="0" style="border: none;">
+                            <tr style="border-bottom: 1px solid black;">
+                                <th style="text-align:center;">Inv #</th>
+                                <th style="text-align:center;">Customer No</th>
+                                <th style="text-align:center;">Customer</th>
+                                <th style="text-align:center;">Date Collected</th>
+                                <th style="text-align:center;">ND Date</th>
+                                <th style="text-align:center;">Amount</th>
+                            </tr>
+
+                            @if (Model != null && Model.Count() > 0)
+                            {
+                                foreach (var item in Model)
+                                {
+                                    ReportTotal += Convert.ToDecimal(item.Amount);
+                                    <tr>
+                                        <td style="text-align:center;">Roll-Over</td>
+                                        <td style="text-align:center;">@item.CustomerNo</td>
+                                        <td style="text-align:left;">@item.CustomerName</td>
+                                        <td style="text-align:center;">@Convert.ToDateTime(item.Date).ToString("MM/dd/yyyy")</td>
+                                        <td style="text-align:center;">@item.Period</td>
+                                        <td style="text-align:right;">@string.Format("{0:c}", item.Amount)</td>
+                                    </tr>
+                                }
+                            }                             
+                            <tfoot>
+                                <tr>
+                                    <td colspan="5" style="text-align:right;"><b>Report Total:</b></td>
+                                    <td style="text-align:right;"><b>@string.Format("{0:c}", ReportTotal)</b></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-1">
+            <button type="button" class="btn btn-primary button-next" onclick="printDiv()">Print <i class="fa fa-print"></i></button>
+        </div>
+        <div class="col-md-1 col-md-offset-9" style="padding-left: 30px;">
+            <button type="button" class="btn btn-primary button-next" onclick="location.href='@Url.Action("ManagementReports", "Management", new { area = "Portal"})'">Back <i class="fa fa-backward"></i></button>
+        </div>
+    </div>
+    <br />
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        function printDiv() {
+
+            var divToPrint = document.getElementById('printDiv');
+
+            var newWin = window.open('', 'Print-Window');
+
+            newWin.document.open();
+
+            newWin.document.write('<html><body onload="window.print()">' + divToPrint.innerHTML + '</body></html>');
+
+            newWin.document.close();
+
+            setTimeout(function () { newWin.close(); }, 10);
+
+        }
+    </script>
+}

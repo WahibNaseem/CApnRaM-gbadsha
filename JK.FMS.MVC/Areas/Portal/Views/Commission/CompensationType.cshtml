@@ -1,0 +1,441 @@
+﻿@{
+    ViewBag.Title = "Deductions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <style>
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .page-size {
+            padding-left: 0;
+            padding-right: 0;
+            width: 62px;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        #CustomerList th {
+            vertical-align: middle;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .no-margin {
+            margin: 0;
+        }
+
+        .padding-tb1 {
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        .margin-tb1 {
+            margin-top: 1px;
+            margin-bottom: 1px;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .contract {
+            text-align: right;
+        }
+
+        .tablebox .table-responsive {
+            min-height: 600px;
+        }
+
+        table.dataTable tbody th, table.dataTable tbody td {
+            padding: 8px 10px !important;
+        }
+    </style>
+}
+
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    Compensation Type List
+                </div>
+                <div class="col-md-4" style="padding-right:5px;">
+                    <div class="col-md-7 pull-right no-padding">
+                        <div style="display:table-cell;padding-right: 5px;">
+
+                        </div>
+                        <div style="display:table-cell;width:100%;">
+                            <button type="button" name="btnAddCompensationType" id="btnAddCompensationType" class="btn red dropdown-toggle pull-right subsectionBtn"
+                                    style="padding: 3px 12px;">
+                                <i class="fa fa-plus"></i>&nbsp;<span class="hidden-sm hidden-xs">Add New</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="tablebox">
+    <div class="table-responsive" id="divcustomerList" style="background-color:#ffffff;">
+        <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" id="CompensationTypeList" style="margin-top:0 !important;">
+            <thead>
+                <tr>
+                    <th style="text-align:center;vertical-align:middle;">
+                        Description
+                    </th>
+                    <th style="text-align:center;width:100px;vertical-align:middle;">
+                        Include Sales
+                    </th>
+                    <th style="text-align:center;width:100px;vertical-align:middle;">
+                        Variable Sales
+                    </th>
+                    <th style="text-align:center;width:120px;vertical-align:middle;">
+                        Commision Based on Total Sale
+                    </th>
+                    <th style="text-align:center;width:100px;vertical-align:middle;">
+                        User Specific
+                    </th>
+                    <th style="text-align:center;width:100px;vertical-align:middle;">
+                        Start Date Specific
+                    </th>
+                    <th style="text-align:center;width:100px;vertical-align:middle;">
+                        Status
+                    </th>
+                    <th style="text-align:center;width:100px;vertical-align:middle;">
+                        Action 
+                    </th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade custom-model custom-form-design" id="ModalCompensationTypePopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:600px">
+        <div class="modal-content" style="border-radius: 0px;" id="RenderCompensationType">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Compensation Type Maintenenace
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Description<span style="color:red;">*</span>:</label>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control input-sm" id="txtCTDescription" name="txtCTDescription" value="" />
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Status<span style="color:red;">*</span>:</label>
+                                <div class="col-md-3">
+                                    @if (ViewBag.statusList != null)
+                                    {
+                                        <select class="form-control input-sm" id="CTStatuslist">
+                                            <option value="">Select Status</option>
+                                            @foreach (var item in (SelectList)ViewBag.statusList)
+                                            {
+                                                <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                            }
+                                        </select>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <label cclass="mt-checkbox">
+                                        <input type="checkbox" id="chkCT_IncludeinTotalSales" name="chkCT_IncludeinTotalSales" class="i-checks" />
+                                        <span>Include in Total Sales</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <label cclass="mt-checkbox">
+                                        <input type="checkbox" id="chkCT_VariableSale" name="chkCT_VariableSale" class="i-checks" />
+                                        <span>Variable Sale</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <label cclass="mt-checkbox">
+                                        <input type="checkbox" id="chkCT_CommissionBasedonTotalSale" name="chkCT_CommissionBasedonTotalSale" class="i-checks" />
+                                        <span>Commission Based on Total Sale</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <label cclass="mt-checkbox">
+                                        <input type="checkbox" id="chkCT_UserSpecific" name="chkCT_UserSpecific" class="i-checks" />
+                                        <span>User Specific</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <label cclass="mt-checkbox">
+                                        <input type="checkbox" id="chkCT_StartDateSpecific" name="chkCT_StartDateSpecific" class="i-checks" />
+                                        <span>Start Date Specific</span>
+                                    </label>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="form-actions" style="padding: 7px;">
+                    <div class="col-md-12">
+
+                        <button type="button" name="Cancel" id="btnCancelCompensationType" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:0px;min-width: 90px;">Cancel</button>
+                        <button type="button" name="Save" id="btnSaveCompensationType" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:10px;min-width: 90px;">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section pageplugins{
+
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+}
+@section scripts{
+    <script type="text/javascript">
+        $('#btnAddCompensationType').click(function () {
+            _compensationtypeId = 0;
+            $('#txtCTDescription').val('');
+            $('#chkCT_IncludeinTotalSales').prop('checked', false);
+            $('#chkCT_VariableSale').prop('checked', false);
+            $('#chkCT_CommissionBasedonTotalSale').prop('checked', false);
+            $('#chkCT_UserSpecific').prop('checked', false);
+            $('#chkCT_StartDateSpecific').prop('checked', false);
+            $('#CTStatuslist').val('');
+            $("#ModalCompensationTypePopup").modal({ backdrop: 'static' });
+
+            
+        });
+        function ShowCompensationTypeMaintenance(Description, IncludeinTotalSales, VariableSales, CommissionBasedonTotalSale, UserSpecific, StartDateSpecific, StatusListId, CompensationTypeListId) {
+            _compensationtypeId = CompensationTypeListId;
+
+            $('#txtCTDescription').val(Description);
+            $('#chkCT_IncludeinTotalSales').prop('checked', IncludeinTotalSales);
+            $('#chkCT_VariableSale').prop('checked', VariableSales);
+            $('#chkCT_CommissionBasedonTotalSale').prop('checked', CommissionBasedonTotalSale);
+            $('#chkCT_UserSpecific').prop('checked', UserSpecific);
+            $('#chkCT_StartDateSpecific').prop('checked', StartDateSpecific);
+            $('#CTStatuslist').val(StatusListId);
+
+            $("#ModalCompensationTypePopup").modal({ backdrop: 'static' });
+        }
+
+        function DeleteCompensationTypeMaintenance(CompensationTypeListId) {
+
+             $.ajax({
+                    type: "GET",
+                 url: '@Url.Action("DeleteCompensationTypeData", "Commission", new { area = "Portal" })?CompensationTypeListId=' + CompensationTypeListId,
+                    data: {},
+                    success: function (data) {
+                        BindCompensationTypeList(data);
+                    }
+                });
+
+        }
+        
+        function BindCompensationTypeList(res) {
+            var listItem = $('#CompensationTypeList tbody');
+            listItem.html('');
+            res.forEach(function (item) {
+
+                trData = "<tr>";
+                trData += '<td style="text-align: left;">' + item.Description + '</td>'
+                trData += '<td style="text-align: center;">' + (item.IncludeinTotalSales?'Yes':'No') + '</td>'
+                trData += '<td style="text-align: center;">' + (item.VariableSales ? 'Yes' : 'No') + '</td>'
+                trData += '<td style="text-align: center;">' + (item.CommissionBasedonTotalSale ? 'Yes' : 'No') + '</td>'
+                trData += '<td style="text-align: center;">' + (item.UserSpecific ? 'Yes' : 'No') + '</td>'
+                trData += '<td style="text-align: center;">' + (item.StartDateSpecific ? 'Yes' : 'No') + '</td>'
+                trData += '<td style="text-align: center;">' + item.StatusListName + '</td>'
+                trData += '<td style="text-align: center;"><a href="javascript:void(0)" onclick="ShowCompensationTypeMaintenance('
+
+                trData += '\''+item.Description + "\',";
+                trData += item.IncludeinTotalSales + ",";
+                trData += item.VariableSales + ",";
+                trData += item.CommissionBasedonTotalSale + ",";
+                trData += item.UserSpecific + ",";
+                trData += item.StartDateSpecific + ",";
+                trData += item.StatusListId + ",";
+                trData += item.CompensationTypeListId;
+
+                trData += ')">Edit</a>&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" onclick="DeleteCompensationTypeMaintenance('
+                trData += item.CompensationTypeListId;
+                trData +=')">Delete</a></td></tr>'
+
+                listItem.append(trData);
+            });
+
+        }
+
+        function validateForm() {
+            var retVal = true;
+            if ($('#txtCTDescription').val() == '') {
+                retVal = false;
+            }
+
+            if ($('#CTStatuslist').val() == '')
+                retVal = false;
+
+            return retVal;
+        }
+
+
+        $('#btnSaveCompensationType').click(function () {
+            if (!validateForm()) {
+                swal('Please fill requierd field\'s');
+                return
+            }
+
+            debugger;
+            var jData = {
+                CompensationTypeListId: _compensationtypeId,
+                Description: $('#txtCTDescription').val(),
+                StatusListId: $('#CTStatuslist').val(),
+                IncludeinTotalSales: ($('#chkCT_IncludeinTotalSales').is(':checked') ? true : false),
+                VariableSales: ($('#chkCT_VariableSale').is(':checked') ? true : false),
+                CommissionBasedonTotalSale: ($('#chkCT_CommissionBasedonTotalSale').is(':checked') ? true : false),
+                UserSpecific: ($('#chkCT_UserSpecific').is(':checked') ? true : false),
+                StartDateSpecific: ($('#chkCT_StartDateSpecific').is(':checked') ? true : false),
+                IsActive: ($('#CTStatuslist').val() == 42 ? true : false)
+            }
+            
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("InsertUpdateCompensationTypeData", "Commission", new { area = "Portal" })',
+                data: jData,
+                success: function (data) {
+
+                    BindCompensationTypeList(data);
+                    
+                    _compensationtypeId = 0;
+                    $("#ModalCompensationTypePopup").modal('hide');
+                }
+                });
+
+            $("#ModalCompensationTypePopup").modal({ backdrop: 'static' });
+        });
+
+
+
+        $('#btnCancelCompensationType').click(function () {
+
+            _compensationtypeId = 0;
+            $("#ModalCompensationTypePopup").modal('hide');
+        });
+
+        var _compensationtypeId = 0;
+        var _compensationtype = {};
+        $(document).ready(function () {
+
+            $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("GetCompensationTypeData", "Commission", new { area = "Portal" })',
+                    data: {},
+                    success: function (data) {
+                        BindCompensationTypeList(data);
+                        
+                    }
+                });
+
+
+        });
+
+    </script>
+
+
+}
+

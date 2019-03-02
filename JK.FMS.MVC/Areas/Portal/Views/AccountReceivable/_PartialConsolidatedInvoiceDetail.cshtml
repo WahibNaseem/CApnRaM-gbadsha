@@ -1,0 +1,316 @@
+﻿
+@model JKApi.Service.AccountReceivable.ConsolidatedInvoiceDetailViewModel
+
+
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+    </style>
+}
+ 
+<div class="modal fade custom-model custom-form-design in bs-modal-lg" id="modal_Consolidatedinvoicedetail" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg" style="width:1024px">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;" data-dismiss="modal"></button>
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Consolidated Invoice Detail
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px 20px 15px 20px;">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="col-md-4">Consolidated Invoice No:</div>
+                        <div class="col-md-3" style="padding:5px;background-color:#e8e8e8;font-weight:bold;text-align:center;">@Html.DisplayFor(one => one.ConsolidatedInvoiceNo)</div>
+                    </div>
+                    @*<div class="col-md-4"><h4><b>Customer: @Html.DisplayFor(one => one.InvoiceDetail.Customer)</b></h4></div>*@
+                    <div class="col-md-6 text-right" style="padding-top: 4px;">
+                        <div class="col-md-3 pull-right text-left" style="padding:5px;background-color:#e8e8e8;font-weight:bold;text-align:center;">@Convert.ToDateTime(Model.ConsolidatedInvoiceDate).ToString("MM/dd/yyyy")</div>
+                        <div class="col-md-3 pull-right" style="padding:5px;">Invoice Date:</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <input type="hidden"  id="hdnConsolidatedInvoiceId" value="@ViewBag.ConsolidatedInvoiceId" /> 
+                        <div class="custom-form portlet light" style="max-width:400px;margin: 0px auto;min-height: 100px;">
+                            <div class="headerbox">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        &nbsp;&nbsp;&nbsp;&nbsp; Customer #: @Html.DisplayFor(one => one.CustomerNo)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="portlet-body form" style="border:1px solid #e7ecf1;">
+                                <div class="form-body">
+                                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.CustomerName)</div>
+                                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.Address1),@Html.DisplayFor(one => one.Address2)</div>
+                                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.City), @Html.DisplayFor(one => one.State) @Html.DisplayFor(one => one.PostalCode)</div>
+                                    <div class="row" style="padding: 3px;margin: 0;">@(Model.Phone != null && Model.Phone != "" ? String.Format("{0: (###) ###-####}", long.Parse(Model.Phone)) : "")</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        <div class="custom-form portlet light" style="max-width:400px;margin: 0px auto;min-height: 100px;">
+                            <div class="headerbox">
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        &nbsp;&nbsp;&nbsp;&nbsp; Bill To
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="portlet-body form" style="border:1px solid #e7ecf1;">
+                                <div class="form-body">
+
+                                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.B_Name)</div>
+                                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.B_Address1),@Html.DisplayFor(one => one.B_Address2)</div>
+                                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.B_City), @Html.DisplayFor(one => one.B_State) @Html.DisplayFor(one => one.B_PostalCode)</div>
+                                    <div class="row" style="padding: 0;margin: 0;">
+                                        @(Model.InvoiceRegion.Phone != null ? String.Format("{0: (###) ###-####}", long.Parse(Model.InvoiceRegion.Phone.ToString().Trim())) : "")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*<div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-2 control-label">Consolidated Invoice No :</div>
+                        <div class="col-md-2"><input type="text" class="form-control input-sm" value="C05180005" /></div>
+                    </div>
+                </div>*@
+                <div class="row">
+                    <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                        <tr>
+                            <th style="width:50px;text-align:center;">Invoice No</th>
+                            <th style="width:61px;text-align:center;">Customer No</th>
+                            <th style="text-align:left;width: 110px;">Customer Name</th>
+                            <th style="width:200px;text-align:left;">Description</th>
+                            <th style="width:76px;text-align:center;">Inv Amount</th>
+                            <th style="width:60px;text-align:center;">Tax</th>
+                            <th style="width:70px;text-align:center;">Total</th>
+                        </tr>
+                        @foreach (var item in Model.Invoices)
+                        {
+                            <tr>
+                                <td style="text-align:center;">@item.InvoiceNo</td>
+                                <td style="text-align:center;">@item.CustomerNo</td>
+                                <td style="white-space:pre-line;text-align:left;">@item.CustomerName</td>
+                                <td style="text-align:left;">@item.InvoiceDescription</td>
+                                <td style="text-align:right;">
+                                   @string.Format("{0:c}", item.ExtendedPrice)
+                                </td>
+                                <td style="text-align:right;">
+                                    @string.Format("{0:c}", item.TAXAmount)
+                                </td>
+                                <td style="text-align:right;">
+                                    @string.Format("{0:c}", item.Total)
+                                </td>
+                            </tr>
+                        }                         
+                    </table>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-5">
+                        <button type="button" class="btn btn-primary button-next" style="margin-right:10px;" onclick="ConsolidatedInvoiceDetailPrint()">Print <i class="fa fa-print"></i></button>
+                        <button type="submit" class="btn btn-primary button-next" style="margin-right:10px;" onclick="ConsolidatedInvoiceDetailExportToPDF()">Export <i class="fa fa-download"></i></button>                        
+                        @*<button type="button" class="btn btn-primary button-next" style="margin-right:10px;" onclick="DetailInvoiceListPrint()">Print <i class="fa fa-print"></i></button>
+                        <button type="submit" class="btn btn-primary button-next" style="margin-right:10px;" onclick="DetailInvoiceListExportPDF()">Export <i class="fa fa-download"></i></button>*@
+                        <button type="button" class="btn btn-primary button-next" style="margin-right:10px;" onclick="DetailInvoiceListSendEmail()">Email <i class="fa fa-envelope"></i></button>
+                    </div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-2 col-md-offset-5">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">
+                            Close
+                            <i class="fa fa-close"></i>
+                        </button>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                        <tr>
+                            <th colspan="8" style="text-align:center;background: #3598dc;color: #FFF !important;">CUSTOMER TRANSACTION HISTORY</th>
+                        </tr>
+                        @if (Model.ConsolidatedInvoiceHistoryListModel != null && Model.ConsolidatedInvoiceHistoryListModel.Count() > 0)
+                        {
+                            foreach (var Conitem in Model.ConsolidatedInvoiceHistoryListModel)
+                            {                                
+                                decimal Balance = 0;                                                 
+                                <tr>
+                                    <th colspan="2" style="text-align:center;background: #3598dc;color: #FFF !important;">Invoice No</th>
+                                    <th colspan="6" style="text-align:left;background: #3598dc;color: #FFF !important;">&nbsp;&nbsp;&nbsp;&nbsp;@Conitem.InvoiceNo</th>
+                                </tr>
+                                if (Conitem.lstInvoiceTransactionHistory != null && Conitem.lstInvoiceTransactionHistory.Count() > 0)
+                                {
+                                    <tr>
+                                        <th style="width:62px;text-align:center">Date</th>
+                                        <th style="text-align:center;width:80px;">TRX Type</th>
+                                        <th style="width:50px;text-align:center">CUSTOMER No</th>
+                                        <th style="width:110px;text-align:left">CUSTOMER NAME</th>
+                                        <th style="width:80px;text-align:center">TRX NUMBER</th>
+                                        <th style="width:120px;text-align:center">DESCRIPTION</th>
+                                        <th style="width:70px;text-align:center">AMOUNT</th>
+                                        <th style="width:100px;text-align:center">INVOICE BALANCE</th>
+                                    </tr>
+                                    foreach (var item in Conitem.lstInvoiceTransactionHistory)
+                                    {
+                                        if (item.AmountTypeListId == 1)
+                                        {
+                                            Balance = Balance - item.Amount;
+                                        }
+                                        else
+                                        {
+                                            Balance = Balance + (item.Amount);
+                                        }
+                                        <tr>
+                                            <td style="text-align:center">@Convert.ToDateTime(item.TransactionDate).ToString("MM/dd/yyyy")</td>
+                                            <td style="white-space:pre-line">@item.MasterTrxTypeListName</td>
+                                            <td style="white-space:pre-line">@item.CustomerNo</td>
+                                            <td style="white-space:pre-line">@item.CustomerName</td>
+                                            <td style="text-align:center">
+                                                @if (item.MasterTrxTypeListId == (int)JKApi.Business.Enumeration.MasterTrxTypeList.CustomerPayment)
+                                                {
+                                                    <a onclick="btnOpenPaymentDetail(@item.RefId)" data-dismiss="modal">@item.TransactionNumber</a>
+                                                }
+                                                else if (item.MasterTrxTypeListId == (int)JKApi.Business.Enumeration.MasterTrxTypeList.CustomerCredit)
+                                                {
+                                                    <a onclick="btnOpenCusCreditDetail(@item.RefId)" data-dismiss="modal">@item.TransactionNumber</a>
+                                                }
+                                                else
+                                                {
+                                                    @item.TransactionNumber
+                                                }
+                                            </td>
+                                            <td style="text-align:left">@item.Description</td>
+                                            <td style="text-align:right">
+
+                                                @if (item.AmountTypeListId == 1)
+                                                {
+                                                    <span style="color:red">($@string.Format("{0:N}", Math.Abs(item.Amount)))</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>
+                                                        @string.Format("{0:c}", Math.Abs(item.Amount))
+                                                    </span>
+                                                }
+
+                                            </td>
+                                            <td style="text-align:right">
+                                                @if (Balance < 0)
+                                                {
+                                                    <span style="color:red">($@string.Format("{0:N}", Math.Abs(Balance)))</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>
+                                                        $@string.Format("{0:N}", Balance)
+                                                    </span>
+                                                    @*@string.Format("{0:N}", Balance)*@
+                                                }
+
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                        }                        
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        $(document).on('click', '#btnClosemodel', function () {
+            $("#modal_Consolidatedinvoicedetail").modal('hide');
+        });
+       
+    </script>
+}
+<script type="text/javascript">
+    function ConsolidatedInvoiceDetailPrint() {
+        var conInvoiceid = $("#hdnConsolidatedInvoiceId").val();
+
+        var invPrintURL = '@Url.Action("GetConsolidatedInvoiceDetailPrint", "AccountReceivable", new { area = "Portal" })?consolidatedInvoiceid=' + conInvoiceid;
+         
+        $.ajax({
+            type: "GET",
+            url: invPrintURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                var tUrl = data;
+                printJS({ printable: document.location.origin + tUrl, type: 'pdf', showModal: false });
+            },
+            error: function () {
+                alert("Content load failed.");
+            }
+        });
+    }
+    function ConsolidatedInvoiceDetailExportToPDF() {
+        var conInvoiceid = $("#hdnConsolidatedInvoiceId").val();
+        var expdfURL = '@Url.Action("GetConsolidatedInvoiceDetailExportToPDF", "AccountReceivable", new { area = "Portal" })?consolidatedInvoiceid=' + conInvoiceid;
+        window.location.href = expdfURL;
+    }
+   
+</script>

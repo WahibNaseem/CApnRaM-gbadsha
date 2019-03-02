@@ -1,0 +1,61 @@
+﻿
+@model List<JKViewModels.Inspection.InspectionFormItemModel>
+@{
+    var request = HttpContext.Current.Request;
+    var address = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Authority);
+}
+
+<div class="modal fade custom-model custom-form-design" id="modal_ShowInspectionItems" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Customer Inspection Form
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px 30px 15px 30px;">
+                <div class="custom-form portlet light" style="padding:0px;margin:0px;">
+                    <div class="portlet-body form form-horizontal">
+
+                        <div class="form-group" style="padding-bottom:5px;">
+                           
+                        </div>
+                        <hr />
+                        @if (Model != null)
+                        {
+                            <div class="form-group" style="padding-bottom: 5px;padding-top: 5px;">
+                                @foreach (var item in Model)
+                                {
+                                    if (item.FormItemType == JKViewModels.FormItemType.FormItemTypeInspection)
+                                    {
+                                        var data = Json.Decode(item.FormItemValue);
+                                        <div class="col-md-2" style="padding-top: 6px;">
+                                            <span style="padding-top: 7px;">
+                                                @data["Label"]
+                                            </span>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-10"></div>
+                        <div class="col-md-2">
+                            <input type="button" class="btn btn-custom btn btn-primary" onclick="btnCloseInspectionItems();" Id="btnClose" value="Close" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

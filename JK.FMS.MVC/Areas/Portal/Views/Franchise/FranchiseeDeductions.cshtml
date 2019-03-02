@@ -1,0 +1,623 @@
+﻿
+@{
+    ViewBag.Title = "FranchiseeDeductions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+   
+
+    th, td {
+        white-space: nowrap;
+    }
+
+    div.dataTables_wrapper {
+        margin: 0 auto;
+    }
+
+    .dataTables_scrollBody {
+        overflow-y: scroll !important;
+    }
+
+   
+
+    .row {
+        margin: 0;
+        padding: 3px 0;
+    }
+
+    .right {
+        text-align: right;
+    }
+
+    .personlink {
+        text-align: center;
+    }
+
+    .close {
+        background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+        height: 12px !important;
+        width: 12px !important;
+        margin-top: 0px !important;
+    }
+
+    .page-size {
+        padding-left: 0;
+        padding-right: 0;
+        width: 62px;
+    }
+
+    .topheader {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFF !important;
+        text-transform: uppercase;
+        margin-top: 3px;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+
+    .alignCenter {
+        text-align: center;
+    }
+
+    #NewCustomerList th {
+        vertical-align: middle;
+    }
+
+    .no-padding {
+        padding: 0;
+    }
+
+    .no-margin {
+        margin: 0;
+    }
+
+    .padding-tb1 {
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+
+    .margin-tb1 {
+        margin-top: 1px;
+        margin-bottom: 1px;
+    }
+
+    .custom-listbox .headerbox {
+        padding: 3px 0px 3px 5px;
+    }
+
+    .custom-listbox {
+        margin-top: 4px;
+        margin-bottom: 0px;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .multiselect-container.dropdown-menu {
+        text-transform: none;
+        font-size: 14px;
+    }
+ 
+
+    table.dataTable thead th {
+        padding: 1px 30px 1px 10px !important;
+    }
+
+</style>
+
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+}
+
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    Franchisee Deductions Reports
+                </div>
+                <div class="col-md-2 pull-right" style="padding-right:5px;">
+                    <div style="display:table-cell;padding-right: 5px;">
+                        Region
+                    </div>
+                    <div style="display:table-cell;width:100%;">
+                        @if (ViewBag.regionlist != null)
+                        {
+                            <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                                @foreach (var item in (SelectList)ViewBag.regionlist)
+                                {
+                                    <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="custom-listbox" style="margin-top:4px;margin-bottom:3px;">
+    <div class="headerbox">
+        <div class="row no-padding">
+            <div class="col-md-2 col-md-offset-5">
+                @Html.DropDownList("PeriodList", (SelectList)ViewBag.PeriodList, new { @class = "form-control input-sm", @id = "select_periodlist" })
+            </div>
+            <div class="col-md-1">
+                <input type="button" class="btn red btn-circle" id="btnSubmit" value="Submit" style="padding: 3px 12px;font-size: 13px" onclick="BindData()" />
+            </div>
+            <div class="col-md-4 pull-right no-padding" style="text-align:right;">
+                <button type="submit" class="btn btn-primary button-next" onclick="FranchiseeDeductionsExportPDF()" style="height:30px;">Export PDF <i class="fa fa-download"></i></button>
+            </div>
+        </div>
+    </div>
+    <div id="BindHTML"></div>
+
+    @*<div class="tablebox">
+        <div id="divFranchiseeDeductions">
+            <table class="striped table-bordered table-hover order-column" cellspacing="0" id="tblFranchiseeDeductions" style="margin-top:0 !important;">
+                <thead>
+                    <tr role="row" style="background: #8d8f92;color: white;font-weight: bold;">
+                        <th style="text-align:center;height: 36px;">
+                            Franchisee No
+                        </th>
+                        <th style="text-align:center;width: 200px;">
+                            Franchisee Name
+                        </th>
+                        <th style="text-align:center;height: 36px;">
+                            Royaly
+                        </th>
+                        <th style="text-align:center;">
+                            Accounting Fee
+                        </th>
+                        <th style="text-align:center;">
+                            Technology Fee
+                        </th>
+                        <th style="text-align:center;">
+                            Add Bill Office-Comm
+                        </th>
+                        <th style="text-align:center;">
+                            Franchisee Note
+                        </th>
+                        <th style="text-align:center;">
+                            Second Note
+                        </th>
+                        <th style="text-align:center;">
+                            IB FF Projected Payment
+                        </th>
+                        <th style="text-align:center;">
+                            Finder's Fee Down
+                        </th>
+                        <th style="text-align:center;">
+                            Finder's Fee
+                        </th>
+                        <th style="text-align:center;">
+                            Cleaning Suppliers
+                        </th>
+                        <th style="text-align:center;">
+                            Regular Misc
+                        </th>
+                        <th style="text-align:center;">
+                            Total Regular Office
+                        </th>
+                        <th style="text-align:center;">
+                            Advesting
+                        </th>
+                        <th style="text-align:center;">
+                            Lease
+                        </th>
+                        <th style="text-align:center;">
+                            Supply sales tax
+                        </th>
+                        <th style="text-align:center;">
+                            Customer Sales Tax
+                        </th>
+                        <th style="text-align:center;">
+                            Business Protection
+                        </th>
+                        <th style="text-align:center;">
+                            Bond
+                        </th>
+                        <th style="text-align:center;">
+                            ChargeBacks
+                        </th>
+                        <th style="text-align:center;">
+                            Pagers
+                        </th>
+                        <th style="text-align:center;">
+                            Miscellaneous
+                        </th>
+                        <th style="text-align:center;">
+                            Total Deduction
+                        </th>
+                        <th style="text-align:center;">
+                            Negative Amounts
+                        </th>
+                        <th style="text-align:center;">
+                            Total Due
+                        </th>
+                        <th style="text-align:center;">
+                            Accting Fee Rebate
+                        </th>
+                        <th style="text-align:center;">
+                            CB Feed Credited
+                        </th>
+                        <th style="text-align:center;">
+                            No CB Reserve
+                        </th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align:center">
+                            701011
+                        </td>
+                        <td style="text-align:center">
+                            Test
+                        </td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:right;">$100.00</td>
+                        <td style="text-align:right;">$10.00</td>
+                        <td style="text-align:right;">$100.00</td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:center">
+                            701011
+                        </td>
+                        <td style="text-align:center">
+                            Test
+                        </td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:center">
+                            701011
+                        </td>
+                        <td style="text-align:center">
+                            Test
+                        </td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:center">
+                            701011
+                        </td>
+                        <td style="text-align:center">
+                            Test
+                        </td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:center">
+                            701011
+                        </td>
+                        <td style="text-align:center">
+                            Test
+                        </td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:center">
+                            701011
+                        </td>
+                        <td style="text-align:center">
+                            Test
+                        </td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:right;background: #d5f7fb;">
+                            Total
+                        </td>
+                        <td style="text-align:right;background: #d5f7fb;"></td>
+                        <td style="text-align:right;background: #d5f7fb;"></td>
+                        <td style="text-align:right;background: #d5f7fb;"></td>
+                        <td style="text-align:right;background: #d5f7fb;"></td>
+                        <td style="text-align:right;background: #d5f7fb;"></td>
+                        <td style="text-align:right;background: #d5f7fb;"></td>
+                        <td style="text-align:right;background: #d5f7fb;"></td>
+                        <td style="text-align:right;background: #d5f7fb;"></td>
+                        <td style="text-align:right;background: #d5f7fb;">$100.00</td>
+                        <td style="text-align:right;background: #d5f7fb;">$10.00</td>
+                        <td style="text-align:right;background: #d5f7fb;">$100.00</td>
+                        <td style="text-align:center;background: #d5f7fb;"></td>
+                        <td style="text-align:center;background: #d5f7fb;"></td>
+                        <td style="text-align:center;background: #d5f7fb;"></td>
+                        <td style="text-align:center;background: #d5f7fb;"></td>
+                        <td style="text-align:center;background: #d5f7fb;"></td>
+                        <td style="text-align:center;background: #d5f7fb;"></td>
+                        <td style="text-align:center;background: #d5f7fb;"></td>
+                        <td style="text-align:center;background: #d5f7fb;"></td>
+                        <td style="text-align:center;background: #d5f7fb;"></td>
+                        <td style="text-align:center;background: #d5f7fb;"></td>
+                        <td style="text-align:center;background: #d5f7fb;"></td>
+                        <td style="text-align:center;background: #d5f7fb;"></td>
+                        <td style="text-align:center;background: #d5f7fb;"></td>
+                        <td style="text-align:center;background: #d5f7fb;"></td>
+                        <td style="text-align:center;background: #d5f7fb;"></td>
+                        <td style="text-align:center;background: #d5f7fb;"></td>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </div>*@
+</div>
+<script src="@Url.Content("https://cdn.datatables.net/fixedcolumns/3.2.4/js/dataTables.fixedColumns.min.js")" type="text/javascript"></script>
+@section scripts{
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        var dtable;
+        jQuery(document).ready(function () {
+            //var dtable = $('#tblFranchiseeDeductions2').DataTable({
+            //    "bFilter": false,
+            //    "bInfo": false,
+
+            //    scrollX: true,
+            //    scrollCollapse: true,
+            //    paging: false,
+            //    "ordering": false,
+            //    aaSorting: [],
+            //    fixedColumns: {
+            //        leftColumns: 2,
+            //        "sHeightMatch": "auto",
+            //    }
+
+            //});
+        })
+
+        $(function () {
+            $("#regionlist").multiselect({
+                includeSelectAllOption: true,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2
+            });
+        });
+
+        function BindData() {
+            if ($("#regionlist").val() != null && $("#regionlist").val() != "") {
+
+                var sURL = '@Url.Action("FranchiseeDeductionsResult", "Franchise", new { area = "Portal" })?regions=' + $("#regionlist").val() + '&periodid=' + $('#select_periodlist').val();
+                $.ajax({
+                    type: "GET",
+                    url: sURL,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (data) {
+                        $('#BindHTML').html(data);
+
+                        console.log($("#regionlist").val())
+
+                        for (var i = 0; i < $("#regionlist").val().length; i++) {
+                            var dtable = $('#tblFranchiseeDeductions' + $("#regionlist").val()[i]).DataTable({
+                                "bFilter": false,
+                                "bInfo": false,
+
+                                scrollX: true,
+                                scrollCollapse: false,
+                                paging: false,
+                                "ordering": false,
+                                aaSorting: [],
+                                fixedColumns: {
+                                    leftColumns: 3,
+                                    "sHeightMatch": "auto",
+                                }
+
+                            });
+                        }
+                        //var dtable = $('#tblFranchiseeDeductions2').DataTable({
+                        //    "bFilter": false,
+                        //    "bInfo": false,
+
+                        //    scrollX: true,
+                        //    scrollCollapse: true,
+                        //    paging: false,
+                        //    "ordering": false,
+                        //    aaSorting: [],
+                        //    fixedColumns: {
+                        //        leftColumns: 3,
+                        //        "sHeightMatch": "auto",
+                        //    }
+
+                        //});
+                    },
+                    error: function () {
+                        alert("Content load failed.");
+                    }
+                });
+            }
+            else {
+                alert("Please select at least one region from region list.");
+            }
+        }
+    </script>
+}
+
+
+<script type="text/javascript" >
+    function FranchiseeDeductionsExportPDF() {
+        if ($("#regionlist").val() != null && $("#regionlist").val() != "") {
+            var sURL = '@Url.Action("FranchiseeDeductionsExportPDFfile", "Franchise", new { area = "Portal" })?regions=' + $("#regionlist").val() + '&periodid=' + $('#select_periodlist').val();
+            window.location.href = sURL;
+        }
+        else {
+            alert("Please select at least one region from region list.");
+        }
+    }
+</script>

@@ -1,0 +1,434 @@
+﻿@model JKApi.Service.Service.Company.CheckViewModel
+
+@using System.Globalization;
+@{
+    var request = HttpContext.Current.Request;
+    var _siteUrl = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Authority);
+
+    string imgpath = _siteUrl + "/Content/admin/assets/layouts/layout2/img/lg_jklogo.jpg";
+
+}
+<DIV id="page_1" class="check-report">
+
+    <table class="header">
+        <tr>
+            <td width="25%">
+                <img src="@imgpath" style="height: 100px" />
+            </td>
+
+            <td width="50%">
+                <P>
+                    <b>@Model.RegionName</b>
+                </P>
+            </td>
+
+            <td width="25%">
+                <P>
+                    Check Number: @Model.CheckNumber<br />
+                    Check Date: @Model.Date
+                </P>
+            </td>
+        </tr>
+    </table>
+
+    <table class="header">
+        <tr>
+            <td width="25%">
+                &nbsp;
+            </td>
+
+            <td width="20%">
+                <P>
+                    Payee: @Html.DisplayFor(o => o.PayeeNumber)
+                </P>
+            </td>
+
+            <td width="55%">
+                <P>
+                    @Html.DisplayFor(o => o.PayeeName)
+                </P>
+            </td>
+        </tr>
+    </table>
+
+    @*<table class="price-list" style="width: 100%;">
+        <tr class="header-row">
+            <td width="30%">
+                Check Type
+            </td>
+            <td width="55%">
+                Month/Year
+            </td>
+            <td width="15%">
+                Amount
+            </td>
+        </tr>
+        <tr>
+            <td width="30%">
+                @Model.CheckType
+            </td>
+            <td width="55%">
+                @(Model.BillMonth)/@(Model.BillYear)
+            </td>
+            <td width="15%">
+                @Model.PayDollars
+            </td>
+        </tr>
+        <tr style="height: 3in">
+            <td width="30%">&nbsp;</td>
+            <td width="55%">&nbsp;</td>
+            <td width="15%">&nbsp;</td>
+        </tr>
+        <tr class="footer-row">
+            <td colspan="2" style="text-align: right">
+                Total Checks:
+            </td>
+            <td>
+                @Model.PayDollars
+            </td>
+        </tr>
+    </table>*@
+    @if (Model.CheckTemplate == 1 && Model.IsCheckSystemGenerated) // && !Model.ManualCheck.IsPrintMemo)
+    {
+        <div>
+            <table>
+                <tr>
+                    <td colspan="3" style="height:45px">&nbsp;</td>
+                </tr>
+            </table>
+
+            <table class="header">
+                <tr></tr>
+                <tr>
+                    <td width="55%">
+                        <b>Description</b>
+                    </td>
+                    <td width="25%">
+                        <b>Date</b>
+                    </td>
+                    <td style="text-align:left;width:15%">
+                        <b>Amount</b>
+                    </td>
+
+
+                </tr>
+            </table>
+            <hr />
+
+            <table>
+                <tr></tr>
+                <tr>
+                    <td width="55%">@Model.APBillViewModel.CheckMemo</td>
+                    <td width="25%">@string.Format("{0:MM/dd/yyyy}", Model.APBillViewModel.APBillCheck.CreatedDate)</td>
+                    <td style="text-align:left;width:15%">@string.Format("{0:c}", Model.APBillViewModel.APBillCheck.CheckAmount) </td>
+                </tr>
+            </table>
+        </div>
+
+
+    }
+    else if (Model.CheckTemplate == 1 && Model.ManualCheck != null) // && !Model.ManualCheck.IsPrintMemo)
+    {
+        <div>
+            <table>
+                <tr>
+                    <td colspan="3" style="height:45px">&nbsp;</td>
+                </tr>
+            </table>
+
+            <table class="header">
+                <tr></tr>
+                <tr>
+                    <td width="55%">
+                        <b>Description</b>
+                    </td>
+                    <td width="25%">
+                        <b>Date</b>
+                    </td>
+                    <td style="text-align:left;width:15%">
+                        <b>Amount</b>
+                    </td>
+
+
+                </tr>
+            </table>
+            <hr />
+
+            <table>
+                <tr></tr>
+                <tr>
+                    <td width="55%">@Model.ManualCheck.Memo</td>
+                    <td width="25%">@string.Format("{0:MM/dd/yyyy}", Model.ManualCheck.CreatedDate)</td>
+                    <td style="text-align:left;width:15%">@string.Format("{0:c}", Model.ManualCheck.Amount) </td>
+                </tr>
+            </table>
+        </div>
+
+
+    }
+    else if (Model.CheckTemplate == 4 && Model.AccountingFeeebateDetails != null)
+    {
+        <div>
+            @if (Model.AccountingFeeebateDetails.AccountingFeeRebateCheckList != null)
+        {
+                <table>
+                    <tr>
+                        <td colspan="12" style="height:45px">&nbsp;</td>
+                    </tr>
+                </table>
+
+                <hr />
+                <table class="header">
+                    <TR>
+                        <td colspan="3" style="font:bold">Bill Month</td>
+                        <td colspan="4" style="font:bold">Bill Year</td>
+                        <td colspan="6" style="font:bold">Total</td>
+
+
+                    </TR>
+                    <tr></tr>
+
+                    @foreach (var ACFeeRebate in Model.AccountingFeeebateDetails.AccountingFeeRebateCheckList)
+                    {
+
+                        <tr>
+                            <td colspan="3" class="text">@ACFeeRebate.BillMonth</td>
+                            <td colspan="4" class="text">@ACFeeRebate.BillYear</td>
+                            <td colspan="6" class="text">@ACFeeRebate.CheckAmount</td>
+                           
+
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+
+            <div>
+                <table>
+                    <tr>
+                        <td colspan="12" style="height:425px">&nbsp;</td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td><hr /></td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td colspan="12" style="text-align:right">Total Accounting Fee Rebate Amount:</td>
+                        <td class="price2">@string.Format("{0:c}", Model.AccountingFeeebateDetails.NumberDisplay(Model.AccountingFeeebateDetails.Total))</td>
+                    </tr>
+
+                </table>
+            </div>
+
+    }
+
+    else if (Model.CheckTemplate == 3 && Model.TurnAround.TurnAround != null)
+    {
+        <div>
+        @if (Model.TurnAround.TurnAroundCheckDetails != null)
+    {
+            <table>
+                <tr>
+                    <td colspan="12" style="height:45px">&nbsp;</td>
+                </tr>
+            </table>
+
+            <hr />
+            <table class="header">
+                <TR>
+                    <td colspan="3" style="font:bold">Invoice No.</td>
+                    <td colspan="4" style="font:bold">Customer No.</td>
+                    <td colspan="6" style="font:bold">Customer Name</td>
+                    <td colspan="3" style="font:bold;text-align:right">Invoice Payment Amt.</td>
+                    <td colspan="3" style="font:bold;text-align:right" >C/B TAR Amt.</td>
+                    @*<td colspan="3" style="font:bold">Negative Due Amt.</td>*@
+                    @*<td colspan="3" style="font:bold">Turnaround Amt.</td>*@
+                </TR>
+                <tr></tr>
+                
+                    @foreach (var TAR in Model.TurnAround.TurnAroundCheckDetails)
+                    {
+
+                        <tr>
+                            <td colspan="3" class="text">@TAR.InvoiceNo</td>
+                            <td colspan="4" class="text">@TAR.CustomerNo</td>
+                            <td colspan="6" class="text">@TAR.CustomerName</td>
+                            <td colspan="3" class="text" style="text-align:right">@string.Format("{0:c}", TAR.PaymentAmount)</td >
+                            <td colspan = "3" class="text" style="text-align:right">@string.Format("{0:c}", TAR.PaymentAmount)</td >
+                            @*<td colspan="3" class="text">@TAR.NegativeDueAmount</td>*@
+                            @*<td colspan="3" class="text">@TAR.TurnAroundAmount</td>*@
+
+                         </tr>
+                    }
+            </table>
+
+            
+               
+            <table>
+                    <tr>
+                        <td colspan="12" style="height:50px">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="12" style="text-align:right">Total Invoice Payment:</td>
+                        <td colspan="3" style="text-align:right" class="price2">@string.Format("{0:c}", Model.TurnAround.TotalPaymentAmount)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="12" style="text-align:right">Total Negative Due</td>
+                        <td colspan="3" style="text-align:right" class="price2">@string.Format("{0:c}", Model.TurnAround.TotalNegativeDueAmount)</td>
+                    </tr>
+
+           </table>
+           
+
+        }
+            </div>
+
+            <div>
+                <table>
+                    <tr>
+                        <td colspan="12" style="height:325px">&nbsp;</td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td><hr /></td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td colspan="12" style="text-align:right">Total C/B Turn Around Amount:</td>
+                        <td class="price2">@string.Format("{0:c}", Model.TurnAround.NumberDisplay(Model.TurnAround.Total))</td>
+                    </tr>
+
+                </table>
+            </div>
+
+    }
+    else if (Model.CheckTemplate == 2 && Model.FranchiseeReport != null)
+    {
+    <div style="width: 80%">
+        <table class="price-list">
+            <tr>
+                <td colspan="2" class="list-header">
+                    FRANCHISEE REVENUES:
+                </td>
+                <td class="price2">&nbsp;</td>
+            </tr>
+            <tr class="new-section"><td>&nbsp;</td></tr>
+            @foreach (var service in Model.FranchiseeReport.DetailsByService)
+            {
+                <TR>
+                    <TD class="text">@service.ServiceType</TD>
+                    <TD class="price1">@Model.FranchiseeReport.NumberDisplay(service.Details.Sum(o => o.Subtotal))</TD>
+                    <td class="price2">&nbsp;</td>
+                </TR>
+            }
+            <TR class="new-subsection">
+                <TD class="text">TOTAL REVENUE</TD>
+                <TD class="price1">&nbsp;</TD>
+                <td class="price2">@Model.FranchiseeReport.NumberDisplay(Model.FranchiseeReport.Report.TotalRevenue)</td>
+            </TR>
+            <TR class="new-subsection">
+                <TD class="text">Client Sales Tax</TD>
+                <TD class="price1">@Model.FranchiseeReport.NumberDisplay(Model.FranchiseeReport.Report.TotalTax)</TD>
+                <td class="price2">&nbsp;</td>
+            </TR>
+            <TR class="new-subsection">
+                <TD class="text">Total Customer Invoice</TD>
+                <TD class="price1">@Model.FranchiseeReport.NumberDisplay(Model.FranchiseeReport.Report.TotalRevenue + Model.FranchiseeReport.Report.TotalTax)</TD>
+                <td class="price2">&nbsp;</td>
+            </TR>
+            <tr class="new-section"><td>&nbsp;</td></tr>
+            <tr>
+                <td colspan="2" class="list-header">
+                    FRANCHISEE DEDUCTIONS:
+                </td>
+                <td class="price2">&nbsp;</td>
+            </tr>
+            <tr class="new-section"><td>&nbsp;</td></tr>
+
+            @{decimal totalChargeback = 0.00m; }
+            @{bool hasChargeback = false;}
+            @foreach (var service in Model.FranchiseeReport.Deductions)
+            {
+                if (service.ServiceTypeListId == 12 /*Chargeback*/)
+                {
+                    totalChargeback = service.Total;
+                    hasChargeback = true;
+                }
+                else
+                {
+                    <TR>
+                        <TD class="text">@service.ServiceType</TD>
+                        <TD class="price1">@Model.FranchiseeReport.NumberDisplay(service.Deductions.Sum(o => o.Total))</TD>
+                        <td class="price2">&nbsp;</td>
+                    </TR>
+                }
+
+            }
+
+        @if (hasChargeback)
+        {
+            <TR class="new-subsection">
+                <TD class="text">Total Deductions</TD>
+                <TD class="price1">&nbsp;</TD>
+                <td class="price2">@Model.FranchiseeReport.NumberDisplay(Model.FranchiseeReport.Report.TotalDeductions - totalChargeback)</td>
+            </TR>
+            <tr class="new-section"><td>&nbsp;</td></tr>
+            <tr class="new-section"><td>&nbsp;</td></tr>
+            <tr>
+                <td colspan="2" class="list-header">
+                    DUE TO FRANCHISEE BEFORE CHARGEBACK:
+                </td>
+                <td class="price2">@Model.FranchiseeReport.NumberDisplay(Model.FranchiseeReport.Report.TotalPayment - totalChargeback)</td>
+            </tr>
+
+            foreach (var service in Model.FranchiseeReport.Deductions)
+            {
+
+                if (service.ServiceTypeGroupListId == 12)
+                {
+                    <tr class="new-subsection">
+                        <td class="text" style="font-size:12px;">&nbsp;</td>
+                        <td class="text" style="font-size:12px;">&nbsp;</td>
+                        <td class="text" style="font-size:12px;">&nbsp;</td>
+                    </tr>
+                    <tr class="new-subsection">
+                        <td class="text" style="font-size:12px;">@service.GroupName </td>
+                        <td class="price1" style="font-size:12px;">@Model.FranchiseeReport.NumberDisplay(service.Deductions.Sum(o => o.Total))</td>
+                        <td class="price2" style="font-size:12px;">&nbsp;</td>
+                    </tr>
+                }
+            }
+
+          
+        }
+        else
+        {
+            <TR class="new-subsection">
+                <TD class="text">Total Deductions</TD>
+                <TD class="price1">&nbsp;</TD>
+                <td class="price2">@Model.FranchiseeReport.NumberDisplay(Model.FranchiseeReport.Report.TotalDeductions)</td>
+            </TR>
+           
+        }
+
+            <tr class="new-section"><td>&nbsp;</td></tr>
+            <tr class="new-section"><td>&nbsp;</td></tr>
+            <tr>
+                <td colspan="2" class="list-header">
+                    DUE TO FRANCHISEE:
+                </td>
+                <td class="price2">@Model.FranchiseeReport.NumberDisplay(Model.FranchiseeReport.Report.TotalPayment)</td>
+            </tr>
+            
+        
+        </table>
+
+    </div>
+    }
+
+</DIV>

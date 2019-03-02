@@ -1,0 +1,1435 @@
+﻿@model JKViewModels.Franchisee.FullFranchiseeViewModel
+
+<style>
+    .form-horizontal .form-group .input-sm {
+        margin-top: 2px !important;
+        margin-bottom: 3px !important;
+    }
+
+    .subsectionBtn {
+        display: none;
+    }
+</style>
+<div class="custom-form portlet light" id="" style="margin-top:0px;">
+    <div class="headerbox" style="font-weight: normal;">
+        <div class="col-md-12 text-center" style="font-size:15px;">
+            <b> Franchisee Information </b>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 5px !important;margin-right: 12px !important;"></button>
+        </div>
+        <div class="clearfix"> </div>
+    </div>
+
+    <div class="portlet-body" style="padding:10px;">
+        @using (Html.BeginForm("SaveEditFranchiseDetails", "Customer", FormMethod.Post, new { @id = "EditFranchiseDetailsform_wizard_1", @role = "form", @class = "form form-horizontal" }))
+        {
+            <div class="tab-pane active" id="tb_fr_page1">
+                @*<button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>*@
+                <h4 class="blocktop">
+                    Business Info
+
+                    <button type="button" class="btn btn-primary button-next  pull-right CancelBtn" id="btnTab1Cancel" style="margin-left: 10px;padding-top:0px;margin-top:-5px;margin-right:20px;">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-primary  pull-right SaveBtn" id="btnTab1Save" style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Save</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    @if (ViewBag.Edit)
+                    {
+                        <button type="button" class="btn btn-primary  pull-right EditBtn" id="EditTab1" onclick=EditfunctionTab1(); style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Edit</button>
+                    }
+                </h4>&nbsp; &nbsp; &nbsp; &nbsp;
+                @Html.HiddenFor(one => one.BusinessInfo.FranchiseeId)
+                @Html.HiddenFor(one => one.BusinessInfo.IdentifierTypeList)
+                @Html.HiddenFor(one => one.BusinessInfoAddress.AddressId)
+                @Html.HiddenFor(one => one.BusinessInfoPhone.PhoneId)
+                @Html.HiddenFor(one => one.BusinessInfoEmail.EmailId)
+                <div class="form-group">
+                    <label class="control-label col-md-2">
+                        Name
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(o => o.BusinessInfo.Name, new { @class = "form-control input-sm edittab1", required = "required", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-2">
+                        Address
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-5">
+                        @Html.TextBoxFor(o => o.BusinessInfoAddress.Address1, new { @class = "form-control input-sm edittab1", required = "required" })
+                    </div>
+                    <div class="col-md-5">
+                        @Html.TextBoxFor(o => o.BusinessInfoAddress.Address2, new { @class = "form-control input-sm edittab1" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-2">
+                        City
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(o => o.BusinessInfoAddress.City, new { @class = "form-control input-sm edittab1", required = "required" })
+                    </div>
+                    <label class="control-label col-md-1">
+                        State
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-2">
+                        @Html.DropDownList("BusinessInfoAddress_State", null, "Select", new { @class = "form-control input-sm edittab1", required = "required", @id = "BusinessInfoAddress_State", name = "BusinessInfoAddress_State" })
+                    </div>
+                    <label class="control-label col-md-1">
+                        Zip
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-2">
+                        @Html.TextBoxFor(o => o.BusinessInfoAddress.PostalCode, new { @class = "form-control input-sm edittab1", required = "required" })
+                    </div>
+                    <label class="control-label col-md-2">
+                        Phone
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(o => o.BusinessInfoPhone.Phone1, new { @class = "form-control input-sm edittab1", required = "required" })
+                    </div>
+                    <label class="control-label col-md-1">
+                        Email
+                    </label>
+                    <div class="col-md-5">
+                        @Html.TextBoxFor(o => o.BusinessInfoEmail.EmailAddress, new { @class = "form-control input-sm edittab1", type = "email" })
+                    </div>
+                </div>
+                <h4 class="block">
+                    MAIN CONTACT
+                    <button type="button" class="btn btn-primary button-next  pull-right CancelBtn" id="btnTab2Cancel" style="margin-left: 10px;padding-top:0px;margin-top:-5px;margin-right:20px;">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    @*<button type="button" class="btn btn-primary  pull-right SaveBtn" id="btnTab2Save" style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Save</button>&nbsp;&nbsp;&nbsp;&nbsp;*@
+                    @if (ViewBag.Edit)
+                    {
+                        <button type="button" class="btn btn-primary  pull-right EditBtn" id="EditTab2" onclick=EditfunctionTab2(); style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Edit</button>
+                    }
+                </h4>&nbsp; &nbsp; &nbsp; &nbsp;
+                @*<div class="form-group">
+                        <label class="control-label col-md-2">
+                        </label>
+                        <div class="col-md-6">
+                            <label class="mt-checkbox">
+                                <input type="checkbox" id="chkcopyaddresstocontact" class="edittab2">Same as Main
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>*@
+                @Html.HiddenFor(one => one.ContactInfo.ContactId)
+                @Html.HiddenFor(one => one.ContactInfoAddress.AddressId)
+                @Html.HiddenFor(one => one.ContactInfoPhone.PhoneId)
+                @Html.HiddenFor(one => one.ContactInfoEmail.EmailId)
+
+
+                <div class="form-group">
+                    <div id="tblFranchiseeMainContact">
+                        @Html.Partial("~/Areas/Portal/Views/Franchise/_EditFranchiseeMainContact.cshtml", Model)
+                    </div>
+
+                </div>
+                @*<div class="form-group">
+                        <label class="control-label col-md-2">
+                            Address
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-5">
+                            @Html.TextBoxFor(o => o.ContactInfoAddress.Address1, new { @class = "form-control input-sm edittab2", required = "required" })
+                        </div>
+                        <div class="col-md-5">
+                            @Html.TextBoxFor(o => o.ContactInfoAddress.Address2, new { @class = "form-control input-sm edittab2" })
+                            <span class="text-danger field-validation-valid"
+                                  data-valmsg-for="ContactInfoAddress_City" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                            City
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(o => o.ContactInfoAddress.City, new { @class = "form-control input-sm edittab2", required = "required" })
+                            <span class="text-danger field-validation-valid"
+                                  data-valmsg-for="ContactInfoAddress_City" data-valmsg-replace="true"></span>
+                        </div>
+                        <label class="control-label col-md-1">
+                            State
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-2">
+                            @Html.DropDownList("ContactInfoAddress_State", null, "Select", new { @class = "form-control input-sm edittab2", required = "required", @id = "ContactInfoAddress_State" })
+                        </div>
+                        <label class="control-label col-md-1">
+                            Zip
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-2">
+                            @Html.TextBoxFor(o => o.ContactInfoAddress.PostalCode, new { @class = "form-control input-sm edittab2", required = "required" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                            Phone
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(o => o.ContactInfoPhone.Phone1, new { @class = "form-control input-sm edittab2", required = "required" })
+                        </div>
+                        <label class="control-label col-md-1">
+                            Ext
+                        </label>
+                        <div class="col-md-1">
+                            @Html.TextBoxFor(o => o.ContactInfoPhone.PhoneExt, new { @class = "form-control input-sm edittab2" })
+                        </div>
+                        <label class="control-label col-md-1">
+                            Cell
+                        </label>
+                        <div class="col-md-3">
+                            @Html.TextBoxFor(o => o.ContactInfoPhone.Cell, new { @class = "form-control input-sm edittab2" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                            Email
+                        </label>
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(o => o.ContactInfoEmail.EmailAddress, new { @class = "form-control input-sm edittab2", type = "email" })
+                        </div>
+                    </div>*@
+
+
+                <h4 class="block">
+                    PARTNERS/OFFICERS
+                    <button type="button" class="btn btn-primary button-next  pull-right CancelBtn" id="btnTab3Cancel" style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    @*<button type="button" class="btn btn-primary  pull-right SaveBtn" id="btnTab3Save" style="margin-left: 10px;padding-top:0px;margin-top:-5px;margin-right:10px;">Save</button>&nbsp;&nbsp;&nbsp;&nbsp;*@
+                    @if (ViewBag.Edit)
+                    {
+                        <button type="button" class="btn btn-primary  pull-right EditBtn" id="EditTab3" onclick=EditfunctionTab3(); style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Edit</button>
+                    }
+                </h4>&nbsp; &nbsp; &nbsp; &nbsp;
+                @if (ViewBag.Edit)
+                {
+                    <div style="margin-top: -12px;margin-right: 8px;">
+                        <button type="button" class="btn red dropdown-toggle pull-right edittab3" onclick="addEditOwner('0')" >
+                            <i class="fa fa-plus"></i> <span class="hidden-sm hidden-xs ">New</span>
+                        </button>
+                    </div>
+                }
+
+                <div class="form-group">
+                    <div id="tblFranchiseeOwner">
+                        @Html.Partial("~/Areas/Portal/Views/Franchise/_EditFranchiseeOwnerPopup.cshtml", Model.FranchiseOwnersList)
+                    </div>
+                </div>
+                    @Html.HiddenFor(one => one.PayeeInfo.FranchiseeBillSettingsId)
+                    @Html.HiddenFor(one => one.ACHBankInfo.ACHBankId)
+                    @Html.HiddenFor(one => one.PayeeInfoAddress.AddressId)
+                    @Html.HiddenFor(one => one.PayeeIdentification.IdentificationId)
+
+                    <h4 class="blocktop">
+                        Financial Section
+
+                        <button type="button" class="btn btn-primary button-next  pull-right CancelBtn" id="btnTab4Cancel" style="margin-left: 10px;padding-top:0px;margin-top:-5px;margin-right:20px;">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="button" class="btn btn-primary  pull-right SaveBtn" id="btnTab4Save" style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Save</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                        @if (ViewBag.Edit)
+                        {
+                            <button type="button" class="btn btn-primary  pull-right EditBtn" id="EditTab4" onclick=EditfunctionTab4(); style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Edit</button>
+                        }
+                    </h4>&nbsp; &nbsp; &nbsp; &nbsp;
+                    <h4 class="subblock">Payee Info Section</h4>
+                    <div class="form-group col-md-12" style="padding-left:100px">
+
+                        <div class="md-radio-inline">
+                            @if (Model != null && Model.PayeeIdentification != null && Model.PayeeIdentification.IdentifierTypeListId == @Convert.ToInt32(JKApi.Business.Enumeration.IdentifierTypeList.EIN))
+                            {
+                                <div class="md-radio">
+
+                                    <input type="radio" id="checkbox1_8" name="radio2" class="md-radiobtn edittab4" checked="">
+                                    <label for="checkbox1_8">
+                                        <span></span>
+                                        <span class="check"></span>
+                                        <span class="box"></span> EIN
+                                    </label>
+                                </div>
+                                <div class="md-radio">
+                                    <input type="radio" id="checkbox1_9" name="radio2" class="md-radiobtn edittab4">
+                                    <label for="checkbox1_9">
+                                        <span></span>
+                                        <span class="check"></span>
+                                        <span class="box"></span> SSN
+                                    </label>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="md-radio">
+
+                                    <input type="radio" id="checkbox1_8" name="radio2" class="md-radiobtn edittab4">
+                                    <label for="checkbox1_8">
+                                        <span></span>
+                                        <span class="check"></span>
+                                        <span class="box"></span> EIN
+                                    </label>
+                                </div>
+                                <div class="md-radio">
+                                    <input type="radio" id="checkbox1_9" name="radio2" class="md-radiobtn edittab4" checked="">
+                                    <label for="checkbox1_9">
+                                        <span></span>
+                                        <span class="check"></span>
+                                        <span class="box"></span> SSN
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                            EIN/SSN
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-2">
+                            @Html.TextBoxFor(o => o.PayeeIdentification.IdentifierNumer, new { @class = "form-control input-sm edittab4", required = "required" })
+                        </div>
+                        @*<div class="col-md-5 col-md-offset-2">
+
+                    <label class="mt-checkbox" style="margin-bottom: 8px;margin-top: 8px;">
+                        <input type="checkbox" id="PayeeInfo_Incorporated" class="i-checks edittab4" @(Model.PayeeInfo.Incorporated.HasValue ? (Model.PayeeInfo.Incorporated.Value == true ? "checked=checked" : string.Empty) : string.Empty ) />
+                        <span></span>In Corporated
+                    </label>
+                </div>*@
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                        </label>
+                        <div class="col-md-6">
+                            <label class="mt-checkbox">
+                                <input type="checkbox" id="chkcopyaddresstopayee" class="edittab4">Same as Main
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                            Name
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(o => o.PayeeInfo.PayeeName, new { @class = "form-control input-sm edittab4" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                            Address
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(o => o.PayeeInfoAddress.Address1, new { @class = "form-control input-sm edittab4", required = "required" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                            City
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-3">
+                            @Html.TextBoxFor(o => o.PayeeInfoAddress.City, new { @class = "form-control input-sm edittab4", required = "required" })
+                        </div>
+                        <label class="control-label col-md-1">
+                            State
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-3">
+                            @Html.DropDownList("PayeeInfoAddress_State", null, "Select", new { @class = "form-control input-sm edittab4", required = "required", @id = "PayeeInfoAddress_State" })
+                        </div>
+                        <label class="control-label col-md-1">
+                            Zip
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-2">
+                            @Html.TextBoxFor(o => o.PayeeInfoAddress.PostalCode, new { @class = "form-control input-sm edittab4", required = "required" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                            1099 Name
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-3">
+                            @Html.TextBoxFor(o => o.PayeeInfo.C1099Name, new { @class = "form-control input-sm edittab4", required = "required" })
+                        </div>
+                        <div class="col-md-5 col-md-offset-1">
+                            <label class="mt-checkbox" style="margin-bottom: 8px;margin-top: 7px;">
+                                @Html.CheckBoxFor(one => one.PayeeInfo.Print1099, new { @class = "i-checks edittab4", @checked = "true" })  Print 1099
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                    <h4 class="subblock">
+                        ACH Sub-Section
+                        <label class="mt-checkbox" style="padding-top: 13px;">
+                            <input type="checkbox" id="chkachsectionenable" class="edittab4" @((Model.ACHBankInfo.Name != null && Model.ACHBankInfo.Name != "") ? "checked=checked" : string.Empty  ) @((Model.ACHBankInfo.Name != null && Model.ACHBankInfo.Name != "") ? "disabled=disabled" : string.Empty  )>
+                            <span></span>
+                        </label>
+                    </h4>
+                    <div id="divachsubsection" @((Model.ACHBankInfo.Name == null || Model.ACHBankInfo.Name == "") ? "style=display:none" : string.Empty )>
+                        <div class="form-group">
+                            <label class="control-label col-md-2">
+                                Bank Name
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(o => o.ACHBankInfo.Name, new { @class = "form-control input-sm edittab4" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2">
+                                Routing #
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(o => o.ACHBankInfo.RoutingNumber, new { @class = "form-control input-sm edittab4", onkeyup = "checkDecimalDigit(this);" })
+                            </div>
+                            <label class="control-label col-md-2">
+                                Account #
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                @Html.TextBoxFor(o => o.ACHBankInfo.AccountNumber, new { @class = "form-control input-sm edittab4", onkeyup = "checkDecimalDigit(this);" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2">
+                                Description
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(o => o.ACHBankInfo.Descrption, new { @class = "form-control input-sm edittab4" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2">
+                                Remittance <br />Notes
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-10">
+                                @Html.TextAreaFor(o => o.ACHBankInfo.RemittanceNotes, new { @class = "form-control input-sm edittab4" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="block">
+                        Billing Setting Section
+                        <button type="button" class="btn btn-primary button-next  pull-right CancelBtn" id="btnTab5Cancel" style="margin-left: 10px;padding-top:0px;margin-top:-5px;margin-right:20px;">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="button" class="btn btn-primary  pull-right SaveBtn" id="btnTab5Save" style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Save</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                        @if (ViewBag.Edit)
+                        {
+                            <button type="button" class="btn btn-primary  pull-right EditBtn" id="EditTab5" onclick=EditfunctionTab5(); style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Edit</button>
+                        }
+                    </h4>&nbsp; &nbsp; &nbsp; &nbsp;
+                    <div class="form-group" style="margin:0px 30px;">
+                        <div class="col-md-5">
+
+                            <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                @Html.CheckBoxFor(one => one.PayeeInfo.Chargeback, new { @class = "i-checks edittab5", @checked = "true" }) Chargeback
+                                <span></span>
+                            </label>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                @Html.CheckBoxFor(one => one.PayeeInfo.BBPAdministrationFee, new { @class = "i-checks edittab5", @checked = "true" })  BBP Administration Fee
+                                <span></span>
+                            </label>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                @Html.CheckBoxFor(one => one.PayeeInfo.AccountRebate, new { @class = "i-checks edittab5", @checked = "true" })  Account Rebate
+                                <span></span>
+                            </label>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                @Html.CheckBoxFor(one => one.PayeeInfo.GenerateReport, new { @class = "i-checks edittab5", @checked = "true" }) Generate Report
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="modal fade custom-model custom-form-design" id="modalAddEditOwnerData" tabindex="-1" role="basic" aria-hidden="true" style="display: none;"></div>
+
+                    <div class="modal fade custom-model custom-form-design" id="modalAddEditContactData" tabindex="-1" role="basic" aria-hidden="true" style="display: none;"></div>
+
+                    <!-- /.modal-dialog -->
+                    <div class="form-actions">
+                        <div class="col-md-12" style="padding-right: 28px;">
+                            @*<button type="submit" class="btn btn-primary button-next  pull-right" id="btnContinue" style="margin-left: 10px;">
+                        Continue
+                        <i class="fa fa-angle-right"></i>
+                    </button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="submit" class="btn btn-primary  pull-right" id="btnSave" style="margin-left: 10px;">
+                        Save
+                        <i class="fa fa-check"></i>
+                    </button>*@
+                        </div>
+                    </div>
+
+                </div>
+        }
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+    $(function () {
+
+        $('#BusinessInfoPhone_Phone1').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+        $('#ContactInfoPhone_Phone1').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+        $('#ContactInfoPhone_Cell').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+        $('#PayeeIdentification_IdentifierNumer').inputmask("mask", {
+            "mask": "99-9999999"
+        });
+
+
+        $('#FranchiseOwnerList_Phone').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+
+        //$('#ContactInfoPhone_CellModel').inputmask("mask", {
+        //    "mask": "(999) 999-9999"
+        //});
+        //$('#ContactInfoPhone_Phone1Model').inputmask("mask", {
+        //    "mask": "(999) 999-9999"
+        //});
+
+        if ($('#checkbox1_8').prop('checked')) {
+                $('#PayeeIdentification_IdentifierNumer').inputmask("mask", {
+                    "mask": "99-9999999"
+                });
+                $('#PayeeIdentification_IdentifierTypeListId').val(@Convert.ToInt32(JKApi.Business.Enumeration.IdentifierTypeList.EIN));
+        }
+
+        if ($('#checkbox1_9').prop('checked')) {
+                $('#PayeeIdentification_IdentifierNumer').inputmask("mask", {
+                    "mask": "999-99-9999"
+                });
+                $('#PayeeIdentification_IdentifierTypeListId').val(@Convert.ToInt32(JKApi.Business.Enumeration.IdentifierTypeList.EIN));
+            }
+
+        $('#checkbox1_8').change(function () {
+            if ($(this).prop('checked')) {
+                $('#PayeeIdentification_IdentifierNumer').inputmask("mask", {
+                    "mask": "99-9999999"
+                });
+                $('#PayeeIdentification_IdentifierTypeListId').val(@Convert.ToInt32(JKApi.Business.Enumeration.IdentifierTypeList.EIN));
+            }
+
+        });
+
+        $('#checkbox1_9').change(function () {
+            if ($(this).prop('checked')) {
+                $('#PayeeIdentification_IdentifierNumer').inputmask("mask", {
+                    "mask": "999-99-9999"
+                });
+                $('#PayeeIdentification_IdentifierTypeListId').val(@Convert.ToInt32(JKApi.Business.Enumeration.IdentifierTypeList.SSN));
+            }
+
+        });
+
+
+        $(".edittab1").attr("disabled", "disabled");
+        $(".edittab1").attr("readonly", "readonly");
+
+        $(".edittab2").attr("disabled", "disabled");
+        $(".edittab2").attr("readonly", "readonly");
+
+        $(".edittab3").attr("disabled", "disabled");
+        $(".edittab3").attr("readonly", "readonly");
+
+        $(".edittab4").attr("disabled", "disabled");
+        $(".edittab4").attr("readonly", "readonly");
+
+        $(".edittab5").attr("disabled", "disabled");
+        $(".edittab5").attr("readonly", "readonly");
+
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+
+        $(".edittab3link").hide();
+        $(".edittab2MainContactlink").hide();
+        window.addEditOwner = function (id) {
+
+            $.blockUI({
+                baseZ: 99999,
+                message: '<center><img height: src="/Images/loading_icon.gif" /><h3> <b>Processing....</br> Please wait! and do not refresh page.</b></h3></center>',
+                css: { backgroundColor: 'rgb{0,0,0}', border: '0', color: '#fff', "z-index": 99999 }
+            });
+            var url = '/Portal/Franchise/AddEditFranchiseOwnerPopup/?id=' + @Model.BusinessInfo.FranchiseeId + '&OwnerId=' + id
+            $.get(url, function (data) {
+                $('#modalAddEditOwnerData').html(data);
+                $('#modalAddEditOwnerData').modal();
+            });
+            $.unblockUI();
+        }
+
+        $('#btnTab1Cancel').click(function () {
+            $(".edittab1").attr("disabled", "disabled");
+            $(".edittab1").attr("readonly", "readonly");
+
+            $("#btnTab1Save").prop("disabled", "false");
+            $("#btnTab1Save").prop("readonly", "true");
+
+            $("#btnTab1Cancel").prop("disabled", "false");
+            $("#btnTab1Cancel").prop("readonly", "true");
+
+            $(".EditBtn").show();
+            $(".SaveBtn").hide();
+            $(".CancelBtn").hide();
+            $(".edittab3link").hide();
+            $("#BusinessInfo_Name").val('@(Model.BusinessInfo != null ? Model.BusinessInfo.Name : string.Empty)');
+            $("#BusinessInfoAddress_Address1").val('@(Model.BusinessInfoAddress != null ? Model.BusinessInfoAddress.Address1 : string.Empty)');
+            $("#BusinessInfoAddress_Address2").val('@(Model.BusinessInfoAddress != null ? Model.BusinessInfoAddress.Address2: string.Empty)');
+            $("#BusinessInfoAddress_City").val('@(Model.BusinessInfoAddress != null ? Model.BusinessInfoAddress.City: string.Empty)');
+            $("#BusinessInfoPhone_Phone1").val('@(Model.BusinessInfoPhone != null ? Model.BusinessInfoPhone.Phone1: string.Empty)');
+            $("#BusinessInfoAddress_PostalCode").val('@(Model.BusinessInfoAddress != null ? Model.BusinessInfoAddress.PostalCode: string.Empty)');
+            $("#BusinessInfoEmail_EmailAddress").val('@(Model.BusinessInfoEmail != null ? Model.BusinessInfoEmail.EmailAddress : string.Empty)');
+            $("#BusinessInfoAddress_State").val('@(Model.BusinessInfoAddress != null ? Model.BusinessInfoAddress.StateListId : 0)');
+
+        });
+        $('#btnTab2Cancel').click(function () {
+            $(".edittab2").attr("disabled", "disabled");
+            $(".edittab2").attr("readonly", "readonly");
+            $('.edittab2MainContactlink').hide();
+            //$("#btnTab2Save").prop("disabled", "false");
+            //$("#btnTab2Save").prop("readonly", "true");
+            $("#btnTab2Cancel").prop("disabled", "false");
+            $("#btnTab2Cancel").prop("readonly", "true");
+
+            $(".EditBtn").show();
+            $(".SaveBtn").hide();
+            $(".CancelBtn").hide();
+            $(".edittab3link").hide();
+
+            $("#ContactInfo_Name").val('@(Model.ContactInfo != null ? Model.ContactInfo.Name : string.Empty)');
+            $("#ContactInfoAddress_Address1").val('@(Model.ContactInfoAddress!= null ? Model.ContactInfoAddress.Address1 : string.Empty)');
+            $("#ContactInfoAddress_Address2").val('@(Model.ContactInfoAddress != null ? Model.ContactInfoAddress.Address2 : string.Empty)');
+            $("#ContactInfoAddress_City").val('@(Model.ContactInfoAddress!= null?Model.ContactInfoAddress.City : string.Empty)');
+            $("#ContactInfoPhone_Phone1").val('@(Model.ContactInfoPhone != null ? Model.ContactInfoPhone.Phone1 : string.Empty)');
+            $("#ContactInfoEmail_EmailAddress").val('@(Model.ContactInfoEmail != null ? Model.ContactInfoEmail.EmailAddress : string.Empty)');
+            $("#ContactInfoAddress_PostalCode").val('@(Model.ContactInfoAddress != null ?Model.ContactInfoAddress.PostalCode : string.Empty)');
+            $("#ContactInfoPhone_Cell").val('@(Model.ContactInfoPhone != null ? Model.ContactInfoPhone.Cell : string.Empty)');
+            $("#ContactInfoPhone_PhoneExt").val('@(Model.ContactInfoPhone != null ? Model.ContactInfoPhone.PhoneExt : string.Empty)');
+            $("#ContactInfoAddress_State").val('@(Model.ContactInfoAddress != null ? Model.ContactInfoAddress.StateListId : 0 )');
+            });
+        $('#btnTab3Cancel').click(function () {
+            $(".edittab3").attr("disabled", "disabled");
+            $(".edittab3").attr("readonly", "readonly");
+
+            //$("#btnTab3Save").prop("disabled", "false");
+            //$("#btnTab3Save").prop("readonly", "true");
+
+            $("#btnTab3Cancel").prop("disabled", "false");
+            $("#btnTab3Cancel").prop("readonly", "true");
+
+            $(".EditBtn").show();
+            $(".SaveBtn").hide();
+            $(".CancelBtn").hide();
+
+            $(".edittab3link").hide();
+        });
+        $('#btnTab4Cancel').click(function () {
+            $(".edittab4").attr("disabled", "disabled");
+            $(".edittab4").attr("readonly", "readonly");
+
+            $("#btnTab4Save").prop("disabled", "false");
+            $("#btnTab4Save").prop("readonly", "true");
+
+            $("#btnTab4Cancel").prop("disabled", "false");
+            $("#btnTab4Cancel").prop("readonly", "true");
+
+            $(".EditBtn").show();
+            $(".SaveBtn").hide();
+            $(".CancelBtn").hide();
+            $(".edittab3link").hide();
+
+            $("#PayeeIdentification_IdentifierNumer").val('@(Model.PayeeIdentification != null ? Model.PayeeIdentification.IdentifierNumer:string.Empty)');
+            $("#PayeeInfo_PayeeName").val('@(Model.PayeeInfo != null ?  Model.PayeeInfo.PayeeName:string.Empty)');
+            $("#PayeeInfoAddress_Address1").val('@(Model.PayeeInfoAddress != null ? Model.PayeeInfoAddress.Address1 : string.Empty)');
+            $("#PayeeInfoAddress_City").val('@(Model.PayeeInfoAddress != null ? Model.PayeeInfoAddress.City:string.Empty)');
+            $("#PayeeInfo_C1099Name").val('@(Model.PayeeInfo != null ? Model.PayeeInfo.C1099Name:string.Empty)');
+            $("#PayeeInfoAddress_PostalCode").val('@(Model.PayeeInfoAddress != null ? Model.PayeeInfoAddress.PostalCode:string.Empty)');
+            $("#PayeeInfoAddress_State").val('@(Model.PayeeInfoAddress != null ? Model.PayeeInfoAddress.StateListId : 0)');
+            if (@Model.PayeeInfo != null) {
+                if ('@Model.PayeeInfo.Print1099' == 'True') {
+                    $("#PayeeInfo_Print1099").prop('checked', true);
+                }
+                else {
+                    $("#PayeeInfo_Print1099").prop('checked', false);
+                }
+            }
+            $("#ACHBankInfo_Name").val('@(Model.ACHBankInfo != null ? Model.ACHBankInfo.Name :string.Empty)');
+            $("#ACHBankInfo_RoutingNumber").val('@(Model.ACHBankInfo != null ? Model.ACHBankInfo.RoutingNumber : null)');
+            $("#ACHBankInfo_AccountNumber").val('@(Model.ACHBankInfo != null ? Model.ACHBankInfo.AccountNumber : null)');
+            $("#ACHBankInfo_Descrption").val('@(Model.ACHBankInfo != null ? Model.ACHBankInfo.Descrption :string.Empty)');
+            $("#ACHBankInfo_RemittanceNotes").val('@(Model.ACHBankInfo != null ? Model.ACHBankInfo.RemittanceNotes :string.Empty)');
+
+        });
+        $('#btnTab5Cancel').click(function () {
+            $(".edittab5").attr("disabled", "disabled");
+            $(".edittab5").attr("readonly", "readonly");
+
+            $("#btnTab5Save").prop("disabled", "false");
+            $("#btnTab5Save").prop("readonly", "true");
+
+            $("#btnTab5Cancel").prop("disabled", "false");
+            $("#btnTab5Cancel").prop("readonly", "true");
+
+            $(".EditBtn").show();
+            $(".SaveBtn").hide();
+            $(".CancelBtn").hide();
+
+            $(".edittab3link").hide();
+
+            if (@Model.PayeeInfo != null) {
+                if ('@Model.PayeeInfo.Chargeback' == 'True') {
+                    $("#PayeeInfo_Chargeback").prop('checked', true);
+                }
+                else {
+                    $("#PayeeInfo_Chargeback").prop('checked', false);
+                }
+
+                if ('@Model.PayeeInfo.AccountRebate' == 'True') {
+                    $("#PayeeInfo_AccountRebate").prop('checked', true);
+                }
+                else {
+                    $("#PayeeInfo_AccountRebate").prop('checked', false);
+                }
+
+                if ('@Model.PayeeInfo.BBPAdministrationFee' == 'True') {
+                    $("#PayeeInfo_BBPAdministrationFee").prop('checked', true);
+                }
+                else {
+                    $("#PayeeInfo_BBPAdministrationFee").prop('checked', false);
+                }
+
+
+                if ('@Model.PayeeInfo.GenerateReport' == 'True') {
+                    $("#PayeeInfo_GenerateReport").prop('checked', true);
+                }
+                else {
+                    $("#PayeeInfo_GenerateReport").prop('checked', false);
+                }
+            }
+        });
+
+        $('#btnTab1Save').click(function () {
+            var isvalid = true;
+            if ($('#BusinessInfo_Name').val().trim() == '') { $('#BusinessInfo_Name').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BusinessInfo_Name').css('border-color', ''); }
+            if ($('#BusinessInfoAddress_Address1').val().trim() == '') { $('#BusinessInfoAddress_Address1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BusinessInfoAddress_Address1').css('border-color', ''); }
+            if ($('#BusinessInfoAddress_City').val().trim() == '') { $('#BusinessInfoAddress_City').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BusinessInfoAddress_City').css('border-color', ''); }
+            if ($('#BusinessInfoAddress_State').val().trim() == '') { $('#BusinessInfoAddress_State').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BusinessInfoAddress_State').css('border-color', ''); }
+            if ($('#BusinessInfoAddress_PostalCode').val().trim() == '') { $('#BusinessInfoAddress_PostalCode').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BusinessInfoAddress_PostalCode').css('border-color', ''); }
+            //if ($('#BusinessInfoPhone_Phone1').val() == '') { $('#BusinessInfoPhone_Phone1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BusinessInfoPhone_Phone1').css('border-color', ''); }
+
+            if ($('#BusinessInfoPhone_Phone1').val().trim() == '' || $('#BusinessInfoPhone_Phone1').val() == NaN || parseInt($("#BusinessInfoPhone_Phone1").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+                $('#BusinessInfoPhone_Phone1').css('border-color', 'red');
+                if (isvalid == true) { isvalid = false; }
+            }
+            else { $('#BusinessInfoPhone_Phone1').css('border-color', ''); }
+            if ($('#BusinessInfoEmail_EmailAddress').val().trim() != '') {
+                if (!ValidateEmail($('#BusinessInfoEmail_EmailAddress').val())) {
+                    if (isvalid == true) { isvalid = false; }
+                    $('#BusinessInfoEmail_EmailAddress').css('border-color', 'red');
+                }
+                else { $('#BusinessInfoEmail_EmailAddress').css('border-color', ''); }
+            }
+
+            if (isvalid == true) {
+
+                var AddressId = 0;
+                var PhoneId = 0;
+                var EmailId = 0;
+
+                if ($("#BusinessInfoAddress_AddressId").val() != undefined && $("#BusinessInfoAddress_AddressId").val() != "") {
+                    AddressId = $("#BusinessInfoAddress_AddressId").val();
+                }
+                if ($("#BusinessInfoPhone_PhoneId").val() != undefined && $("#BusinessInfoPhone_PhoneId").val() != "") {
+                    PhoneId = $("#BusinessInfoPhone_PhoneId").val();
+                }
+                if ($("#BusinessInfoEmail_EmailId").val() != undefined && $("#BusinessInfoEmail_EmailId").val() != "") {
+                    EmailId = $("#BusinessInfoEmail_EmailId").val();
+                }
+
+                var EditFranchiseDetailsTab1 = { FranchiseeId: $("#BusinessInfo_FranchiseeId").val(), AddressId: AddressId, Address1: $("#BusinessInfoAddress_Address1").val(), Address2: $("#BusinessInfoAddress_Address2").val(), City: $("#BusinessInfoAddress_City").val(), StateId: $("#BusinessInfoAddress_State").val(), PostalCode: $("#BusinessInfoAddress_PostalCode").val(), PhoneId: PhoneId, Phone1: $("#BusinessInfoPhone_Phone1").val(), EmailId: EmailId, EmailAddress: $("#BusinessInfoEmail_EmailAddress").val(), Name: $('#BusinessInfo_Name').val() };
+
+                $.ajax({
+                    url: '@Url.Action("SaveEditFranchiseDetailsPopupTab1", "Franchise")',
+                    dataType: "json",
+                    data: EditFranchiseDetailsTab1,
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        if (data != null) {
+                            $("#BusinessInfoAddress_AddressId").val(data.AddressId);
+                            $("#BusinessInfoPhone_PhoneId").val(data.PhoneId)
+                            $("#BusinessInfoEmail_EmailId").val(data.EmailId)
+                        }
+                        $(".SaveBtn").hide();
+                        $(".CancelBtn").hide();
+                        $("#EditTab1").show();
+                        $(".edittab1").attr("disabled", "disabled");
+                        $(".edittab1").attr("readonly", "readonly");
+                        loadFranchisee(@Model.BusinessInfo.FranchiseeId);
+                    },
+                    error: function () { }
+                });
+                //window.location.href = window.location.href;
+            }
+        });
+        $('#btnTab2Save').click(function () {
+            var isvalid = true;
+
+            if ($('#ContactInfo_Name').val().trim() == '') { $('#ContactInfo_Name').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContactInfo_Name').css('border-color', ''); }
+            if ($('#ContactInfoAddress_Address1').val().trim() == '') { $('#ContactInfoAddress_Address1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContactInfoAddress_Address1').css('border-color', ''); }
+            if ($('#ContactInfoAddress_City').val().trim() == '') { $('#ContactInfoAddress_City').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContactInfoAddress_City').css('border-color', ''); }
+            if ($('#ContactInfoAddress_State').val().trim() == '') { $('#ContactInfoAddress_State').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContactInfoAddress_State').css('border-color', ''); }
+            if ($('#ContactInfoAddress_PostalCode').val().trim() == '') { $('#ContactInfoAddress_PostalCode').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContactInfoAddress_PostalCode').css('border-color', ''); }
+            //if ($('#ContactInfoPhone_Phone1').val() == '') { $('#ContactInfoPhone_Phone1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContactInfoPhone_Phone1').css('border-color', ''); }
+            if ($('#ContactInfoPhone_Phone1').val().trim() == '' || $('#ContactInfoPhone_Phone1').val() == NaN || parseInt($("#ContactInfoPhone_Phone1").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+                $('#ContactInfoPhone_Phone1').css('border-color', 'red');
+                if (isvalid == true) { isvalid = false; }
+            }
+            else { $('#ContactInfoPhone_Phone1').css('border-color', ''); }
+
+            if ($('#ContactInfoEmail_EmailAddress').val().trim() != '') {
+                if (!ValidateEmail($('#ContactInfoEmail_EmailAddress').val())) {
+                    if (isvalid == true) { isvalid = false; }
+                    $('#ContactInfoEmail_EmailAddress').css('border-color', 'red');
+                }
+                else { $('#ContactInfoEmail_EmailAddress').css('border-color', ''); }
+            }
+            if ($('#ContactInfoPhone_Cell').val().trim() != '') {
+                if (parseInt($("#ContactInfoPhone_Cell").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+                    $('#ContactInfoPhone_Cell').css('border-color', 'red'); if (isvalid == true) { isvalid = false; }
+                    $('#ContactInfoPhone_Cell').css('border-color', 'red');
+                } else { $('#ContactInfoPhone_Cell').css('border-color', ''); }
+            }
+
+            if (isvalid == true) {
+
+                var ContactId = 0;
+                var AddressId = 0;
+                var PhoneId = 0;
+                var EmailId = 0;
+
+                if ($("#ContactInfo_ContactId").val() != undefined && $("#ContactInfo_ContactId").val() != "") {
+                    ContactId = $("#ContactInfo_ContactId").val();
+                }
+                if ($("#ContactInfoAddress_AddressId").val() != undefined && $("#ContactInfoAddress_AddressId").val() != "") {
+                    AddressId = $("#ContactInfoAddress_AddressId").val();
+                }
+                if ($("#ContactInfoPhone_PhoneId").val() != undefined && $("#ContactInfoPhone_PhoneId").val() != "") {
+                    PhoneId = $("#ContactInfoPhone_PhoneId").val();
+                }
+                if ($("#ContactInfoEmail_EmailId").val() != undefined && $("#ContactInfoEmail_EmailId").val() != "") {
+                    EmailId = $("#ContactInfoEmail_EmailId").val();
+                }
+
+                var EditFranchiseDetailsTab2 = { FranchiseeId: $("#BusinessInfo_FranchiseeId").val(), ContactId: ContactId, Name: $("#ContactInfo_Name").val(), AddressId: AddressId, Address1: $("#ContactInfoAddress_Address1").val(), Address2: $("#ContactInfoAddress_Address2").val(), City: $("#ContactInfoAddress_City").val(), StateId: $("#ContactInfoAddress_State").val(), PostalCode: $("#ContactInfoAddress_PostalCode").val(), PhoneId: PhoneId, Phone1: $("#ContactInfoPhone_Phone1").val(), PhoneExt: $("#ContactInfoPhone_PhoneExt").val(), Cell: $("#ContactInfoPhone_Cell").val(), EmailId: EmailId, EmailAddress: $("#ContactInfoEmail_EmailAddress").val() };
+
+                $.ajax({
+                    url: '@Url.Action("SaveEditFranchiseDetailsPopupTab2", "Franchise")',
+                    dataType: "json",
+                    data: EditFranchiseDetailsTab2,
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        if (data != null) {
+                            $("#ContactInfo_ContactId").val(data.ContactId)
+                            $("#ContactInfoAddress_AddressId").val(data.AddressId);
+                            $("#ContactInfoPhone_PhoneId").val(data.PhoneId)
+                            $("#ContactInfoEmail_EmailId").val(data.EmailId)
+                        }
+                        $(".SaveBtn").hide();
+                        $(".CancelBtn").hide();
+                        $("#EditTab2").show();
+                        $(".edittab2").attr("disabled", "disabled");
+                        $(".edittab2").attr("readonly", "readonly");
+                    },
+                    error: function () { }
+                });
+                //window.location.href = window.location.href;
+            }
+
+        });
+
+
+
+
+        $('#btnTab3Save').click(function () {
+            var isvalid = true;
+            if (isvalid == true) {
+                //window.location.href = window.location.href;
+            }
+
+        });
+        $('#btnTab4Save').click(function () {
+            var isvalid = true;
+
+            if ($('#PayeeIdentification_IdentifierNumer').val().trim() == '') { $('#PayeeIdentification_IdentifierNumer').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#PayeeIdentification_IdentifierNumer').css('border-color', ''); }
+            if ($('#PayeeInfo_PayeeName').val().trim() == '') { $('#PayeeInfo_PayeeName').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#PayeeInfo_PayeeName').css('border-color', ''); }
+            if ($('#PayeeInfoAddress_Address1').val().trim() == '') { $('#PayeeInfoAddress_Address1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#PayeeInfoAddress_Address1').css('border-color', ''); }
+            if ($('#PayeeInfoAddress_City').val().trim() == '') { $('#PayeeInfoAddress_City').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#PayeeInfoAddress_City').css('border-color', ''); }
+            if ($('#PayeeInfoAddress_State').val().trim() == '') { $('#PayeeInfoAddress_State').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#PayeeInfoAddress_State').css('border-color', ''); }
+            if ($('#PayeeInfoAddress_PostalCode').val().trim() == '') { $('#PayeeInfoAddress_PostalCode').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#PayeeInfoAddress_PostalCode').css('border-color', ''); }
+            if ($('#PayeeInfo_C1099Name').val().trim() == '') { $('#PayeeInfo_C1099Name').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#PayeeInfo_C1099Name').css('border-color', ''); }
+
+             if ($("#chkachsectionenable").is(":checked")) {
+                 if ($('#ACHBankInfo_Name').val().trim() == '') { $('#ACHBankInfo_Name').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ACHBankInfo_Name').css('border-color', ''); }
+                 if ($('#ACHBankInfo_RoutingNumber').val().trim() == '') { $('#ACHBankInfo_RoutingNumber').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ACHBankInfo_RoutingNumber').css('border-color', ''); }
+                 if ($('#ACHBankInfo_AccountNumber').val().trim() == '') { $('#ACHBankInfo_AccountNumber').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ACHBankInfo_AccountNumber').css('border-color', ''); }
+                 if ($('#ACHBankInfo_Descrption').val().trim() == '') { $('#ACHBankInfo_Descrption').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ACHBankInfo_Descrption').css('border-color', ''); }
+                 if ($('#ACHBankInfo_RemittanceNotes').val().trim() == '') { $('#ACHBankInfo_RemittanceNotes').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ACHBankInfo_RemittanceNotes').css('border-color', ''); }
+             }
+            if (isvalid == true) {
+
+                var FranchiseeId = 0;
+                var BillSettingsId = 0;
+                var ACHBankId = 0;
+                var AddressId = 0;
+                var IdentificationId = 0;
+                var Print1099 = false;
+                var Incorporated = false;
+                var IdentifierTypeListId = 0;
+
+                if ($("#BusinessInfo_FranchiseeId").val() != null && $("#BusinessInfo_FranchiseeId").val() != "") {
+                    FranchiseeId = $("#BusinessInfo_FranchiseeId").val();
+                }
+                if ($("#PayeeInfo_FranchiseeBillSettingsId").val() != null && $("#PayeeInfo_FranchiseeBillSettingsId").val() != "") {
+                    BillSettingsId = $("#PayeeInfo_FranchiseeBillSettingsId").val();
+                }
+                if ($("#PayeeInfoAddress_AddressId").val() != null && $("#PayeeInfoAddress_AddressId").val() != "") {
+                    AddressId = $("#PayeeInfoAddress_AddressId").val();
+                }
+                if ($("#ACHBankInfo_ACHBankId").val() != null && $("#ACHBankInfo_ACHBankId").val() != "") {
+                    ACHBankId = $("#ACHBankInfo_ACHBankId").val();
+                }
+                if ($("#PayeeIdentification_IdentificationId").val() != null && $("#PayeeIdentification_IdentificationId").val() != "") {
+                    IdentificationId = $("#PayeeIdentification_IdentificationId").val();
+                }
+                if ($("#PayeeInfo_Print1099").is(":checked")) {
+                    Print1099 = true;
+                }
+                //if ($("#PayeeInfo_Incorporated").is(":checked")) {
+                //    Incorporated = true;
+                //}
+                if ($("#checkbox1_8").is(":checked")) {
+                    IdentifierTypeListId = 1;
+                }
+                else {
+                    IdentifierTypeListId = 2;
+                }
+
+                var EditFranchiseDetailsTab4 = { FranchiseeId: FranchiseeId, BillSettingsId: BillSettingsId, IdentificationId: IdentificationId, IdentifierTypeListId: IdentifierTypeListId, IdentifierNumer: $("#PayeeIdentification_IdentifierNumer").val(), Incorporated: Incorporated, PayeeName: $("#PayeeInfo_PayeeName").val(), Name1099: $("#PayeeInfo_C1099Name").val(), Print1099: Print1099, AddressId: AddressId, Address: $("#PayeeInfoAddress_Address1").val(), City: $("#PayeeInfoAddress_City").val(), StateId: $("#PayeeInfoAddress_State").val(), PostalCode: $("#PayeeInfoAddress_PostalCode").val(), ACHBankId: ACHBankId, BankName: $("#ACHBankInfo_Name").val(), Routing: $("#ACHBankInfo_RoutingNumber").val(), Account: $("#ACHBankInfo_AccountNumber").val(), Description: $("#ACHBankInfo_Descrption").val(), RemittanceNotes: $("#ACHBankInfo_RemittanceNotes").val() };
+
+                $.ajax({
+                    url: '@Url.Action("SaveEditFranchiseDetailsPopupTab4", "Franchise")',
+                    dataType: "json",
+                    data: EditFranchiseDetailsTab4,
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        if (data != null && data != "")
+                        {
+                            $("#PayeeIdentification_IdentificationId").val(data.IdentificationId);
+                            $("#PayeeInfoAddress_AddressId").val(data.AddressId);
+                            $("#PayeeInfo_FranchiseeBillSettingsId").val(data.BillSettingsId);
+                            $("#ACHBankInfo_ACHBankId").val(data.ACHBankId);
+                        }
+                        $(".SaveBtn").hide();
+                        $(".CancelBtn").hide();
+                        $("#EditTab4").show();
+                        $(".edittab4").attr("disabled", "disabled");
+                        $(".edittab4").attr("readonly", "readonly");
+                        loadFranchisee(@Model.BusinessInfo.FranchiseeId);
+                    },
+                    error: function () { }
+                });
+                //window.location.href = window.location.href
+            }
+        });
+        $('#btnTab5Save').click(function () {
+            var isvalid = true;
+            if (isvalid == true) {
+
+                var BillSettingsId = 0;
+                var Chargeback = false;
+                var BBPAdministrationFee = false;
+                var AccountRebate = false;
+                var GenerateReport = false;
+
+                if ($("#PayeeInfo_FranchiseeBillSettingsId").val() != null && $("#PayeeInfo_FranchiseeBillSettingsId").val() != "") {
+                    BillSettingsId = $("#PayeeInfo_FranchiseeBillSettingsId").val();
+                }
+
+                if ($("#PayeeInfo_Chargeback").is(":checked")) {
+                    Chargeback = true;
+                }
+                if ($("#PayeeInfo_BBPAdministrationFee").is(":checked")) {
+                    BBPAdministrationFee = true;
+                }
+                if ($("#PayeeInfo_AccountRebate").is(":checked")) {
+                    AccountRebate = true;
+                }
+                if ($("#PayeeInfo_GenerateReport").is(":checked")) {
+                    GenerateReport = true;
+                }
+                var EditFranchiseDetailsTab5 = { BillSettingsId: BillSettingsId, Chargeback: Chargeback, BBPAdministrationFee: BBPAdministrationFee, AccountRebate: AccountRebate, GenerateReport: GenerateReport };
+
+                $.ajax({
+                    url: '@Url.Action("SaveEditFranchiseDetailsPopupTab5", "Franchise")',
+                    dataType: "json",
+                    data: EditFranchiseDetailsTab5,
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+                    success: function () {
+                        $(".SaveBtn").hide();
+                        $(".CancelBtn").hide();
+                        $("#EditTab5").show();
+                        $(".edittab5").attr("disabled", "disabled");
+                        $(".edittab5").attr("readonly", "readonly");
+                        loadFranchisee(@Model.BusinessInfo.FranchiseeId);
+                    },
+                    error: function () { }
+                });
+                //window.location.href = window.location.href
+            }
+        });
+
+        $('#chkcopyaddresstocontact').change(function () {
+
+            var ContactInfo_Name = $('#ContactInfo_Name');
+            var ContactInfoAddress_Address1 = $('#ContactInfoAddress_Address1');
+            var ContactInfoAddress_City = $('#ContactInfoAddress_City');
+            var ContactInfoAddress_State = $('#ContactInfoAddress_State');
+            var ContactInfoAddress_PostalCode = $('#ContactInfoAddress_PostalCode');
+
+            var ContactInfoPhone_Phone1 = $('#ContactInfoPhone_Phone1');
+            var ContactInfoEmail_EmailAddress = $('#ContactInfoEmail_EmailAddress');
+
+
+
+
+            if ($(this).prop('checked')) { //3rd radiobutton
+                ContactInfo_Name.val($('#BusinessInfo_Name').val());
+                ContactInfoAddress_Address1.val($('#BusinessInfoAddress_Address1').val());
+                ContactInfoAddress_City.val($('#BusinessInfoAddress_City').val());
+                ContactInfoAddress_State.val($('#BusinessInfoAddress_State').val());
+                ContactInfoAddress_PostalCode.val($('#BusinessInfoAddress_PostalCode').val());
+                ContactInfoPhone_Phone1.val($('#BusinessInfoPhone_Phone1').val());
+                ContactInfoEmail_EmailAddress.val($('#BusinessInfoEmail_EmailAddress').val());
+
+                ContactInfo_Name.attr("readonly", "readonly");
+                ContactInfoAddress_Address1.attr("readonly", "readonly");
+                ContactInfoAddress_City.attr("readonly", "readonly");
+                ContactInfoAddress_State.attr("readonly", "readonly");
+                ContactInfoAddress_PostalCode.attr("readonly", "readonly");
+                ContactInfoPhone_Phone1.attr("readonly", "readonly");
+                ContactInfoEmail_EmailAddress.attr("readonly", "readonly");
+            }
+            else {
+                ContactInfo_Name.val('');
+                ContactInfoAddress_Address1.val('');
+                ContactInfoAddress_City.val('');
+                ContactInfoAddress_State.val('');
+                ContactInfoAddress_PostalCode.val('');
+                ContactInfoPhone_Phone1.val('');
+                ContactInfoEmail_EmailAddress.val('');
+
+                ContactInfo_Name.removeAttr("readonly");
+                ContactInfoAddress_Address1.removeAttr("readonly");
+                ContactInfoAddress_City.removeAttr("readonly");
+                ContactInfoAddress_State.removeAttr("readonly");
+                ContactInfoAddress_PostalCode.removeAttr("readonly");
+                ContactInfoPhone_Phone1.removeAttr("readonly");
+                ContactInfoEmail_EmailAddress.removeAttr("readonly");
+
+            }
+
+
+        });
+        $('#chkcopyaddresstopayee').change(function () {
+            var PayeeInfo_PayeeName = $('#PayeeInfo_PayeeName');
+            var PayeeInfoAddress_Address1 = $('#PayeeInfoAddress_Address1');
+            var PayeeInfoAddress_City = $('#PayeeInfoAddress_City');
+            var PayeeInfoAddress_State = $('#PayeeInfoAddress_State');
+            var PayeeInfoAddress_PostalCode = $('#PayeeInfoAddress_PostalCode');
+
+
+            if ($(this).prop('checked')) { //3rd radiobutton
+                PayeeInfo_PayeeName.val($('#BusinessInfo_Name').val());
+                PayeeInfoAddress_Address1.val($('#BusinessInfoAddress_Address1').val());
+                PayeeInfoAddress_City.val($('#BusinessInfoAddress_City').val());
+                PayeeInfoAddress_State.val($('#BusinessInfoAddress_State').val());
+                PayeeInfoAddress_PostalCode.val($('#BusinessInfoAddress_PostalCode').val());
+
+                //  PayeeInfo_PayeeName.attr("disabled", "disabled");
+                PayeeInfoAddress_Address1.attr("readonly", "readonly");
+                PayeeInfoAddress_City.attr("readonly", "readonly");
+                PayeeInfoAddress_State.attr("readonly", "readonly");
+                PayeeInfoAddress_PostalCode.attr("readonly", "readonly");
+            }
+            else {
+                PayeeInfo_PayeeName.val('');
+                PayeeInfoAddress_Address1.val('');
+                PayeeInfoAddress_City.val('');
+                PayeeInfoAddress_State.val('');
+                PayeeInfoAddress_PostalCode.val('');
+
+                PayeeInfo_PayeeName.removeAttr("readonly");
+                PayeeInfoAddress_Address1.removeAttr("readonly");
+                PayeeInfoAddress_City.removeAttr("readonly");
+                PayeeInfoAddress_State.removeAttr("readonly");
+                PayeeInfoAddress_PostalCode.removeAttr("readonly");
+            }
+        });
+        $('#chkachsectionenable').change(function () {
+
+            var ACHBankInfo_Name = $('#ACHBankInfo_Name');
+            var ACHBankInfo_RoutingNumber = $('#ACHBankInfo_RoutingNumber');
+            var ACHBankInfo_AccountNumber = $('#ACHBankInfo_AccountNumber');
+            var ACHBankInfo_Descrption = $('#ACHBankInfo_Descrption');
+            var ACHBankInfo_RemittanceNotes = $('#ACHBankInfo_RemittanceNotes');
+
+            ACHBankInfo_Name.val('');
+            ACHBankInfo_RoutingNumber.val('');
+            ACHBankInfo_AccountNumber.val('');
+            ACHBankInfo_Descrption.val('');
+            ACHBankInfo_RemittanceNotes.val('');
+
+
+            if ($(this).prop('checked')) {
+                ACHBankInfo_Name.removeAttr("readonly");
+                ACHBankInfo_RoutingNumber.removeAttr("readonly");
+                ACHBankInfo_AccountNumber.removeAttr("readonly");
+                ACHBankInfo_Descrption.removeAttr("readonly");
+                ACHBankInfo_RemittanceNotes.removeAttr("readonly");
+
+
+                ACHBankInfo_Name.attr("required", "required");
+                ACHBankInfo_RoutingNumber.attr("required", "required");
+                ACHBankInfo_AccountNumber.attr("required", "required");
+                ACHBankInfo_Descrption.attr("required", "required");
+                ACHBankInfo_RemittanceNotes.attr("required", "required");
+
+                $('#divachsubsection').show();
+
+
+            }
+            else {
+                ACHBankInfo_Name.attr("readonly", "readonly");
+                ACHBankInfo_RoutingNumber.attr("readonly", "readonly");
+                ACHBankInfo_AccountNumber.attr("readonly", "readonly");
+                ACHBankInfo_Descrption.attr("readonly", "readonly");
+                ACHBankInfo_RemittanceNotes.attr("readonly", "readonly");
+
+                ACHBankInfo_Name.removeAttr("required");
+                ACHBankInfo_RoutingNumber.removeAttr("required");
+                ACHBankInfo_AccountNumber.removeAttr("required");
+                ACHBankInfo_Descrption.removeAttr("required");
+                ACHBankInfo_RemittanceNotes.removeAttr("required");
+                $('#divachsubsection').hide();
+            }
+
+
+        })
+    });
+
+    function EditfunctionTab1() {
+        $(".edittab1").removeAttr("disabled").removeAttr("readonly");
+        $("#btnTab1Save").removeAttr("disabled");
+        $("#btnTab1Cancel").removeAttr("disabled");
+        $(".edittab3link").hide();
+        $('.edittab2MainContactlink').hide();
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+
+        $("#EditTab1").hide();
+        $("#btnTab1Save").show();
+        $("#btnTab1Cancel").show();
+
+        $(".edittab2").attr("disabled", "disabled");
+        $(".edittab2").attr("readonly", "readonly");
+
+        $(".edittab3").attr("disabled", "disabled");
+        $(".edittab3").attr("readonly", "readonly");
+
+        $(".edittab4").attr("disabled", "disabled");
+        $(".edittab4").attr("readonly", "readonly");
+
+        $(".edittab5").attr("disabled", "disabled");
+        $(".edittab5").attr("readonly", "readonly");
+
+    }
+    function EditfunctionTab2() {
+
+        $(".edittab2").removeAttr("disabled").removeAttr("readonly");
+        //$("#btnTab2Save").removeAttr("disabled");
+        $("#btnTab2Cancel").removeAttr("disabled");
+        $(".edittab3link").hide();
+
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+
+        $("#EditTab2").hide();
+        //$("#btnTab2Save").show();
+        $("#btnTab2Cancel").show();
+
+        $(".edittab2MainContactlink").show();
+    }
+    function EditfunctionTab3() {
+        $(".edittab3").removeAttr("disabled").removeAttr("readonly");
+        //$("#btnTab3Save").removeAttr("disabled");
+        $("#btnTab3Cancel").removeAttr("disabled");
+        $('.edittab2MainContactlink').hide();
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+
+        $("#EditTab3").hide();
+        //$("#btnTab3Save").show();
+        $("#btnTab3Cancel").show();
+
+        $(".edittab1").attr("disabled", "disabled");
+        $(".edittab1").attr("readonly", "readonly");
+
+        $(".edittab2").attr("disabled", "disabled");
+        $(".edittab2").attr("readonly", "readonly");
+
+        $(".edittab4").attr("disabled", "disabled");
+        $(".edittab4").attr("readonly", "readonly");
+
+        $(".edittab5").attr("disabled", "disabled");
+        $(".edittab5").attr("readonly", "readonly");
+
+        $(".edittab3link").show();
+
+    }
+    function EditfunctionTab4() {
+        $(".edittab4").removeAttr("disabled").removeAttr("readonly");
+        $("#btnTab4Save").removeAttr("disabled");
+        $("#btnTab4Cancel").removeAttr("disabled");
+        $(".edittab3link").hide();
+        $(".edittab2MainContactlink").hide();
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+        $('.edittab2MainContactlink').hide();
+        $("#EditTab4").hide();
+        $("#btnTab4Save").show();
+        $("#btnTab4Cancel").show();
+
+        $(".edittab1").attr("disabled", "disabled");
+        $(".edittab1").attr("readonly", "readonly");
+
+        $(".edittab2").attr("disabled", "disabled");
+        $(".edittab2").attr("readonly", "readonly");
+
+        $(".edittab3").attr("disabled", "disabled");
+        $(".edittab3").attr("readonly", "readonly");
+
+        $(".edittab5").attr("disabled", "disabled");
+        $(".edittab5").attr("readonly", "readonly");
+
+        if ($("#ACHBankInfo_Name").val().trim() != '') {
+            $("#chkachsectionenable").attr("disabled", "disabled")
+            $("#chkachsectionenable").attr("readonly", "readonly")
+        }
+    }
+    function EditfunctionTab5() {
+        $(".edittab5").removeAttr("disabled").removeAttr("readonly");
+        $("#btnTab5Save").removeAttr("disabled");
+        $("#btnTab5Cancel").removeAttr("disabled");
+        $(".edittab3link").hide();
+        $(".edittab2MainContactlink").hide();
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+
+        $("#EditTab5").hide();
+        $("#btnTab5Save").show();
+        $("#btnTab5Cancel").show();
+
+        $(".edittab1").attr("disabled", "disabled");
+        $(".edittab1").attr("readonly", "readonly");
+
+        $(".edittab2").attr("disabled", "disabled");
+        $(".edittab2").attr("readonly", "readonly");
+
+        $(".edittab3").attr("disabled", "disabled");
+        $(".edittab3").attr("readonly", "readonly");
+
+        $(".edittab4").attr("disabled", "disabled");
+        $(".edittab4").attr("readonly", "readonly");
+    }
+    function ValidateEmail(email) {
+        // Validate email format
+        var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        return expr.test(email);
+    };
+    function checkDecimalDigit(el) {
+        var ex = /^[0-9]+\.?[0-9]*$/;
+        if (ex.test(el.value) == false) {
+            el.value = el.value.substring(0, el.value.length - 1);
+        }
+    }
+
+     function loadFranchisee(Id) {
+         $.blockUI();
+
+        $.ajax({
+
+            type: "GET",
+            url: '@Url.Action("GetFranchiseeLoad", "Franchise", new { @area = "Portal" })?id=' + Id,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                $('#detailinfo').html(response);
+                $.unblockUI();
+            },
+            error: function (xhr, textStatus, error) {
+                if (typeof console == "object") {
+
+                    $('#detailinfo').html(xhr.responseText);
+                    console.log(xhr.status + "," + xhr.responseText + "," + textStatus + "," + error);
+                }
+                $.unblockUI();
+            }
+        });
+
+        $.unblockUI();
+    }
+
+    function loadOwners(id)
+    {
+        $.blockUI({
+            baseZ: 99999,
+            message: '<center><img height: src="/Images/loading_icon.gif" /><h3> <b>Processing....</br> Please wait! and do not refresh page.</b></h3></center>',
+            css: { backgroundColor: 'rgb{0,0,0}', border: '0', color: '#fff', "z-index": 99999 }
+        });
+
+        $.ajax({
+
+            type: "GET",
+            url: '@Url.Action("GetFranchiseeOwnerList", "Franchise", new { @area = "Portal" })?id=' + id,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                $('#tblFranchiseeOwner').html(response);
+                $.unblockUI();
+            },
+            error: function (xhr, textStatus, error) {
+                if (typeof console == "object") {
+
+                    $('#tblFranchiseeOwner').html(xhr.responseText);
+                    console.log(xhr.status + "," + xhr.responseText + "," + textStatus + "," + error);
+                }
+                $.unblockUI();
+            }
+        });
+
+        $.unblockUI();
+    }
+
+    function ClickEditFranchiseeMainContact(){
+        $("#modalAddEditContactData").modal('hide');
+    }
+
+    function addEditFranchiseeMainContact() {
+        var EditFranchiseDetailsTab2 = {
+            FranchiseeId: $("#BusinessInfo_FranchiseeId").val(), ContactId: $("#hdnContactId").val(), Name: $("#ContactInfo_NameModel").val(), PhoneId: $("#hdnPhoneId").val(), Phone1: $("#ContactInfoPhone_Phone1Model").val(), PhoneExt: $("#ContactInfoPhone_PhoneExtModel").val(), EmailId: $("#hdnEmailId").val(), EmailAddress: $("#ContactInfoEmail_EmailAddressModel").val(), Cell : $("#ContactInfoPhone_CellModel").val() };
+
+                $.ajax({
+                    url: '@Url.Action("SaveEditFranchiseContact", "Franchise")',
+                    dataType: "json",
+                    data: EditFranchiseDetailsTab2,
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        if (data != null) {
+                            $("#ContactInfo_ContactId").val(data.ContactId)
+                            $("#ContactInfoPhone_PhoneId").val(data.PhoneId)
+                            $("#ContactInfoEmail_EmailId").val(data.EmailId)
+                            $('.edittab2MainContactlink').hide();
+                            $('#modalAddEditMainContact').modal('toggle');
+                            loadContact(data.FranchiseeId);
+                            loadFranchisee(data.FranchiseeId);
+                        }
+                        $(".SaveBtn").hide();
+                        $(".CancelBtn").hide();
+                        $("#EditTab2").show();
+                        $(".edittab2").attr("disabled", "disabled");
+                        $(".edittab2").attr("readonly", "readonly");
+                        $(".EditBtn").show();
+                        $(".CancelBtn").hide();
+                        $('.edittab2MainContactlink').hide();
+                        $('#modalAddEditContactData').modal('toggle');
+                    },
+                    error: function (result) {
+                        $('#modalAddEditMainContact').modal('toggle');
+                        $('.edittab2MainContactlink').hide();
+                        loadContact(result.FranchiseeId);
+
+                    },
+                });
+        }
+
+    function loadContact(id)
+    {
+        $.blockUI({
+            baseZ: 99999,
+            message: '<center><img height: src="/Images/loading_icon.gif" /><h3> <b>Processing....</br> Please wait! and do not refresh page.</b></h3></center>',
+            css: { backgroundColor: 'rgb{0,0,0}', border: '0', color: '#fff', "z-index": 99999 }
+        });
+
+        $.ajax({
+
+            type: "GET",
+            url: '@Url.Action("GetFranchiseeContact", "Franchise", new { @area = "Portal" })?id=' + id,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                $('#tblFranchiseeMainContact').html(response);
+                $.unblockUI();
+            },
+            error: function (xhr, textStatus, error) {
+                if (typeof console == "object") {
+
+                    $('#tblFranchiseeMainContact').html(xhr.responseText);
+                    console.log(xhr.status + "," + xhr.responseText + "," + textStatus + "," + error);
+                }
+                $.unblockUI();
+            }
+        });
+
+        $.unblockUI();
+    }
+
+    function EditFranchiseeContact(id) {
+        $.blockUI()
+             var url = '/Portal/Franchise/AddEditFranchiseContactPopup/?id=' + @Model.BusinessInfo.FranchiseeId + '&contactId=' + id
+            $.get(url, function (data) {
+                $('#modalAddEditContactData').html(data);
+                $('#modalAddEditContactData').modal();
+            });
+            $.unblockUI();
+    }
+</script>

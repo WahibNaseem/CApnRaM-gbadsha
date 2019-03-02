@@ -1,0 +1,706 @@
+﻿@model List<JKViewModels.Customer.CustomerSearchResultModel>
+@{
+    ViewBag.Title = "SearchCustomerList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+@section styles{
+    <link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+    <style type="text/css">
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .row {
+            margin: 0;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+            padding-right: 10px;
+            padding-left: 40px;
+        }
+    </style>
+
+}
+
+<div class="form-horizontal">
+    <div class="custom-form portlet light">
+        <div class="headerbox" style="display:none;">
+            <div class="row" style="background-color: #3598DC;color: #fff;">
+                <div class="col-md-12 no-padding">
+                    <div class="alignCenter">
+                        <div class="col-md-4" style="margin-left:-8px;text-align:left;">
+                            @*<button type="button" class="btn btn-primary button-next" onclick="" style="height:30px;">Export PDF <i class="fa fa-download"></i></button>*@
+                        </div>
+                        <div class="col-md-4 topheader">
+                            CUSTOMER SEARCH RESULT
+                        </div>
+                        <div class="col-md-4" style="padding-right:5px;">
+                            @*<div class="col-md-7 pull-right no-padding">
+                                <div style="display:table-cell;padding-right: 5px;text-transform:none">
+                                    Region
+                                </div>
+                                <div style="display:table-cell;width:100%;">
+                                    @if (ViewBag.regionlist != null)
+                                    {
+                                        <select class="form-control input-sm" id="regionlist" multiple="multiple" >
+                                            @foreach (var item in (SelectList)ViewBag.RegionList)
+                                            {
+                                                <option @(item.Selected ? "selected" : "" ) value="@item.Value">@item.Text</option>
+                                            }
+                                        </select>
+                                    }
+                                </div>
+                            </div>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="portlet-body form">
+            <div class="row no-padding" style="background:#3598dc;margin-left:0px;margin-right:0px;padding-top: 5px;padding-bottom: 5px;margin-top: 2px;">
+                <div class="col-sm-1 page-size">
+                    <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                        <option value="-1">All</option>
+                        <option value="100" selected>100</option>
+                        <option value="50">50</option>
+                        <option value="25">25</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <div class="input-icon">
+                        <i class="icon-magnifier icon-align-right" style="margin-top: 7px;"></i>
+                        <input type="text" placeholder="Search..." class="form-control input-sm search-field col-md-4" id="input_Search" />
+                    </div>
+                    <div id="container">
+                    </div>
+                </div>
+                <div class="col-md-4"></div>
+                <div class="col-md-4" style="padding-right:5px;">
+                    <div class="col-md-7 pull-right no-padding control-label">
+                        <a class="btn btn-primary" id="btnnewsearch" href="@Url.Action("SearchCustomer","CustomerService",new { area="Portal" })"> New Search </a>
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+                 
+                    <div class="col-md-12">
+                        <div class="col-md-1 control-label"></div>
+                        <div class="col-md-2 control-label" style="padding-top:0px !important;" >
+                            Search Text:
+                        </div>
+                        <div class="col-md-2"  >
+                            @if (ViewBag.search != null && ViewBag.search == "")
+                            {
+                                <span style="color:red;">All</span>
+                            }
+                            else
+                            {
+                                <span style="color:red;">@string.Format(ViewBag.search)</span>
+                            }
+                        </div> 
+                        <div class="col-md-2 control-label" style="padding-top:0px !important;" >
+                            Customers Billing Between:
+                        </div>
+                        <div class="col-md-2"  >
+                            @if (ViewBag.amountTo != null && ViewBag.amountFrom != null && ViewBag.amountTo == 0 && ViewBag.amountFrom == 0)
+                            {
+                                <span style="color:red;">All</span>
+                            }
+                            else
+                            {
+                                <span style="color:red;">@string.Format("{0:c}", ViewBag.amountTo) and @(ViewBag.amountFrom == 0 ? "above" : string.Format("{0:c}", ViewBag.amountFrom))</span>
+                            }
+
+                        </div>
+                        <div class="col-md-1 control-label" style="padding-top:0px !important;" >Region:</div>
+                        <div class="col-md-2" style="padding-top:0px !important;" >
+                            @if (ViewBag.regionlist != null)
+                            {
+                                <select class="form-control input-sm" multiple="multiple" id="selectedregionlist">
+                                    @{
+
+                                        foreach (var item in (MultiSelectList)ViewBag.regionlist)
+                                        {
+                                            <option @(item.Selected ? "selected" : "" ) value="@item.Value" disabled="disabled"> @item.Text </option>
+                                        }
+                                    }
+                                </select>
+                            }
+
+                        </div>
+                    </div>
+               
+                 
+                    <div class="col-md-12">
+                        <div class="col-md-1 control-label"></div>
+                        <div class="col-md-2 control-label" style="padding-top:0px !important;" >
+                            Sqr. Ft. Between:
+                        </div>
+                        <div class="col-md-2"  >
+                            @if (ViewBag.sqrFtTo != null && ViewBag.sqrFtFrom != null && ViewBag.sqrFtTo == 0 && ViewBag.sqrFtFrom == 0)
+                            {
+                                <span style="color:red;">All</span>
+                            }
+                            else
+                            {
+                                <span style="color:red;">@ViewBag.sqrFtTo and @(ViewBag.sqrFtFrom == 0 ? "above" : ViewBag.sqrFtFrom)</span>
+                            }
+                        </div>
+                        <div class="col-md-2 control-label" style="padding-top:0px !important;" >
+                            Customer Status  Search:
+                        </div>
+                        <div class="col-md-2">
+                            <span style="color:red;"> @(Convert.ToInt32(ViewBag.status) == 1 ? "Active" : "All") </span>
+                        </div>
+                    </div>
+                 
+                <div class="form-group">
+                    <input type="hidden" id="hdnord" value="@ViewBag.ord" />
+                    <hr style="margin-top: 1px;margin-bottom: 8px;" />
+                    <div class="row" style="margin-top: -15px;">
+                        <div class="col-md-12" style="padding-left:0px;padding-right:0px;">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover order-column" id="tblReport">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:60px;text-align:center;">
+                                                Region
+                                            </th>
+                                            <th style="width:80px;text-align:center;">
+                                                Customer No
+                                            </th>
+                                            <th style="text-align:center;width:220px;">
+                                                Customer Name
+                                            </th>
+                                            <th style="width:80px;text-align:center;">
+                                                Contract Amount
+                                            </th>
+                                            <th style="text-align:center;width:90px;">
+                                                Phone
+                                            </th>
+                                            <th style="text-align:center;width:270px;">
+                                                Services Address
+                                            </th>
+                                            <th style="text-align:center;width:80px;">
+                                                Franchise No
+                                            </th>
+                                            <th style="text-align:center;width:200px;">
+                                                Franchise Name
+                                            </th>
+                                            <th style="text-align:center;width:80px;">
+                                                Status
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model != null)
+                                        {
+                                            List<JKViewModels.Customer.SearchCustomerListId> ListData = new List<JKViewModels.Customer.SearchCustomerListId>();
+                                            int j = 1;
+                                            foreach (var item in Model)
+                                            {
+                                                JKViewModels.Customer.SearchCustomerListId itm = new JKViewModels.Customer.SearchCustomerListId();
+                                                itm.Id = j;
+                                                itm.CustomerId = item.CustomerId;
+                                                itm.CustomerNo = item.CustomerNo;
+                                                itm.CustomerName = item.CustomerName;
+                                                itm.ContractAmount = item.Amount;
+                                                itm.FranchiseeNo = item.FranchiseeNo;
+                                                itm.FranchiseeName = item.FranchiseeName;
+                                                ListData.Add(itm);
+
+                                                j = j + 1;
+                                                <tr role="row">
+                                                    <td style="text-align:center;">@item.RegionName</td>
+                                                    <td style="text-align:center;"><a style="color:#0c9cff" onclick="onClickSearchCustDetails(@item.CustomerId)">@item.CustomerNo</a></td>
+                                                    <td> <a style="color:#0c9cff" onclick="onClickSearchCustDetails(@item.CustomerId)"> @item.CustomerName</a></td>
+                                                    <td style="text-align:right;">@string.Format("{0:c}", item.Amount)</td>
+                                                    <td style="text-align:center;">@((item.Phone != null && item.Phone != "" ) ? string.Format("{0:(###) ###-####}", Convert.ToDecimal(item.Phone.Replace("(","").Replace(")", "").Replace("-", "").Replace(" ", ""))) : string.Empty) </td>
+                                                    <td>@item.Address</td>
+                                                    <td style="text-align:center;">@item.FranchiseeNo</td>
+                                                    <td>@item.FranchiseeName</td>
+                                                    <td style="text-align:center;">@item.Status</td>
+                                                </tr>
+
+
+                                            }
+                                            Session["SearchCustomerIds"] = ListData;
+                                        }
+                                    </tbody>
+                                    @*
+                                        <tfoot>
+                                            <tr style="background:#95a5a6;color:white;">
+                                                <td style="text-align:center;" colspan="8"><strong>Total:</strong> </td>
+                                                <td style="text-align:right;width:50px;" class="totAmount">&nbsp;</td>
+                                                <td style="text-align:right;width:50px;" class="totTax">&nbsp;</td>
+                                                <td style="text-align:right;width:50px;" class="totPayment">&nbsp;</td>
+                                                <td style="text-align:right;width:50px;">&nbsp;</td>
+                                            </tr>
+                                        </tfoot>*@
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade in" id="modal_RegionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 8px;width: 60%;margin-left: 140px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Select Region
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Select Region</label>
+                                @if (ViewBag.regionlist != null)
+                                {
+                                    <select class="form-control input-sm" id="selectregionlist">
+                                        <option value="">Select Region</option>
+                                        @foreach (var item in (MultiSelectList)ViewBag.regionlist)
+                                        {
+                                            <option @(item.Selected ? "selected" : "" ) value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div class="col-md-12">
+                        <button type="button" name="SaveNew" id="btnRegion" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:0px;">Select Region</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="form-horizontal" id="form_LeaseBillReportDetail"></div>
+
+@section pageplugins{
+
+    <script src="@Url.Content(" ~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content(" ~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content(" ~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content(" ~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content(" ~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content(" ~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    @*
+        <script src="@Url.Content(" ~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>*@
+    <script src="@Url.Content(" ~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content(" ~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content(" ~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+}
+@section scripts{
+
+    <script>
+        //table sort column maintain in next step for Next && Prev records
+        var colidx = 0;
+        var sort = '';
+
+        $(window).load(function () {
+            if ('@ViewBag.selectedRegionId' == 0) {
+                $("#modal_RegionModel").modal({ backdrop: 'static' });
+            }
+
+        });
+        jQuery(document).ready(function () {
+
+
+
+
+            //$('#tblReport').dataTable({
+            //    "bProcessing": true,
+            //    "aLengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            //    "pageLength": 200, // default records per page
+            //    "dom": "<'table-responsive't>"// '<"top">rt<"bottom"lp><"clear">'
+            //    //"dom": "<'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'<'table-group-actions pull-right'>>r><'table-responsive't><'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'>>", // datatable layout
+            //});
+
+
+            /* Region List of Search */
+
+            $("#selectedregionlist").multiselect({
+                includeSelectAllOption: true,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2,
+            });
+
+            $("#input_Search").keyup(function () {
+                var table = $("#tblReport").DataTable();
+                table.search($(this).val()).draw();
+            });
+            $("#btnRegion").click(function () {
+                if ($("#selectregionlist").val() != "") {
+                    $("#regionlist option[value='" + $("#selectregionlist").val() + "']").attr("selected", 1);
+                    $("#regionlist").multiselect("refresh");
+                    //bindLeaseReportList();
+                    $(".close").click();
+                }
+            });
+            $('.modal-dialog').draggable();
+            //$('#divspandate').show();
+            //$('#divSD').hide();
+            //$('#divED').hide();
+
+            firstDay = moment().subtract(0, 'month').startOf('month').toString();
+            lastDay = moment().subtract(0, 'month').endOf('month').toString();
+
+            //$('#spnStartDate').html(moment(firstDay).format('L'));
+            //$('#spnEndtDate').html(moment(lastDay).format('L'));
+            //$('#txtStartDate').inputmask("mm/dd/yyyy", {});
+            //$('#txtEndtDate').inputmask("mm/dd/yyyy", {});
+            $("#regionlist").multiselect({
+                includeSelectAllOption: true,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2,
+                //onChange: bindLeaseReportList,
+                //onSelectAll: bindLeaseReportList,
+                //onDeselectAll: bindLeaseReportList
+            });
+
+            $("#pageSize").change(function () {
+                setPaging();
+            });
+
+            $("a[href$='/Portal/Management/ManagementReports']").parents("li").addClass("active");
+            //  bindLeaseReportList();
+            //bindLeaseReportList();
+
+            $('#tblReport').dataTable({
+                "bAutoWidth": false,
+                cache: false,
+                //"order": true,
+                "iDisplayLength": 25,
+                "bDestroy": true,
+                "iDisplayLength": $('#pageSize').val() == -1 ? 25 : $('#pageSize').val(),
+                "bLengthChange": false,
+                "aLengthMenu": [[5, 7, 10, 25, 50, -1], [5, 7, 10, 25, 50, "All"]],
+                //"dom": '<"top">rt<"bottom"lp><"clear">',
+                "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                "aaSorting": $("#hdnord").val() == "name" ? [[1, "asc"]] : [[0, "asc"]],
+                "rowCallback": function (nRow, data) { }
+            });
+
+
+            //table sort column maintain in next step for Next && Prev records
+            var table = $('#tblReport').dataTable();
+            table.on('click', 'th', function () {
+                var info = table.fnSettings().aaSorting;
+                var colIndex = info[0][0];
+                var colIndexSort = info[0][1]; // asc or desc
+                if (colIndex == 1 || colIndex == 2 || colIndex == 3 || colIndex == 6 || colIndex == 7) // Note: Column Index 2: Customer No && Column Index 2: Customer Name && Column Index 3: Contract Amount && Column Index 6: Franchisee No && Column Index 7: Franchisee Name
+                {
+                    colidx = colIndex;
+                    sort = colIndexSort;
+                }
+                else { colidx = 0; sort = '';}
+            });
+        })
+
+        function setPaging() {
+            var z = $("#pageSize").val();
+            var table = $("#tblReport").DataTable();
+            if (z > 0) {
+                table.page.len(z).draw();
+            }
+            else if (z == -1) {
+                table.page.len(table.rows().count()).draw();
+            }
+            else {
+                table.page.page.len(25).draw();
+            }
+        }
+
+        var leasereportList;
+
+        function refreshTable() {
+            var url = getLeaseListLink();
+            leasereportList.api().ajax.url(encodeURI(url)).load();
+        }
+
+        function getLeaseListLink() {
+            var _searchtext = $("#input_Search").val();
+            var _startDate = $('#spnStartDate').text();
+            var _endDate = $('#spnEndtDate').text();
+            var r = $('#regionlist').val();
+            return '@Url.Action("LeaseReportListDataWithSearch", "Franchise", new { area = "Portal" })?&searchtext=' + _searchtext + '&startDate=' + _startDate + '&endDate=' + _endDate + '&RegionIds=' + (r == null ? '' : r);
+        }
+
+        function formatJSONDate(jsonDate) {
+            if (jsonDate != null) {
+                var dtstr = jsonDate.substr(6);
+                var dateString = dtstr.substring(0, dtstr.length - 2);
+                var currentTime = new Date(parseInt(dateString)).toUTCString();
+                var date = moment.utc(currentTime).format("MM/DD/YYYY");
+                return date;
+            }
+            return null;
+        }
+
+        //function bindLeaseReportList() {
+        //    leasereportList = $('#tblReport').dataTable({
+        //        "bAutoWidth": false,
+        //        cache: false,
+        //        //"order": true,
+        //        "iDisplayLength": 25,
+        //        "bDestroy": true,
+        //        "iDisplayLength": $('#pageSize').val() == -1 ? 25 : $('#pageSize').val(),
+        //        "bLengthChange": false,
+        //        "aLengthMenu": [[5, 7, 10, 25, 50, -1], [5, 7, 10, 25, 50, "All"]],
+        //        //"dom": '<"top">rt<"bottom"lp><"clear">',
+        //        "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+        //        "aaSorting": [[0, "desc"]],
+        //        "sAjaxSource": getLeaseListLink(),
+        //        "sAjaxDataProp": "LeaseReportData",  // Internationalisation. For more info refer to http://datatables.net/manual/i18n
+        //        "rowCallback": function (nRow, data) { },
+        //        "aoColumns": [
+        //            {
+        //                "sName": "Region",
+        //                "bSortable": true,
+        //                "sClass": "alignCenter",
+        //                "mRender": function (data, type, full) {
+        //                    return full.RegionName;
+        //                }
+        //            },
+        //            {
+        //                "sName": "TransactionNumber",
+        //                "bSortable": true,
+        //                "sClass": "alignCenter",
+        //                "mRender": function (data, type, full) {
+        //                    return "<a onclick=\"showLeaseReportDetail('" + full.TransactionNumber + "')\" target='_blank' style='color:#0c9cff' id=" + full.TransactionNumber + ">" + full.TransactionNumber + "</a>";
+        //                }
+        //            },
+        //            {
+        //                "sName": "TransactionDate",
+        //                "bSortable": true,
+        //                "sClass": "alignCenter",
+        //                "mRender": function (data, type, full) {
+        //                    var date = formatJSONDate(full.TransactionDate);
+        //                    return date;
+        //                    //return moment(new Date(parseInt(full.TransactionDate.substr(6)))).format("MM/DD/YYYY");
+        //                }
+        //            },
+        //        {
+        //            "sName": "LeaseBillNo",
+        //            "bSortable": true,
+        //            "sClass": "alignCenter",
+        //            "mRender": function (data, type, full) {
+        //                return full.LeaseBillNo;
+        //            }
+        //        },
+        //            {
+        //                "sName": "Description",
+        //                "bSortable": true,
+        //                //"sClass": "alignCenter",
+        //                "mRender": function (data, type, full) {
+        //                    return full.Description;
+        //                }
+        //            },
+        //            {
+        //                "sName": "FranchiseeNo",
+        //                "bSortable": true,
+        //                "sClass": "alignCenter",
+        //                "mRender": function (data, type, full) {
+        //                    return full.FranchiseeNo;
+        //                }
+        //            },
+        //            {
+        //                "sName": "FranchiseeName",
+        //                "bSortable": true,
+        //                //"sClass": "alignCenter",
+        //                "mRender": function (data, type, full) {
+        //                    return full.FranchiseeName;
+        //                }
+        //            },
+        //            {
+        //                "sName": "PaymentNumber",
+        //                "bSortable": true,
+        //                "sClass": "alignCenter",
+        //                "mRender": function (data, type, full) {
+        //                    return full.PaymentNumber;
+        //                }
+        //            },
+        //            {
+        //                "sName": "PaymentAmount",
+        //                "data": "PaymentAmount",
+        //                "bSortable": true,
+        //                "sClass": "alignRight",
+        //                "mRender": function (data, type, full) {
+        //                    return '$ ' + parseFloat(full.PaymentAmount, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        //                }
+        //            },
+
+        //            {
+        //                "sName": "TaxAmount",
+        //                "data": "TaxAmount",
+        //                "bSortable": true,
+        //                "sClass": "alignRight",
+        //                "mRender": function (data, type, full) {
+        //                    return '$ ' + parseFloat(full.TaxAmount, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        //                }
+        //            },
+        //            {
+        //                "sName": "Total",
+        //                "data": "Total",
+        //                "bSortable": true,
+        //                "sClass": "alignRight",
+        //                "mRender": function (data, type, full) {
+        //                    return '$ ' + parseFloat(full.Total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        //                }
+        //            },
+        //            {
+        //                "sName": "Status",
+        //                "bSortable": true,
+        //                "sClass": "alignCenter",
+        //                "mRender": function (data, type, full) {
+        //                    return full.TransactionStatus;
+        //                }
+        //            },
+        //        ],
+        //        "footerCallback": function (row, data, start, end, display) {
+        //            var api = this.api(), data;
+
+        //            // Remove the formatting to get integer data for summation
+        //            var intVal = function (i) {
+        //                return typeof i === 'string' ?
+        //                    i.replace(/[\$,]/g, '') * 1 :
+        //                    typeof i === 'number' ?
+        //                    i : 0;
+        //            };
+
+        //            var totAmount = api
+        //                .column(8)
+        //                .data()
+        //                .reduce(function (a, b) {
+        //                    return intVal(a) + intVal(b);
+        //                }, 0);
+        //            var totTax = api
+        //                .column(9)
+        //                .data()
+        //                .reduce(function (a, b) {
+        //                    return intVal(a) + intVal(b);
+        //                }, 0);
+
+        //            var totPayment = api
+        //                .column(10)
+        //                .data()
+        //                .reduce(function (a, b) {
+        //                    return intVal(a) + intVal(b);
+        //                }, 0);
+
+        //            $(api.column(8).footer()).html("$" + formatCurrency(totAmount));
+        //            $(api.column(9).footer()).html("$" + formatCurrency(totTax));
+        //            $(api.column(10).footer()).html("$" + formatCurrency(totPayment));
+
+        //        }
+
+        //    });
+        //    $("#input_Search").keyup(function () {
+        //        refreshTable();
+        //    });
+        //    //$("#select_dateRange").change(function () {
+        //    //    var value = this.value;
+        //    //    setSearchTime(value);
+        //    //    refreshTable();
+        //    //});
+
+        //    $(".search-field").change(function () {
+        //        refreshTable();
+        //    });
+
+        //    $('#tblReport').show();
+        //}
+        function formatCurrency(total, dollar) {
+            dollar = (dollar == true ? true : false);
+            var neg = false;
+            if (total < 0) {
+                neg = true;
+                total = Math.abs(total);
+            }
+            return (neg ? "-" : '') + (dollar ? "$" : "") + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        };
+
+        function onClickSearchCustDetails(CustomerId) {            
+            window.location.href = '@Url.Action("SearchCustomerDetails", "CustomerService", new { area = "Portal" })' + "?CustID=" + CustomerId + "&colidx=" + colidx + "&sort=" + sort + "&stflt=67";
+        }
+    </script>
+}

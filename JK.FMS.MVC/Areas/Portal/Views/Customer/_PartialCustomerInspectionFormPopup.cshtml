@@ -1,0 +1,792 @@
+﻿@{
+    JKViewModels.Customer.FullCustomerViewModel CustModel = new JKViewModels.Customer.FullCustomerViewModel();
+    if (ViewBag.CustomerDetail != null)
+    {
+        CustModel = (JKViewModels.Customer.FullCustomerViewModel)ViewBag.CustomerDetail;
+    }
+
+    JKViewModels.Franchisee.FranchiseeBasicInfo FranModel = new JKViewModels.Franchisee.FranchiseeBasicInfo();
+    if (ViewBag.FranchiseeInfo != null)
+    {
+        FranModel = (JKViewModels.Franchisee.FranchiseeBasicInfo)ViewBag.FranchiseeInfo;
+    }
+
+    List<JKViewModels.AccountReceivable.AgingReportViewModel> AginList = new List<JKViewModels.AccountReceivable.AgingReportViewModel>();
+    decimal currentTotal = 0;
+    decimal oneMoTotal = 0;
+    decimal twoMoTotal = 0;
+    decimal threeMoTotal = 0;
+    decimal fourMoTotal = 0;
+    decimal fiveMoTotal = 0;
+    decimal sixMoTotal = 0;
+    if (ViewBag.AgingData != null)
+    {
+        AginList = (List<JKViewModels.AccountReceivable.AgingReportViewModel>)ViewBag.AgingData;
+        foreach (var item in AginList)
+        {
+            currentTotal += Convert.ToDecimal(item.totalAmount);
+            oneMoTotal += Convert.ToDecimal(item.onemo);
+            twoMoTotal += Convert.ToDecimal(item.twomo);
+            threeMoTotal += Convert.ToDecimal(item.threemo);
+            fourMoTotal += Convert.ToDecimal(item.fourmo);
+            fiveMoTotal += Convert.ToDecimal(item.fivemo);
+            sixMoTotal += Convert.ToDecimal(item.sixmo);
+        }
+    }
+}
+<div class="custom-form portlet light">
+    <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+        <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+            Inspection Form
+        </h4>
+    </div>
+     
+    <div class="portlet-body form">
+        <div class="form-body" style="padding-top:0px !important;margin-top: 0px !important;">
+            <div class="form-group" style="margin-top: 0px !important;">
+                <div class="row" style="background-color: #fff !important;margin-left:-18px !important;margin-right:-18px;">
+
+                    <div class="col-md-12">
+                        <div class="row no-padding" style="background-color: #4b85cc;color: #fff;padding-top:8px;padding-bottom:8px">
+                            <div class="col-sm-1 page-size">
+                                <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                                    <option value="-1">All</option>
+                                    <option value="100" selected>100</option>
+                                    <option value="50">50</option>
+                                    <option value="25">25</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="input-icon">
+                                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                                    <input id="csearch-box" type="text" required name="customernumber" autocomplete="off" placeholder="Search...." value="" class="form-control input-sm typeahead" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-5 pull-right no-padding">
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12" style="background-color: #b3f1f1;">
+                    <hr style="margin-top: 0px;margin-bottom: 0px;border-top: 1px solid #cac0c0;" />
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-12" style="padding-right:0px;padding-left:0px;">
+                            <div class="table-responsive" style="overflow-x:hidden;">
+                                <div class="col-md-12">
+                                    <hr style="margin-top: 0px;margin-bottom: 0px;border-top: 1px solid #cac0c0;" />
+                                </div>
+                                <div class="col-md-12">
+                                    <table style="width:100%">
+                                        <tbody>
+                                            <tr>
+                                                <td style="width:10%;"><label class="control-label"><b>Customer:</b></label>&nbsp;&nbsp;<label class="control-label">@(CustModel.CustomerViewModel != null ? CustModel.CustomerViewModel.Name : string.Empty)  </label></td>
+                                                <td style="width:10%;"><label class="control-label"><b>Contact:</b> @(CustModel.MainContact != null ? CustModel.MainContact.Name : string.Empty) </label></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="col-md-12" style="margin-top:-5px;">
+                                    <table style="width:100%">
+                                        <tbody>
+                                            <tr>
+                                                <td style="width:20%;"><label class="control-label"><b>Address:</b></label>&nbsp;&nbsp;<label class="control-label">@(CustModel.MainAddress != null ? CustModel.MainAddress.Address1 : string.Empty)  @(CustModel.MainAddress != null ? CustModel.MainAddress.Address2 : string.Empty) , @(CustModel.MainAddress != null ? CustModel.MainAddress.City : string.Empty) , @(CustModel.MainAddress != null ? CustModel.MainAddress.StateName : string.Empty)  @(CustModel.MainAddress != null ? CustModel.MainAddress.PostalCode : string.Empty)</label></td>
+
+                                                <td style="width:20%;"><label class="control-label"><b>Phone:</b></label>&nbsp;&nbsp;<label class="control-label">@((CustModel.MainPhone != null && CustModel.MainPhone.Phone1 != null && CustModel.MainPhone.Phone1 != "") ? string.Format("{0:(###) ###-####}", Convert.ToDecimal(CustModel.MainPhone.Phone1.Trim().Replace(" ", "").Replace("-", "").Replace(")", "").Replace("(", ""))) : string.Empty)</label></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="col-md-12" style="margin-top:-5px;">
+                                    <table style="width:100%">
+                                        <tbody>
+                                            <tr>
+                                                <td style="width:20%;"><label class="control-label"><b>Acct Type:</b></label>&nbsp;&nbsp;<label class="control-label">@(CustModel.ContractDetail != null ? CustModel.ContractDetail.ServiceTypeName : string.Empty)</label></td>
+
+                                                <td style="width:20%;"><label class="control-label"><b>Contract Type:</b></label>&nbsp;&nbsp;<label class="control-label">@ViewBag.ContractTypeName</label></td>
+                                            </tr>
+                                        </tbody>
+
+                                    </table>
+                                </div>
+
+                                <div class="col-md-12" style="margin-top:0px;">
+                                    <table style="width:100%;">
+                                        <tbody>
+                                            <tr>
+                                                @{
+                                                    string strdays = "";
+                                                    if (CustModel.ContractDetail != null)
+                                                    {
+                                                        if (CustModel.ContractDetail.Mon == true) { strdays += "Mo "; }
+                                                        if (CustModel.ContractDetail.Tues == true) { strdays += "Tu "; }
+                                                        if (CustModel.ContractDetail.Wed == true) { strdays += "We "; }
+                                                        if (CustModel.ContractDetail.Thur == true) { strdays += "Th "; }
+                                                        if (CustModel.ContractDetail.Fri == true) { strdays += "Fr "; }
+                                                        if (CustModel.ContractDetail.Sat == true) { strdays += "Sa "; }
+                                                        if (CustModel.ContractDetail.Sun == true) { strdays += "Su "; }
+                                                    }
+                                                }
+                                                <td style="width:10%;"><label class="control-label"><b>Frequency:</b></label>&nbsp;&nbsp;<label class="control-label">@(CustModel.ContractDetail != null ? Convert.ToString(CustModel.ContractDetail.CleanTimes) : string.Empty) Per @ViewBag.CleanFrequencyName (@strdays)</label></td>
+                                                <td style="width:10%;"><label class="control-label"><b>Franchisee:</b></label> &nbsp;&nbsp;<label class="control-label"> </label></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <hr style="margin-top: 0px;margin-bottom: 0px;border-top: 1px solid #cac0c0;" />
+                                    <div class="col-md-11">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <b>Cleaning Task</b>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <label>YES has the value of 2.</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <b>scored Yes or No</b>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <label>No has the value of 0.</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+
+                                            </div>
+                                            <div class="col-md-8">
+                                                <label>If a Category DOES NOT apply, Place and 'X' in the box.<br />Deduct 2 point for each 'X' from from the total point possible.</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1" style="padding-top:7px;">
+                                        <button type="button" class="btn btn-primary" id="btnEdit" onclick="btnEditclick();">Edit</button>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <table style="width:100%;" class="table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <td style="width:10%;background: black;color: white;" class="text-center"><label class="text-center"><b>Lobby/Entry</b></label></td>
+                                                <td style="width:10%;" class="text-center"><label class="text-center"><b>Yes</b></label></td>
+                                                <td style="width:10%;" class="text-center"><label class="text-center"><b>No</b></label></td>
+                                                <td style="width:10%;" class="text-center"><label class="text-center"><b>N/A</b></label></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Ashtrays</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Counter/Edges</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Doors</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Entry Stoop</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Furnishings</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Glass</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Tile/Carpet</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <table style="width:100%;" class="table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <td style="width:10%;background: black;color: white;" class="text-center"><label class="text-center"><b>Offices</b></label></td>
+                                                <td style="width:10%;" class="text-center"><label class="text-center"><b>Yes</b></label></td>
+                                                <td style="width:10%;" class="text-center"><label class="text-center"><b>No</b></label></td>
+                                                <td style="width:10%;" class="text-center"><label class="text-center"><b>N/A</b></label></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>BaseBoards</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Bliends</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Carpets</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Ceiling Vents</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Chairs</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Corner/Edges</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Desks</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>High Dusting</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Ledges</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Light Switches</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Low Dusting</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Partition Glass</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Phones</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Stairs</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Tile-Daily</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Tile-Weekly</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Tile-Monthly</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Trash-Cans</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Vertical</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Water Dispenser</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <table style="width:100%;" class="table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <td style="width:10%;background: black;color: white;" class="text-center"><label class="text-center"><b>Lunchroom</b></label></td>
+                                                <td style="width:10%;" class="text-center"><label class="text-center"><b>Yes</b></label></td>
+                                                <td style="width:10%;" class="text-center"><label class="text-center"><b>No</b></label></td>
+                                                <td style="width:10%;" class="text-center"><label class="text-center"><b>N/A</b></label></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Cabinets</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Chairs</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Counters Tops</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Floor</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Microwave</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Refrigerator</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Sinks</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Tables</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Trash Cans</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Vending</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <table style="width:100%;" class="table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <td style="width:10%;background: black;color: white;" class="text-center"><label class="text-center"><b>Restroom</b></label></td>
+                                                <td style="width:10%;" class="text-center"><label class="text-center"><b>Yes</b></label></td>
+                                                <td style="width:10%;" class="text-center"><label class="text-center"><b>No</b></label></td>
+                                                <td style="width:10%;" class="text-center"><label class="text-center"><b>N/A</b></label></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Basing</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Basing/Under</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Brightwork</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Counter/Edges</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Counter Areas</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Drains</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Floors</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Mirrors</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Napkin Bin</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Dispensers</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Stalls</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Tissue/Towels</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Toilets</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Trash Can</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Urinals</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Vents</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label>Walls</label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                                <div class="col-md-6">
+                                    <table style="width:100%;" class="table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <td style="width:10%;background: black;color: white;" class="text-center"><label class="text-center"><b>Questions</b></label></td>
+                                                <td style="width:10%;" class="text-center"><label class="text-center"><b>Yes</b></label></td>
+                                                <td style="width:10%;" class="text-center"><label class="text-center"><b>No</b></label></td>
+                                                <td style="width:10%;" class="text-center"><label class="text-center"><b>N/A</b></label></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" style="width:10%;"><label>Has FO Corrected Past Problem?</label></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label></label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" style="width:10%;"><label>Is FO using contact evaluation sheet?</label></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label></label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" style="width:10%;"><label>Is FO using memo pad?</label></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label></label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" style="width:10%;"><label>Is supply closet in order?</label></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label></label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" style="width:10%;"><label>Are proper posters displayed, MSDS etc.?</label></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label></label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" style="width:10%;"><label>Are there a minimum of at least two 'FLOOR HAZARD' signs in closet?</label></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label></label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" style="width:10%;"><label>Is the Equipment in Appropriate Condition?</label></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label></label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-12">
+                                    <table style="width:100%;" class="table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:10%;background: black;color: white;" class="text-center"><label class="text-center"><b>Totals</b></label></th>
+                                                <th style="width:10%;background: black;color: white;" class="text-center"><label class="text-center"><b>Lobby/Entry</b></label></th>
+                                                <th style="width:10%;background: black;color: white;" class="text-center"><label class="text-center"><b>Lunchroom</b></label></th>
+                                                <th style="width:10%;background: black;color: white;" class="text-center"><label class="text-center"><b>Offices</b></label></th>
+                                                <th style="width:10%;background: black;color: white;" class="text-center"><label class="text-center"><b>Restroom</b></label></th>
+                                                <th style="width:10%;background: black;color: white;" class="text-center"><label class="text-center"><b>Question</b></label></th>
+                                                <th style="width:10%;background: black;color: white;" class="text-center"><label class="text-center"><b>Overall</b></label></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="width:10%;" class=""><label><b>Total Point Possible</b></label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class=""><label><b>Deductions</b></label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class=""><label><b>Total Possible Score</b></label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class=""><label><b>Total Actual Score</b></label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:10%;" class=""><label><b>Percentage Score</b></label></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                                <td style="width:10%;" class="text-center"><input type="text" class="input-sm form-control disableControl" /></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <table style="width:100%;" class="">
+                                        <thead>
+                                            <tr>
+                                                <th colspan="5" style="width:10%;background: black;color: white;" class="text-center"><label class="text-center"><b>Scoring</b></label></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="width:10%;" class="text-center"><label><b>100%-95% = Excellent</b></label></td>
+                                                <td style="width:10%;" class="text-center"><label><b>94%-90% = Good</b></label></td>
+                                                <td style="width:10%;" class="text-center"><label><b>89%-86% = Fair</b></label></td>
+                                                <td style="width:10%;" class="text-center"><label><b>85%-81% = Poor</b></label></td>
+                                                <td style="width:10%;" class="text-center"><label><b>80% or Less = Failure</b></label></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-12">
+                                    <hr style="margin-top: 0px;margin-bottom: 0px;border-top: 1px solid #cac0c0;" />
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="col-md-3">
+                                        <label>Customer Signature</label>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Re Inspection Date</label>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Operations Represenative</label>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Date:</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+        $(document).ready(function ($) {
+            $(".disableControl").attr("disabled", "disabled");
+            $(".disableControl").attr("readonly", "readonly");
+            //applyAutoSeacrh();
+        });
+
+        function btnEditclick() {
+            if ($("#btnEdit").text() == 'Edit')
+            {
+                $("#btnEdit").text("Save");
+                $(".disableControl").removeAttr("disabled").removeAttr("readonly");
+            }
+            else {
+                $("#btnEdit").text("Edit");
+                $(".disableControl").attr("disabled", "disabled");
+                $(".disableControl").attr("readonly", "readonly");
+            }
+        }
+
+        function applyAutoSeacrh() {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetAllCustomer", "Customer", new { area = "Portal" })',
+                data: {},
+                success: function (data) {
+                    var typeaheadSource = [];
+                    $.each(data, function (key, value) {
+                        typeaheadSource.push({ id: value.CustomerId, name: value.CustomerNo + ' ' + $.trim(value.Name) })
+                    });
+                    var box = $('#csearch-box').data('typeahead');
+                    if (box != null) {
+                        console.log('csearch source change');
+                        box.source = typeaheadSource;
+                    }
+                    else {
+                        console.log('csearch initiated');
+                        $('#csearch-box').typeahead({
+                            source: typeaheadSource,
+                            updater: function (item) {
+                                console.log(item);
+                                redirect(item.id);
+                                return item;
+                            },
+                            minLength: 1
+                        }).focus();
+                    }
+                }
+            });
+        }
+
+        function redirect(id) {
+            var url = '/Portal/CustomerService/InspectionForm/-1';
+                var path = url.replace("-1", id);
+                location.href = path;
+        }
+</script>

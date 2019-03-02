@@ -1,0 +1,245 @@
+﻿@model JKViewModels.Franchisee.FranchiseeDistributionDetailsModel
+@{
+    Layout = null;
+}
+<div class="modal fade custom-model custom-form-design" id="ModalFranchiseDistributionPopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:850px">
+        <div class="modal-content" style="border-radius: 8px;" id="RenderFranchiseDistribution">
+
+            <div class="custom-form portlet light" id="" style="margin-top:0px;">
+                <div class="headerbox" style="font-weight: normal;">
+                    <div class="col-md-12 text-center" style="font-size:15px;">
+                        <b> Distribution </b>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 5px !important;margin-right: 12px !important;"></button>
+                    </div>
+                    <div class="clearfix"> </div>
+                </div>
+                <div class="portlet-body" style="padding:10px;">
+                    <form id="EditFranchiseDetailsform_wizard_1" role="form" class="form form-horizontal">
+                        <div class="tab-pane active" id="tb_fr_page1">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label class="control-label col-md-2" style="font-weight:600;">
+                                        Franchise No.:
+                                    </label>
+                                    <div class="col-md-4">
+                                        <label class="control-label col-md-4" style="width:auto;">
+                                            @Model.FranchiseeNo
+                                        </label>
+                                    </div>
+                                    <label class="control-label col-md-3" style="font-weight:600;">
+                                        Total Distribution:
+                                    </label>
+                                    <div class="col-md-3">
+                                        <label class="control-label col-md-4" style="width:auto;">
+                                            <text>@string.Format("{0:c}", Model.TotalDistribution)</text>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="padding-bottom:15px;">
+                                <div class="col-md-12">
+                                    <label class="control-label col-md-2" style="font-weight:600;">
+                                        Franchise Name:
+                                    </label>
+                                    <div class="col-md-4">
+                                        <label class="control-label col-md-4" style="width:auto;">
+                                            @Model.FranchiseName
+                                        </label>
+                                    </div>
+                                    <div class="col-md-1 col-md-offset-1">
+                                        <label class="control-label" style="font-weight:600;">
+                                        </label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="control-label" style="width:auto;">
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="custom-form portlet light custom-form-design custom-listbox">
+                                <div class="tablebox">
+                                    <table class="table table-striped table-bordered table-hover order-column" style="width:100%;" id="tblFranchiseeDistributionList">
+                                        <thead>
+                                            <tr>
+                                                <th style="text-align:center;">
+                                                    Customer No.
+                                                </th>
+                                                <th style="text-align:center;">
+                                                    Customer Name
+                                                </th>
+                                                <th style="text-align:center;">
+                                                    Service Type
+                                                </th>
+                                                <th style="text-align:center;">
+                                                    Distribution Amount
+                                                </th>
+                                                <th style="text-align:center;width:90px;" >
+                                                    Start Date
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tblFranchiseeFeeList">
+                                        @if (Model.FranchiseeDistributionList != null)
+                                        {
+                                            foreach (var item in Model.FranchiseeDistributionList)
+                                            {
+                                                    <tr>
+                                                        <td style="text-align:center;">
+                                                            @item.CustomerNo
+                                                        </td>
+                                                        <td style="text-align:left;">
+                                                            @item.CustomerName
+                                                        </td>
+                                                        <td style="text-align:center;">
+                                                            @item.ServiceType
+                                                        </td>
+                                                        <td style="text-align:right;">
+                                                            <text>@string.Format("{0:c}", item.DistributionAmount)</text>
+                                                        </td>
+                                                        <td style="text-align:center;width:85px;">
+                                                            <text>@(item.StartDate.HasValue ? item.StartDate.Value.ToString("MM-dd-yyyy") : string.Empty )</text>
+                                                        </td>
+                                                    </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                                    <tr>
+                                                        <td style="" colspan="4">
+                                                            <span style="color:red;text-align:center;">No record found</span>
+                                                        </td>
+                                                    </tr>
+                                        }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-primary button-next pull-right" onclick="ShowCustomerSuggetionBox()">Add New Customer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="modal fade custom-model custom-form-design" id="ModalFranchiseDistribution_CustomerPopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:350px">
+        <div class="modal-content" style="border-radius: 0px;" id="RenderFranchiseDistributionCustomer">
+            <div class="modal-content" style="border-radius: 8px;" id="RenderFranchiseDistribution">
+                <div class="custom-form portlet light" id="" style="margin-top:0px;box-shadow: none;">
+                    <div class="headerbox" style="font-weight: normal;border-radius: 0;">
+                        <div class="col-md-12 text-center" style="font-size:15px;">
+                            <b> SEARCH CUSTOMER </b>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 5px !important;margin-right: 12px !important;"></button>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                    <div class="row" style="padding-top:8px;padding-bottom:8px;margin-left: 0px;margin-right: 0px;min-height: 100px;">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdfsearch_customerid" name="hdfsearch_customerid" value="0" />
+                                <div class="input-icon" style="margin-top: 30px;">
+                                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                                    <input id="fcsearch-box" type="text" required name="customernumber" autocomplete="off" placeholder="Search Customer Name or Number" value="" class="form-control input-sm typeahead" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-primary button-next pull-right" onclick="ShowCustomerSave()">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade custom-model custom-form-design" id="ModalFranchiseCustomersPopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:850px">
+        <div class="modal-content" style="border-radius: 0px;" id="RenderFranchiseCustomers">
+
+        </div>
+    </div>
+</div>
+
+<div id="form_FranchiseCustomersDistributionPopup"></div>
+<script>
+    $(document).ready(function () {
+        $('#tblFranchiseeDistributionList').DataTable(
+        {
+            "bServerSide": false,
+            "bDestroy": true,            
+            "bLengthChange": false, //thought this line could hide the LengthMenu
+            "bInfo": false,
+            "bPaginate": false,
+            "dom": '<"top">rt<"bottom"lp><"clear">'
+        });
+    });
+
+    function ShowCustomerSuggetionBox() {
+
+
+        var box = $('#fcsearch-box').data('typeahead');
+        if (box != null) {
+            box.source = c_typeaheadSource;
+        }
+        else {
+
+            $('#fcsearch-box').typeahead({
+                source: c_typeaheadSource,
+                updater: function (item) {
+                    $('#hdfsearch_customerid').val(item.id);
+                    //BindFranchiseeCustomerDistribution(item.id,@Model.FranchiseeId);
+                    return item;
+                },
+                minLength: 1
+            }).focus();
+        }
+
+       
+    }
+    function ShowCustomerSave() {
+        if($('#hdfsearch_customerid').val()!='0'&&$('#hdfsearch_customerid').val()!='')
+        {
+            BindFranchiseeCustomerDistribution($('#hdfsearch_customerid').val(),@Model.FranchiseeId);
+            $("#ModalFranchiseDistribution_CustomerPopup").modal({ backdrop: 'static' });
+        }
+    }
+
+    function BindFranchiseeCustomerDistribution(cid,fid) {
+        var sURL = '@Url.Action("RenderFranchiseCustomerDistributionPopup", "Franchise", new { area = "Portal" })?cid=' + cid+'&fid=' + fid;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#form_FranchiseCustomersDistributionPopup').html(data);
+                $("#modal_CIDFranchiseeDistribution").modal({ backdrop: 'static' });
+                GetFindersFeeScheduleList();
+                InItTransferDistributionfee();
+                maskCurrency('FranchiseeDistribution_Amount');
+            },
+            error: function () {
+                alert("Content load failed.");
+            }
+        });
+    }
+
+
+
+
+</script>

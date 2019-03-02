@@ -1,0 +1,162 @@
+﻿<div class="modal fade" id="AddCustomerVerifyPopup" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" style="width:455px;">
+        <div class="modal-content">
+            <div class="modal-header" id="AddCustomerVerifyPopup_header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="cancelAddCustomerpopup();"></button>
+                <h4 class="modal-title">New Customer</h4>
+            </div>
+            <div class="modal-body" id="AddCustomerVerifyPopup_body">
+                <div class="row">
+                    <div class="form-body">
+                        <div id="diverrmsg" style="color:red;display:none;padding-left:27px;font-size:13px;"></div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Company Name<span class="required">*</span>:</label>
+                                    <input id="txtcompanyname" name="txtcompanyname" type="text" class="form-control input-sm" maxlength="100" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Phone Number<span class="required">*</span>:</label>
+                                    <input id="txtphonenumber" name="txtphonenumber" type="text" class="form-control input-sm" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="AddCustomerVerifyPopup_footer">
+                <button id="cancel_addlead_button" type="button" class="btn btn-default" data-dismiss="modal" onclick="resetfrm();">Cancel</button>
+                <button id="addlead_button" type="button" class="btn btn-success" onclick="checkCompanyDetails();">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="addlead_confirmpopup" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" style="width:522px;">
+        <div class="modal-content">
+            <div class="modal-header" id="confirm _popup_header">
+                <h4 class="modal-title">Confirm Company Details</h4>
+            </div>
+            <div class="modal-body" id="addlead_popup_body">
+                <input id="txtcompanynameNew" name="txtcompanyname" type="hidden" class="form-control input-sm" maxlength="100" hidden />
+                <input id="txtphonenumberNew" name="txtphonenumber" type="hidden" class="form-control input-sm" hidden />
+                <div class="row">
+                    <div class="form-body">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label style="color:red;font-size:13px;">Comany name or phone already exists in Customer. do you want to access it?</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="addlead_popup_footer">
+                <button id="btncreateNew" type="button" class="btn btn-theme-panel pull-left blue" onclick="createNew();">Create New</button>
+                <button id="btnconfirmno" type="button" class="btn btn-default" onclick="clickbtnconfirmno();">No</button>
+                <button id="btnconfirmYes" type="button" class="btn btn-success" onclick="">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+    function clickbtnconfirmno() {
+        $("#addlead_confirmpopup").modal("hide");
+        $("#AddCustomerVerifyPopup").modal({ backdrop: 'static' });
+    }
+    function clickbtnconfirmYes(Id) {
+
+        window.location.href = '@Url.Action("CustomerDetail", "Customer",new { area = "Portal" })' + "?id=" + Id;
+    }
+
+    function createNew() {
+        $("#AddCustomerVerifyPopup").modal("hide");
+        
+        window.location.replace('@Url.Action("MaintenanceStepOne", "Customer", new { area = "Portal" })' + "?searchin=1&status=1&title=" + encodeURIComponent($('#txtcompanynameNew').val().trim()) + "&phone=" + $('#txtphonenumberNew').val().trim());
+    }
+    //function AddNewCustomerVefiry() {
+    //    $("#AddCustomerVerifyPopup").modal({ backdrop: 'static' });
+    //    $('#txtphonenumber').inputmask("mask", {
+    //        "mask": "(999) 999-9999", removeMaskOnSubmit: true,
+    //    });
+    //}
+    function cancelAddCustomerpopup() {
+        $("#txtcompanyname").val("");
+        $("#txtphonenumber").val("");
+    }
+    function resetfrm() {
+        $("#txtcompanyname").val("");
+        $("#txtphonenumber").val("");
+        $("#diverrmsg").hide()
+        $('#txtcompanyname').css('border-color', '');
+    }
+    function checkCompanyDetails() {
+        var isvalid = true;
+        $("#diverrmsg").hide();
+        $('#txtcompanyname').css('border-color', '');
+        if ($('#txtcompanyname').val().trim() == '') { $('#txtcompanyname').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtcompanyname').css('border-color', ''); }
+        if ($('#txtphonenumber').val().trim() == '') { $('#txtphonenumber').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtphonenumber').css('border-color', ''); }
+        if (isvalid == true) {
+            $('#txtcompanynameNew').val($('#txtcompanyname').val().trim());
+            $('#txtphonenumberNew').val($('#txtphonenumber').val().trim());
+            $.ajax({
+                url: '@Url.Action("CheckCustomernameExits", "Customer",new { area = "Portal" })',
+                dataType: "json",
+                data: { CustomerName: $('#txtcompanyname').val().trim(), Phone: $('#txtphonenumber').val().trim() },
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $.blockUI();
+                    if (data != null) {
+                        @*if (data.CustomerId == "-2") {
+                            $("#diverrmsg").html("Customer name already in system so please contact to administrator.");
+                            $("#diverrmsg").show();
+                            $('#txtcompanyname').css('border-color', 'red');
+                        }
+                        else if (data.CustomerId == "-3") {
+                            $("#diverrmsg").html("This phone number not match with customer so please contact to administrator.");
+                            $("#diverrmsg").show();
+                            $('#txtphonenumber').css('border-color', 'red');
+                        }
+                        else if (data.CustomerId == "-1") {
+                            $("#AddCustomerVerifyPopup").modal("hide");
+                            window.location.href = '@Url.Action("MaintenanceStepOne", "Customer", new { area = "Portal" })' + "?searchin=1&status=1&title=" + $('#txtcompanyname').val().trim() + "&phone=" + $('#txtphonenumber').val().trim();
+                        }
+                        else if (data.CustomerId > 0) {
+                            $("#AddCustomerVerifyPopup").modal("hide");
+
+                            $("#addlead_confirmpopup").modal({ backdrop: 'static' });
+                            $("#btnconfirmYes").attr("onclick", "clickbtnconfirmYes(" + data.CustomerId + ")");
+
+                        }*@
+                        if (data.CustomerId > 0) {
+                            $("#AddCustomerVerifyPopup").modal("hide");
+                            $("#addlead_confirmpopup").modal({ backdrop: 'static' });
+                            $("#btnconfirmYes").attr("onclick", "clickbtnconfirmYes(" + data.CustomerId + ")");
+                            //$("#btncreateNew").attr("onclick", "createNew(" + $('#txtcompanyname').val().trim() + "," + $('#txtphonenumber').val().trim() +")");
+                        }
+                        else {
+                            $("#AddCustomerVerifyPopup").modal("hide");
+
+                            //setInterval(function () { $.unblockUI(); }, 6000);
+
+                            window.location.replace('@Url.Action("MaintenanceStepOne", "Customer", new { area = "Portal" })' + "?searchin=1&status=1&title=" + encodeURIComponent($('#txtcompanyname').val().trim()) + "&phone=" + $('#txtphonenumber').val().trim());
+
+                            //window.location.href = '@Url.Action("MaintenanceStepOne", "Customer", new { area = "Portal" })' + "?searchin=1&status=1&title=" + $('#txtcompanyname').val().trim() + "&phone=" + $('#txtphonenumber').val().trim();
+                        }
+                    }
+                },
+                error: function () { }
+            });
+        }
+    }
+</script>

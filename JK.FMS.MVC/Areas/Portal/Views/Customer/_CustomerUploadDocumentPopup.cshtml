@@ -1,0 +1,333 @@
+﻿@model  IEnumerable<JKViewModels.Customer.CustomerUploadDocumentViewModel>
+@{
+    var request = HttpContext.Current.Request;
+    var address1 = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Authority);
+    var address = System.Configuration.ConfigurationManager.AppSettings["FileApiUrl"].ToString() + "v1/file/FileName/";
+}
+<style>
+    form {
+        margin: 0px !important;
+    }
+</style>
+<div class="custom-form portlet light">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+
+    <h4 class="modal-title" style="margin-top: -5px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+        Upload Required Document
+    </h4>
+    <div class="portlet-body" style="padding-top:0px;">
+        <div class="tab-pane" style="padding: 0px 0px 10px 0px !important">
+            @using (Html.BeginForm("SaveCustomerUploadDocumentPopup", "Customer", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="row">
+                    <div class="col-md-12" style="padding-left:7px;padding-right:0px;">
+                        <div class="col-md-5">
+                            <label class="control-label" style="font-weight:600;">
+                                Customer No.
+                            </label>
+                            @Html.Raw(ViewBag.CustomerNo)<br />
+
+                            <label class="control-label" style="font-weight:600;">
+                                Customer Name:
+                            </label>
+                            @Html.Raw(ViewBag.CustomerName)
+
+                        </div>
+                        <div class="col-md-3" style="text-align:right;">
+                            <label class="control-label" style="font-weight:600;">
+                                Address:
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            @Html.Raw(ViewBag.Address)<br />
+                            @Html.Raw(ViewBag.Address2)
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12" style="padding-left:0px;padding-right:0px;">
+                        <hr style="margin-top: 2px;margin-bottom: 1px;" />
+                    </div>
+                </div>
+
+                <input type="hidden" name="hdfCustomerId" id="hdfCustomerId" value="@ViewBag.Id" />
+                <table class="dataTable no-footertable table-striped table-bordered table-hover order-column" id="tblDocList" style="width:100% !important">
+                    <thead>
+                        <tr>
+                            <td style="width:230px !important;">Doc Type</td>
+                            <td style="width:260px !important;">Document Name</td>
+                            <td style="width:165px !important;">Browse</td>
+                            <td style="width:130px !important;">Upload Date/Time</td>
+                            @*<td style="width:30px;">File Size</td>*@
+                            @*<td style="width:20px !important;">View</td>*@
+                            <td style="width:20px !important;">Action</td>
+                            <td style="width:40px;">Is View</td>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @{
+                            var IsOdd = "";
+                        }
+
+                        @foreach (var item in Model)
+                        {
+                            bool isShow = true;
+                            if (Convert.ToBoolean(ViewBag.isCRM) == true)
+                            {
+                                if (item.FiletypeListId == 3 || item.FiletypeListId == 5 || item.FiletypeListId == 9)
+                                {
+                                    isShow = false;
+                                }
+                            }
+                            if (isShow)
+                            {
+                                IsOdd += item.FiletypeListId + ",";
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.FiletypeListName)
+                                        @if (item.IsCustomerRequired == true)
+                                        {
+                                            <span style="color:red">*</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.FileName)
+                                    </td>
+                                    <td>
+                                        @if (item.FiletypeListId != (int)JKApi.Business.Enumeration.FileTypeList.AccountWalkThurs)
+                                        {
+                                            @Html.HiddenFor(one => item.FiletypeListId, new { @id = "FiletypeListId" + @item.FiletypeListId, name = ("FiletypeListId" + @item.FiletypeListId) })
+
+                                            if (item.IsCustomerRequired == true)
+                                            {
+                                                @Html.TextBox("file", "", new { type = "file", @id = "file" + @item.FiletypeListId, name = ("file" + @item.FiletypeListId), style = "width:165px !important;", @required = "required" })
+                                            }
+                                            else
+                                            {
+                                                @Html.TextBox("file", "", new { type = "file", @id = "file" + @item.FiletypeListId, name = ("file" + @item.FiletypeListId), style = "width:165px !important;" })
+                                            }
+
+                                        }
+                                        <input type="hidden" id="hdndocFile_@item.FiletypeListId" value="@item.FilePath" />
+                                    </td>
+                                    <td>
+                                        @(item.CreatedOn != null ? Convert.ToDateTime(item.CreatedOn).ToString("dd-MM-yyyy HH:mm") : string.Empty )
+                                    </td>
+                                    @*<td>
+                                            @Html.DisplayFor(modelItem => item.FileSize)
+                                        </td>*@
+                                    @*<td>
+                                            @if (item.FileName != null && item.FileName != "")
+                                            {
+                                                <a target="_blank" href="@address@item.FileName">View</a>
+                                            }
+                                        </td>*@
+                                    <td>
+                                        @if (item.FiletypeListId != (int)JKApi.Business.Enumeration.FileTypeList.AccountWalkThurs)
+                                        {
+                                            if (item.UploadDocumentId != null)
+                                            {
+                                                <input type="hidden" name="@("hdfUploadDocumentFiletypeList" + item.FiletypeListId)" value="@item.UploadDocumentId" id="@("hdfUploadDocumentFiletypeList" + item.FiletypeListId)" />
+                                                <a onclick="RemoveUploadDocument(@item.UploadDocumentId)">Delete</a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (item.FilePath != null && item.FilePath != "")
+                                            {
+                                                <a target="_blank" href="@address1@Convert.ToString(item.FilePath.Trim().Replace("~",""))">View</a>
+                                            }
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.FiletypeListId != (int)JKApi.Business.Enumeration.FileTypeList.AccountWalkThurs)
+                                        {
+                                            if (item.IsViewToFranchisee)
+                                            {
+                                                <input type="checkbox" class="form-control" onchange="IsDocViewToFranchiseeUploadDocument(@item.UploadDocumentId)" checked />
+                                            }
+                                            else
+                                            {
+                                                <input type="checkbox" class="form-control" onchange="IsDocViewToFranchiseeUploadDocument(@item.UploadDocumentId)" />
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+
+
+                        }
+
+                        @if (Convert.ToBoolean(ViewBag.isCRM) == true)
+                        {
+                            @*if (ViewBag.NewAccountForm != "" && ViewBag.NewAccountForm != null)
+                                {
+                                    <tr>
+                                        <td>New Account Form</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td><a target="_blank" href="@address1@Convert.ToString(ViewBag.NewAccountForm)">View</a></td>
+                                        <td></td>
+                                    </tr>
+                                }*@
+                        if (ViewBag.AccountAcceptanceForm != "" && ViewBag.AccountAcceptanceForm != null)
+                        {
+                            <tr>
+                                <td>Account Acceptance Form</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><a target="_blank" href="@address1@Convert.ToString(ViewBag.AccountAcceptanceForm)">View</a></td>
+                                <td></td>
+                            </tr>
+                            }
+                        }
+
+                        <tr id="trDocumentRow_1">
+                            <td>
+                                @Html.DropDownList("ddlDocFileType_1", (SelectList)ViewBag.CFileTypeList, "--Select Type--", new { @id = "ddlDocFileType_1", @class = "form-control input-sm" })
+                            </td>
+                            <td>
+                                <input type="text" id="txtDocName_1" style="width: 100%;" />
+                            </td>
+                            <td>
+                                <input type="file" id="doc_file_1" name="doc_file_1" style="width:180px;" />
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <a class="btnaddnew" id="btnAddNew_1" onclick="AddNewDocument()">&ensp;+ Add New</a>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+                <input type="hidden" id="hdfFiletypeListIds" name="hdfFiletypeListIds" value="@IsOdd" />
+                <div class="form-actions">
+                    <div class="col-md-5" style="padding-right: 28px;">
+                        <button type="button" class="btn btn-primary" onclick="AddNewDocType()" style="margin-bottom:7px;">
+                            New Doc Type
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="FileView(@ViewBag.Id)" style="margin-left: 10px;margin-bottom:7px;">
+                            View Files
+                        </button>
+                    </div>
+                    <div class="col-md-7" style="padding-right: 28px;">
+                        <button type="button" class="btn btn-primary button-next pull-right" id="btnContractDetailCancel" style="margin-left: 10px;margin-bottom:7px;" data-dismiss="modal">
+                            Close
+                            <i class="fa fa-angle-right"></i>
+                        </button>
+                        <button type="button" class="btn btn-primary pull-right" id="btnSubmit" onclick="clickSaveCustomerDocument()" style="margin-left: 10px;">
+                            Upload
+                            <i class="fa fa-check"></i>
+                        </button>
+                        <br />
+                    </div>
+                </div>
+                            }
+        </div>
+        <div style="clear:both"></div>
+    </div>
+</div>
+
+@section pageplugins{
+}
+@section scripts{
+}
+
+<script type="text/javascript">
+    function clickSaveCustomerDocument() {
+        debugger;
+        var CustomerId = $("#hdfCustomerId").val();
+        if (CustomerId != "") {
+            var strIds = $("#hdfFiletypeListIds").val();
+            if (strIds != "") {
+                var fileData = new FormData();
+
+                var FiletypeIds = strIds.split(",");
+                var selIds = "";
+                for (var i = 0 ; i <= FiletypeIds.length; i++) {
+
+                    if (FiletypeIds[i] != "") {
+
+                        var Docfile = $("#file" + FiletypeIds[i]);
+
+                        if (Docfile.length > 0 && Docfile != null && Docfile[0].files[0] != "" && Docfile[0].files[0] != undefined) {
+
+                            fileData.append("file" + FiletypeIds[i], Docfile[0].files[0]);
+                            fileData.append("Document_" + FiletypeIds[i], FiletypeIds[i]);
+                            if (selIds == "") {
+                                selIds = FiletypeIds[i];
+                            }
+                            else {
+                                selIds += "," + FiletypeIds[i];
+                            }
+                        }
+                    }
+                }
+
+                for (var i = 1; i <= documentCount; i++) {
+
+                    console.log(i);
+                    var CRM_file = $("#doc_file_" + i);
+                    console.log(CRM_file);
+
+                    if (CRM_file.length > 0 && CRM_file != null && CRM_file[0].files[0] != "" && CRM_file[0].files[0] != undefined) {
+                        console.log('ok');
+                        fileData.append("doc_file_" + i, CRM_file[0].files[0]);
+                        fileData.append("txtDocName_" + $("#ddlDocFileType_" + i).val(), $("#txtDocName_" + i).val());
+                        if (selIds == "") {
+                            selIds = "Other_" + $("#ddlDocFileType_" + i).val();
+                        }
+                        else {
+                            selIds += "," + "Other_" + $("#ddlDocFileType_" + i).val();
+                        }
+                    }
+                }
+
+                fileData.append("selIds", selIds);
+                fileData.append("CustomerId", CustomerId);
+
+                $.ajax({
+                    url: '@Url.Action("SaveCustomerUploadDocumentPopup", "Customer", new { @area = "Portal" })',
+                    type: "POST",
+                    contentType: false,
+                    processData: false,
+                    data: fileData,
+                    async: false,
+                    success: function (response) {
+                        $("#ModelCustomerUploadDocumentPopup").modal("hide");
+                        OpenCustomerUploadDocumentPopup($("#hdfCustomerId").val());
+                        if ($('#hdfUploadDocumentFiletypeList6').length > 0) {
+                            $('#anhUploadDocumentCA').removeClass('ca-nvalid');
+                            $('#anhUploadDocumentCA').attr('style', function (i, style) {
+                                return style && style.replace(/background-color[^;]+;?/g, '');
+                            });
+                        }
+
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+        }
+    }
+
+    function RemoveUploadDocument(Id) {
+        $.ajax({
+            url: '@Url.Action("RemoveUploadDocument", "Customer", new { @area = "Portal" })' + "?Id=" + Id,
+            type: "POST",
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                OpenCustomerUploadDocumentPopup($("#hdfCustomerId").val());
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+</script>

@@ -1,0 +1,250 @@
+﻿@model JKViewModels.Customer.CommonAccountOfferingViewModel
+
+
+
+<style type="text/css">
+
+       
+    #loading {
+        width: 300px;
+        padding: 20px;
+        background: orange;
+        color: white;
+        text-align: center;
+        margin: 0 auto;
+        display: none;
+    }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+            font-weight: normal;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        #modal_RegionModel .modal-content {
+            width: 55% !important;
+            margin-left: 30% !important;
+        }
+
+        #CustomerAccountOffringResultList thead > tr > th,
+        #CustomerAccountOffringResultList tbody > tr > td,
+        #CustomerAccountOffringResultList tfoot > tr > td {
+            font-size: 11px !important;
+            padding: 3px !important;
+            text-align:center;
+
+        }
+
+        #CustomerAccountOffringResultList thead > tr > th
+       {
+           vertical-align:middle;
+
+        }
+
+
+        .has-error {
+            border-color: red;
+        }
+</style>
+
+
+
+<table class="table table-striped table-bordered table-hover order-column" id="CustomerAccountOffringResultList">
+    <thead>
+        <tr>
+            <th>
+
+            </th>
+            <th style="width:80px;">
+                Fran No
+            </th>
+            <th style="width:200px;">
+                Franchisee Name
+            </th>
+            <th style="width:80px;">
+                Distance (miles)
+            </th>
+            <th style="width:80px;">
+                Plan
+            </th>
+            <th style="width:80px;">
+                Accts
+            </th>
+            <th style="width:80px;">
+                Billing
+            </th>
+            <th style="width:80px;">
+                Cont Eval
+            </th>
+            <th style="width:80px;">
+                Grp1 Tot
+            </th>
+            <th style="width:80px;">
+                Complaint
+            </th>
+            <th style="width:80px;">
+                Fail Insp
+            </th>
+            <th style="width:80px;">
+                Cancel
+            </th>
+            <th style="width:80px;">
+                Pending Cancel
+            </th>
+            <th style="width:80px;">
+                Last Offered
+            </th>
+            <th style="width:80px;">
+                Oblg
+            </th>
+        </tr>
+    </thead>
+    <tbody>       
+        @for (int i = 0; i < Model.lstAccountOfferingResult.Count; i++)
+        {
+            <tr>
+                <td style="width:50px;text-align:center;background-color: #e8e7e7;font-size: 12px;">
+                    <input type="checkbox" class="i-checks" value="@Model.lstAccountOfferingResult[i].FranchiseeId" relAO="relAO_checkbox" />
+                    @Html.HiddenFor(one => one.lstAccountOfferingResult[i].FranchiseeId, new { @id = "hdfAO_" + i + "__FranchiseeId" })
+                    @Html.HiddenFor(one => one.lstAccountOfferingResult[i].Latitude, new { @id = "hdfAO_" + i + "__FLatitude" })
+                    @Html.HiddenFor(one => one.lstAccountOfferingResult[i].Longitude, new { @id = "hdfAO_" + i + "__FLongitude" })
+
+                </td>
+                <td style="width:50px;text-align:center;background-color: #e8e7e7;font-size: 12px;">@Model.lstAccountOfferingResult[i].FranchiseeNo</td>
+                <td style="text-align:left;width:50px;background-color: #e8e7e7;font-size: 12px;">
+                    <a href="javascript:void(0);" onclick="_AOSendAccountOffer(@Model.lstAccountOfferingResult[i].FranchiseeId,@Model.CustomerDetail.CustomerId)">
+                        @Model.lstAccountOfferingResult[i].FranchiseeName
+                    </a>
+                </td>
+                <td style="text-align:center;width:50px;background-color: #e8e7e7;font-size: 12px;">@String.Format("{0:n}", Model.lstAccountOfferingResult[i].Distance)</td>
+                <td style="text-align:center;width:80px;background-color: #e8e7e7;font-size: 12px;">@Model.lstAccountOfferingResult[i].Plan</td>
+                <td style="text-align:center;width:80px;background-color: #e8e7e7;font-size: 12px;">@Model.lstAccountOfferingResult[i].ACCTS</td>
+                <td style="text-align:right;width:80px;background-color: #e8e7e7;font-size: 12px;"> @String.Format("{0:C}", Model.lstAccountOfferingResult[i].BILLING)</td>
+                <td style="text-align:center;width:50px;background-color: #e8e7e7;font-size: 12px;">@String.Format("{0:C}", Model.lstAccountOfferingResult[i].CONTEVAL)</td>
+                <td style="text-align:center;width:50px;background-color: #e8e7e7;font-size: 12px;">@String.Format("{0:C}", Model.lstAccountOfferingResult[i].GRP1TOT)</td>
+                <td style="text-align:center;width:50px;background-color: #e8e7e7;font-size: 12px;">@String.Format("{0:N}", Model.lstAccountOfferingResult[i].COMPLAINT)</td>
+                <td style="text-align:center;width:80px;background-color: #e8e7e7;font-size: 12px;">@String.Format("{0:N}", Model.lstAccountOfferingResult[i].FAILINSP)</td>
+                <td style="text-align:center;width:80px;background-color: #e8e7e7;font-size: 12px;">@String.Format("{0:N}", Model.lstAccountOfferingResult[i].CANCEL)</td>
+                <td style="text-align:center;width:80px;background-color: #e8e7e7;font-size: 12px;">@String.Format("{0:N}", Model.lstAccountOfferingResult[i].PENDINGCANCEL)</td>
+                <td style="text-align:center;width:80px;background-color: #e8e7e7;font-size: 12px;">@(Model.lstAccountOfferingResult[i].LASTOFFERED != null ? String.Format("{0:MM/dd/yyyy}", Model.lstAccountOfferingResult[i].LASTOFFERED) : "")</td>
+                <td style="text-align:center;width:80px;background-color: #e8e7e7;font-size: 12px;">@String.Format("{0:C}", Model.lstAccountOfferingResult[i].OBLG)</td>
+            </tr>
+        }
+
+
+
+    </tbody>
+</table>
+
+<div class="modal fade custom-model custom-form-design" id="ModalEditFranchisePopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:645px">
+        <div class="modal-content" style="border-radius: 8px;" id="RenderEditFranchiseDetails">
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function _AOSendAccountOffer(fid,cid) {
+        //alert('F: '+fid+', C: '+cid);
+
+        var sURL = '@Url.Action("RenderEditFranchiseDetailsPopup", "Franchise", new { area = "Portal" })?id=' + fid + '&edit=false';
+
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+            $('#RenderEditFranchiseDetails').html(data);
+            $("#ModalEditFranchisePopup").modal({ backdrop: 'static' });
+         },
+            error: function () {
+                alert("Content load failed.");
+           }
+         });
+
+        
+        
+    };
+
+</script>
+    
+    

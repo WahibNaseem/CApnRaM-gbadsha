@@ -1,0 +1,1395 @@
+﻿@using JKApi.Core
+@using JKApi.Core.Common
+@using JKApi.Service
+
+@using MimeKit;
+
+
+
+@{
+    ViewBag.Title = "WriteCheck";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+    <style>
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .no-padding {
+            padding: 0 !important;
+        }
+
+        .no-margin {
+            margin: 0 !important;
+        }
+
+        .padding-tb1 {
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        .margin-tb1 {
+            margin-top: 1px;
+            margin-bottom: 1px;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+            font-weight: normal;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .page-size {
+            padding-left: 0;
+            padding-right: 0;
+            width: 62px;
+        }
+
+        input {
+            outline: 0;
+            border-width: 0 0 2px 0;
+            border-color: blue
+        }
+
+        .input-bottom {
+            border-width: 0 0 2px 0;
+        }
+
+        .check-bg {
+            background: #cad8ea;
+        }
+
+        .mytable {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: white;
+        }
+
+        .mytable-head {
+            border: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+            .mytable-head td {
+                border: none;
+            }
+
+        .mytable-body {
+            border: none;
+            border-top: 0;
+            margin-top: 0;
+            padding-top: 0;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+            .mytable-body td {
+                border: none;
+                border-top: 0;
+            }
+
+        .mytable-footer {
+            border: none;
+            border-top: 0;
+            margin-top: 0;
+            padding-top: 0;
+        }
+
+            .mytable-footer td {
+                border: none;
+                border-top: 0;
+            }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        #modal_RegionModel .modal-content {
+            width: 55% !important;
+            margin-left: 30% !important;
+        }
+    </style>
+}
+
+<iframe src="" style="display:none;" id="iframe_check" name="iframe_check"></iframe>
+
+@*<div class="custom-listbox" style="margin-bottom: 0px;">
+    <div class="headerbox">
+        <div class="row" style="background-color: #3598DC;color: #fff;">
+            <div class="col-md-12 no-padding">
+                <div class="alignCenter">
+                    <div class="col-md-8">
+                    </div>
+                    <div class="col-md-4" style="padding-right:5px;">
+                        <div class="col-md-7 pull-right no-padding">
+                            <div style="display:table-cell;padding-right: 5px;">
+                                Region
+                            </div>
+                            <div style="display:table-cell;width:100%;">
+                                @if (ViewBag.regionlist != null)
+                                {
+                                    <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                                        @foreach (var item in (SelectList)ViewBag.regionlist)
+                                        {
+                                            <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>*@
+@*<div class="custom-form portlet light form-horizontal" style="margin: 0px auto;padding:0;min-height: 100px;">
+</div>*@
+    <div class="portlet-body form">
+        <div class="form-body">
+
+            <div class="custom-form portlet light form form-horizontal" style="max-width:1250px;margin: 0px auto;padding:0;min-height: 100px;">
+
+                <div class="custom-form portlet light">
+                    <div class="headerbox">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                Write Check
+                            </div>
+                        </div>
+                    </div>
+                    <div class="portlet-body form">
+                        <div class="form-body">
+
+                            <form class="form-horizontal" role="form" id="form_manualCheck" action="@Url.Action("InsertManualCheck","AccountsPayable","Portal")" method="post">
+                                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-md-2">
+                                                <label class="mt-radio">
+                                                    <input type="radio" onclick="searchOnChangeOD(13)" name="OptType" id="OptOthersPayaee" value="13" checked="checked">Others Payee
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="mt-radio">
+                                                    <input type="radio" onclick="searchOnChangeOD(12)" name="OptType" id="OptOthersRegion" value="12" >Region
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="mt-radio">
+                                                    <input type="radio" onclick="searchOnChangeOD(2)" name="OptType" id="OptFranchisee" value="2"> Franchisee
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="mt-radio">
+                                                    <input type="radio" onclick="searchOnChangeOD(1)" name="OptType" id="OptCustomer" value="1">Customer
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                            <div id="divCompanySearch"class="col-md-4">
+                                                <input class="form-control input-sm" id="OD_inputSerachCo" name="" type="text" value="" placeholder="Name or Number">
+                                            </div>
+                                            <div id="divReagionSearch" class="col-md-4" style="display:none">
+                                                <input class="form-control input-sm" id="OD_inputSerachRegion" name="" type="text" value="" placeholder="Name or Number">
+                                            </div>
+                                            <div id="divCustomerSearch" class="col-md-4" style="display:none">
+                                                <input class="form-control input-sm" id="OD_inputSerachCust" name="" type="text" value="" placeholder="Name or Number">
+                                            </div>
+                                            <div id="divFranchiseeSearch" class="col-md-4" style="display:none">
+                                                <input class="form-control input-sm" id="OD_inputSerachFran" name="" type="text" value="" placeholder="Name or Number">
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                @*<div class="form-group" style="border: 2px solid #7173a0;padding-top: 4px;padding-bottom: 4px;">
+                                    <div class="col-md-2 control-label">
+                                        <label>Bank Account</label>
+                                    </div>
+                                    <div class="col-md-4" style="padding-left: 0px;">
+                                        @Html.DropDownList("BankList", (SelectList)ViewBag.BankList, new { @class = "form-control input-sm", @id = "BankTypeList" })
+                                    </div>
+                                    <div class="control-label col-md-2">
+                                        Ending Balance<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-1 control-label">
+                                        <label><b>-11,650.00</b></label>
+                                    </div>
+                                    <div class="col-md-2">
+
+                                    </div>
+                                </div>*@
+                                <hr style="margin-bottom: 0px;margin-top: 0px;" />
+                                <div class="form-group">
+                                    <div class="col-md-2 control-label">
+                                        <label>Check Amount</label>
+                                    </div>
+                                    <div class="col-md-1" style="padding-left: 0px;">
+                                        <input type="text" class="form-control input-sm" id="txtAmount" value="0.00" name="txtAmount" />
+                                    </div>
+                                    <div class="col-md-2 control-label">
+                                        <label>Check Type</label>
+                                    </div>
+                                    <div class="col-md-3">
+                                        @Html.DropDownList("CheckTypeList", (SelectList)ViewBag.CheckTypeList, new { @class = "form-control input-sm", @id = "CheckTypeList" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-2"></div>
+                                    <div class="col-md-8 custom-form portlet" style="border-style: double;">
+                                        <div class="portlet-body form check-bg" style="border:1px solid #e7ecf1;">
+                                            <div class="table-responsive">
+                                                <table class="check-bg mytable mytable-head" cellspacing="0" cellpadding="0">
+                                                    <tr>
+                                                        <td class="check-bg" style="width:70%"></td>
+                                                        <td class="check-bg" style="width:10%;text-align:center;">No.</td>
+                                                        <td class="check-bg" style="width:20%">To Print</td>
+                                                    </tr>
+                                                </table>
+                                                <table class="check-bg mytable mytable-body" cellspacing="0" cellpadding="0">
+                                                    <tr>
+                                                        <td class="check-bg" style="width:70%"></td>
+                                                        <td class="check-bg" style="width:10%;text-align:center;vertical-align: middle;">Date</td>
+                                                        <td class="check-bg" style="width:20%;text-align:left;">
+                                                            <div class="input-group date " data-date-format="mm/dd/yyyy">
+                                                                <input type="text" name="dtCheckDate" value="" class="form-control input-sm date-picker check-bg" id="dtSigned" style="padding-left: 0px;border-width: 0 0 2px 0;font-size: 12px;" />
+                                                                <span class="input-group-btn">
+                                                                    <button class="btn default" type="button">
+                                                                        <i class="fa fa-calendar"></i>
+                                                                    </button>
+                                                                </span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                <table class="check-bg mytable mytable-body" cellspacing="0" cellpadding="0">
+                                                    <tr>
+                                                        <td class="check-bg" style="width:22%;text-align:center;">Pay to the Order of</td>
+                                                        <td class="check-bg" style="width:45%;">
+                                                            @Html.Hidden("classId")
+                                                            @Html.Hidden("typeListId")
+                                                            @Html.Hidden("regionId")
+                                                            <input class="form-control input-sm input-bottom check-bg" id="txtName" style="font-size: 12px;" />
+                                                            
+                                                        </td>
+                                                        <td class="check-bg" style="width:10%;">
+                                                            <select class="check-bg"><option>USD</option></select>
+                                                        </td>
+                                                        <td class="check-bg" style="width:5%;"></td>
+                                                        <td class="check-bg" style="width:25%;text-align:left;"><lable>USD </lable><label class="control-label input-sm input-bottom" id="lblamount"></label></td>
+                                                    </tr>
+                                                </table>
+                                                <table class="check-bg mytable mytable-body" cellspacing="0" cellpadding="0">
+                                                    <tr>
+                                                        <td class="check-bg" style="width:86%;"><input class="form-control input-sm input-bottom check-bg" id="txtAmountTrans" style="font-size: 12px;" /></td>
+                                                        <td class="check-bg" style="width:30%;"><lable>USD</lable></td>
+                                                    </tr>
+                                                </table>
+                                                <table class="check-bg mytable mytable-body" cellspacing="0" cellpadding="0">
+                                                    <tr>
+                                                        <td class="check-bg" style="width:12%;text-align:center"><lable>Address</lable></td>
+                                                        <td class="check-bg" style="width:40%;">
+                                                            <div class="custom-form portlet light">
+                                                                <div class="portlet-body form check-bg" style="border:1px solid #7b8a98;">
+                                                                    <div class="form-body">
+                                                                        @Html.Hidden("addressId")
+                                                                        <div class="row" style="padding: 0;margin: 0;" id="name"> </div>
+                                                                        <div class="row" style="padding: 0;margin: 0;" id="address1"> </div>
+                                                                        <div class="row" style="padding: 0;margin: 0;" id="Citystatezip"> </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="check-bg" style="width:50%;"></td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-2 control-label">
+                                        <label>Memo:</label>
+                                    </div>
+                                    <div class="col-md-8" style="padding-left: 0px;padding-right:0px;">
+                                        <input type="text" class="form-control input-sm" id="txtMemo" name="txtMemo" />
+                                    </div>
+                                    @*<div class="col-md-2 control-label">
+                                        <label class="mt-checkbox mt-checkbox-outline" style="margin-top: 0px;">
+                                            <input type="checkbox" name="chkPrintMemo">To be Printed
+                                            <span></span>
+                                        </label>
+                                    </div>*@
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-2 col-md-offset-8" style="padding-left: 52px;">
+                                        <input type="submit" class="btn btn-primary submit-button" name="btnSaveNew" id="btnSaveNew" onclick="onClick_SaveNew()" value="Save & New" />
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="button" class="btn btn-primary submit-button" id="btnSavePrint" value="Save & Print" />
+                                    </div>
+                                </div>
+                            </form>
+
+                            <hr />
+
+                            <form class="form-horizontal" role="form" id="form_runManualChecks" action="@Url.Action("RunChecks","AccountsPayable","Portal")" method="post">
+                                @Html.Hidden("runCheckIds")
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped table-bordered table-hover order-column" id="TableCheckList">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="tblCL_chk" style="width:10px;text-align:center;">
+                                                                <input type="checkbox" id="chkAll" name="chkAll" />
+                                                            </th>
+                                                            <th class="tblCL_payTo" style="width:180px;text-align:center;">
+                                                                Pay To
+                                                            </th>
+                                                            <th class="tblCL_checkType" style="width:80px;text-align:center;">
+                                                                Check Type
+                                                            </th>
+                                                            <th class="tblCL_date" style="text-align:center;width:70px;">
+                                                                Date
+                                                            </th>
+                                                            <th class="tblCL_amount" style="text-align:center;width:70px;">
+                                                                Amount
+                                                            </th>
+                                                            <th class="tblCL_memo" style="text-align:center;width:120px;">
+                                                                Memo
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-10"> </div>
+                                    <div class="col-md-2">
+                                        <input type="button" class="btn btn-primary" value="Print Selected Checks" id="btnRunChecks" />
+                                    </div>
+                                </div>
+                            </form>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+@*<div class="modal fade in" id="modal_RegionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Select Region
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Select Region</label>
+                                @if (ViewBag.regionlist != null)
+                                {
+                                    <select class="form-control input-sm" id="selectregionlist">
+                                        <option value="">Select Region</option>
+                                        @foreach (var item in (SelectList)ViewBag.regionlist)
+                                        {
+                                            <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div class="col-md-12">
+                        <button type="button" name="SaveNew" id="btnRegion" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:0px;">Select Region</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>*@
+
+@section pageplugins{
+    @if (Request.IsSecureConnection)
+    {
+        <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    }
+    else
+    {
+        <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    }
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+    <script src="~/Scripts/jquery-ui.js" type="text/javascript"></script>
+
+
+}
+@section scripts{
+    <script>
+        //var typeaheadSource = [];
+        //var box = $('#OD_inputSerach').data('typeahead');
+        //box.source = typeaheadSource;
+
+        var CLOSED_TRXSTATUSID = "CLOSE";
+        var OPEN_TRXSTATUSID = "OPEN";
+        var PENDING_TRXSTATUSID = "PENDING";
+        var NOREPRINT = false;
+        var REPRINT = true;
+
+        var checkList;
+
+        function getTableURL() {
+
+            var sURL = '@Url.Action("UnprintedManualCheckList", "AccountsPayable", new { area = "Portal" })';
+
+            return sURL;
+        }
+
+        function refreshTable(sURL) {
+
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    checkList.clear();
+                    checkList.rows.add(data.aaData).draw();
+                },
+                error: function (response) {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+        function updateCloseManualCheckTransactionStatus(getStatus, updateStatus, printMode) {
+            var printedCheck = localStorage.getItem("PrintedManualCheck");
+            var regionId = parseInt(@ViewBag.selectedRegionId);
+            var APBilIds = localStorage.getItem("runCheckIdsList");
+
+            if (regionId == 0)
+                return;
+
+            if (printedCheck == "1") {
+                $.ajax({
+                    type: "GET",
+                    //url: Url.Action("UpdateCloseManualCheckTransactionStatus", "AccountsPayable", new { area = "Portal" })?regionId=' + regionId.toString() + '&CheckbookTransactionTypeListId=' + printedCheckType.toString() + '&GetTrxStatusId=' + getStatus + '&UpdateTrxStatusId=' + updateStatus,
+                    url: '@Url.Action("UpdateCloseTransactionStatus", "AccountsPayable", new { area = "Portal" })?regionId=' + regionId.toString() + '&CheckbookTransactionTypeListId=-1' + '&GetTrxStatusId=' + getStatus + '&UpdateTrxStatusId=' + updateStatus + '&APBillList=' + APBilIds,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (data) {
+                        if (printMode == REPRINT) {
+                            RePrintChecks(regionId, PENDING_TRXSTATUSID, CLOSED_TRXSTATUSID, APBilIds);
+                        } else {
+                            localStorage.setItem("PrintedManualCheck", "0");
+                            window.location.href = '@Url.Action("WriteCheck", "AccountsPayable")';
+                        }
+
+                    },
+                    error: function () {
+                        alert("Content load failed.");
+                    }
+                });
+            } else {
+                window.location.href = '@Url.Action("WriteCheck", "AccountsPayable")';
+            }
+
+        }
+
+        function updateOpenManualCheckTransactionStatus() {
+
+            var regionId = parseInt(@ViewBag.selectedRegionId);
+
+            if (regionId == 0)
+                return;
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("UpdateOpenManualCheckTransactionStatus", "AccountsPayable", new { area = "Portal" })?regionId=' + regionId.toString(),
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    window.location.href = '@Url.Action("WriteCheck", "AccountsPayable")';
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+        }
+
+
+        $(window).load(function () {
+            //var pendingChecks = parseInt(@ViewBag.hasPendingChecks);
+            var printedCheck = parseInt(localStorage.getItem("PrintedManualCheck"));
+
+            if (printedCheck == "1") {
+                swal({
+                    title: "",
+                    text: "Have pending checks printed ok?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-confirmr",
+                    confirmButtonText: "Yes",
+                    cancelButtonText: "No",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+
+                },
+
+                      function (isConfirm) {
+                          if (isConfirm) {
+                              updateCloseManualCheckTransactionStatus(PENDING_TRXSTATUSID, CLOSED_TRXSTATUSID, NOREPRINT);
+                          } else {
+
+                              swal({
+                                  title: "",
+                                  text: "Do you want to reprint checks?",
+                                  type: "warning",
+                                  showCancelButton: true,
+                                  confirmButtonClass: "btn-confirmr",
+                                  confirmButtonText: "Yes",
+                                  cancelButtonText: "No",
+                                  closeOnConfirm: false,
+                                  closeOnCancel: false
+
+                              }, function (isConfirm) {
+                                  if (isConfirm) {
+                                      updateCloseManualCheckTransactionStatus(PENDING_TRXSTATUSID, PENDING_TRXSTATUSID, REPRINT);
+                                  } else {
+                                      localStorage.setItem("PrintedManualCheck", "0");
+                                      document.location.reload();
+
+                                  }
+                              }
+                              )
+
+                          }
+                      }
+                )
+            }
+
+
+
+            if ('@ViewBag.selectedRegionId' == 0) {
+                $("#modal_RegionModel").modal({ backdrop: 'static' });
+            }
+            else {
+                refreshTable(getTableURL());
+            }
+
+            var txtMemo = document.getElementById("txtMemo");
+            var dropDwnCheckType = document.getElementById("CheckTypeList")
+            txtMemo.value = dropDwnCheckType.options[0].text;
+
+        });
+
+        jQuery(document).ready(function () {
+
+            applyMaskCurrency('#txtAmount');
+            applyAutoSearchCompanyOD(13);
+
+            $("#regionlist").multiselect({
+                includeSelectAllOption: true,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2
+            });
+
+            $(".input-group-btn").click(function () {
+                $(this).prev().trigger("focus");
+                $(this).prev().trigger("focus");
+            });
+
+            $("#btnRegion").click(function () {
+                if ($("#selectregionlist").val() != "") {
+                    $("#regionlist option[value='" + $("#selectregionlist").val() + "']").attr("selected", 1);
+                    $("#regionlist").multiselect("refresh");
+                    refreshTable(getTableURL());
+                    $(".close").click();
+                }
+            });
+
+            $("#dtSigned").datepicker("setDate", new Date());
+            $("#lblamount").text("$0.00");
+
+
+
+            /*
+            $("#txtName").autocomplete({
+                appendTo: $("#container"),
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/Portal/Company/PayeeAutoComplete",
+                        type: "POST",
+                        dataType: "json",
+                        data: { namePrefix: request.term, limit: 20 },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return { label: item.Name, value: item.Name, id: item.ClassId, typeId: item.TypeListId, regionId: item.RegionId };
+                            }))
+                        },
+                        error: function (result) {
+
+                        }
+                    })
+                },
+                select: function (event, ui) {
+                    var id = ui.item.id;
+                    var typeId = ui.item.typeId;
+                    var regionId = ui.item.regionId;
+                    $("#classId").val(id);
+                    $("#typeListId").val(typeId);
+                    $("#regionId").val(regionId);
+                }
+            });*/
+
+            checkList = $('#TableCheckList').DataTable({
+                //"bProcessing": true,
+                "bServerSide": false,
+                "aLengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                "pageLength": 25, // default records per page
+                "dom": '<"top">rt<"bottom"lp><"clear">'
+                //"dom": "<'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'<'table-group-actions pull-right'>>r><'table-responsive't><'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'>>", // datatable layout
+                ,
+                columnDefs: [
+                    {
+                        targets: "tblCL_chk",
+                        data: "",
+                        orderable: false,
+                        className: "dt-center",
+                        render: function (data, type, row, meta) {
+                            return '<input rel="mgglchk" type="checkbox" style="margin-left: 5px;" id="fp' + row.APBillId + '_chk" name="fp' + row.APBillId + '_chk" relId="' + row.APBillId + '" class="payment-checkbox" />';
+                        }
+                    },
+                    {
+                        targets: "tblCL_payTo",
+                        data: "PayTo",
+                        render: function (data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                    {
+                        targets: "tblCL_checkType",
+                        data: "CheckType",
+                        render: function (data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                    {
+                        targets: "tblCL_date",
+                        data: "CheckDate",
+                        render: function (data, type, row, meta) {
+                            if (data === null) return '';
+                            return moment(new Date(parseInt(data.substr(6)))).format("MM/DD/YYYY");
+                        }
+                    },
+                    {
+                        targets: "tblCL_amount",
+                        data: "Amount",
+                        className: "dt-right",
+                        render: function (data, type, row, meta) {
+                            return formatCurrency(parseFloat(data));
+                        }
+                    },
+                    {
+                        targets: "tblCL_memo",
+                        data: "Memo",
+                        render: function (data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                ]
+            });
+            refreshTable(getTableURL());
+
+            //$("#divrightddl").append('<select class="form-control input-sm"><option>This Month</option></select>');
+            //$("#divdate").append('08/01/2017 - 08/31/2017');
+            //$("#divdate").addClass('');
+
+            //$("#txtAmount").change(function () {
+            //    var origAmount = $("#txtAmount").val();
+            //    var amount = withDecimal($("#txtAmount").val())
+
+            //    //var amount = convertNumberToWords($("#txtAmount").val());
+            //    $("#txtAmountTrans").val(origAmount);
+            //    $("#lblamount").text($("#txtAmount").val());
+            //    applyMaskCurrency("#lblamount");
+            //});
+
+            $("#txtName").change(function () {
+                var address = Address();
+            });
+
+            $("#btnSavePrint").click(function (e) {
+
+                var checkAmount = $("#txtAmount").val();
+
+                if (parseInt(checkAmount) > 0) {
+                    var key = "PrintedManualCheck";
+                    var value = "1";
+                    localStorage.setItem(key, value);
+
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("InsertManualCheckAndPrint","AccountsPayable","Portal")',
+                        data: $("#form_manualCheck").serialize(),
+                        dataType: 'json',
+                        success: function (data) {
+                            printChecksAndReload(data);
+                        }
+                    });
+
+                } else {
+
+                    swal({
+                        title: "",
+                        text: "Please enter a check amount.",
+                        type: "warning",
+                        confirmButtonClass: "btn-confirmr",
+                        confirmButtonText: "Ok"
+
+
+                    });
+                }
+
+            });
+
+            $("#btnRunChecks").click(function (e) {
+
+                var key = "PrintedManualCheck";
+                var value = "1";
+                localStorage.setItem(key, value);
+
+                var Ids = getSelectedIds();
+                if (Ids != "") {
+                    $("#runCheckIds").val(Ids);
+                    var key = "runCheckIdsList";
+                    var value = Ids;
+                    localStorage.setItem(key, value);
+                    var action = $("#form_runManualChecks").attr("action");
+                    $.ajax({
+                        type: "POST",
+                        //url: 'Url.Action("RunChecks","AccountsPayable","Portal")',
+                        url: '@Url.Action("RunManualChecks","AccountsPayable","Portal")',
+                        data: $("#form_runManualChecks").serialize(),
+                        dataType: 'json',
+                        success: function (data) {
+                            printChecksAndReload(data);
+                        },
+                        error: function (result) {
+                            alert(result);
+                        }
+
+                    })
+                }
+            });
+
+            searchOnChangeOD(13)
+
+        });
+
+        function RePrintChecks(RegId, RePrintWithStatusId, UpdateStatusId, APBList) {
+
+            var checkTypeId = "-1";
+            var regionId = $("#regionlist").val();
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("RePrintChecks", "AccountsPayable","Portal")',
+                data: { RegionId: RegId, checkTypeId: checkTypeId, GetTRXStatusId: RePrintWithStatusId, UpdateTRXStatusId: UpdateStatusId, APBillList: APBList },
+                dataType: 'json',
+                success: function (data) {
+                    printChecksAndReload(data);
+                    localStorage.setItem("PrintedManualCheck", "0");
+
+                }
+            });
+
+
+        }
+
+        function printChecksAndReload(data) {
+
+            var afterPrint = function () {
+                document.location.reload();
+            }
+
+            var sURL = data;
+            $('#iframe_check').attr('src', document.location.origin + sURL);
+            $('#iframe_check').load(function () {
+
+                // for ie and firefox
+                window.onafterprint = afterPrint();
+
+                // for chrome
+                if (window.matchMedia) {
+                    var mediaQueryList = window.matchMedia('print');
+                    mediaQueryList.addListener(function (mql) {
+                        if (mql.matches) {
+                        } else {
+                            afterPrint();
+                        }
+                    });
+                }
+
+                frames['iframe_check'].print();
+            });
+
+        }
+        function getSelectedIds() {
+            var Ids = "";
+            $('input[rel="mgglchk"]').each(function (item) {
+
+                if ($(this).is(":checked")) {
+                    var mId = $(this).attr('relid');
+
+                    if (Ids != "")
+                        Ids = Ids + "," + mId;
+                    else
+                        Ids = mId;
+                }
+            });
+            return Ids;
+        }
+
+        function withDecimal(n) {
+
+            var nums = n.toString().split('.')
+            var whole = convertNumberToWords(nums[0])
+            if (nums.length == 2) {
+                var fraction = convertNumberToWords(nums[1])
+                if (nums[1] == '00') {
+                    return whole + 'and ' + '00/100 DOLLARS';
+                } else {
+                    return whole + 'and ' + fraction + ' DOLLARS';
+                }
+            } else {
+                return whole + 'and ' + '00/100 DOLLARS ';
+            }
+        }
+
+
+        function convertNumberToWords(amount) {
+            var words = new Array();
+            words[0] = '';
+            words[1] = 'One';
+            words[2] = 'Two';
+            words[3] = 'Three';
+            words[4] = 'Four';
+            words[5] = 'Five';
+            words[6] = 'Six';
+            words[7] = 'Seven';
+            words[8] = 'Eight';
+            words[9] = 'Nine';
+            words[10] = 'Ten';
+            words[11] = 'Eleven';
+            words[12] = 'Twelve';
+            words[13] = 'Thirteen';
+            words[14] = 'Fourteen';
+            words[15] = 'Fifteen';
+            words[16] = 'Sixteen';
+            words[17] = 'Seventeen';
+            words[18] = 'Eighteen';
+            words[19] = 'Nineteen';
+            words[20] = 'Twenty';
+            words[30] = 'Thirty';
+            words[40] = 'Forty';
+            words[50] = 'Fifty';
+            words[60] = 'Sixty';
+            words[70] = 'Seventy';
+            words[80] = 'Eighty';
+            words[90] = 'Ninety';
+            amount = amount.toString();
+            var atemp = amount.split(".");
+            var number = atemp[0].split(",").join("");
+            var n_length = number.length;
+            var words_string = "";
+            if (n_length <= 9) {
+                var n_array = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0);
+                var received_n_array = new Array();
+                for (var i = 0; i < n_length; i++) {
+                    received_n_array[i] = number.substr(i, 1);
+                }
+                for (var i = 9 - n_length, j = 0; i < 9; i++, j++) {
+                    n_array[i] = received_n_array[j];
+                }
+                for (var i = 0, j = 1; i < 9; i++, j++) {
+                    if (i == 0 || i == 2 || i == 4 || i == 7) {
+                        if (n_array[i] == 1) {
+                            n_array[j] = 10 + parseInt(n_array[j]);
+                            n_array[i] = 0;
+                        }
+                    }
+                }
+                value = "";
+
+                for (var i = 0; i < 9; i++) {
+                    if (i == 0 || i == 2 || i == 4 || i == 7) {
+                        value = n_array[i] * 10;
+                    } else {
+                        value = n_array[i];
+                    }
+                    if (value != 0) {
+                        words_string += words[value] + " ";
+                    }
+                    if ((i == 1 && value != 0) || (i == 0 && value != 0 && n_array[i + 1] == 0)) {
+                        words_string += "Crores ";
+                    }
+                    if ((i == 3 && value != 0) || (i == 2 && value != 0 && n_array[i + 1] == 0)) {
+                        words_string += "Lakhs ";
+                    }
+                    if ((i == 5 && value != 0) || (i == 4 && value != 0 && n_array[i + 1] == 0)) {
+                        words_string += "Thousand ";
+                    }
+                    if (i == 6 && value != 0 && (n_array[i + 1] != 0 && n_array[i + 2] != 0)) {
+                        words_string += "Hundred and ";
+                    } else if (i == 6 && value != 0) {
+                        words_string += "Hundred ";
+                    }
+                }
+                words_string = words_string.split("  ").join(" ");
+            }
+            return words_string;
+        }
+
+        function Address(classId, RegionId) {
+            $("#classId").val(classId);
+            // $("#typeListId").val('2');
+            $("#regionId").val(RegionId);
+            $.ajax({
+                url: "/Portal/Franchise/Franchiseeaddress",
+                type: "POST",
+                dataType: "json",
+                data: { franchiseeid: classId },
+                //data: { franchiseeId: $("#classId").val() },
+                success: function (data) {
+                    $("#addressId").val(data.AddressId);
+                    $("#name").html($("#txtName").val());
+                    $("#address1").html(data.Address1);
+                    $("#Citystatezip").html(data.City + ' ' + data.StateName + ' ' + data.PostalCode);
+                    return data;
+
+                },
+                error: function (result) {
+
+                }
+            })
+        }
+
+        function AddressCompany(classId, RegionId) {
+            $("#classId").val(classId);
+
+            $("#regionId").val(RegionId);
+            $.ajax({
+                url: "/Portal/Company/CompanyAddress",
+                type: "POST",
+                dataType: "json",
+                data: { CompanyId: classId},
+
+                success: function (data) {
+                    $("#addressId").val(data.AddressId);
+                    $("#name").html($("#txtName").val());
+                    $("#address1").html(data.Address);
+                    $("#Citystatezip").html(data.City + ' ' + data.State + ' ' + data.Zip);
+                    return data;
+
+                },
+                error: function (result) {
+                    alert(result.error);
+                }
+            })
+        }
+
+
+        function CustomerAddress(classId, RegionId) {
+            $("#classId").val(classId);
+            $("#regionId").val(RegionId);
+
+            $.ajax({
+                url: "/Portal/Customer/Customeraddress",
+                type: "POST",
+                dataType: "json",
+                data: { customerId: classId },
+                success: function (data) {
+                    $("#addressId").val(data.AddressId);
+                    $("#name").html($("#txtName").val());
+                    $("#address1").html(data.Address1);
+                    $("#Citystatezip").html(data.City + ' ' + data.StateName + ' ' + data.PostalCode);
+                    return data;
+
+                },
+                error: function (result) {
+
+                }
+            })
+        }
+
+        function formatCurrency(total) {
+            var neg = false;
+            if (total < 0) {
+                neg = true;
+                total = Math.abs(total);
+            }
+            return (neg ? "-$" : '$') + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        }
+
+
+        function searchOnChangeOD(v) {
+            $("#typeListId").val(v);
+         
+            if (v == 13) {
+                applyAutoSearchCompanyOD(v);
+            } else if (v == 12) {
+                applyAutoSeacrhRegion(v);
+
+            } else if (v == 2) {
+                applyAutoSeacrhFranchiseeOD(v);
+
+            } else if (v == 1) {
+                applyAutoSeacrhCustomerOD(v);
+            }
+        }
+
+
+      
+
+
+        function applyAutoSeacrhRegion(t) {
+            $('#divCompanySearch').hide();
+            $('#divReagionSearch').show();
+            $('#divCustomerSearch').hide();
+            $('#divFranchiseeSearch').hide();
+           
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetRegionData", "Company", new { area = "Portal" })',
+                data: {},
+                success: function (data) {
+                    var typeaheadSource = [];
+                    $.each(data.returnedData, function (key, value) {
+                        $('#txtName').val(value.DisplayName);
+                        $('#OD_inputSerachRegion').val(value.DisplayName);
+                        $("#classId").val(value.RegionId);
+                        $("#name").html($("#txtName").val());
+                        $("#address1").html(value.Address);
+                        $("#Citystatezip").html(value.City + ' ' + value.State + ' ' + value.PostalCode);
+
+                    });
+
+                }
+
+            });
+        }
+
+        function applyAutoSeacrhCustomerOD(t) {
+            $('#divCompanySearch').hide();
+            $('#divReagionSearch').hide();
+            $('#divCustomerSearch').show();
+            $('#divFranchiseeSearch').hide();
+            $.blockUI()
+            ClearCheckPayToAddress();
+            $('#OD_inputSerachCust').val('');
+            $('#OD_txtPayeeType').val(t);
+            $('#OD_inputSerachCust').data('typeahead', null);
+          
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetAllCustomer", "Customer", new { area = "Portal" })',
+                data: {},
+                success: function (data) {
+                    var typeaheadSource = [];
+                    $.each(data, function (key, value) {
+                        typeaheadSource.push({ id: value.CustomerId, name: value.CustomerNo + ' ' + $.trim(value.Name), number: value.CustomerNo, title: $.trim(value.Name), regionId: value.RegionId })
+                    });
+                    var box = $('#OD_inputSerachCust').data('typeahead');
+                    if (box != null) {
+
+                        console.log('csearch source change');
+                        box.source = typeaheadSource;
+                    }
+                    else {
+                        $('#OD_inputSerachCust').data('typeahead', null);
+                        $('#OD_inputSerachCust').typeahead({
+                            source: typeaheadSource,
+                            updater: function (item) {
+                                //console.log(item);
+                                $('#txtName').val(item.title);
+                                CustomerAddress(item.id, item.regionId);
+
+                                return item;
+                            },
+                            minLength: 1
+                        }).focus();
+                    }
+
+
+                }
+            });
+
+
+            $.unblockUI();
+        }
+
+
+
+        function applyAutoSeacrhFranchiseeOD(t) {
+            $('#divCompanySearch').hide();
+            $('#divReagionSearch').hide();
+            $('#divCustomerSearch').hide();
+            $('#divFranchiseeSearch').show();
+            ClearCheckPayToAddress();
+            $('#OD_inputSerachFran').val('');
+            $('#OD_inputSerachFran').data('typeahead', null);
+            $('#OD_txtPayeeType').val(t);
+           
+            $.blockUI()
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetAllFranchisees", "Franchise", new { area = "Portal" })',
+                data: {},
+                success: function (data) {
+                    var typeaheadSource = [];
+                    $.each(data, function (key, value) {
+                        typeaheadSource.push({ id: value.FranchiseeId, name: value.FranchiseeNo + ' ' + value.Name, number: value.FranchiseeNo, title: $.trim(value.Name), regionId: value.RegionId })
+                    });
+                    var box = $('#OD_inputSerachFran').data('typeahead');
+                    if (box != null) {
+
+                        console.log('csearch source change');
+                        box.source = typeaheadSource;
+                    }
+                    else {
+
+                        $('#OD_inputSerachFran').data('typeahead', null);
+                        $('#OD_inputSerachFran').typeahead({
+                            source: typeaheadSource,
+                            updater: function (item) {
+                                $('#txtName').val(item.title);
+                                Address(item.id, item.regionId);
+                                return item;
+                            }, minLength: 1
+                        }).focus();
+                    }
+
+
+                }
+            });
+
+
+            $.unblockUI();
+        }
+
+        function applyAutoSearchCompanyOD(t) {
+            $('#divCompanySearch').show();
+            $('#divReagionSearch').hide();
+            $('#divCustomerSearch').hide();
+            $('#divFranchiseeSearch').hide();
+            ClearCheckPayToAddress();
+            $('#OD_inputSerachCo').val('');
+            $('#OD_txtPayeeType').val(t);
+            $('#OD_inputSerachCo').data('typeahead', null);
+           
+            $.blockUI()
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetAllCompanies", "Company", new { area = "Portal" })',
+                data: {},
+                success: function (data) {
+                    var typeaheadSource = [];
+
+                    $.each(data, function (key, value) {
+                        typeaheadSource.push({ id: value.CompanyId, name: value.Name, number: '', title: $.trim(value.Name), regionId: value.RegionId })
+                    });
+
+                    var box = $('#OD_inputSerachCo').data('typeahead');
+                    if (box != null) {
+
+                        console.log('csearch source change');
+                        box.source = typeaheadSource;
+                    }
+                    else {
+                        $('#OD_inputSerachCo').data('typeahead', null);
+                        $('#OD_inputSerachCo').typeahead({
+                            source: typeaheadSource,
+                            updater: function (item) {
+
+                                $('#txtName').val(item.title);
+                                AddressCompany(item.id, item.regionId);
+
+                                return item;
+                            }, minLength: 1
+                        }).focus();
+                    }
+                }
+            });
+            $.unblockUI();
+        }
+
+
+        function ClearCheckPayToAddress()
+        {
+            $('#txtName').val('');
+            $("#addressId").val('');
+            $('#txtName').val('');
+            $("#name").html($("#txtName").val());
+            $("#address1").html('');
+            $("#Citystatezip").html('');
+        }
+
+        function applyMaskCurrency(id) {
+            $(id).inputmask("currency", {
+                alias: 'currency',
+                prefix: '$ ',
+                digits: 2,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                unmaskAsNumber: true,
+                allowPlus: false,
+                allowMinus: true,
+                autoGroup: true,
+                groupSeparator: ",",
+            });
+        }
+
+        const formatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2
+        })
+
+        document.getElementById("CheckTypeList").onchange = function () { onChangeCheckTypeList(this) };
+
+        function onChangeCheckTypeList(selectChkType) {
+            var memo = document.getElementById("txtMemo");
+            memo.value = selectChkType.options[selectChkType.selectedIndex].text;
+        }
+
+        document.getElementById("txtAmount").onchange = function () { onChangeCheckAmount(this) };
+
+        function onChangeCheckAmount(amount) {
+            var origAmount = amount.value;
+
+            var lblCheckAmount = document.getElementById("lblamount");
+            lblCheckAmount.innerHTML = formatter.format(origAmount);
+
+            var wordAmount = document.getElementById("txtAmountTrans");
+            wordAmount.value = withDecimal(origAmount);
+
+
+        }
+
+        function onClick_SaveNew() {
+            var enteredCheckAmount = $("#txtAmount").val();
+            var frm = document.getElementById("form_manualCheck");
+            var payeeValue = document.getElementById("OD_inputSerach");
+            var missingMsgItem = "";
+
+            if (parseInt(enteredCheckAmount) > 0 && payeeValue.value != "") {
+                frm.submit();
+            } else {
+
+                if (payeeValue.value == "") {
+                    missingMsgItem = "Please enter a Payee.";
+                } else {
+                    missingMsgItem = "Please enter a check amount.";
+                }
+
+                swal({
+                    title: "",
+                    text: missingMsgItem,
+                    type: "warning",
+                    confirmButtonClass: "btn-confirmr",
+                    confirmButtonText: "Ok"
+
+
+                });
+            }
+
+        }
+
+
+
+
+    </script>
+}

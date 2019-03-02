@@ -1,0 +1,291 @@
+﻿@model JKViewModels.Customer.CustomerMaintenanceApproval
+
+@{
+    Layout = null;
+}
+
+@section styles{
+
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
+<style type="text/css">
+    #tblcontractdetailrows {
+    }
+
+    .theadRow tr {
+        font-size: 12px;
+    }
+
+    .theadRow td {
+        border: 1px solid #e8e8e8 !important;
+        padding: 0px 5px !important;
+        font-size: 12px;
+    }
+
+    .theadRowH td {
+        border-left: 1px solid #e8e8e8 !important;
+        border-right: 1px solid #e8e8e8 !important;
+        border-bottom: 1px solid #e8e8e8 !important;
+        padding: 5px 5px !important;
+        font-size: 12px;
+    }
+
+    .theadRowH.remove-padding td {
+        padding: 0px !important;
+        font-size: 12px;
+    }
+
+    .theadRow td > label, .theadRowH td > label {
+        float: left;
+        margin-top: 3px;
+        font-size: 12px;
+    }
+
+    .theadRow td input[type=checkbox], .theadRowH td input[type=checkbox] {
+        float: left;
+        margin-right: 5px;
+        margin-top: 6px;
+        font-size: 12px;
+    }
+
+    .theadRow td input[type=text], .theadRowH td input[type=text] {
+        margin-top: 0px !important;
+        border: 0;
+        border-radius: 0;
+        font-size: 12px;
+    }
+
+    .theadRow td .input-sm, .theadRowH td .input-sm {
+        margin-top: 0px !important;
+        border: 0;
+        border-radius: 0;
+        font-size: 12px;
+    }
+</style>
+
+
+<form class="form-horizontal" role="form" method="post" id="form_customermaintenanceApproval">
+    @Html.HiddenFor(m => m.CustomerId, new { id = "hdfCustomerId" })
+    @Html.HiddenFor(m => m.MaintenanceTempId, new { id = "hdfMaintenanceTempId" })
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Customer</label>
+                <label class="col-md-12">
+                    <b>
+                        @Html.DisplayFor(o => o.CustomerMaintenance.CustomerNo, new { @class = "form-control input-sm" })
+                    </b>
+                </label>
+                <label class="col-md-12">@Html.DisplayFor(o => o.CustomerMaintenance.CustomerName, new { @class = "form-control input-sm" })</label>
+                <label class="col-md-12">@Html.DisplayFor(o => o.CustomerMaintenance.CustomerAddress, new { @class = "form-control input-sm" })</label>
+                <label class="col-md-12">@Html.DisplayFor(o => o.CustomerMaintenance.CustomerCity, new { @class = "form-control input-sm" }), @Html.DisplayFor(o => o.CustomerMaintenance.CustomerState, new { @class = "form-control input-sm" })&nbsp;@Html.DisplayFor(o => o.CustomerMaintenance.CustomerPincode, new { @class = "form-control input-sm" })</label>
+            </div>
+        </div>
+        <div class="col-md-4 text-center" id="status"></div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Billing</label>
+                <label class="col-md-12"><b>@Html.DisplayFor(o => o.CustomerMaintenance.CustomerBillingName, new { @class = "form-control input-sm" })</b></label>
+                <label class="col-md-12">&nbsp;@Html.DisplayFor(o => o.CustomerMaintenance.CustomerBillingAddress, new { @class = "form-control input-sm" })</label>
+                <label class="col-md-12">@Html.DisplayFor(o => o.CustomerMaintenance.CustomerBillingCity, new { @class = "form-control input-sm" }), @Html.DisplayFor(o => o.CustomerMaintenance.CustomerBillingState, new { @class = "form-control input-sm" })&nbsp;@Html.DisplayFor(o => o.CustomerMaintenance.CustomerBillingPincode, new { @class = "form-control input-sm" })</label>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+
+    <div class="row">
+        <div class="form-group">
+            <div class="control-label col-md-2">
+                Status <span class="required"> * </span>
+            </div>
+            <div class="col-md-4">
+                @Html.DropDownListFor(model => model.StatusListId, (SelectList)ViewBag.StatusList, "Select", new { @class = "form-control input-sm", @id = "ddlStatus" })
+            </div>
+            <div class="control-label col-md-2">
+                Effective Date<span class="required"> * </span>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group " @*data-date-format="mm/dd/yyyy"*@ style="width: 120px;">
+                    @Html.TextBoxFor(o => o.EffectiveDate, "{0:MM/dd/yyyy}", new { @class = "form-control input-sm date-picker", required = "required" })
+                    @*<input type="text" value="@Model.EffectiveDate.ToString("MM/dd/yyyy")" class="form-control input-sm" />*@
+                    <span class="input-group-btn">
+                        <button class="btn default" type="button" style="margin-top: 3px;">
+                            <i class="fa fa-calendar"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="manediv">
+
+        <div class="row" id="divresumedate">
+            <div class="form-group">
+
+                <div class="control-label col-md-2">
+                    Resume Date <span class="required"> * </span>
+                </div>
+                <div class="col-md-3">
+
+                    <div class="input-group" @*data-date-format="mm/dd/yyyy"*@ style="width: 120px;">
+                        @*Using TextBox for this as There is some Id conflict with the name of  ResumeDate*@
+                        @*@Html.TextBox("resumedate",string.Format("{0:MM/dd/yyyy}",Model.ResumeDate), new { @class = "form-control input-sm date-picker" ,@required = "required" })*@
+                        @Html.TextBoxFor(o => o.ResumeDate, "{0:MM/dd/yyyy}", new { @class = "form-control input-sm date-picker", @required = "required" })
+                        <span class="input-group-btn">
+                            <button class="btn default" type="button" style="margin-top: 3px;">
+                                <i class="fa fa-calendar"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <div class="control-label col-md-2">
+                    Reason <span class="required"> * </span>
+                </div>
+                <div class="col-md-4">
+                    @Html.DropDownListFor(model => model.ReasonListId, (SelectList)ViewBag.StatusReasonList, "Select", new { @class = "form-control input-sm", @id = "ddlReason" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="control-label col-md-2">
+                    Comments  <span class="required"> * </span>
+                </div>
+                <div class="col-md-8">
+                    @Html.TextAreaFor(o => o.Comments, new { @class = "form-control input-sm" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="control-label col-md-2">
+                    Reason
+                </div>
+                <div class="col-md-8">
+                    @Html.TextAreaFor(o => o.StatusReason, new { @class = "form-control input-sm" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <button type="button" id="Accept" class="btn btn-primary button-next pull-right SaveButton" style="padding: 5px; margin: 15px;" onclick="Accept()">Accept</button>
+
+            <button type="button" id="Reject" class="btn btn-primary button-next pull-right SaveButton" style="padding: 5px; margin: 15px;">Reject</button>
+        </div>
+    </div>
+
+</form>
+
+
+
+@section pageplugins{
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+}
+
+
+<script>
+
+    var firstDateSet = true;
+
+
+$(document).ready(function () {
+            var container = $('.bootstrap-iso form').length > 0 ? $('.bootstrap-iso form').parent() : "body";
+            var options = {
+                dateFormat: 'mm/dd/yyyy',
+                container: container,
+                todayHighlight: true,
+                autoclose: true,
+                setDate: new Date(),
+            };
+
+            //$('#ResumeDate').datepicker(options);
+            //$('#ResumeDate').datepicker("setDate", new Date());
+           $('#LastServiceDate').datepicker(options);
+            $('#LastServiceDate').datepicker("setDate", new Date());
+            $('#StatusDate').datepicker(options);
+            $('#StatusDate').datepicker("setDate", new Date());
+            $(".input-group-btn").click(function () {
+                $(this).prev().trigger("focus");
+                $(this).prev().trigger("focus");
+            });
+            $("#ddlStatus").val('3');
+            $("#ddlStatus").prop('required', true);
+            $("#StatusDate").prop('required', true);
+
+
+         $( "#Accept" ).click(function() {
+              AcceptCustomerMaintenanceSuspension()
+             });
+
+
+
+
+    function AcceptCustomerMaintenanceSuspension() {
+        if ( parseInt($('#hdfMaintenanceTempId').val()) == 0) {
+            e.preventDefault();
+        }
+        else {
+        var MaintenanceTempId=$('#hdfMaintenanceTempId').val();
+            $.ajax({
+                url: '@Url.Action("AcceptCustomerMaintenanceSuspension", "Customer",new { area = "Portal" })',
+                type: "POST",
+                data: {  MaintenanceTempId : MaintenanceTempId} ,
+                success: function (res) {
+                     window.location.reload();
+                },
+                error: function () { }
+            });
+        }
+    }
+
+
+            $( "#Reject" ).click(function() {
+              RejectCustomerMaintenanceSuspension()
+             });
+
+
+    function RejectCustomerMaintenanceSuspension() {
+      //  var isValid = $('#form_customermaintenanceApproval').valid();
+        if ( parseInt($('#hdfMaintenanceTempId').val()) == 0) {
+            e.preventDefault(); //prevent the default action
+        }
+        else {
+
+        var Reason=$("#StatusReason").val();
+        var MaintenanceTempId=$('#hdfMaintenanceTempId').val();
+
+            $.ajax({
+                url: '@Url.Action("RejectCustomerMaintenanceSuspension", "Customer",new { area = "Portal" })',
+                type: "POST",
+                data: {  MaintenanceTempId : MaintenanceTempId, Reason: Reason} ,
+                success: function (res) {
+                     window.location.reload();
+                },
+                error: function () { }
+            });
+        }
+    }
+});
+</script>
+

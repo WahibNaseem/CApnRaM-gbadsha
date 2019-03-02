@@ -1,0 +1,431 @@
+﻿@using JK.Resources;
+@using JK.FMS.MVC.Areas.CRM.Common;
+@model IEnumerable<JKViewModels.CRM.CRMPotentialFranchiseeViewModel>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var mode = Model;
+}
+
+@section styles{
+<style type="text/css">
+    th {
+        text-transform: uppercase;
+        text-align: center;
+    }
+</style>
+
+<style>
+    .form-actions {
+        padding-top: 10px;
+        margin-top: 20px;
+        border-top: 1px solid #e7ecf1;
+    }
+
+    .form-section {
+        margin-top: 10px;
+        padding: 5px;
+        border-bottom: 1px solid #e7ecf1;
+    }
+
+    .forminput {
+        text-align: left;
+        margin-left: -20px;
+        border: none;
+        background: transparent;
+    }
+
+    .portlet-bottom {
+        margin-bottom: 10px;
+    }
+
+    .portlet-align {
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+
+    .modal-custom-content {
+        padding: 0px;
+        border-radius: 20px;
+    }
+
+    .modal-custom-header {
+        background: #3598DC;
+        padding: 8px;
+        border-top-left-radius: 18px;
+        border-top-right-radius: 18px;
+    }
+
+    .modal-close-button {
+        margin-top: 10px;
+        margin-right: 10px;
+    }
+
+    .topheader {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFF !important;
+        text-transform: uppercase;
+        margin-top: 3px;
+    }
+
+    .alignCenter {
+        text-align: center;
+    }
+
+    .capitaltext {
+        text-transform: uppercase;
+    }
+
+    .tabpointer {
+        cursor: pointer;
+    }
+</style>
+
+<style>
+    .close {
+        background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+        height: 12px !important;
+        width: 12px !important;
+        margin-top: 0px !important;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .row {
+        margin: 0;
+        padding: 3px 0;
+    }
+
+    .page-size {
+        padding-left: 0;
+        padding-right: 0;
+        width: 62px;
+    }
+
+    .topheader {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFF !important;
+        text-transform: uppercase;
+        margin-top: 3px;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+
+    .alignCenter {
+        text-align: center;
+    }
+
+    #CustomerList th {
+        vertical-align: middle;
+    }
+
+    .no-padding {
+        padding: 0;
+    }
+
+    .no-margin {
+        margin: 0;
+    }
+
+    .padding-tb1 {
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+
+    .margin-tb1 {
+        margin-top: 1px;
+        margin-bottom: 1px;
+    }
+
+    .custom-listbox .headerbox {
+        padding: 3px 0px 3px 5px;
+    }
+
+    .custom-listbox {
+        margin-top: 4px;
+        margin-bottom: 0px;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .multiselect-container.dropdown-menu {
+        text-transform: none;
+        font-size: 14px;
+    }
+
+    .contract {
+        text-align: right;
+    }
+
+    .tablebox .table-responsive {
+        min-height: 80px;
+    }
+</style>
+
+<style>
+    @@media (min-width: 768px) {
+        .seven-cols .col-md-1,
+        .seven-cols .col-sm-1,
+        .seven-cols .col-lg-1 {
+            width: 100%;
+            *width: 100%;
+        }
+    }
+
+    @@media (min-width: 992px) {
+        .seven-cols .col-md-1,
+        .seven-cols .col-sm-1,
+        .seven-cols .col-lg-1 {
+            width: 14.285714285714285714285714285714%;
+            *width: 14.285714285714285714285714285714%;
+        }
+    }
+
+    @@media (min-width: 1200px) {
+        .seven-cols .col-md-1,
+        .seven-cols .col-sm-1,
+        .seven-cols .col-lg-1 {
+            width: 14.285714285714285714285714285714%;
+            *width: 14.285714285714285714285714285714%;
+        }
+    }
+</style>
+    
+}
+ 
+
+@section scripts{
+    <script type="text/javascript">
+        //Set Number of Record to show
+        function setPaging() {
+            var z = $("#pageSize").val();
+            var table = $("#FranchiseeUnQualifiedLeadList").DataTable();
+            if (z > 0) {
+                table.page.len(z).draw();
+            }
+            else if (z == -1) {
+                table.page.len(table.rows().count()).draw();
+            }
+            else {
+                table.page.page.len(10).draw();
+            }
+        }
+        function getCurrentUrl() {
+            return '@Url.Action("FranchiseUnQualifiedListData", "CRMLeadFranchise", new { area = "CRM" })';
+        }
+        $(document).ready(function () {
+
+            $.fn.dataTableExt.afnFiltering.push(function (oSettings, aData, iDataIndex) {
+                return true;
+            });
+
+
+            $(document).on('init.dt', function (e, settings) {
+                var api = new $.fn.dataTable.Api(settings);
+                if ($(api.table().node()).attr('id') == 'FranchiseeUnQualifiedLeadList') {
+                    setPaging();
+                }
+            });
+
+            $('#unqualified_table_tools > li > a.tool-action').on('click', function () {
+                var action = $(this).attr('data-action');
+                $('#FranchiseeUnQualifiedLeadList').DataTable().button(action).trigger();
+            });
+            function initTable() {
+
+                var ps = $('#pageSize').val();
+                var dtable = $('#FranchiseeUnQualifiedLeadList').dataTable({
+                    "bAutoWidth": false,
+                    cache: true,
+                    "iDisplayLength": ps == '-1' ? 10 : ps,
+                    "bDestroy": true,
+                    "aLengthMenu": [[5, 7, 10, 25, 50, -1], [5, 7, 10, 25, 50, "All"]],
+                    "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                    "aaSorting": [[0, "asc"]],
+                    "sAjaxSource": getCurrentUrl(),
+                    "sAjaxDataProp": "aadata",  // Internationalisation. For more info refer to http://datatables.net/manual/i18n
+                    "rowCallback": function (nRow, data) {
+                    },
+                    "aoColumns": [
+                        {
+                            "sName": "AccountId",
+                            "bSortable": true,
+                            "sClass":"alignCenter",
+                            "mRender": function (data, type, full) {
+                                return '<span>' + full.CRM_AccountId + '</span>';
+                            }
+                        },
+                        {
+                            "sName": "FranchiseName",
+                            "bSortable": true,
+                            "sClass": "tabpointer",
+                            "mRender": function (data, type, full) {
+                                return "<a href='@Url.Action("Detail", "CRMLeadFranchise")?accountId=" + full.CRM_AccountId + "' style='color:#0c9cff'>" + full.FranchiseeName + "</a>";
+                            }
+                        },
+                        {
+                            "sName": "ContactName",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+                                return "<a href='@Url.Action("Detail","CRMLeadFranchise")?accountId" + full.CRM_AccountId + "'>" + full.ContactName + "</a>";
+                            }
+                        },
+                        {
+                            "sName": "Phone",
+                            "bSortable": true,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                if (full.PhoneNumber != null) {
+                                    if (full.PhoneNumber.length == 10)
+                                        var value = '(' + full.PhoneNumber.substr(0, 3) + ')' + ' ' + full.PhoneNumber.substr(3, 3) + '-' + full.PhoneNumber.substr(6, 4);
+                                    return '<span>' + value + '</span>';
+                                } else { return ''; }
+                            }
+                        },
+                        {
+                            "sName": "Email",
+                            "bSortable": true,
+                            "sClass": "capitaltext",
+                            "mRender": function (data, type, full) {
+                                return '<span>' + full.EmailAddress + '</span>';
+                            }
+                        },
+                        {
+                            "sName": "ProviderName",
+                            "bSortable": true,
+                            "sClass": "alignCenter capitaltext",
+                            "mRender": function (data, type, full) {
+                                return '<span>' + full.ProviderName + '</span>';
+                            }
+                        },
+                        {
+                            "sName": "StageStatusName",
+                            "bSortable": true,
+                            "sClass": "alignCenter capitaltext",
+                            "mRender": function (data, type, full) {
+                                return '<span class="label label-sm label-warning" style="background-color:#75923a;">' + full.StageStatusName + '</span>'
+                            }
+                        }
+                    ]
+                });
+            }
+            /*Search key up event*/
+            $("#input_Search").keyup(function () {
+                var table = $("#FranchiseeUnQualifiedLeadList").DataTable();
+                table.search($(this).val()).draw();
+            });
+
+            /*page size change event*/
+            $("#pageSize").change(function () {
+                setPaging();
+            })
+
+            /*Call table initialize function*/
+            initTable();
+
+            /*Show Franchisee New Lead Table and New Lead Div */
+            $('#FranchiseeUnQualifiedLeadList').show();
+            $('#divfranchiseeunqualifiedleadList').show();
+
+        });
+    </script>
+}
+@*Franchisee UnQualified Lead Header*@
+<div class="custom-listbox" style="margin-top:-7px;">
+    <div class="headerbox">
+        <div class="row no-padding">
+            <div class="col-md-1 page-size" style="margin-top:4px;">
+                <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                    <option value="-1">All</option>
+                    <option value="10" selected>10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </div>
+            <div class="col-md-3" style="margin-top:4px;">
+                <div class="input-icon">
+                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                    <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search..." value="" class="form-control input-sm typeahead" />
+                </div>
+            </div>
+            <div class="col-md-2"></div>
+            <div class="col-md-4 pull-right" style="padding-right:5px;">
+                <div class="actions pull-right">
+                    <div class="btn-group">
+                        <a class="btn btn-circle" href="" data-toggle="dropdown" style="background-color: white;">
+                            <i class="fa fa-download"></i><span class="hidden-xs"> @JKCRMResource.export </span><i class="fa fa-angle-down"></i>
+                        </a>
+                        <ul class="dropdown-menu pull-right" id="unqualified_table_tools">
+                            <li><a href="javascript:;" data-action="0" class="tool-action"><i class="icon-printer"></i> @JKCRMResource.print</a></li>
+                            <li><a href="javascript:;" data-action="1" class="tool-action"><i class="icon-doc"></i> @JKCRMResource.pdf</a></li>
+                            <li><a href="javascript:;" data-action="2" class="tool-action"><i class="icon-paper-clip"></i> @JKCRMResource.excel</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Franchisee UnQualified Lead Table*@
+<div class="tablebox">
+    <div class="table-responsive" id="divfranchiseeunqualifiedleadList" style="display:none;">
+        <table class="table table-striped table-bordered table-hover order-column" id="FranchiseeUnQualifiedLeadList" style="display:none;margin-top:0 !important;">
+            <thead>
+                <tr>
+                    <th style="width:30px;text-align:center;">
+                        Lead #
+                    </th>
+                    <th style="width:160px;text-align:center;">
+                        Franchisee Name
+                    </th>
+                    <th style="text-align:center;width:75px;">
+                        Contact Name
+                    </th>
+                    <th style="text-align:center;width:52px;">
+                        @JKCRMResource.phoneNumber
+                    </th>
+                    <th style="text-align:center;width:80px;">
+                        @JKCRMResource.email
+                    </th>
+                    <th style="text-align:center;width:25px;">
+                        @JKCRMResource.provider
+                    </th>
+                    <th style="text-align:center;width:10px;">
+                        @JKCRMResource.leadstatus
+                    </th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+
+

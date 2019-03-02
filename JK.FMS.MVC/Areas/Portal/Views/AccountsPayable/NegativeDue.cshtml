@@ -1,0 +1,633 @@
+﻿
+@{
+    ViewBag.Title = "NegativeDue";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+}
+
+<style>
+    .ErrorBorder {
+        border-color: red;
+    }
+
+    .topheader {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFF !important;
+        text-transform: uppercase;
+        margin-top: 3px;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+
+    .alignCenter {
+        text-align: center;
+    }
+
+    .no-padding {
+        padding: 0 !important;
+    }
+
+    .no-margin {
+        margin: 0 !important;
+    }
+
+    .padding-tb1 {
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+
+    .margin-tb1 {
+        margin-top: 1px;
+        margin-bottom: 1px;
+    }
+
+    .custom-listbox .headerbox {
+        padding: 3px 0 3px 5px;
+        font-weight: normal;
+    }
+
+    .custom-listbox {
+        margin-top: 4px;
+        margin-bottom: 0;
+    }
+
+    .row {
+        margin: 0;
+        padding: 3px 0;
+    }
+
+    #btnGenerateReport {
+        padding: 4.1px 12px;
+        font-size: 11px;
+        padding-bottom: 4.4px;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .multiselect-container.dropdown-menu {
+        text-transform: none;
+        font-size: 14px;
+    }
+
+    #modal_RegionModel .modal-content {
+        width: 55% !important;
+        margin-left: 30% !important;
+    }
+
+    input[type=text] {
+        width: calc(100% - 2px);
+        margin-left: 1px;
+        box-shadow: -8px 10px 0px -7px #ebebeb, 8px 10px 0px -7px #ebebeb;
+        -webkit-transition: box-shadow 0.3s;
+        transition: box-shadow 0.3s;
+    }
+
+        input[type=text]:focus {
+            outline: none;
+            box-shadow: -8px 10px 0px -7px #4EA6EA, 8px 10px 0px -7px #4EA6EA;
+        }
+</style>
+
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+
+                </div>
+                <div class="col-md-4 topheader">
+                    Franchisee Negative Due Balance
+                </div>
+                <div class="col-md-4" style="padding-right:5px;">
+                    <div class="col-md-7 pull-right no-padding">
+                        <div style="display:table-cell;padding-right: 5px;">
+                            Region
+                        </div>
+                        <div style="display:table-cell;width:100%;">
+                            @if (ViewBag.regionlist != null)
+                            {
+                                <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                                    @foreach (var item in (SelectList)ViewBag.RegionList)
+                                    {
+                                        <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="custom-listbox" id="divPaymentProcesslist" style="margin-top:4px;">
+    <div class="headerbox">
+        <div class="row no-padding">
+            <div class="col-sm-1 page-size">
+                <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                    <option value="-1">All</option>
+                    <option value="100" selected>100</option>
+                    <option value="50">50</option>
+                    <option value="25">25</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <div class="input-icon">
+                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                    <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search" value="" class="form-control input-sm typeahead" />
+                </div>
+            </div>
+            <div class="input-group pull-left">
+                <div class="icheck-inline" style="margin-top: 2px; margin-bottom: 2px">
+                    <label class="icheck-inline" style="margin-top: 0; margin-bottom: 0; ">
+                        <input type="radio" name="rdoFranchiseeStatus" value="9" class="icheck" id="chkActive"> Active
+                    </label>
+                    <label class="icheck-inline" style="margin-top: 0; margin-bottom: 0; ">
+                        <input type="radio" name="rdoFranchiseeStatus" value="0" class="icheck" checked id="chkAll"> All
+                    </label>
+
+                </div>
+            </div>
+            <div class="col-md-3" style="padding-left: 0;padding-right: 0;">
+            </div>
+            <div class="col-md-5 pull-right no-padding">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="tablebox">
+    <form>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover" id="tableNegativeDue" style="margin-top: 0 !important;">
+                <thead>
+                    <tr>
+                        <th style="width: 25px; text-align: center; visibility: hidden;"></th>
+                        <th style="width: 25px; text-align: center;">Region</th>
+                        <th style="width: 25px; text-align: center;">Franchisee #</th>
+                        <th style="width: 464px; text-align: center;">Franchisee Name</th>
+                        <th style="width: 85px; text-align: center;">Current Balance</th>
+                        <th style="width: 85px; text-align: center;">Rollover</th>
+                        <th style="width: 85px; text-align: center;"> <input type="checkbox" id="chkSelectAll" onclick="MoveToNextMonth(this)" />Move To Next Month</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div class="col-md-12">
+                <div class="col-md-9"></div>
+                <div class="col-md-3" style="padding-right: 0; padding-left: 0;">
+                    <button type="button" name="SaveNew" id="btnSave" class="btn btn-primary col-md-5 pull-right" onclick="ProcessSelectedRows();">Process</button>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal fade in" id="modal_RegionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0;text-transform: uppercase;">
+                    Select Region
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Select Region</label>
+                                @if (ViewBag.regionlist != null)
+                                {
+                                    <select class="form-control input-sm" id="selectregionlist">
+                                        <option value="">Select Region</option>
+                                        @foreach (var item in (SelectList)ViewBag.regionlist)
+                                        {
+                                            <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div class="col-md-12">
+                        <button type="button" name="SaveNew" id="btnRegion" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:0;">Select Region</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        var negativeDueTotals = {
+            negativeDueRow: []
+        };
+
+        /*
+         * Proxy object to handle relevant page events - German Sosa 10/26/2018
+         */
+        var negativeDueTotalsInitHandler = {
+            set: function(target, key, value) {
+                target[key].push(value);
+            }
+        };
+
+        var negativeDueTotalsUpdateHandler = {
+            set: function(target, key, value) {
+                target.negativeDueRow.forEach(function(element, index) {
+                    if (element.negativeDueId == value.negativeDueId) {
+                        element.rollover = value.rollover;
+                        element.balanceAfterRollover = value.balanceAfterRollover;
+                    }
+                });
+            }
+        };
+
+        var negativeDueTotalsInitProxy = new Proxy(negativeDueTotals, negativeDueTotalsInitHandler);
+        var negativeDueTotalsUpdateProxy = new Proxy(negativeDueTotals, negativeDueTotalsUpdateHandler);
+
+        var tableNegativeDue;
+
+        var selectedPeriodId = $('#ddlPeriodId').val();
+        var selPeriodId = $('#ddlPeriodId').val();
+        var _regionId = $("#regionlist").val();
+
+        function MoveToNextMonth(checkboxObject) {
+            let checkboxesSelectAll = document.querySelectorAll('[rel="MoveToNextMonth"]');
+
+            checkboxesSelectAll.forEach((element) => {
+                element.checked = checkboxObject.checked;
+                RollOverToNextPeriod(element);
+            });
+        };
+
+        jQuery(document).ready(function() {
+
+            $("#regionlist").multiselect({
+                includeSelectAllOption: true,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region... ',
+                dropRight: true,
+                numberDisplayed: 2
+
+            });
+
+            $('input[type=radio][name=rdoFranchiseeStatus]').change(function() {
+                var t = $('#tableNegativeDue').DataTable();
+                t.destroy();
+                initDataTable();
+
+            });
+
+            $("#regionlist").change(function () {
+                var t = $('#tableNegativeDue').DataTable();
+                t.destroy();
+                initDataTable();
+            });
+
+            var negativeDueRow = [];
+            initDataTable();
+
+            $("#input_Search").keyup(function() {
+                var table = $("#tableNegativeDue").DataTable();
+                table.search($(this).val()).draw();
+            });
+        });
+
+        function initDataTable() {
+            
+            _regionId = 2; /* Substitute this for the multi region dropdown */
+            selectedRegions = $("#regionlist").val().join();
+            var myRadio = $("input[name=rdoFranchiseeStatus]");
+
+            selectedPeriodId = $('#ddlPeriodId').val();
+
+            var groupColumn = 0;
+            var payLoad = {
+                "Page": 1,
+                "PageSize": 100,
+                "FranchiseeStatus": 0,
+                "RegionIds": selectedRegions,
+                "SelectedPeriodId": selectedPeriodId.toString()
+            }
+
+
+            fetch('@ViewBag.apiEndpoint' + '/v1/negativedue/getlist',
+                {
+                    method: 'post',
+                    body: JSON.stringify(payLoad),
+                    mode: 'cors',
+                    headers: new Headers({
+                        'Content-Type': 'application/json',
+                        'token': '@ViewBag.apiToken',
+                        'api_key': '@ViewBag.apiKey'
+                    })
+                })
+                .then(function (response) { return response.json(); })
+                .then(function (data) {
+                    /* If empty need to display whatever message we get from the server 
+                     On this case, if the period is already closed, we need to display the info on the body of the table 
+                     And disable the Process Button*/
+                    tableNegativeDue = $('#tableNegativeDue').DataTable({
+                "bAutoWidth": false,
+                "cache": false,
+                "ordering": true,
+                "paging": false,
+                "iDisplayLength": 100,
+                "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                "data": data.Data,
+                "columns": [
+                    {
+                        "data": "NegativeDueId",
+                        "sortable": false,
+                        "visible": false
+                    },
+                    {
+                        "data": "RegionName",
+                        "sortable": true,
+                        "class": "alignCenter",
+                        "render": function(data, type, full) {
+                            return full.RegionName;
+                        }
+                    },
+                    {
+                        "data": "FranchiseeNo",
+                        "sortable": true,
+                        "class": "alignCenter",
+                        "render": function(data, type, full) {
+                            return full.FranchiseeNo;
+                        }
+                    },
+                    {
+                        "data": "FranchiseeName",
+                        "sortable": true,
+                        "class": "alignLeft",
+                        "render": function(data, type, full) {
+                            return '<div>' + full.FranchiseeName + '<br><span class="small text-success hidden" id="rowStatus_' + full.NegativeDueId+'"><i class="fa fa-check text-success"></i> Processed Successfully!</span></div>';
+                        }
+                    },
+                    {
+                        "data": "Balance",
+                        "sortable": false,
+                        "class": "alignRight",
+                        "render": function(data, type, full) {
+                            return formatCurrency(full.Balance, true);
+                        }
+
+                    },
+                    {
+                        "sName": "TotalRollover",
+                        "sortable": false,
+                        "class": "alignRight",
+                        "render": function(data, type, full) {
+                            return '<div class="form-group" id="formDivVal_' +
+                                full.NegativeDueId +
+                                '"><input type="text" rel="txtToChargeAmt" class="inputs form-control input-sm text-right" onblur="ValidateAmount(this)" data-negative_due_balance="' +
+                                full.Balance +
+                                '"  data-negative_due_balance_id="' +
+                                full.NegativeDueId +
+                                '"  id="txtToChargeAmt_' +
+                                full.NegativeDueId +
+                                '" value="' +
+                                formatCurrency(full.Balance, false) +
+                                '" required /></div>';
+                        }
+                    },
+                    {
+                        "sName": "NegativeDueBalance",
+                        "sortable": false,
+                        "class": "alignLeft",
+                        "render": function(data, type, full) {
+                            return '<input type="checkbox" rel="moveToNextMonth" class="i-check checkRoll" onchange="RollOverToNextPeriod(this)" data-negative_due_balance="' +
+                                full.Balance +
+                                '"  data-negative_due_balance_id="' +
+                                full.NegativeDueId +
+                                '" id="checkRoll_' +
+                                full.NegativeDueId +
+                                '" name="checkdata_' +
+                                full.NegativeDueId +
+                                '" value="' +
+                                full.NegativeDueId +
+                                '" /> <div class="text-right pull-right" id="divRolloverNextMonth_' +
+                                full.NegativeDueId +
+                                '"> $0.00</div>';
+                        }
+                    }
+                ],
+                "drawCallback": function(settings) {
+                    var api = this.api();
+                    var currentRowData = api.rows({ page: 'current' }).data();
+
+                    api.column(groupColumn, { page: 'current' }).data().each(function(group, i) {
+                        currentRowValues = currentRowData[i];
+                        negativeDueRow = {
+                            negativeDueId: currentRowValues.NegativeDueId,
+                            rollover: parseFloat(currentRowValues.Balance),
+                            balanceAfterRollover: 0.00
+                        }
+                        negativeDueTotalsInitProxy.negativeDueRow = negativeDueRow;
+                    });
+                }
+            });
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+
+        function ProcessSelectedRows() {
+            if ($("#regionlist").val().length > 1) {
+                swal({
+                    title: "Feature Not Available Yet.",
+                    text: "Multi-Region Processing Feature is not available yet for this process. Please select only 1 region.",
+                    type: "info",
+                    showCancelButton: false
+                });
+                return;
+            }
+
+            selectedPeriodId = parseInt($('#ddlPeriodId').val());
+            selectedRegions = parseInt($("#regionlist").val().join());
+
+            var payLoad = [{
+                'regionId': selectedRegions,
+                'selectedPeriodId': selectedPeriodId,
+                'isSelectedPeriodIdFinalized': false,
+                'selectedPeriodProcessStatus': 'About to process',
+                'selectedRows': negativeDueTotals.negativeDueRow
+            }];
+            swal({
+                title: "Please confirm you want to process Negative Dues for the selected period.",
+                text: "This action is irreversible.",
+                type: "warning",
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Yes, do it!",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true
+            }, function (isConfirmed) {
+                if (isConfirmed) {
+                    swal("Processing, please wait...");
+                    fetch('@ViewBag.apiEndpoint' + '/v1/negativedue/SetNextAction',
+                        {
+                            method: 'post',
+                            body: JSON.stringify(payLoad),
+                            mode: 'cors',
+                            headers: new Headers({
+                                'Content-Type': 'application/json',
+                                'token': '@ViewBag.apiToken',
+                                'api_key': '@ViewBag.apiKey'
+                            })
+                        })
+                        .then(function (response) { return response.json(); })
+                        .then(function (data) {
+                            /* Update grid with latest results row by row */
+                            document.querySelector('#btnSave').disabled = true;
+                            let checkboxesSelectAll = document.querySelectorAll('[rel="MoveToNextMonth"]');
+                            let chkSelectAll = document.querySelector('#chkSelectAll');
+
+                            let len = data.Data[0].SelectedRows.length;
+                            returnedData = data.Data[0];
+                            for (var i = 0; i < len; i++) {
+                                element = returnedData.SelectedRows[i];
+                                rowStatus = document.querySelector('#rowStatus_' + element.NegativeDueId);
+                                rowStatus.classList.remove("hidden");
+                            }
+
+                            chkSelectAll.disabled = true;
+                            checkboxesSelectAll.forEach((element) => {
+                                element.disabled = true;
+                            });
+                            swal({
+                                title: "Woohoo!",
+                                text: returnedData.SelectedPeriodProcessStatus,
+                                type: "success",
+                                confirmButtonClass: "btn-success",
+                                confirmButtonText: "Close",
+                                showCancelButton: false,
+                                closeOnConfirm: false,
+                            });
+                        });
+                    }
+                });
+        }
+                     
+        function ValidateAmount(textBoxObject) {
+            var negativeDueValueEntered = parseFloat(textBoxObject.value);
+            var negativeDueBalance = parseFloat(textBoxObject.dataset.negative_due_balance);
+            if ((negativeDueValueEntered > negativeDueBalance) ||
+                (negativeDueValueEntered <= 0) ||
+                (isNaN(negativeDueValueEntered))) {
+                document.querySelector('#formDivVal_' + textBoxObject.dataset.negative_due_balance_id).classList
+                    .add('has-error');
+                var infoMessage = "Rollover amount can't be " +
+                (negativeDueValueEntered > negativeDueBalance
+                    ? "greater than the balance."
+                    : (isNaN(negativeDueValueEntered) ? " an empty field." : "0."));
+                swal({
+                        title: "User Input Error",
+                        text: infoMessage,
+                        type: "warning",
+                        showCancelButton: false
+                    },
+                    function() {
+                        textBoxObject.value = formatCurrency(negativeDueBalance, false);
+                        textBoxObject.focus();
+                    });
+            } else {
+                textBoxObject.value = formatCurrency(negativeDueValueEntered, false);
+                document.querySelector('#formDivVal_' + textBoxObject.dataset.negative_due_balance_id).classList
+                    .remove('has-error');
+                if ((negativeDueValueEntered < negativeDueBalance)) {
+                    document.querySelector('#divRolloverNextMonth_' + textBoxObject.dataset.negative_due_balance_id)
+                        .innerHTML =
+                        formatCurrency((negativeDueBalance - negativeDueValueEntered), true);
+                }
+                negativeDueRow = {
+                    negativeDueId: parseInt(textBoxObject.dataset.negative_due_balance_id),
+                    rollover: negativeDueValueEntered,
+                    balanceAfterRollover: parseFloat(negativeDueBalance - negativeDueValueEntered)
+                }
+                negativeDueTotalsUpdateProxy.negativeDueRow = negativeDueRow;
+            }
+        }
+
+        function RollOverToNextPeriod(checkBoxObject) {
+            var negativeDueBalance = parseFloat(checkBoxObject.dataset.negative_due_balance);
+            if (checkBoxObject.checked) {
+                document.querySelector('#divRolloverNextMonth_' + checkBoxObject.dataset.negative_due_balance_id)
+                    .innerHTML =
+                    formatCurrency(checkBoxObject.dataset.negative_due_balance, true);
+                document.querySelector('#txtToChargeAmt_' + checkBoxObject.dataset.negative_due_balance_id)
+                    .value = "0.00";
+                document.querySelector('#txtToChargeAmt_' + checkBoxObject.dataset.negative_due_balance_id)
+                    .disabled = true;
+
+                negativeDueValueEntered = parseFloat(0.00);
+            } else {
+                document.querySelector('#divRolloverNextMonth_' + checkBoxObject.dataset.negative_due_balance_id)
+                    .innerHTML = '$0.00';
+                document.querySelector('#txtToChargeAmt_' + checkBoxObject.dataset.negative_due_balance_id)
+                    .disabled = false;
+                negativeDueValueEntered = negativeDueBalance;
+
+                document.querySelector('#txtToChargeAmt_' + checkBoxObject.dataset.negative_due_balance_id)
+                    .value = formatCurrency(checkBoxObject.dataset.negative_due_balance, false);
+            }
+
+            negativeDueRow = {
+                negativeDueId: parseInt(checkBoxObject.dataset.negative_due_balance_id),
+                rollover: negativeDueValueEntered,
+                balanceAfterRollover: parseFloat(negativeDueBalance - negativeDueValueEntered)
+            }
+            negativeDueTotalsUpdateProxy.negativeDueRow = negativeDueRow;
+
+        }
+
+        function formatCurrency(total, dollar) {
+            dollar = (dollar == true ? true : false);
+            var neg = false;
+            if (total < 0) {
+                neg = true;
+                total = Math.abs(total);
+            }
+            return (neg ? "-" : '') +
+                (dollar ? "$" : "") +
+                parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        }
+
+
+
+    </script>
+}

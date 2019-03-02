@@ -1,0 +1,51 @@
+﻿@model List<JKViewModels.markers>
+<!DOCTYPE html>
+@{ Layout = null;}
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>MAP</title>
+</head>
+<body>
+
+    <div id="map" style="height: 600px;"></div>
+    <script src="https://maps.google.com/maps/api/js?key=AIzaSyCrw533WZZijl0sItzXs-DjfyHMN5g4xD8" async defer></script>
+
+    <script type="text/javascript">
+
+        window.onload = function () {
+           
+            var markers = @Html.Raw(Json.Encode(Model));
+           
+			function initMap() {
+			    var mapOptions = {
+				    center: new google.maps.LatLng(markers[0].lat, markers[0].lng),
+				    zoom: 10,
+				    mapTypeId: google.maps.MapTypeId.ROADMAP
+			    };
+			    var infoWindow = new google.maps.InfoWindow();
+			    var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+			    for (i = 0; i < markers.length; i++) {
+				    var data = markers[i]
+				    var myLatlng = new google.maps.LatLng(data.lat, data.lng);
+				    var marker = new google.maps.Marker({
+					    position: myLatlng,
+					    map: map,
+					    icon: i==0?'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=C|4286f4|000000':'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=F|FF0000|000000',
+					    title: data.number+' - '+data.title
+				    });
+				    (function (marker, data) {
+					    google.maps.event.addListener(marker, "click", function (e) {
+					        infoWindow.setContent(data.number+' - '+data.title);
+						    infoWindow.open(map, marker);
+					    });
+				    })(marker, data);
+			    }
+		      }
+
+	        initMap();
+		};
+    </script>
+</body>
+
+</html>

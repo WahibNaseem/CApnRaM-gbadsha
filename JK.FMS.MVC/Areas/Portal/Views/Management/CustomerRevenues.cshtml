@@ -1,0 +1,248 @@
+﻿
+@{
+    ViewBag.Title = "CustomerRevenues";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+<style>
+    tr > td {
+        font-size: 12px !important;
+        padding: 4px !important;
+    }
+
+    /*tr > th {
+        font-size: 11px !important;
+        text-transform: uppercase;
+    }*/
+
+    .row {
+        margin: 0;
+        padding: 3px 0;
+    }
+
+    .right {
+        text-align: right;
+    }
+
+    .personlink {
+        text-align: center;
+    }
+
+    .close {
+        background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+        height: 12px !important;
+        width: 12px !important;
+        margin-top: 0px !important;
+    }
+
+    .page-size {
+        padding-left: 0;
+        padding-right: 0;
+        width: 62px;
+    }
+
+    .topheader {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFF !important;
+        text-transform: uppercase;
+        margin-top: 3px;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+
+    .alignCenter {
+        text-align: center;
+    }
+
+    #NewCustomerList th {
+        vertical-align: middle;
+    }
+
+    .no-padding {
+        padding: 0;
+    }
+
+    .no-margin {
+        margin: 0;
+    }
+
+    .padding-tb1 {
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+
+    .margin-tb1 {
+        margin-top: 1px;
+        margin-bottom: 1px;
+    }
+
+    .custom-listbox .headerbox {
+        padding: 3px 0px 3px 5px;
+    }
+
+    .custom-listbox {
+        margin-top: 4px;
+        margin-bottom: 0px;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .multiselect-container.dropdown-menu {
+        text-transform: none;
+        font-size: 14px;
+    }
+</style>
+
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+}
+
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:left;">
+                    @*@if (Convert.ToInt32(ViewBag.isback) == 1)
+                    {
+                        <a class="btn red" href="@Url.Action("ManagementReports","Management",new {  area = "Portal"})" style="padding: 3px 12px;font-size: 13px">Back</a>
+
+                    }*@
+                    <button type="button" class="btn btn-primary button-next" onclick="location.href='@Url.Action("ManagementReports", "Management", new { area = "Portal"})'">Back <i class="fa fa-backward"></i></button>
+                </div>
+                <div class="col-md-4 topheader">
+                    Customer Revenues Reports
+                </div>
+                <div class="col-md-2 pull-right" style="padding-right:5px;">
+                    <div style="display:table-cell;padding-right: 5px;">
+                        Region
+                    </div>
+                    <div style="display:table-cell;width:100%;">
+                        @if (ViewBag.regionlist != null)
+                        {
+                            <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                                @foreach (var item in (SelectList)ViewBag.regionlist)
+                                {
+                                    <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="custom-listbox" style="margin-top:4px;margin-bottom:3px;">
+    <div class="headerbox">
+        <div class="row no-padding">
+            <div class="col-md-2 col-md-offset-5">
+                @Html.DropDownList("PeriodList", (SelectList)ViewBag.PeriodList, new { @class = "form-control input-sm", @id = "select_periodlist" })
+            </div>
+            <div class="col-md-1">
+                <input type="button" class="btn red btn-circle" id="btnSubmit" value="Submit" style="padding: 3px 12px;font-size: 13px" onclick="BindCustomerData()" />
+            </div>
+            <div class="col-md-4 pull-right no-padding" style="text-align:right;">
+                <button type="submit" class="btn btn-primary button-next" onclick="CustomerRevenuesExportPDF()" style="height:30px;">Export PDF <i class="fa fa-download"></i></button>
+            </div>
+        </div>
+    </div>
+    <div id="BindHTML"></div>
+
+</div>
+
+@section pageplugins{
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+}
+
+@section scripts{
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+    <script type="text/javascript">
+        var dtable;
+        jQuery(document).ready(function () {
+
+            $('a[href="#tab_ManagementReports"]').parent().addClass('active');
+            $('a[href="/Portal/Management/ManagementReports"]').parent().addClass('active')
+        })
+
+        $(function () {
+            $("#regionlist").multiselect({
+                includeSelectAllOption: true,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2
+            });
+        });
+
+
+        function BindCustomerData() {
+            if ($("#regionlist").val() != null && $("#regionlist").val() != "") {
+                var sURL = '@Url.Action("CustomerRevenuesResult", "Customer", new { area = "Portal" })?regions=' + $("#regionlist").val() + '&periodid=' + $('#select_periodlist').val();
+                $.ajax({
+                    type: "GET",
+                    url: sURL,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (data) {
+                        $('#BindHTML').html(data);
+                        $('table[rel="datatableCR"]').each(function (index) {
+                            console.log(index);
+                            $('#' + $(this).attr('id')).dataTable({
+                            "bProcessing": true,
+                            "aLengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                            "pageLength": 200,
+                            "dom": "<'table-responsive't>"
+                        });
+                        });
+
+
+                    },
+                    error: function () {
+                        alert("Content load failed.");
+                    }
+                });
+            }
+            else {
+                alert("Please select at least one region from region list.");
+            }
+        }
+        function CustomerRevenuesExportPDF() {
+            if ($("#regionlist").val() != null && $("#regionlist").val() != "") {
+                var sURL = '@Url.Action("CustomerRevenuesResultExportPDFfile", "Customer", new { area = "Portal" })?regions=' + $("#regionlist").val() + '&periodid=' + $('#select_periodlist').val();
+                window.location.href = sURL;
+            }
+            else {
+                alert("Please select at least one region from region list.");
+            }
+        }
+    </script>
+}
+
+

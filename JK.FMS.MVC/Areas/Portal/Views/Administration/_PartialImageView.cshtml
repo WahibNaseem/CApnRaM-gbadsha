@@ -1,0 +1,150 @@
+﻿@model JKViewModels.Inspection.InspectionFormItemModel
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+    </style>
+}
+<div class="modal fade custom-model custom-form-design" id="modal_ShowImage" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Image View
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px 30px 15px 30px;">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            @if (Model.FormItemValue.Count() > 0)
+                            {
+                                var data = Json.Decode(Model.FormItemValue);
+                                int i = data["Items"].Length;
+                                int active = 1;
+                                <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                                    <!-- Indicators -->
+                                    <ol class="carousel-indicators">
+                                        @for (var k = 0; k < i; k++)
+                                        {
+                                            if (k == 0)
+                                            {
+                                            <li data-target="#myCarousel" data-slide-to="@k" class="active"></li>}
+                                            else
+                                            {
+                                                <li data-target="#myCarousel" data-slide-to="@k" class=""></li>}
+                                        }
+                                    </ol>
+                                    <div class="carousel-inner">
+                                        @foreach (var item in data["Items"])
+                                        {
+                                            if (active == 1)
+                                            {
+                                            <div class="item active">
+                                                <img src="@item">
+                                            </div>
+                                                active = 0;
+                                            }
+                                            else
+                                            {
+                                                <div class="item">
+                                                    <img src="@item">
+                                                </div>
+                                            }
+                                        }
+
+                                    </div>
+                                    @if (i > 1)
+                                    {
+                                    <!-- Left and right controls -->
+                                        <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+                                            <span class="glyphicon glyphicon-chevron-left"></span>
+                                            <span class="sr-only">Previous</span>
+                                        </a>
+                                        <a class="right carousel-control" href="#myCarousel" data-slide="next">
+                                            <span class="glyphicon glyphicon-chevron-right"></span>
+                                            <span class="sr-only">Next</span>
+                                        </a>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-12">
+                            @if (Model.FormItemValue.Count() > 0)
+                            {
+                                var data = Json.Decode(Model.FormItemValue);
+                                <div class="col-md-3 control-label">Comment:</div>
+                                <div class="col-md-8" style="padding-top: 8px;">@data["Text"]</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-10"></div>
+                        <div class="col-md-2">
+                            <input type="button" class="btn btn-custom btn btn-primary" onclick="btnClose();" Id="btnClose" value="Close" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

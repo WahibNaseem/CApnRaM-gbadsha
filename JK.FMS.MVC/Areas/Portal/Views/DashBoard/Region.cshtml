@@ -1,0 +1,125 @@
+﻿@model JKViewModels.UserViewModel
+
+@{
+    ViewBag.Title = "Region";
+    Layout = "~/Areas/JKControl/Views/Shared/_LayoutLogin.cshtml";
+}
+
+<style type="text/css">
+    .web_dialog_overlay {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        background: rgb(215, 233, 240);
+        opacity: .15;
+        filter: alpha(opacity=50);
+        -moz-opacity: .50;
+        z-index: 101;
+        display: none;
+    }
+
+    .web_dialog {
+        display: block;
+        position: fixed;
+        width: 50%;
+        height: auto;
+        top: 50px;
+        left: 25%;
+        background-color: #ffffff;
+        border: 2px solid #336699;
+        padding: 0px;
+        z-index: 9999;
+        font-family: Verdana;
+        font-size: 10pt;
+    }
+
+    .web_dialog_title {
+        border-bottom: solid 2px #0c0c0c;
+        background-color: rgb(80, 163, 200);
+        padding: 4px;
+        color: White;
+        font-weight: bold;
+        text-align: center;
+    }
+
+        .web_dialog_title a {
+            color: White;
+            text-decoration: none;
+        }
+
+    .align_right {
+        text-align: right;
+    }
+</style>
+
+<div class="login-form">
+    <div class="form-horizontal center-body">
+        <div class="custom-form portlet light">
+            <div class="form-body">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12" style="padding-bottom: 20px;">
+                            <div class="col-md-2"></div>
+                            <div class="col-md-8" style="border: 7px solid lightblue;padding-left: 0px;padding-right: 0px;">
+                                <img src="~/Images/slide1.gif" alt="" style="width:100%;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8">
+
+                        @if (Model != null && Model.Regions != null)
+                        {
+                            for (int i = 0; i < Model.Regions.Count; i++)
+                            {
+                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" style="margin-bottom: 14px;">
+                                    <i class="glyphicon glyphicon-check"></i>
+                                    <a href="@Url.Action("RegionSelect", "DashBoard", new { RegionId = Model.Regions[i].RegionId, area = "Portal" })">@Model.Regions[i].Name</a>
+                                </div>
+                            }
+                        }
+
+                    </div>
+                    <div class="col-md-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        function redirectFromDashboardToLastVisitedPage() {
+            // Retrieve
+            var data = localStorage.getItem("lastVisitedUrl");
+            if (data) {
+                data = JSON && JSON.parse(data) || $.parseJSON(data);
+                if (data.lastUrl) {
+                    if (data.lastUrl.indexOf("Region") != 0) {
+                        var now = new Date();
+                        var lastDate = new Date(data.sessionTimeOutTime);
+                        if (now.getTime() > lastDate.getTime()) {
+                            //destroy session after period (12Hrs) is over.
+                            localStorage.clear();
+                        } else {
+                            window.location.replace(data.lastUrl);
+                        }
+
+                    }
+                }
+            }
+
+        }
+    </script>
+<script src="@Url.Content("~/Scripts/common.js?v=" + System.Configuration.ConfigurationManager.AppSettings["jsVersion"])"></script>
+}

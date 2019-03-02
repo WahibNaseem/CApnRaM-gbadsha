@@ -1,0 +1,115 @@
+﻿
+@{
+    ViewBag.Title = "Customner Search";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section styles{
+
+}
+<div class="custom-form portlet light" style="max-width:740px;margin: 0px auto;padding:0;min-height: 100px;">
+    <div class="headerbox">
+        <div class="row">
+
+            &nbsp;
+        </div>
+    </div>
+    <div class="portlet-body form">
+        <form class="form-horizontal" role="form" method="post">
+            <div class="form-body">
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        Search in
+                    </label>
+                   
+                    <div class="col-md-5">
+                        @*<input type="text" name="For" id="For" value="" class="form-control input-sm" />*@
+                        <div class="ui-widget">
+                            <div class="input-icon right input-sm">
+                                <i class="icon-magnifier" style="margin-top: 1px; margin-right: 28px;"></i>
+                                @* <input type="text" name="For" value="" placeholder="Search" class="form-control input-sm" id="input_Search" style="margin-top: -5px;margin-left: -22px;" />*@
+                                <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search Customer Name or Number" value="" class="form-control input-sm typeahead" style="margin-top: -5px;margin-left: -22px;" />
+                            </div>
+                            <div id="container">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+
+                @*<div class="col-md-12">
+                <button type="submit" class="btn btn-primary button-next pull-right" style="margin-right:10px;">Search</button>
+            </div>*@
+
+            </div>
+        </form>
+    </div>
+</div>
+@section pageplugins{
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+}
+@section scripts{
+    <script>
+        jQuery(document).ready(function () {
+
+            @*$("#input_Search").keyup(function () {
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("CustomerAutoComplete", "Customer", new { area = "Portal" })',
+                    data: { namePrefix: $("#input_Search").val(), InvoicePrefix: $("#select_SearchType").val() },
+                    success: function (data) {
+                        var typeaheadSource = [];
+                        $.each(data, function (key, value) {
+                            typeaheadSource.push({ id: value.CustomerId, name: value.CustomerNo + ' ' + $.trim(value.Name) })
+                        });
+
+                        $('#input_Search').typeahead({
+                            source: typeaheadSource,
+                            updater: function (item) {
+                                console.log(item);
+                                redirect(item.id);
+                                return item;
+                            }
+                        });
+                    }
+                });
+            });*@
+
+            $("#input_Search").keyup(function () {
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("CustomerAutoComplete", "Customer", new { area = "Portal" })',
+                    data: 'keyword=' + $(this).val(),
+                    success: function (data) {
+                        var typeaheadSource = [];
+                        $.each(data, function (key, value) {
+                            typeaheadSource.push({ id: value.CustomerId, name: value.CustomerNo + ' ' + value.Name })
+                        });
+
+                        $('#input_Search').typeahead({
+                            source: typeaheadSource,
+                            updater: function (item) {
+                                console.log(item);
+                                //$("#hdfCustomerId").val(item.id);
+                                redirect(item.id);
+                                return item;
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+        function redirect(id) {
+            var url = '@Url.Action("CustomerDetail", "Customer",new { area = "Portal", id =  -1})';
+            var path = url.replace("-1", id);
+            location.href = path;
+        }
+
+    </script>
+}

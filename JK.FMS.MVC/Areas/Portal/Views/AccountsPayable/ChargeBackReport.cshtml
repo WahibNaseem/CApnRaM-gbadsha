@@ -1,0 +1,1425 @@
+﻿@{
+    ViewBag.Title = "ChargeBackReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+
+    <style type="text/css">
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .clsAmounttd {
+            text-align: right;
+           
+        }
+        .clsAmounttdRed {
+            text-align: right;
+            color: red;
+        }
+
+        .clsFooterAmounttd {
+             background:#bbf7f7;
+             font-size: 12px !important;
+            
+        }
+
+
+         .clsFooterAmounttdRed {
+             background:#bbf7f7;
+             font-size: 12px !important;
+             color: red;
+                
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .no-padding {
+            padding: 0 !important;
+        }
+
+        .no-margin {
+            margin: 0 !important;
+        }
+
+        .padding-tb1 {
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        .margin-tb1 {
+            margin-top: 1px;
+            margin-bottom: 1px;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+            font-weight: normal;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .page-size {
+            padding-left: 0;
+            padding-right: 0;
+            width: 62px;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+    </style>
+}
+@Html.Hidden("SelectedView")
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    Chargeback History
+                </div>
+                <div class="col-md-4" style="padding-right:5px;">
+                    <div class="col-md-7 pull-right no-padding">
+                        <div style="display:table-cell;padding-right: 5px;">
+                            Region
+                        </div>
+                        <div style="display:table-cell;width:100%;">
+                            @if (ViewBag.regionlist != null)
+                            {
+                                <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                                    @foreach (var item in (SelectList)ViewBag.regionlist)
+                                    {
+                                        <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="custom-listbox" id="divfranchiseList" style="margin-top:4px;">
+    <div class="headerbox">
+        <div class="row no-padding">
+            <div class="col-md-1 page-size">
+                <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                    <option value="-1">All</option>
+                    <option value="100" selected>100</option>
+                    <option value="50">50</option>
+                    <option value="25">25</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <div class="col-md-10 no-padding">
+                    <div class="input-icon">
+                        <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                        <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search..." value="" class="form-control input-sm typeahead" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3" style="padding-left: 0px;padding-right: 0px;">
+                <div class="input-group">
+                    <div class="icheck-inline" style="margin-top: 2px; margin-bottom: 2px">
+                        <label class="icheck-inline" style="margin-top: 0px; margin-bottom: 0px; ">
+                            <input type="radio" name="isSummaryView" value="1" class="icheck" checked> Summary View
+                        </label>
+                        <label class="icheck-inline" style="margin-top: 0px; margin-bottom: 0px; ">
+                            <input type="radio" name="isSummaryView" value="2" class="icheck"> Detail View
+                        </label>
+                        <input type="button" class="btn btn-primary pull-right" id="btnPrint" onclick="onclickPrint()" value="Print" style="margin-left:30px;margin-right:0px !important">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-5 pull-right no-padding">
+                <div class="col-md-10 pull-right no-padding" style="text-align:center;">
+                    <div class="col-md-6 no-padding" style="margin-left:30px;">
+                        <select id="select_timeduration" class="form-control input-sm">
+                            <option value="1">This Week</option>
+                            <option value="2">This Week-to-date</option>
+                            <option value="3" selected="selected">This Month</option>
+                            <option value="4">This Month-to-date</option>
+                            <option value="5">This Quarter</option>
+                            <option value="6">This Quarter-to-date</option>
+                            <option value="7">This Fiscal Year</option>
+                            <option value="8">This Fiscal Year-to-date</option>
+                            <option value="9">Today</option>
+                            <option value="10">Yesterday</option>
+                            <option value="11">Last Week</option>
+                            <option value="12">Last Month</option>
+                            <option value="13">Last Quarter</option>
+                            <option value="14">Last Year</option>
+                            <option value="15">Custom Date</option>
+                            <option value="16">Period</option>
+                        </select>
+                    </div>
+                    <div class="col-md-5 divspandate no-padding" id="divspandate" style="margin-top: 3px; margin-left: 0px; display: block; float: right;">
+                        <span id="spnStartDate"></span> - <span id="spnEndtDate"></span>
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divSD">
+                        <input type="text" name="txtStartDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divED">
+                        <input type="text" name="txtEndtDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divmonth">
+                        <select id="monthlist" class="form-control input-sm">
+                            <option value=""></option>
+                            <option value="1">Jan</option>
+                            <option value="2">Feb</option>
+                            <option value="3">Mar</option>
+                            <option value="4">Apr</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">Aug</option>
+                            <option value="9">Sep</option>
+                            <option value="10">Oct</option>
+                            <option value="11">Nov</option>
+                            <option value="12">Dec</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divyear">
+                        <select class="form-control input-sm" id="yearlist" style="padding-left: 2px;">
+                            <option value=""></option>
+                            <option value="2018">2018</option>
+                            <option value="2017">2017</option>
+                            <option value="2016">2016</option>
+                            <option value="2015">2015</option>
+                            <option value="2014">2014</option>
+                            <option value="2013">2013</option>
+                            <option value="2012">2012</option>
+                            <option value="2011">2011</option>
+                            <option value="2010">2010</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="tablebox">
+    <div class="table-responsive" id="divChargeBackSummaryReportList">
+        <table class="table table-striped table-bordered table-hover" id="tblChargeBackSummaryReport" style="margin-top:0 !important;">
+            <thead>
+                <tr>
+                    <th style="width:40px;text-align:center;" class="dtable_SummaryRegion">
+                        Region
+                    </th>
+                    <th style="width:40px;text-align:center;" class="dtable_SummaryFranchiseeNo">
+                        Franchisee No
+                    </th>
+                    <th style="width:110px;text-align:center;" class="dtable_SummaryFranchiseeName">
+                        Franchisee Name
+                    </th>
+
+                    @*<th style="text-align:center;width:40px;" class="dtable_SummaryDate">
+                            C/B Date
+                        </th>*@
+                    <th style="text-align:center;width:25px;" class="dtable_SummaryAmount">
+                        C/B Amount
+                    </th>
+                    @*<th style="text-align:center;width:82px;" class="dtable_SummaryChkNo">
+                        C/B Tar Chk No
+                    </th>*@
+                    <th style="text-align:center;width:25px;" class="dtable_SummaryTarAmount">
+                        C/B Tar Amount
+                    </th>
+                    <th style="text-align:center;width:30px;" class="dtable_SummaryBalance">
+                        Balance
+                    </th>
+                </tr>
+            </thead>
+            <tfoot align="right">
+                <tr id="trSumSummary">
+                    <th></th>
+                    <th></th>
+                    <th class="text-center" style="background:#bbf7f7;padding-right: 5px;font-size: 12px !important;">Total</th>
+                    <th style="background:#bbf7f7;padding-right: 3px;font-size: 12px ;text-align: right;"><span id="spnCBAmount"></span></th>                  
+                    <th style="background:#bbf7f7;padding-right: 3px;font-size: 12px ;text-align: right;"><span id="spnTARAmount"></span></th>
+                    <th style="background:#bbf7f7;padding-right: 3px;font-size: 12px ;text-align: right;"><span id="spnBalanceAmount"></span></th>
+                </tr>
+            </tfoot>
+            <tbody> </tbody>
+        </table>
+    </div>
+    <div class="table-responsive" id="divChargeBackDetailReportList">
+        <table class="table table-striped table-bordered table-hover" id="tblChargeBackDetailReport" style="margin-top:0 !important;">
+            <thead>
+                <tr>
+                    @*<th style="width:30px;text-align:center;" class="dtable_FranchiseeNo">
+                            Franchisee No
+                        </th>
+                        <th style="width:160px;text-align:center;" class="dtable_FranchiseeName">
+                            Franchisee Name
+                        </th>*@
+                    <th style="text-align:center;width:30px;" class="dtable_CustomerNo">
+                        Customer No
+                    </th>
+                    <th style="text-align:center;width:160px;" class="dtable_CustomerName">
+                        Customer Name
+                    </th>
+                    <th style="text-align:center;width:14px;" class="dtable_InvoiceNo">
+                        Invoice No
+                    </th>
+                    <th style="text-align:center;width:40px;" class="dtable_Date">
+                        C/B Date
+                    </th>
+                    <th style="text-align:center;width:25px;" class="dtable_Amount">
+                        C/B Amount
+                    </th>
+                    <th style="text-align:center;width:7%;" class="dtable_ChkNo">
+                        C/B Tar Chk No
+                    </th>
+                    <th style="text-align:center;width:25px;" class="dtable_TarAmount">
+                        C/B Tar Amount
+                    </th>
+                    <th style="text-align:center;width:30px;" class="dtable_Balance">
+                        Balance
+                    </th>
+                </tr>
+            </thead>
+            @*<tfoot align="right">
+                    <tr id="trSumDetail">
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th class="text-center" style="background:#bbf7f7;padding-right: 5px;font-size: 12px !important;">Total</th>
+                        <th style="background:#bbf7f7;padding-right: 3px;font-size: 12px !important;"><span id="spnDetailCBAmount"></span></th>
+                        <th style="background:#bbf7f7;"></th>
+                        <th style="background:#bbf7f7;padding-right: 3px;font-size: 12px !important;"><span id="spnDetailTARAmount"></span></th>
+                        <th style="background:#bbf7f7;padding-right: 3px;font-size: 12px !important;"><span id="spnDetailBalanceAmount"></span></th>
+                    </tr>
+                </tfoot>*@
+            <tbody> </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="form-horizontal" id="form_FranchiseeBillingDetail"></div>
+<div class="form-horizontal" id="form_invoicedetail"></div>
+@section pageplugins{
+
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    @*<script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>*@
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+
+
+
+
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js")" type="text/javascript"></script>
+
+}
+
+@section scripts{
+    <script>
+        var ChargebackSummaryList;
+        var ChargebackDetailsList;
+        var dtable;
+        var _monthVal = $('#monthlist').val();
+        var _yearVal = $('#yearlist').val();
+        function getTableURL() {
+            var st = $('#spnStartDate').text();
+            var et = $('#spnEndtDate').text();
+            var _searchtextVal = "";
+            var rgId = $('#regionlist').val();
+            var _monthVal = $('#monthlist').val();
+            var _yearVal = $('#yearlist').val();
+            var sURL = '@Url.Action("ChargeBackHistoryReportData", "AccountsPayable", new { area = "Portal" })?regionId=' + rgId + '&startDate=' + st + '&endDate=' + et + '&month=' + _monthVal + '&year=' + _yearVal
+            //string regionId, DateTime? startDate, DateTime? endDate, int month, int year
+            return sURL;
+        }
+
+         function getDetailTableURL() {
+            var st = $('#spnStartDate').text();
+            var et = $('#spnEndtDate').text();
+            var _searchtextVal = "";
+            var rgId = $('#regionlist').val();
+            var _monthVal = $('#monthlist').val();
+            var _yearVal = $('#yearlist').val();
+            var sURL = '@Url.Action("GetChargebackHistoryReportList", "AccountsPayable", new { area = "Portal" })?regionId=' + rgId + '&startDate=' + st + '&endDate=' + et + '&month=' + _monthVal + '&year=' + _yearVal
+            //string regionId, DateTime? startDate, DateTime? endDate, int month, int year
+            return sURL;
+        }
+
+        function refreshTable() {
+            var table1 = $('#tblChargeBackSummaryReport').DataTable();
+            table1.clear();
+            //var table2 = $('#tblChargeBackDetailReport').DataTable();
+            //table2.clear();
+            var sURL = getTableURL();
+            $.blockUI();
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    ChargebackSummaryList.rows.add(data.summaryData).draw();
+                    //ChargebackDetailsList.rows.add(data.detailsData).draw();
+                    //reloadTable();
+                    showTableView(true);
+                    $.unblockUI();
+                },
+                error: function () {
+                    $.unblockUI();
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+        function showTableView(showAll) {
+            $("#divChargeBackSummaryReportList").hide();
+            $("#divChargeBackDetailReportList").hide();
+
+            var selectedView = $("input[name=isSummaryView]:checked").val();
+            if (selectedView == "1") {
+                $("#divChargeBackSummaryReportList").show();
+            }
+            else if (selectedView == "2") {
+
+                $("#divChargeBackDetailReportList").show();
+            }
+
+
+            var selectedView = $("input[name=isSummaryView]:checked").val();
+            if (selectedView == "1") {
+
+
+                var table = $("#tblChargeBackSummaryReport").DataTable();
+                if ($("#pageSize").val() > 0) {
+                    table.page.len($("#pageSize").val()).draw();
+                }
+                else if ($("#pageSize").val() == -1) {
+                    table.page.len(table.rows().count()).draw();
+                }
+                else {
+                    table.page.page.len(25).draw();
+                }
+                //if ($("#pageSize").val() == -1 || $("#CustomerList_length").val() >= table.rows().count()) {
+                //    $("#trSumSummary").show();
+                //}
+                //else {
+                //    $("#trSumSummary").hide();
+                //}
+            }
+            else if (selectedView == "2") {
+                //var table = $("#tblChargeBackDetailReport").DataTable();
+                reloadTable();
+                //if ($("#pageSize").val() > 0) {
+                //    table.page.len($("#pageSize").val()).draw();
+                //}
+                //else if ($("#pageSize").val() == -1) {
+                //    table.page.len(table.rows().count()).draw();
+                //}
+                //else {
+                //    table.page.page.len(25).draw();
+                //}
+            }
+        }
+
+        function formatCurrency(total, dollar) {
+            dollar = (dollar == true ? true : false);
+            var neg = false;
+            if (total < 0) {
+                neg = true;
+                total = Math.abs(total);
+            }
+            return (neg ? "-" : '') + (dollar ? "$" : "") + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        };
+
+        function initTable() {
+
+                var ps = $('#pageSize').val();
+                var dtable = $('#tblChargeBackReport').dataTable({
+                    "bAutoWidth": false,
+                     cache: true,
+                    "iDisplayLength": ps == '-1' ? 25 : ps,
+                    "bDestroy": true,
+                    "aLengthMenu": [[5, 7, 10, 25, 50, -1], [5, 7, 10, 25, 50, "All"]],
+                    //"dom": "<'headerbox list'<'row'<'col-md-1'l><'col-md-4'f><'#divrightckbox.col-md-5 pull-right text-center'>>><'table-responsive't><'bottom'ip><'clear'>",
+                    "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                    "aaSorting": [[0, "desc"]],
+                    "sAjaxSource": getTableURL(),
+                    "sAjaxDataProp": "aadata",  // Internationalisation. For more info refer to http://datatables.net/manual/i18n
+                    "rowCallback": function (nRow, data) {
+                    },
+                    "aoColumns": [
+                        //{
+                        //    "sName": "RegionName",
+                        //    "bSortable": true,
+                        //    "mRender": function (data, type, full) {
+                        //        return '<span>' + full.RegionName + '</span>';
+                        //    }
+                        //},
+                        {
+                            "sName": "FranchiseeNo",
+                            "bSortable": true,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                return "<a href='@Url.Action("FranchiseeDetail", "Franchise", new { @area = "Portal" })?id=" + full.FranchiseeId + "'  style='color:#0c9cff' id=" + full.FranchiseeId + ">" + full.FranchiseeNo + "</a>";
+                            }
+                        },
+                        {
+                            "sName": "FranchiseeName",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+
+                                return '<span>' + full.FranchiseeName + '</span>';
+                            }
+                        },
+                        {
+                            "sName": "CustomerNo",
+                            "bSortable": true,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                return "<a href='@Url.Action("CustomerDetail", "Customer", new { @area = "Portal" })?id=" + full.CustomerId + "'  style='color:#0c9cff' id=" + full.CustomerId + ">" + full.CustomerNo + "</a>";
+
+
+                            }
+                        },
+                        {
+                            "sName": "CustomerName",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+                                return '<span>' + full.CustomerName + '</span>';
+                            }
+                        },
+                        {
+                            "sName": "InvoiceNo",
+                            "bSortable": true,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                return "<a onclick='btnOpenInvoiceDetail(" + full.InvoiceId + ")' target='_blank' style='color:#0c9cff' id=" + full.InvoiceId + ">" + full.InvoiceNo + "</a>";
+                            }
+                        },
+                        {
+                            "sName": "TrxDate",
+                            "bSortable": true,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                //return full.DistributionAmount;
+                                return formatJSONDate(full.TrxDate);
+                            }
+                        },
+                        {
+                            "sName": "CBAmount",
+                            "bSortable": true,
+                            "sClass": "alignRight",
+                            "mRender": function (data, type, full) {
+                                //return full.DistributionAmount;
+                                return '$ ' +commaSeparateNumber(full.CBAmount);
+                            }
+                        },
+                        {
+                            "sName": "TARCheckNo",
+                            "bSortable": true,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                //return full.DistributionAmount;
+                                return full.TARCheckNo;
+                            }
+                        },
+                        {
+                            "sName": "TARAmount",
+                            "bSortable": true,
+                            "sClass": "alignRight",
+                            "mRender": function (data, type, full) {
+                                //return full.DistributionAmount;
+                                return '$ ' +commaSeparateNumber(full.TARAmount);
+                            }
+                        },
+                        {
+                            "sName": "BalanceAmount",
+                            "bSortable": true,
+                            "sClass": "alignRight",
+                            "mRender": function (data, type, full) {
+                                //return full.DistributionAmount;
+                                return '$ ' +commaSeparateNumber(full.BalanceAmount);
+                            }
+                        }
+                    ]
+                });
+            }
+
+        jQuery(document).ready(function () {
+            $("#regionlist").multiselect({
+                includeSelectAllOption: true,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2
+            });
+
+            var selview = $("input[name=isSummaryView]:checked").val();
+            $('#SelectedView').val(selview);
+
+            $('#divspandate').show();
+            $('#divSD').hide();
+            $('#divED').hide();
+            $('#divmonth').hide();
+            $('#divyear').hide();
+            $('#monthlist').val('');
+            $('#yearlist').val('');
+            firstDay = moment().subtract(0, 'month').startOf('month').toString();
+            lastDay = moment().subtract(0, 'month').endOf('month').toString();
+            $('#dtpfrom').val(moment(firstDay).format('L'));
+            $('#dtpto').val(moment(lastDay).format('L'));
+            $('#spnStartDate').html(moment(firstDay).format('L'));
+            $('#spnEndtDate').html(moment(lastDay).format('L'));
+
+
+            $("#pageSize").change(function () {
+
+                var selectedView = $("input[name=isSummaryView]:checked").val();
+                if (selectedView == "1") {
+                    var table = $("#tblChargeBackSummaryReport").DataTable();
+                    if ($(this).val() > 0) {
+                        table.page.len($(this).val()).draw();
+                    }
+                    else if ($(this).val() == -1) {
+                        table.page.len(table.rows().count()).draw();
+                    }
+                    else {
+                        table.page.page.len(25).draw();
+                    }
+                    //if ($("#pageSize").val() == -1 || $("#CustomerList_length").val() >= table.rows().count()) {
+                    //    $("#trSumSummary").show();
+                    //}
+                    //else {
+                    //    $("#trSumSummary").hide();
+                    //}
+                }
+                else if (selectedView == "2") {
+                    //var table = $("#tblChargeBackDetailReport").DataTable();
+                    //if ($(this).val() > 0) {
+                    //    table.page.len($(this).val()).draw();
+                    //}
+                    //else if ($(this).val() == -1) {
+                    //    table.page.len(table.rows().count()).draw();
+                    //}
+                    //else {
+                    //    table.page.page.len(25).draw();
+                    //}
+                }
+            });
+
+            $("input[name=isSummaryView]").change(function () {
+                var selectedview = $("input[name=isSummaryView]:checked").val();
+                $('#SelectedView').val(selectedview);
+                showTableView();
+            });
+
+             ChargebackDetailsList = $('#tblChargeBackDetailReport').DataTable({
+                //"bProcessing": true,
+                 "bInfo": false,
+                "bServerSide": false,
+                "aLengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                "pageLength": 25, // default records per page
+                "dom": "<'table-responsive't><'bottom'ip><'clear'>"
+            });
+
+            @*ChargebackDetailsList = $('#tblChargeBackDetailReport').DataTable({
+                //"bProcessing": true,
+                "bServerSide": false,
+                "aLengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                "pageLength": 25, // default records per page
+                "dom": "<'table-responsive't><'bottom'ip><'clear'>"
+                //"dom": "<'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'<'table-group-actions pull-right'>>r><'table-responsive't><'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'>>", // datatable layout
+                ,
+                columnDefs: [
+                    {
+                        targets: "dtable_FranchiseeNo",
+                        data: "",
+                        sClass: "dt-center",
+                        render: function (data, type, row, meta) {
+                            return "<a href='@Url.Action("FranchiseeDetail", "Franchise", new { @area = "Portal" })?id=" + row.FranchiseeId + "'  style='color:#0c9cff' id=" + row.FranchiseeId + ">" + row.FranchiseeNo + "</a>";
+                        }
+                    },
+                    { targets: "dtable_FranchiseeName", data: "FranchiseeName" },
+                    {
+                        targets: "dtable_CustomerNo",
+                        data: "",
+                        render: function (data, type, row, meta) {
+                            return "<a href='@Url.Action("CustomerDetail", "Customer", new { @area = "Portal" })?id=" + row.CustomerId + "'  style='color:#0c9cff' id=" + row.CustomerId + ">" + row.CustomerNo + "</a>";
+                        }
+                    },
+                    { targets: "dtable_CustomerName", data: "CustomerName" },
+                    {
+                        targets: "dtable_InvoiceNo",
+                        data: "",
+                        render: function (data, type, row, meta) {
+                            return "<a onclick='btnOpenInvoiceDetail(" + row.InvoiceId + ")' target='_blank' style='color:#0c9cff' id=" + row.InvoiceId + ">" + row.InvoiceNo + "</a>";
+                        }
+                    },
+                    {
+                        targets: "dtable_Date",
+                        data: "TrxDate",
+                        type: "date",
+                        sClass: "dt-center",
+                        render: function (data, type, row, meta) {
+                            return formatJSONDate(data);
+                        }
+                    },
+                    {
+                        targets: "dtable_Amount",
+                        data: "CBAmount",
+                        sClass: "clsAmounttd",
+                        render: function (data, type, row, meta) {
+                            return formatCurrency(parseFloat(data), true);
+                        }
+                    },
+                    { targets: "dtable_ChkNo", data: "TARCheckNo" },
+                    {
+                        targets: "dtable_TarAmount",
+                        data: "TARAmount",
+                        sClass: "clsAmounttd",
+                        render: function (data, type, row, meta) {
+                            return formatCurrency(parseFloat(data), true);
+                        }
+                    },
+                    {
+                        targets: "dtable_Balance",
+                        data: "BalanceAmount",
+                        sClass: "clsAmounttd",
+                        render: function (data, type, row, meta) {
+                            return formatCurrency(parseFloat(data), true);
+                        }
+                    },
+                ],
+                "footerCallback": function (row, data) {
+                    var api = this.api(), data;
+                    var _cbAmount = 0;
+                    var _tarPayment = 0;
+                    var _totalAmount = 0;
+
+                    $.each(data, function (key, value) {
+                        _cbAmount += CleanformatCurrency(value.CBAmount);
+                        _tarPayment += CleanformatCurrency(value.TARAmount);
+                        _totalAmount += CleanformatCurrency(value.BalanceAmount);
+                    });
+
+                    $('#spnDetailCBAmount').html(formatCurrency(parseFloat(_cbAmount)));
+                    $('#spnDetailTARAmount').html(formatCurrency(parseFloat(_tarPayment)));
+                    $('#spnDetailBalanceAmount').html(formatCurrency(parseFloat(_totalAmount)));
+
+                },
+            });*@
+
+            ChargebackSummaryList = $('#tblChargeBackSummaryReport').DataTable({
+                //"bProcessing": true,
+                "bServerSide": false,
+                "aLengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                "pageLength": 25, // default records per page
+                "dom": "<'table-responsive't><'bottom'ip><'clear'>"
+
+
+
+                //"dom": "<'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'<'table-group-actions pull-right'>>r><'table-responsive't><'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'>>", // datatable layout
+                ,
+                columnDefs: [
+                    { targets: "dtable_SummaryRegion", data: "Region", sClass: "dt-center" },
+                    { targets: "dtable_SummaryFranchiseeNo", data: "FranchiseeNo", sClass: "dt-center" },
+                    { targets: "dtable_SummaryFranchiseeName", data: "FranchiseeName" },
+
+                    //{
+                    //    targets: "dtable_SummaryDate",
+                    //    data: "TrxDate",
+                    //    type: "date",
+                    //    sClass: "dt-center",
+                    //    render: function (data, type, row, meta) {
+                    //        return formatJSONDate(data);
+                    //    }
+                    //},
+                    {
+                        targets: "dtable_SummaryAmount",
+                        data: "CBAmount",
+                        //sClass: "clsAmounttd",
+                        render: function (data, type, row, meta) {
+                            if (parseFloat(data) < 0) {
+                                return CBAmountFormatted = '($' + Math.abs(parseFloat(data)).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + ')'
+                            } else {
+                                return formatCurrency(parseFloat(data), true);
+                            }
+                        }
+                    },
+                    //{ targets: "dtable_SummaryChkNo", data: "TARCheckNo" },
+                    {
+                        targets: "dtable_SummaryTarAmount",
+                        data: "TARAmount",
+                        sClass: "clsAmounttd",
+                        render: function (data, type, row, meta) {
+                            return formatCurrency(parseFloat(data), true);
+                        }
+                    },
+                    {
+                        targets: "dtable_SummaryBalance",
+                        data: "BalanceAmount",
+                        //sClass: "clsAmounttd",
+                        render: function (data, type, row, meta) {
+                            if (parseFloat(data) < 0) {
+                                return CBAmountFormatted = '($' + Math.abs(parseFloat(data)).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + ')'
+                            } else {
+                                return formatCurrency(parseFloat(data), true);
+                            }
+                        }
+
+
+                    }
+                ],
+
+                "rowCallback": function (row, data, index) {
+                    if (data.CBAmount < 0 ) {
+                        var CBAmountFormatted = '($' + Math.abs(data.CBAmount).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + ')'
+                        $(row).find('td:eq(3)').val(CBAmountFormatted);
+                        $(row).find('td:eq(3)').addClass("clsAmounttdRed");
+
+                    }
+                    else {
+                        $(row).find('td:eq(3)').addClass("clsAmounttd");
+                    }
+
+                    if (data.BalanceAmount < 0 ) {
+                        var BalanceAmountFormatted = '($' + Math.abs(data.BalanceAmount).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + ')'
+                        $(row).find('td:eq(5)').val(BalanceAmountFormatted);
+                        $(row).find('td:eq(5)').addClass("clsAmounttdRed");
+                    }
+                    else {
+                        $(row).find('td:eq(5)').addClass("clsAmounttd");
+                    }
+
+
+
+                },
+
+                "footerCallback": function (row, data) {
+                    var api = this.api(), data;
+                    var _cbAmount = 0;
+                    var _tarPayment = 0;
+                    var _totalAmount = 0;
+
+                    $.each(data, function (key, value) {
+                        _cbAmount += CleanformatCurrency(value.CBAmount);
+                        _tarPayment += CleanformatCurrency(value.TARAmount);
+                        _totalAmount += CleanformatCurrency(value.BalanceAmount);
+                    });
+
+                    $('#spnCBAmount').html(formatCurrency(parseFloat(_cbAmount),true));
+                    $('#spnTARAmount').html(formatCurrency(parseFloat(_tarPayment), true));
+                    $('#spnBalanceAmount').html(formatCurrency(parseFloat(_totalAmount), true));
+
+                    if (_cbAmount < 0) {
+                        var _cbAmountFormatted = '($' + Math.abs(_cbAmount).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + ')';
+                        $('#spnCBAmount').html(_cbAmountFormatted);
+                        $('#spnCBAmount').addClass("cclsFooterAmounttdRed");
+
+                        $('#spnCBAmount').removeAttr('style').addClass("clsFooterAmounttdRed");
+                    }
+                    else {
+                        $('#spnCBAmount').removeAttr('style').addClass("clsFooterAmounttd");
+
+                    }
+
+                    if (_totalAmount < 0) {
+                        var _totalAmountFormatted = '($' + Math.abs(_totalAmount).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + ')'
+                        $('#spnBalanceAmount').html(_totalAmountFormatted);
+                        $('#spnBalanceAmount').addClass("clsFooterAmounttdRed");
+
+                    }
+                    else {
+                        $('#spnBalanceAmount').addClass("clsFooterAmounttd");
+                    }
+
+                },
+            });
+            //$('#txtStartDate').inputmask("mm/dd/yyyy", {});
+            //$('#txtEndtDate').inputmask("mm/dd/yyyy", {});
+
+            $(document).on('init.dt', function (e, settings) {
+                var api = new $.fn.dataTable.Api(settings);
+                if ($(api.table().node()).attr('id') == 'tblChargeBackReport') {
+                    setPaging($("#pageSize").val());
+                }
+            });
+
+
+
+            //setSearchTime(3);
+            //function initTable() {
+            //    var ps = $('#pageSize').val();
+            //    dtable = $('#tblChargeBackReport').DataTable({
+            //        "bDestroy": true,
+            //        "bServerSide": false,
+            //        //"sAjaxSource": getTableURL(),
+            //        "aLengthMenu": [[5, 7, 10, 25, 50, -1], [5, 7, 10, 25, 50, "All"]],
+            //        "pageLength": ps == '-1' ? 25 : ps, // default records per page
+            //        "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+            //    });
+            //}
+            $("#input_Search").keyup(function () {
+                var table = $("#tblChargeBackSummaryReport").DataTable();
+                table.search($(this).val()).draw();
+                //table = $("#tblChargeBackDetailReport").DataTable();
+                //table.search($(this).val()).draw();
+                if ($(this).val() != '') {
+                    $("#tblChargeBackDetailReport tbody>tr").hide()
+                    $("#tblChargeBackDetailReport tbody>tr[relcusn*='" + $(this).val().toUpperCase() + "']").show()
+                } else {
+                    $("#tblChargeBackDetailReport tbody>tr").show()
+                }
+            });
+
+            $("#pageSize").change(function () {
+                setPaging($(this).val());
+            })
+
+            $("#regionlist").change(function () {
+                refreshTable();
+                //initTable();
+            })
+
+            //$("#divChargeBackReportList").show();
+            refreshTable();
+            //initTable();
+        });
+
+        function reloadTable() {
+
+            $.blockUI();
+            //var table2= $('#tblChargeBackDetailReport').DataTable();
+            //table2.clear();
+
+            $('#tblChargeBackDetailReport tbody').html('');
+
+            $.ajax({
+                type: "GET",
+                url: getDetailTableURL(),
+                success: function (data) {
+                    var frId = 0;
+                    var sec_frid = 0;
+                    var cbTotal = 0;
+                    var tarTotal = 0;
+                    var balanceTotal = 0;
+                    for (var i = 0; i <= data.length; i++){
+                        var lengthdata = data.length;
+                    //data.forEach(function (item) {
+                        if (data[i] != null) {
+                            frId = data[i].FranchiseeId;
+                            trInvoicelist = "";
+                            if (sec_frid != frId) {
+                                if (sec_frid != 0 && sec_frid != frId) {
+                                    trInvoicelist += '<tr relcusn="' + data[i].FranchiseeNo + ' ' + data[i].FranchiseeName + '">';
+                                    trInvoicelist += '<td style="text-align:center;"colspan="3"></td>';
+                                    trInvoicelist += '<td style="text-align:center;background: #bbf7f7;">Total</td>';
+
+                                    if (cbTotal < 0) {
+                                        trInvoicelist += '<td style="text-align:right;background: #bbf7f7;color: red">' + '($' +  Math.abs(cbTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + ')' +  '</td>';
+
+                                    } else {
+                                        trInvoicelist += '<td style="text-align:right;background: #bbf7f7;">' + formatCurrency(parseFloat(cbTotal)) + '</td>';
+                                    }
+
+                                    //trInvoicelist += '<td style="text-align:right;background: #bbf7f7;">' + formatCurrency(parseFloat(cbTotal)) + '</td>';
+                                    trInvoicelist += '<td style="text-align:center;background: #bbf7f7;"></td>';
+                                    trInvoicelist += '<td style="text-align:right;background: #bbf7f7;">' + formatCurrency(parseFloat(tarTotal)) + '</td>';
+
+                                    if (balanceTotal < 0) {
+                                        trInvoicelist += '<td style="text-align:right;background: #bbf7f7;color:red">' +  '($' + Math.abs(balanceTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + ')'  + '</td></tr>';
+                                    } else {
+                                        trInvoicelist += '<td style="text-align:right;background: #bbf7f7;">' + formatCurrency(parseFloat(balanceTotal)) + '</td></tr>';
+                                    }
+                                    //trInvoicelist += '<td style="text-align:right;background: #bbf7f7;">' + formatCurrency(parseFloat(balanceTotal)) + '</td></tr>';
+                                    cbTotal = 0;
+                                    tarTotal = 0;
+                                    balanceTotal = 0;
+                                }
+                                trInvoicelist += '<tr relcusn="' + data[i].FranchiseeNo + ' ' + data[i].FranchiseeName + '">';
+                                trInvoicelist += '<td style="font-size:12px" colspan="8"><b>' + data[i].FranchiseeNo + '</b>-<span style="color: blue;"> <b>' + data[i].FranchiseeName + '</b></span></td></tr>';
+                                sec_frid = data[i].FranchiseeId;
+                            }
+                            trInvoicelist += '<tr relcusn="' + data[i].FranchiseeNo + ' ' + data[i].FranchiseeName + '">';
+                            trInvoicelist += '<td style="text-align:center;">' + data[i].CustomerNo + '</td>';
+                            trInvoicelist += '<td style="text-align:center;">' + data[i].CustomerName + '</td>';
+                            trInvoicelist += '<td style="text-align:center;"><a href="javascript:void(0);" onclick=btnOpenInvoiceDetail(' + data[i].InvoiceId + ') target=_blank style=color: #0c9cff id=' + data[i].InvoiceId + '>' + data[i].InvoiceNo + '</a></td>';
+                            trInvoicelist += '<td style="text-align:center;">' + formatJSONDate(data[i].TrxDate) + '</td>';
+
+                            if (data[i].CBAmount < 0) {
+                                trInvoicelist += '<td style="text-align:right;color: red">' + '($' + Math.abs(data[i].CBAmount).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + ')' + '</td>';
+                            } else {
+                                trInvoicelist += '<td style="text-align:right;">' + formatCurrency(parseFloat(data[i].CBAmount), true) + '</td>';
+                            }
+
+                            //trInvoicelist += '<td style="text-align:right;">' + formatCurrency(parseFloat(data[i].CBAmount), true) + '</td>';
+                            if (data[i].TARCheckNo == null) {
+                                data[i].TARCheckNo = "";
+                            }
+                            trInvoicelist += '<td style="text-align:center;">' + data[i].TARCheckNo + '</td>';
+                            trInvoicelist += '<td style="text-align:right;">' + formatCurrency(parseFloat(data[i].TARAmount), true) + '</td>';
+
+                            var balAmount = parseFloat(data[i].CBAmount) - parseFloat(data[i].TARAmount);
+
+                            if (parseFloat(balAmount) < 0) {
+                                trInvoicelist += '<td style="text-align:right;color:red">' + '($' + Math.abs(balAmount).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + ')' + '</td></tr>';
+                            } else {
+                                trInvoicelist += '<td style="text-align:right;">' + formatCurrency(parseFloat(balAmount)) + '</td></tr>';
+                            }
+
+                            //if (parseFloat(balanceTotal) < 0) {
+                            //    trInvoicelist += '<td style="text-align:right;color:red">' + '($' + Math.abs(balanceTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + ')' + '</td></tr>';
+                            //} else {
+                            //    trInvoicelist += '<td style="text-align:right;">' + formatCurrency(parseFloat(balanceTotal)) + '</td></tr>';
+                            //}
+
+                            //trInvoicelist += '<td style="text-align:right;">' + formatCurrency(parseFloat(data[i].BalanceAmount), true) + '</td>';
+                            trInvoicelist += '</tr>';
+                            if (sec_frid == frId) {
+                                cbTotal += data[i].CBAmount;
+                                tarTotal += data[i].TARAmount;
+                                balanceTotal += data[i].BalanceAmount;
+                            }
+                            if (i == lengthdata-1)
+                            {
+                                trInvoicelist += '<tr relcusn="' + data[i].FranchiseeNo + ' ' + data[i].FranchiseeName + '">';
+                                trInvoicelist += '<td style="text-align:center;"colspan="3"></td>';
+                                trInvoicelist += '<td style="text-align:center;background: #bbf7f7;">Total</td>';
+
+                                if (cbTotal < 0) {
+                                    trInvoicelist += '<td style="text-align:right;background: #bbf7f7;color: red;">' + '($' + Math.abs(cbTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + ')' + '</td>';
+
+                                } else {
+                                    trInvoicelist += '<td style="text-align:right;background: #bbf7f7;">' + formatCurrency(parseFloat(cbTotal)) + '</td>';
+                                }
+                                //trInvoicelist += '<td style="text-align:right;background: #bbf7f7;">' + formatCurrency(parseFloat(cbTotal)) + '</td>';
+
+                                trInvoicelist += '<td style="text-align:center;background: #bbf7f7;"></td>';
+                                trInvoicelist += '<td style="text-align:right;background: #bbf7f7;">' + formatCurrency(parseFloat(tarTotal)) + '</td>';
+
+                                if ( balanceTotal < 0) {
+                                    trInvoicelist += '<td style="text-align:right;background: #bbf7f7;color: red;">' + '($' + Math.abs(balanceTotal).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + ')' + '</td></tr>';
+                                } else {
+                                    trInvoicelist += '<td style="text-align:right;background: #bbf7f7;">' + formatCurrency(parseFloat(balanceTotal)) + '</td></tr>';
+                                }
+                                //trInvoicelist += '<td style="text-align:right;background: #bbf7f7;">' + formatCurrency(parseFloat(balanceTotal)) + '</td></tr>';
+
+                            }
+
+                            $('#tblChargeBackDetailReport tbody').append(trInvoicelist);
+                        }
+
+                    }
+
+                    $.unblockUI();
+                },
+                error: function () {
+                    $.unblockUI();
+                    alert("Content load failed");
+                }
+            });
+        }
+
+        function CleanformatCurrency(total) {
+            return parseFloat(total.toString().replace('$', '').replace(',', ''));
+        }
+
+
+        function btnOpenInvoiceDetail(id) {
+
+            $.blockUI();
+
+            var sURL = '@Url.Action("InvoiceDetail", "AccountReceivable", new { area = "Portal" })?Id=' + id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_invoicedetail').html(data);
+                    $.unblockUI();
+                    $("#modal_invoicedetail").modal({ backdrop: 'static' });
+                },
+                error: function () {
+                    $.unblockUI();
+                    alert("Content load failed.");
+                }
+            });
+        };
+
+        function commaSeparateNumber(val) {
+            if (val != "") {
+                val = parseFloat(val.toString()).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString()
+
+                //while (/(\d+)(\d{3})/.test(val.toString())) {
+                //    val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
+                //}
+            }
+            return val;
+        }
+        /*
+        function formatJSONDate(jsonDate) {
+            if (jsonDate != null) {
+                var dateString = jsonDate.substr(6);
+                var currentTime = new Date(parseInt(dateString));
+                var month = currentTime.getMonth() + 1;
+                var day = currentTime.getDate();
+                var year = currentTime.getFullYear();
+                var date = month + "/" + day + "/" + year;
+                return date;
+            }
+            return null;
+        }
+        */
+        function formatJSONDate(jsonDate) {
+            if (jsonDate != null) {
+                //var dateString = jsonDate.substr(6);
+                var dtstr = jsonDate.substr(6);
+                var dateString = dtstr.substring(0, dtstr.length - 2);
+                var currentTime = new Date(parseInt(dateString)).toUTCString();
+                var date = moment(currentTime).format("MM/DD/YYYY")
+                return date;
+            }
+            return null;
+        }
+
+        function setPaging(lenth) {
+            var selectedView = $("input[name=isSummaryView]:checked").val();
+            if (selectedView == "1") {
+                var table = $("#tblChargeBackSummaryReport").DataTable();
+                if (lenth > 0) {
+                    table.page.len(lenth).draw();
+                }
+                else if (lenth == -1) {
+                    table.page.len(table.rows().count()).draw();
+                }
+                else {
+                    table.page.page.len(25).draw();
+                }
+
+
+            }
+            else if (selectedView == "2") {
+                //var table = $("#tblChargeBackDetailReport").DataTable();
+                //if (lenth > 0) {
+                //    table.page.len(lenth).draw();
+                //}
+                //else if (lenth == -1) {
+                //    table.page.len(table.rows().count()).draw();
+                //}
+                //else {
+                //    table.page.page.len(25).draw();
+                //}
+            }
+
+        }
+        var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+        var firstDay;
+        var lastDay;
+        Date.prototype.getWeek = function (start) {
+            //Calcing the starting point
+            start = start || 0;
+            var today = new Date(this.setHours(0, 0, 0, 0));
+            var day = today.getDay() - start;
+            var date = today.getDate() - day;
+
+            // Grabbing Start/End Dates
+            var StartDate = new Date(today.setDate(date));
+            var EndDate = new Date(today.setDate(date + 6));
+            return [StartDate, EndDate];
+        }
+
+        $('#txtStartDate').change(function () {
+            $('#spnStartDate').html($(this).val());
+            if ($('#txtStartDate').val() != '' && $('#txtEndtDate').val() != '')
+                refreshTable();
+        });
+        $('#txtEndtDate').change(function () {
+            $('#spnEndtDate').html($(this).val());
+            if ($('#txtStartDate').val() != '' && $('#txtEndtDate').val() != '')
+                refreshTable();
+        });
+
+        $('#monthlist').change(function () {
+            $('#spnStartDate').html('');
+            if ($('#monthlist').val() != '' && $('#yearlist').val() != '')
+                refreshTable();
+        });
+        $('#yearlist').change(function () {
+            $('#spnEndtDate').html('');
+            if ($('#monthlist').val() != '' && $('#yearlist').val() != '')
+                refreshTable();
+        });
+
+        $(".search-date-field").on('changeDate', function (e) {
+            refreshTable();
+        });
+
+        $('#select_timeduration').change(function () {
+
+            //alert($(this).val());
+            $('#spnStartDate').html('');
+            $('#spnEndtDate').html('');
+            $('#divspandate').show();
+            $('#divSD').hide();
+            $('#divED').hide();
+            $('#divmonth').hide();
+            $('#divyear').hide();
+            $('#monthlist').val('');
+            $('#yearlist').val('');
+            switch (parseInt($(this).val())) {
+                case 1:
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = moment().endOf('isoWeek').toString();
+                    break;
+                case 2:
+                    //code block
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 3:
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                    break;
+                case 4:
+                    //code block
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 5:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = moment().endOf('quarter').toString();
+                    break;
+                case 6:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 7:
+                    //code block
+                    firstDay = moment().startOf('year').toString();;
+                    lastDay = moment().endOf('year').toString();
+                    break;
+                case 8:
+                    //code block
+                    firstDay = moment().startOf('year').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 9:
+                    //code block
+                    firstDay = moment().toString();
+                    lastDay = moment().toString();
+                    break;
+                case 10:
+                    //code block
+                    firstDay = moment().add(-1, 'days').toString();
+                    lastDay = moment().add(-1, 'days').toString();
+                    break;
+                case 11:
+                    //code block
+                    firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                    lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                    break;
+                case 12:
+                    //code block
+                    firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                    break;
+                case 13:
+                    //code block
+                    firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                    lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                    break;
+                case 14:
+                    //code block
+                    firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                    lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                    break;
+                case 15:
+                    //code block
+                    $('#divspandate').hide();
+                    $('#divSD').show();
+                    $('#divED').show();
+                    $('#txtStartDate').val('');
+                    $('#txtEndtDate').val('')
+                    break;
+                case 16:
+                    $('#divspandate').hide();
+                    $('#divSD').hide();
+                    $('#divED').hide();
+                    $('#divmonth').show();
+                    $('#divyear').show();
+                    break
+                default:
+                    //code block
+            }
+            $('#spnStartDate').html(moment(firstDay).format('L'));
+            $('#spnEndtDate').html(moment(lastDay).format('L'));
+
+            //Set Values becuase due to Filter Is not working
+            $('#dtpfrom').val(moment(firstDay).format('L'));
+            $('#dtpto').val(moment(lastDay).format('L'));
+
+            if (parseInt($(this).val()) != 15 && parseInt($(this).val()) != 16)
+                refreshTable();
+        });
+
+        function onclickPrint() {
+
+            var st = $('#spnStartDate').text();
+            var et = $('#spnEndtDate').text();
+            var _searchtextVal = "";
+            var rgId = $('#regionlist').val();
+            var _monthVal = $('#monthlist').val();
+            var _yearVal = $('#yearlist').val();
+
+            var selectedView = $("input[name=isSummaryView]:checked").val();
+
+            var sURL = '@Url.Action("ChargeBackHistoryReportDataPrint", "AccountsPayable", new { area = "Portal" })?regionId=' + rgId + '&startDate=' + st + '&endDate=' + et + '&month=' + _monthVal + '&year=' + _yearVal + '&selView=' + selectedView
+
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    if (data != null && data != "") {
+                        var tUrl = data;
+                        printJS({ printable: document.location.origin + tUrl, type: 'pdf', showModal: false });
+                    }
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+        }
+
+    </script>
+}
+
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+
+
+

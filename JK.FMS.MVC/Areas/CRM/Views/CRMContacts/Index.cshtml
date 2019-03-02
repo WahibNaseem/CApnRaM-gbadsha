@@ -1,0 +1,1448 @@
+﻿
+@model JKViewModels.CRM.CRMNewContactViewModel
+
+@{
+    /**/
+
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<style>
+    .allcontacts-list > ul > li:hover {
+        background-color: #3697dad4;
+        cursor: pointer;
+    }
+
+    .modal-footer {
+        padding-top: 35%;
+    }
+    .liclick, .liclickCust, .liclickJK {
+        background-color: #3598dc;
+        height: 25px;
+        color: white;
+        padding-top: 4px;
+        padding-left: 10px;
+        text-transform: capitalize;
+    }
+</style>
+<div class="custom-form portlet light form-horizontal">
+    <input type="hidden" id="hdnContactID" />
+    <div class="portlet-body form">
+        <ul id="contact-type-ul" class="nav nav-tabs">
+            <li class="active">
+                <a id="" href="#AllContact" data-toggle="tab" aria-expanded="true"> All Contact </a>
+            </li>
+            <li class="">
+                <a href="#CustomerContact" data-toggle="tab" aria-expanded="false"> Lead Contact </a>
+            </li>
+            <li class="">
+                <a href="#JaniKing" data-toggle="tab" aria-expanded="false"> Jani-King </a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade active in" id="AllContact">
+                <div class="row no-padding" style="background:#3598dc;margin-left:0px;margin-right:0px;padding-top: 5px;padding-bottom: 5px;margin-top: 2px;">
+                    <div class="col-xs-4 col-md-3 text-center">
+                        <a data-toggle="modal" data="Add" style="color:white" onclick="onNewContactForm(this);">Add New</a>
+                    </div>
+                    <div class="col-xs-8 col-md-9 text-left">
+                        <a data-toggle="modal" data="Edit"  style="color:white"  onclick="onNewContactForm(this)" >Edit Detail</a>
+                    </div>
+                </div>
+                <div class="row" style="margin-left:auto;">
+                    <div class="col-xs-4 col-md-3 col-lg-2" style="max-height:42rem; padding:0;">
+                        <div class="col-md-12" style="margin-top:1rem; padding-left:0.5rem; max-height:40.8rem;">
+                            <form style="padding:0;">
+                                <div class="input-group" style="background-color:#e4ecf3;">
+                                    <input type="text" class="form-control" placeholder="Search..." id="inputALL" onkeyup="myFunctionALL()" style="margin:0.5rem;" />
+                                    <span class="input-group-btn" style="padding-right:0.5rem;">
+                                        <button class="btn btn-default" type="button" style="padding:0.7rem 1.1rem 0.6rem;">
+                                            <i class="fa fa-search">&nbsp;</i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </form>
+
+                            <div class="allcontacts-list" id="ULALL">
+                                <ul>
+                                    @{var datas = new JKApi.Data.DAL.jkDatabaseEntities().spGetCRMContactList(null).ToList();
+                                        foreach (var d in datas)
+                                        {
+                                            <li class="liclick" data="@d.CRMContactId">@d.FullName</li>
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-8 col-md-9 col-lg-10">
+                        <div class="custom-form portlet light">
+                            <div class="headerbox" style="border-radius:4px; background-color:#e3ecf3 !important; border:none !important;">
+                                <div class="row" style="color:#778891; margin-bottom:0.3rem; margin-left:0;">
+                                    <div class="col-md-12 no-padding" style="padding-left:0;">
+                                        <div class="alignCenter">
+                                            <div class="col-md-12" style="padding-left:0;">
+                                                Address Book
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="portlet-body form">
+                                <div class="form-body">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <img class="col-xs-4 col-md-3 col-lg-2" src="~/Images/default-profileImage.png" alt="Jeff Phillips" />
+
+                                            <div class="col-xs-8 col-md-9 col-lg-10">
+                                                <div class="col-xs-12 col-md-12">
+                                                    <h4 style="font-weight:bold" class="Fullname"></h4>
+                                                </div>
+
+                                                <div class="col-xs-12 col-md-12 text-left">
+                                                    <p class="Jobtitle"></p>
+                                                </div>
+
+                                                <div class="col-xs-12 col-md-12">
+                                                    <div class="col-xs-6 col-md-6" style="padding-left:0;">
+                                                        <div class="col-xs-4 col-md-4" style="padding-left:0;">
+                                                            <p style="color:#a4a4a4">
+                                                                Business Phone:
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-xs-8 col-md-8 text-left" style="padding-left:0; font-weight:bold;">
+                                                            <span style="color:#94948d" class="BusinessPhone">
+                                                               
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-6">
+                                                        <div class="col-xs-4 col-md-4" style="padding-left:0;">
+                                                            <p style="color:#a4a4a4" >
+                                                                Fax:
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-xs-8 col-md-8 text-left" style="padding-left:0; font-weight:bold;">
+                                                            <span style="color:#94948d" class="fax">
+
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-md-12">
+                                                    <div class="col-xs-6 col-md-6" style="padding-left:0;">
+                                                        <div class="col-xs-4 col-md-4" style="padding-left:0;">
+                                                            <p style="color:#a4a4a4">
+                                                                Mobile Phone:
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-xs-8 col-md-8 text-left" style="padding-left:0; font-weight:bold;">
+                                                            <span style="color:#94948d" class="MobilePhone">
+
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-6">
+                                                        <div class="col-xs-4 col-md-4" style="padding-left:0;">
+                                                            <p style="color:#a4a4a4">
+                                                                Home Phone:
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-xs-8 col-md-8 text-left" style="padding-left:0; font-weight:bold;">
+                                                            <span style="color:#94948d" class="HomePhone">
+
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-md-12">
+                                                    <p style="color:#94948d; font-weight:bold;" class="Address">
+                                                       
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div name="comment-log" class="col-xs-11 col-md-11" style="border:solid 1px #d0d0d0; min-height:10rem; margin-left:1.5rem;">
+                                                <div name="comment-info" class="col-md-12" style="margin-top:1rem;">
+                                                    <span name="comment-timestamp" style="font-weight:bold;">
+                                                        10/30/2009 3:15:58 PM
+                                                    </span>
+                                                    <span name="comment-description">
+                                                        Met for coffee, discussed marketing plan
+                                                    </span>
+                                                </div>
+
+                                                <div name="comment-info" class="col-md-12" style="margin-top:1rem;">
+                                                    <span name="comment-timestamp" style="font-weight:bold;">
+                                                        10/30/2009 3:57:53 PM
+                                                    </span>
+                                                    <span name="comment-description">
+                                                        Faxed marketing materials
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-1"></div>
+
+                                            <div class="col-md-12 margin-top-10" style="padding:0;">
+                                                @using (Html.BeginForm("Index", "CRMContacts", FormMethod.Post, new { @class = "form-inline" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+
+                                                    <div class="form-group col-md-12" style="margin-left:0 !important; margin-bottom:0 !important;">
+                                                        <div class="col-md-12" style="padding-left:0;">
+                                                            <label for="comment-input">Add a Comment</label>
+                                                        </div>
+
+                                                        <div class="col-xs-9 col-md-10" style="padding-left:0;">
+                                                            <input type="text" class="form-control" style="width:100%" />
+                                                        </div>
+
+                                                        <div class="col-xs-3 col-md-2">
+                                                            <button type="submit" class="btn">Save</button>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="new-contact" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="new-contact-label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <h5 id="new-contact-label" class="modal-title text-center">Add New Contact</h5>
+                                        </div>
+                                        <div class="modal-body" id="RenderNewcontact">
+
+                                            </div>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="CustomerContact">
+                <div class="row no-padding" style="background:#3598dc;margin-left:0px;margin-right:0px;padding-top: 5px;padding-bottom: 5px;margin-top: 2px;">
+                    <div class="col-xs-4 col-md-3 text-center">
+                        <a data-toggle="modal" data="Add"  style="color:white"  onclick="onNewContactForm(this);">Add New</a>
+                    </div>
+                    <div class="col-xs-8 col-md-9 text-left">
+                        <a data-toggle="modal" data="Edit"  style="color:white"  onclick="onNewContactForm(this)">Edit Detail</a>
+                    </div>
+                </div>
+                <div class="row" style="margin-left:auto;">
+                    <div class="col-xs-4 col-md-3 col-lg-2" style="max-height:42rem; padding:0;">
+                        <div class="col-md-12" style="margin-top:1rem; padding-left:0.5rem; max-height:40.8rem;">
+                            <form style="padding:0;">
+                                <div class="input-group" style="background-color:#e4ecf3;">
+                                    <input type="text" class="form-control" placeholder="Search..."  id="inputCustomer" onkeyup="myFunctionCustomer()" style="margin:0.5rem;" />
+                                    <span class="input-group-btn" style="padding-right:0.5rem;">
+                                        <button class="btn btn-default" type="button" style="padding:0.7rem 1.1rem 0.6rem;">
+                                            <i class="fa fa-search">&nbsp;</i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </form>
+
+                            <div class="allcontacts-list" id="ULCustomer">
+                                <ul>
+                                    @{var datas1 = new JKApi.Data.DAL.jkDatabaseEntities().spGetCRMContactList(null).Where(r=>r.CRMContactTypeId == 1).ToList();
+                                        foreach (var d in datas1)
+                                        {
+                                            <li class="liclickCust" data="@d.CRMContactId">@d.FullName</li>
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-8 col-md-9 col-lg-10">
+                        <div class="custom-form portlet light">
+                            <div class="headerbox" style="border-radius:4px; background-color:#e3ecf3 !important; border:none !important;">
+                                <div class="row" style="color:#778891; margin-bottom:0.3rem; margin-left:0;">
+                                    <div class="col-md-12 no-padding" style="padding-left:0;">
+                                        <div class="alignCenter">
+                                            <div class="col-md-12" style="padding-left:0;">
+                                                Address Book
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="portlet-body form">
+                                <div class="form-body">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <img class="col-xs-4 col-md-3 col-lg-2" src="~/Images/default-profileImage.png" alt="Jeff Phillips" />
+
+                                            <div class="col-xs-8 col-md-9 col-lg-10">
+                                                <div class="col-xs-12 col-md-12">
+                                                    <h4 style="font-weight:bold" class="FullnameCust"></h4>
+                                                </div>
+
+                                                <div class="col-xs-12 col-md-12 text-left">
+                                                    <p class="JobtitleCust"></p>
+                                                </div>
+
+                                                <div class="col-xs-12 col-md-12">
+                                                    <div class="col-xs-6 col-md-6" style="padding-left:0;">
+                                                        <div class="col-xs-4 col-md-4" style="padding-left:0;">
+                                                            <p style="color:#a4a4a4">
+                                                                Business Phone:
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-xs-8 col-md-8 text-left" style="padding-left:0; font-weight:bold;">
+                                                            <span style="color:#94948d" class="BusinessPhoneCust">
+                                                               
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-6">
+                                                        <div class="col-xs-4 col-md-4" style="padding-left:0;">
+                                                            <p style="color:#a4a4a4">
+                                                                Fax:
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-xs-8 col-md-8 text-left" style="padding-left:0; font-weight:bold;">
+                                                            <span style="color:#94948d" class="faxCust">
+
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-md-12">
+                                                    <div class="col-xs-6 col-md-6" style="padding-left:0;">
+                                                        <div class="col-xs-4 col-md-4" style="padding-left:0;">
+                                                            <p style="color:#a4a4a4">
+                                                                Mobile Phone:
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-xs-8 col-md-8 text-left" style="padding-left:0; font-weight:bold;">
+                                                            <span style="color:#94948d" class="MobilePhoneCust">
+
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-6">
+                                                        <div class="col-xs-4 col-md-4" style="padding-left:0;">
+                                                            <p style="color:#a4a4a4">
+                                                                Home Phone:
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-xs-8 col-md-8 text-left" style="padding-left:0; font-weight:bold;">
+                                                            <span style="color:#94948d" class="HomePhoneCust">
+
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-md-12">
+                                                    <p style="color:#94948d; font-weight:bold;" class="AddressCust">
+                                                        
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div name="comment-log" class="col-xs-11 col-md-11" style="border:solid 1px #d0d0d0; min-height:10rem; margin-left:1.5rem;">
+                                                <div name="comment-info" class="col-md-12" style="margin-top:1rem;">
+                                                    <span name="comment-timestamp" style="font-weight:bold;">
+                                                        10/30/2009 3:15:58 PM
+                                                    </span>
+                                                    <span name="comment-description">
+                                                        Met for coffee, discussed marketing plan
+                                                    </span>
+                                                </div>
+
+                                                <div name="comment-info" class="col-md-12" style="margin-top:1rem;">
+                                                    <span name="comment-timestamp" style="font-weight:bold;">
+                                                        10/30/2009 3:57:53 PM
+                                                    </span>
+                                                    <span name="comment-description">
+                                                        Faxed marketing materials
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-1"></div>
+
+                                            <div class="col-md-12 margin-top-10" style="padding:0;">
+                                                @using (Html.BeginForm("Index", "CRMContacts", FormMethod.Post, new { @class = "form-inline" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+
+                                                    <div class="form-group col-md-12" style="margin-left:0 !important; margin-bottom:0 !important;">
+                                                        <div class="col-md-12" style="padding-left:0;">
+                                                            <label for="comment-input">Add a Comment</label>
+                                                        </div>
+
+                                                        <div class="col-xs-9 col-md-10" style="padding-left:0;">
+                                                            <input type="text" class="form-control" style="width:100%" />
+                                                        </div>
+
+                                                        <div class="col-xs-3 col-md-2">
+                                                            <button type="submit" class="btn">Save</button>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @*<div id="new-contactCustomerContact" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="new-contact-label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <h5 id="new-contact-label" class="modal-title text-center">Add New Contact</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                @using (Html.BeginForm("Create", "CRMContacts", FormMethod.Post, new { @class = "form-horizontal" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+
+                                                    <div class="col-md-9">
+                                                        <div class="form-group">
+                                                            <label for="contactTypeInput" class="col-md-4 control-label" style="text-align:left;">Contact Type</label>
+
+                                                            <div class="col-md-8">
+                                                                @Html.DropDownListFor(Model => Model.ContactTypeId, new SelectList(new List<Object>{
+                                                                     new { value = 1 , text = "Customer Contact" },
+                                                                     new { value = 2 , text = "Jani-King"}
+                                                                  }, "value", "text", Model.ContactTypeId), new { @class = "form-control" })
+
+                                                               
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <button for="fullNameInput" class="btn btn-default col-md-4 control-label" style="text-align:left;">Full Name</button>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.FullName, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label for="companyInput" class="col-md-4 control-label" style="text-align:left;">Company</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.Company, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="jobTitleInput" class="col-md-4 control-label" style="text-align:left;">Job Title</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.Jobtitle, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="fileAsInput" class="col-md-4 control-label" style="text-align:left;">File as</label>
+                                                            <div class="col-md-8">
+                                                                @Html.DropDownListFor(Model => Model.FileAs, new SelectList(new List<Object> { new { value = 1, text = "No Idea" } }
+, "value", "text", Model.FileAs), new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-3">
+                                                        <img class="col-md-12" src="~/Images/default-profileImage.png" style="border:solid 0.1rem #ababab;" />
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        Internet
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;">E-mail</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.Email, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="col-md-4 control-label" style="text-align:left;">Display as</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.DisplayAs, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="col-md-4 control-label" style="text-align:left;">Web page address</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.WebPageAddress, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="col-md-4 control-label" style="text-align:left;">IM address</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.IMAddress, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        Phone Numbers
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;text-overflow:ellipsis;">Business Phone</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.BusinessPhone, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;text-overflow:ellipsis;">Home Phone</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.HomePhone, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;text-overflow:ellipsis;">Business Fax Phone</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.BusinessFaxPhone, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;text-overflow:ellipsis;">Mobile Phone</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.MobilePhone, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        Addresses
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <div class="col-md-4">
+                                                                <label class="btn btn-default col-md-12 control-label" style="text-align:left;text-overflow:ellipsis;">Business Address</label>
+                                                                <div class="checkbox">
+                                                                    <label>
+                                                                        @Html.CheckBoxFor(Model => Model.IsMailingAddress) This is the mailing address
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                @Html.TextAreaFor(Model => Model.BusinessAddress, new { @class = "form-control", @rows = "3", @cols = "6" })
+                                                            </div>
+                                                            <div class="col-md-2" style="border:solid 0.1rem #e1e1e1;">
+                                                                <img src="~/Images/globe-marker-icon.png" class="col-md-12" />
+                                                                <span class="col-md-12 text-center">Map It</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-primary">Add Contact</button>
+                                                        <button type="reset" class="btn btn-default">Reset</button>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="edit-contactCustomerContact" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="new-contact-label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <h5 id="new-contact-label" class="modal-title text-center">Edit Contact</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                            </div>
+                                            <div class="row">
+                                                @using (Html.BeginForm("Create", "CRMContacts", FormMethod.Post, new { @class = "form-horizontal" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+
+                                                    <div class="col-md-9">
+                                                        <div class="form-group">
+                                                            <label for="contactTypeInput" class="col-md-4 control-label" style="text-align:left;">Contact Type</label>
+
+                                                            <div class="col-md-8">
+                                                                @Html.DropDownListFor(Model => Model.ContactTypeId, new SelectList(new List<Object>{
+                                                                new { value = 1 , text = "Customer Contact" },
+                                                                new { value = 2 , text = "Jani-King"}
+                                                             }, "value", "text", Model.ContactTypeId), new { @class = "form-control" })
+
+                                                               
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <button for="fullNameInput" class="btn btn-default col-md-4 control-label" style="text-align:left;">Full Name</button>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.FullName, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label for="companyInput" class="col-md-4 control-label" style="text-align:left;">Company</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.Company, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="jobTitleInput" class="col-md-4 control-label" style="text-align:left;">Job Title</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.Jobtitle, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="fileAsInput" class="col-md-4 control-label" style="text-align:left;">File as</label>
+                                                            <div class="col-md-8">
+                                                                @Html.DropDownListFor(Model => Model.FileAs, new SelectList(new List<Object> { new { value = 1, text = "No Idea" } }
+, "value", "text", Model.FileAs), new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-3">
+                                                        <img class="col-md-12" src="~/Images/default-profileImage.png" style="border:solid 0.1rem #ababab;" />
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        Internet
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;">E-mail</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.Email, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="col-md-4 control-label" style="text-align:left;">Display as</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.DisplayAs, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="col-md-4 control-label" style="text-align:left;">Web page address</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.WebPageAddress, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="col-md-4 control-label" style="text-align:left;">IM address</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.IMAddress, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        Phone Numbers
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;text-overflow:ellipsis;">Business Phone</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.BusinessPhone, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;text-overflow:ellipsis;">Home Phone</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.HomePhone, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;text-overflow:ellipsis;">Business Fax Phone</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.BusinessFaxPhone, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;text-overflow:ellipsis;">Mobile Phone</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.MobilePhone, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        Addresses
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <div class="col-md-4">
+                                                                <label class="btn btn-default col-md-12 control-label" style="text-align:left;text-overflow:ellipsis;">Business Address</label>
+                                                                <div class="checkbox">
+                                                                    <label>
+                                                                        @Html.CheckBoxFor(Model => Model.IsMailingAddress) This is the mailing address
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                @Html.TextAreaFor(Model => Model.BusinessAddress, new { @class = "form-control", @rows = "3", @cols = "6" })
+                                                            </div>
+                                                            <div class="col-md-2" style="border:solid 0.1rem #e1e1e1;">
+                                                                <img src="~/Images/globe-marker-icon.png" class="col-md-12" />
+                                                                <span class="col-md-12 text-center">Map It</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-primary">Add Contact</button>
+                                                        <button type="reset" class="btn btn-default">Reset</button>
+                                                    </div>
+                                                }
+                                                <form class="form-horizontal"></form>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="JaniKing">
+                <div class="row no-padding" style="background:#3598dc;margin-left:0px;margin-right:0px;padding-top: 5px;padding-bottom: 5px;margin-top: 2px;">
+                    <div class="col-xs-4 col-md-3 text-center">
+                        <a data-toggle="modal" data="Add" style="color:white" onclick="onNewContactForm(this);">Add New</a>
+                    </div>
+                    <div class="col-xs-8 col-md-9 text-left">
+                        <a data-toggle="modal" data="Edit" style="color:white" onclick="onNewContactForm(this)">Edit Detail</a>
+                    </div>
+                </div>
+                <div class="row" style="margin-left:auto;">
+                    <div class="col-xs-4 col-md-3 col-lg-2" style="max-height:42rem; padding:0;">
+                        <div class="col-md-12" style="margin-top:1rem; padding-left:0.5rem; max-height:40.8rem;">
+                            <form style="padding:0;">
+                                <div class="input-group" style="background-color:#e4ecf3;">
+                                    <input type="text" class="form-control" placeholder="Search..."  id="inputJK" onkeyup="myFunctionJK()" style="margin:0.5rem;" />
+                                    <span class="input-group-btn" style="padding-right:0.5rem;">
+                                        <button class="btn btn-default" type="button" style="padding:0.7rem 1.1rem 0.6rem;">
+                                            <i class="fa fa-search">&nbsp;</i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </form>
+
+                            <div class="allcontacts-list" id="ULJK">
+                                <ul>
+                                    @{var data2 = new JKApi.Data.DAL.jkDatabaseEntities().spGetCRMContactList(null).Where(r=>r.CRMContactTypeId == 2).ToList();
+                                        foreach (var d in data2)
+                                        {
+                                            <li class="liclickJK" data="@d.CRMContactId">@d.FullName</li>
+                                        }
+                                     }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-8 col-md-9 col-lg-10">
+                        <div class="custom-form portlet light">
+                            <div class="headerbox" style="border-radius:4px; background-color:#e3ecf3 !important; border:none !important;">
+                                <div class="row" style="color:#778891; margin-bottom:0.3rem; margin-left:0;">
+                                    <div class="col-md-12 no-padding" style="padding-left:0;">
+                                        <div class="alignCenter">
+                                            <div class="col-md-12" style="padding-left:0;">
+                                                Address Book
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="portlet-body form">
+                                <div class="form-body">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <img class="col-xs-4 col-md-3 col-lg-2" src="~/Images/default-profileImage.png" alt="Jeff Phillips" />
+
+                                            <div class="col-xs-8 col-md-9 col-lg-10">
+                                                <div class="col-xs-12 col-md-12">
+                                                    <h4 style="font-weight:bold" class="FullnameJK"></h4>
+                                                </div>
+
+                                                <div class="col-xs-12 col-md-12 text-left">
+                                                    <p class="JobtitleJK"></p>
+                                                </div>
+
+                                                <div class="col-xs-12 col-md-12">
+                                                    <div class="col-xs-6 col-md-6" style="padding-left:0;">
+                                                        <div class="col-xs-4 col-md-4" style="padding-left:0;">
+                                                            <p style="color:#a4a4a4">
+                                                                Business Phone:
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-xs-8 col-md-8 text-left" style="padding-left:0; font-weight:bold;">
+                                                            <span style="color:#94948d" class="BusinessPhoneJK">
+                                                                
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-6">
+                                                        <div class="col-xs-4 col-md-4" style="padding-left:0;">
+                                                            <p style="color:#a4a4a4">
+                                                                Fax:
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-xs-8 col-md-8 text-left" style="padding-left:0; font-weight:bold;">
+                                                            <span style="color:#94948d" class="faxJK">
+
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-md-12">
+                                                    <div class="col-xs-6 col-md-6" style="padding-left:0;">
+                                                        <div class="col-xs-4 col-md-4" style="padding-left:0;">
+                                                            <p style="color:#a4a4a4">
+                                                                Mobile Phone:
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-xs-8 col-md-8 text-left" style="padding-left:0; font-weight:bold;">
+                                                            <span style="color:#94948d" class="MobilePhoneJK">
+
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-6">
+                                                        <div class="col-xs-4 col-md-4" style="padding-left:0;">
+                                                            <p style="color:#a4a4a4">
+                                                                Home Phone:
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-xs-8 col-md-8 text-left" style="padding-left:0; font-weight:bold;">
+                                                            <span style="color:#94948d" class="HomePhoneJK">
+
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-md-12">
+                                                    <p style="color:#94948d; font-weight:bold;" class="AddressJK">
+                                                        
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div name="comment-log" class="col-xs-11 col-md-11" style="border:solid 1px #d0d0d0; min-height:10rem; margin-left:1.5rem;">
+                                                <div name="comment-info" class="col-md-12" style="margin-top:1rem;">
+                                                    <span name="comment-timestamp" style="font-weight:bold;">
+                                                        10/30/2009 3:15:58 PM
+                                                    </span>
+                                                    <span name="comment-description">
+                                                        Met for coffee, discussed marketing plan
+                                                    </span>
+                                                </div>
+
+                                                <div name="comment-info" class="col-md-12" style="margin-top:1rem;">
+                                                    <span name="comment-timestamp" style="font-weight:bold;">
+                                                        10/30/2009 3:57:53 PM
+                                                    </span>
+                                                    <span name="comment-description">
+                                                        Faxed marketing materials
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-1"></div>
+
+                                            <div class="col-md-12 margin-top-10" style="padding:0;">
+                                                @using (Html.BeginForm("Index", "CRMContacts", FormMethod.Post, new { @class = "form-inline" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+
+                                                    <div class="form-group col-md-12" style="margin-left:0 !important; margin-bottom:0 !important;">
+                                                        <div class="col-md-12" style="padding-left:0;">
+                                                            <label for="comment-input">Add a Comment</label>
+                                                        </div>
+
+                                                        <div class="col-xs-9 col-md-10" style="padding-left:0;">
+                                                            <input type="text" class="form-control" style="width:100%" />
+                                                        </div>
+
+                                                        <div class="col-xs-3 col-md-2">
+                                                            <button type="submit" class="btn">Save</button>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @*<div id="new-contactJaniKing" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="new-contact-label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <h5 id="new-contact-label" class="modal-title text-center">Add New Contact</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                @using (Html.BeginForm("Create", "CRMContacts", FormMethod.Post, new { @class = "form-horizontal" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+
+                                                    <div class="col-md-9">
+                                                        <div class="form-group">
+                                                            <label for="contactTypeInput" class="col-md-4 control-label" style="text-align:left;">Contact Type</label>
+
+                                                            <div class="col-md-8">
+                                                                @Html.DropDownListFor(Model => Model.ContactTypeId, new SelectList(new List<Object>{
+                                                                new { value = 1 , text = "Customer Contact" },
+                                                                new { value = 2 , text = "Jani-King"}
+                                                             }, "value", "text", Model.ContactTypeId), new { @class = "form-control" })
+
+                                                              
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <button for="fullNameInput" class="btn btn-default col-md-4 control-label" style="text-align:left;">Full Name</button>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.FullName, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label for="companyInput" class="col-md-4 control-label" style="text-align:left;">Company</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.Company, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="jobTitleInput" class="col-md-4 control-label" style="text-align:left;">Job Title</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.Jobtitle, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="fileAsInput" class="col-md-4 control-label" style="text-align:left;">File as</label>
+                                                            <div class="col-md-8">
+                                                                @Html.DropDownListFor(Model => Model.FileAs, new SelectList(new List<Object> { new { value = 1, text = "No Idea" } }
+, "value", "text", Model.FileAs), new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-3">
+                                                        <img class="col-md-12" src="~/Images/default-profileImage.png" style="border:solid 0.1rem #ababab;" />
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        Internet
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;">E-mail</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.Email, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="col-md-4 control-label" style="text-align:left;">Display as</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.DisplayAs, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="col-md-4 control-label" style="text-align:left;">Web page address</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.WebPageAddress, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="col-md-4 control-label" style="text-align:left;">IM address</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.IMAddress, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        Phone Numbers
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;text-overflow:ellipsis;">Business Phone</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.BusinessPhone, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;text-overflow:ellipsis;">Home Phone</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.HomePhone, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;text-overflow:ellipsis;">Business Fax Phone</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.BusinessFaxPhone, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;text-overflow:ellipsis;">Mobile Phone</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.MobilePhone, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        Addresses
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <div class="col-md-4">
+                                                                <label class="btn btn-default col-md-12 control-label" style="text-align:left;text-overflow:ellipsis;">Business Address</label>
+                                                                <div class="checkbox">
+                                                                    <label>
+                                                                        @Html.CheckBoxFor(Model => Model.IsMailingAddress) This is the mailing address
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                @Html.TextAreaFor(Model => Model.BusinessAddress, new { @class = "form-control", @rows = "3", @cols = "6" })
+                                                            </div>
+                                                            <div class="col-md-2" style="border:solid 0.1rem #e1e1e1;">
+                                                                <img src="~/Images/globe-marker-icon.png" class="col-md-12" />
+                                                                <span class="col-md-12 text-center">Map It</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-primary">Add Contact</button>
+                                                        <button type="reset" class="btn btn-default">Reset</button>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="edit-contactJaniKing" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="new-contact-label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <h5 id="new-contact-label" class="modal-title text-center">Edit Contact</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                            </div>
+                                            <div class="row">
+                                                @using (Html.BeginForm("Create", "CRMContacts", FormMethod.Post, new { @class = "form-horizontal" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+
+                                                    <div class="col-md-9">
+                                                        <div class="form-group">
+                                                            <label for="contactTypeInput" class="col-md-4 control-label" style="text-align:left;">Contact Type</label>
+
+                                                            <div class="col-md-8">
+                                                                @Html.DropDownListFor(Model => Model.ContactTypeId, new SelectList(new List<Object>{
+                                                                   new { value = 1 , text = "Customer Contact" },
+                                                                   new { value = 2 , text = "Jani-King"}
+                                                                }, "value", "text", Model.ContactTypeId), new { @class = "form-control" })
+
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <button for="fullNameInput" class="btn btn-default col-md-4 control-label" style="text-align:left;">Full Name</button>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.FullName, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label for="companyInput" class="col-md-4 control-label" style="text-align:left;">Company</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.Company, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="jobTitleInput" class="col-md-4 control-label" style="text-align:left;">Job Title</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.Jobtitle, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="fileAsInput" class="col-md-4 control-label" style="text-align:left;">File as</label>
+                                                            <div class="col-md-8">
+                                                                @Html.DropDownListFor(Model => Model.FileAs, new SelectList(new List<Object> { new { value = 1, text = "No Idea" } }
+                                                            , "value", "text", Model.FileAs), new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-3">
+                                                        <img class="col-md-12" src="~/Images/default-profileImage.png" style="border:solid 0.1rem #ababab;" />
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        Internet
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;">E-mail</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.Email, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="col-md-4 control-label" style="text-align:left;">Display as</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.DisplayAs, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="col-md-4 control-label" style="text-align:left;">Web page address</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.WebPageAddress, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="col-md-4 control-label" style="text-align:left;">IM address</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.IMAddress, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        Phone Numbers
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;text-overflow:ellipsis;">Business Phone</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.BusinessPhone, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;text-overflow:ellipsis;">Home Phone</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.HomePhone, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;text-overflow:ellipsis;">Business Fax Phone</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.BusinessFaxPhone, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="btn btn-default col-md-4 control-label" style="text-align:left;text-overflow:ellipsis;">Mobile Phone</label>
+                                                            <div class="col-md-8">
+                                                                @Html.TextBoxFor(Model => Model.MobilePhone, new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        Addresses
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <div class="col-md-4">
+                                                                <label class="btn btn-default col-md-12 control-label" style="text-align:left;text-overflow:ellipsis;">Business Address</label>
+                                                                <div class="checkbox">
+                                                                    <label>
+                                                                        @Html.CheckBoxFor(Model => Model.IsMailingAddress) This is the mailing address
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                @Html.TextAreaFor(Model => Model.BusinessAddress, new { @class = "form-control", @rows = "3", @cols = "6" })
+                                                            </div>
+                                                            <div class="col-md-2" style="border:solid 0.1rem #e1e1e1;">
+                                                                <img src="~/Images/globe-marker-icon.png" class="col-md-12" />
+                                                                <span class="col-md-12 text-center">Map It</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-primary">Add Contact</button>
+                                                        <button type="reset" class="btn btn-default">Reset</button>
+                                                    </div>
+                                                }
+                                                <form class="form-horizontal"></form>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap/js/bootstrap.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/fullcalendar/fullcalendar.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/pages/scripts/ui-blockui.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery.blockui.min.js")" type="text/javascript"></script>
+
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/clockface/js/clockface.js")" type="text/javascript"></script>
+
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+@*<script src="@Url.Content("~/Content/admin/assets/pages/scripts/ui-nestable.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-nestable/jquery.nestable.js")" type="text/javascript"></script*@
+
+<script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+<script>
+    $(document).ready(function () {
+
+        $(".btnSubmit").click(function () {
+            $(".modal").hide();
+        });
+
+        $(".liclick").click(function () {
+            var contactid = $(this).attr("data");
+            $("#hdnContactID").val(contactid);
+            var sURL = '@Url.Action("GetContacts", "CRMContacts", new { area = "CRM" })?ContactTypeId=' + contactid
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+
+                    $(".Fullname").text(data.FullName);
+                    $(".Jobtitle").text(data.Jobtitle);
+                    $(".BusinessPhone").text(data.BusinessPhone);
+                    $(".fax").text(data.BusinessFaxPhone);
+                    $(".MobilePhone").text(data.MobilePhone);
+                    $(".HomePhone").text(data.HomePhone);
+                    $(".Address").text(data.BusinessAddress);
+                }, error: function (err) {
+                    console.log(err);
+                }
+
+            });
+        });
+
+        $(".liclickCust").click(function () {
+            var contactid = $(this).attr("data");
+            $("#hdnContactID").val(contactid);
+            var sURL = '@Url.Action("GetContacts", "CRMContacts", new { area = "CRM" })?ContactTypeId=' + contactid
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+
+                    $(".FullnameCust").text(data.FullName);
+                    $(".JobtitleCust").text(data.Jobtitle);
+                    $(".BusinessPhoneCust").text(data.BusinessPhone);
+                    $(".faxCust").text(data.BusinessFaxPhone);
+                    $(".MobilePhoneCust").text(data.MobilePhone);
+                    $(".HomePhoneCust").text(data.HomePhone);
+                    $(".AddressCust").text(data.BusinessAddress);
+                }, error: function (err) {
+                    console.log(err);
+                }
+
+            });
+        });
+
+        $(".liclickJK").click(function () {
+            var contactid = $(this).attr("data");
+            $("#hdnContactID").val(contactid);
+            var sURL = '@Url.Action("GetContacts", "CRMContacts", new { area = "CRM" })?ContactTypeId=' + contactid
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+
+                    $(".FullnameJK").text(data.FullName);
+                    $(".JobtitleJK").text(data.Jobtitle);
+                    $(".BusinessPhoneJK").text(data.BusinessPhone);
+                    $(".faxJK").text(data.BusinessFaxPhone);
+                    $(".MobilePhoneJK").text(data.MobilePhone);
+                    $(".HomePhoneJK").text(data.HomePhone);
+                    $(".AddressJK").text(data.BusinessAddress);
+                }, error: function (err) {
+                    console.log(err);
+                }
+
+            });
+        });
+
+    });
+    function myFunctionALL() {
+        var input, filter, ul, li, a, i;
+        input = document.getElementById('inputALL');
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("ULALL");
+        li = ul.getElementsByTagName('li');
+
+        // Loop through all list items, and hide those who don't match the search query
+        for (i = 0; i < li.length; i++) {
+            a = li[i];
+            if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+            }
+        }
+    }
+
+    function myFunctionCustomer() {
+        var input, filter, ul, li, a, i;
+        input = document.getElementById('inputCustomer');
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("ULCustomer");
+        li = ul.getElementsByTagName('li');
+
+        // Loop through all list items, and hide those who don't match the search query
+        for (i = 0; i < li.length; i++) {
+            a = li[i];
+            if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+            }
+        }
+    }
+    function myFunctionJK() {
+        var input, filter, ul, li, a, i;
+        input = document.getElementById('inputJK');
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("ULJK");
+        li = ul.getElementsByTagName('li');
+
+        // Loop through all list items, and hide those who don't match the search query
+        for (i = 0; i < li.length; i++) {
+            a = li[i];
+            if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+            }
+        }
+    }
+
+    function saveCustomerMaintenance() {
+                $.ajax({
+                    url: '@Url.Action("Create", "CRMContacts", new { area = "CRM" })',
+                    type: "POST",
+                    data: $('#FromNewAccount').serialize(),
+                    success: function (res) {
+                        $('.modal').modal('hide');
+                        $(".modal-backdrop").hide();
+                        HNavigation('CRMContacts', 'CRM', '/CRM/CRMContacts');
+                    },
+                    error: function () { }
+                });
+        }
+
+    function onNewContactForm(dtl) {
+        var Id = null;
+        if ($(dtl).attr("data") == "Add") {
+            Id = null;
+        } else {
+            Id = $("#hdnContactID").val();
+        }
+            var sURL = '@Url.Action("ContactNewForm", "CRMContacts", new { area = "CRM" })?id=' + Id;
+
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#RenderNewcontact').html(data);
+                    $("#new-contact").modal({ backdrop: 'static' });
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+</script>

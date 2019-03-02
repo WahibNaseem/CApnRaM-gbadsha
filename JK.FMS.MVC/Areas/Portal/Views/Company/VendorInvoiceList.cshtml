@@ -1,0 +1,624 @@
+﻿
+@{
+    ViewBag.Title = "Customer SearchList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section styles{
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")' rel="stylesheet" type="text/css" />
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")' rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+}
+<style type="text/css">
+    .close {
+        background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+        height: 12px !important;
+        width: 12px !important;
+        margin-top: 0px !important;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .row {
+        margin: 0;
+        padding: 3px 0;
+    }
+
+    .page-size {
+        padding-left: 0;
+        padding-right: 0;
+        width: 62px;
+    }
+
+    .topheader {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFF !important;
+        text-transform: uppercase;
+        margin-top: 3px;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+
+    .alignCenter {
+        text-align: center;
+    }
+
+    #tblVendorList th {
+        vertical-align: middle;
+    }
+
+    .no-padding {
+        padding: 0;
+    }
+
+    .no-margin {
+        margin: 0;
+    }
+
+    .padding-tb1 {
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+
+    .margin-tb1 {
+        margin-top: 1px;
+        margin-bottom: 1px;
+    }
+
+    .custom-listbox .headerbox {
+        padding: 3px 0px 3px 5px;
+    }
+
+    .custom-listbox {
+        margin-top: 4px;
+        margin-bottom: 0px;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .multiselect-container.dropdown-menu {
+        text-transform: none;
+        font-size: 14px;
+    }
+
+    .contract {
+        text-align: right;
+    }
+
+    .tablebox .table-responsive {
+        min-height: 600px;
+    }
+
+    #modal_RegionModel .modal-content {
+        width: 55% !important;
+        margin-left: 30% !important;
+    }
+</style>
+
+
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    VENDORS INVOICES
+                </div>
+                <div class="col-md-4" style="padding-right:5px;">
+                    <div class="col-md-7 pull-right no-padding">
+                        <div style="display:table-cell;padding-right: 5px;">
+                            Region
+                        </div>
+                        <div style="display:table-cell;width:100%;">
+                            @if (ViewBag.regionlist != null)
+                            {
+                                <select class="form-control input-sm" id="regionlist" multiple="multiple" style="display:none;">
+                                    @foreach (var item in (SelectList)ViewBag.regionlist)
+                                    {
+                                        <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="custom-listbox">
+    <div class="headerbox">
+        <div class="row no-padding">
+            <div class="col-md-4">
+                <div class="input-icon">
+                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                    <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search..." value="" class="form-control input-sm typeahead" />
+                </div>
+                <select class="form-control input-sm" id="pageSize" style="padding-left:6px;display:none;">
+                    <option value="-1" selected>All</option>
+                    <option value="100">100</option>
+                    <option value="50">50</option>
+                    <option value="25">25</option>
+                </select>
+            </div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4 pull-right" style="padding-right:5px;">
+                @if (ViewBag.TransactionStatusList != null)
+                {
+                    <div class="col-md-12 pull-right no-padding">
+                        <div class="col-md-6 no-padding" style="text-transform:none;font-weight:normal;text-align: right;margin-top: 3px;">
+                            Status
+                        </div>
+                        <div class="col-md-6 no-padding" style="padding-left: 6px;">
+                            @Html.DropDownList("ddlStatus", (MultiSelectList)ViewBag.TransactionStatusList, new { style = "display:none;", multiple = "multiple" })
+
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="tablebox" style="background-color:#fff;">
+
+    <div class="form-group">
+        <div class="row">
+            <div class="control-label col-md-1">
+                Vendor
+            </div>
+            <div class="col-md-3">
+                <select id="select_vendorlist" class="form-control input-sm">
+                    <option value="-1">All</option>
+                </select>
+            </div>
+            <div class="control-label col-md-2">
+                Total Selected
+            </div>
+            <div class="col-md-2">
+                <input class="form-control input-sm" id="txtTotalSelectedAmount" />
+            </div>
+            <div class="col-md-1">
+                <input type="button" name="btnRequestPayment" id="btnRequestPayment" class="btn btn-primary button-next" value="Request Payment" />
+            </div>
+        </div>
+    </div>
+
+
+    <div class="table-responsive" id="divtblVendorList" style="display:none;">
+        <table class="table table-striped table-bordered table-hover order-column" id="tblVendorList" style="display:none;margin-top:0 !important;">
+            <thead>
+                <tr>
+                    <th style="width:7px;text-align:center;">
+                        <input type="checkbox" name="chkSelectAll" id="chkSelectAll" />
+                    </th>
+                    <th style="text-align:center;width:160px;">
+                        Vendor Name
+                    </th>
+                    <th style="text-align:center;width:100px;">
+                        Vendor Invoice No.
+                    </th>
+                    <th style="text-align:center;width:80px;">
+                        Invoice Date
+                    </th>
+                    <th style="text-align:center;width:80px;">
+                        Due Date
+                    </th>
+                    <th style="text-align:center;width:80px;">
+                        Gross Due
+                    </th>
+                    <th style="text-align:center;width:50px;">
+                        Status
+                    </th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade in" id="modal_RegionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Select Region
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Select Region</label>
+                                @if (ViewBag.regionlist != null)
+                                {
+                                    <select class="form-control input-sm" id="selectregionlist">
+                                        <option value="">Select Region</option>
+                                        @foreach (var item in (SelectList)ViewBag.regionlist)
+                                        {
+                                            <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div class="col-md-12">
+                        <button type="button" name="SaveNew" id="btnRegion" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:0px;">Select Region</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section pageplugins{
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js")" type="text/javascript"></script>
+    @*<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/chosen.css")" />
+        <script src="@Url.Content("~/Scripts/chosen.jquery.min.js")" type="text/javascript"></script>
+        <script src="~/Scripts/jquery.uniform.min.js"></script>*@
+    @if (Request.IsSecureConnection)
+    {
+        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    }
+    else
+    {
+        <script src="http://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    }
+}
+
+@section scripts{
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        function getCurrentUrl() {
+            var s = $("#ddlStatus").val();
+            var r = $('#regionlist').val();
+            return '@Url.Action("VendorListData", "Company", new { area = "Portal" })?status=' + (s == null ? '' : s) + '&rgId=' + (r == null ? '' : r);
+        }
+
+        $(document).ready(function () {
+            $("#btnRegion").click(function () {
+                if ($("#selectregionlist").val() != "") {
+                    $("#regionlist option[value='" + $("#selectregionlist").val() + "']").attr("selected", 1);
+                    $("#regionlist").multiselect("refresh");
+                    initTable();
+                    $(".close").click();
+                }
+            });
+            $("#ddlStatus").multiselect({
+                includeSelectAllOption: true,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select status..',
+                dropRight: true,
+                numberDisplayed: 2,
+                onChange: initTable,
+                onSelectAll: initTable,
+                onDeselectAll: initTable
+            });
+            $("#regionlist").multiselect({
+                includeSelectAllOption: false,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2,
+                onChange: initTable,
+                onSelectAll: initTable,
+                onDeselectAll: initTable
+            });
+
+
+            $.fn.dataTableExt.afnFiltering.push(function (oSettings, aData, iDataIndex) {
+
+                return true;
+            });
+
+            $(document).on('init.dt', function (e, settings) {
+                var api = new $.fn.dataTable.Api(settings);
+                if ($(api.table().node()).attr('id') == 'tblVendorList') {
+                    setPaging();
+                }
+            });
+            function initTable() {
+
+                var ps = $('#pageSize').val();
+                var dtable = $('#tblVendorList').dataTable({
+                    "bAutoWidth": false,
+                    cache: true,
+                    "iDisplayLength": ps == '-1' ? 25 : ps,
+                    "bDestroy": true,
+                    "aLengthMenu": [[5, 7, 10, 25, 50, -1], [5, 7, 10, 25, 50, "All"]],
+                    //"dom": "<'headerbox list'<'row'<'col-md-1'l><'col-md-4'f><'#divrightckbox.col-md-5 pull-right text-center'>>><'table-responsive't><'bottom'ip><'clear'>",
+                    "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                    "aaSorting": [[0, "desc"]],
+                    "sAjaxSource": getCurrentUrl(),
+                    "sAjaxDataProp": "aadata",  // Internationalisation. For more info refer to http://datatables.net/manual/i18n
+                    "rowCallback": function (nRow, data) {
+                    },
+                    "aoColumns": [
+                        {
+                            "sName": "Select",
+                            "bSortable": false,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                return '<input type="checkbox" name="chkSelect' + full.VendorInvoiceId + '" id="chkSelect' + full.VendorInvoiceId + '" onchange="VendorCheck(' + full.VendorInvoiceId + ')" relvick="relvick" relVI="' + full.VendorInvoiceId + '">';//'<span>' + full.VendorName + '</span>';
+                            }
+                        },
+                        {
+                            "sName": "VendorName",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+                                return '<span>' + full.VendorName + '</span>';
+                            }
+                        },
+                        {
+                            "sName": "VendorInvoiceNo",
+                            "bSortable": true,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                return '<span>' + full.VendorInvoiceNo + '</span>';
+                            }
+                        },
+                        {
+                            "sName": "InvoiceDate",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+                                return '<span>' + moment(new Date(parseInt(full.InvoiceDate.substr(6)))).format("MM/DD/YYYY") + '</span>';
+                                //return '<span>' + full.InvoiceDate + '</span>';
+                            }
+                        },
+                        {
+                            "sName": "InvoiceDueDate",
+                            "bSortable": true,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                return '<span>' + moment(new Date(parseInt(full.InvoiceDueDate.substr(6)))).format("MM/DD/YYYY") + '</span>';
+                            }
+                        },
+                        {
+                            "sName": "GrossDue",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+                                return '<span style="float: right;">' + formatCurrency(full.GrossDue, true) + '</span>';
+                            }
+                        },
+                        {
+                            "sName": "Status",
+                            "bSortable": true,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                return full.Status;
+                            }
+                        }
+                    ]
+                });
+            }
+            $("#input_Search").keyup(function () {
+                var table = $("#tblVendorList").DataTable();
+                table.search($(this).val()).draw();
+            });
+
+            $("#pageSize").change(function () {
+                setPaging();
+            })
+
+            $("#regionlist").change(function () {
+                // initTable();
+                //var tblVendorList = $('#tblVendorList').DataTable();
+                //tblVendorList.draw();
+            });
+
+
+
+            //tblVendorListData
+
+            if ('@ViewBag.selectedRegionId' > 0) {
+
+                $("#regionlist option[value='" + '@ViewBag.selectedRegionId' + "']").attr("selected", 1);
+                $("#regionlist").multiselect("refresh");
+            }
+            initTable();
+
+
+            $('.modal-dialog').draggable();
+            $('#tblVendorList').show();
+            $('#divtblVendorList').show();
+        });
+
+        function GetDataByRegion() {
+            var tblVendorList = $('#tblVendorList').DataTable();
+
+            $.ajax({
+                url: getCurrentUrl(), success: function (result) {
+
+                    tblVendorListData = result;
+
+                    //for (var i = 0; i < result.aadata.length; i++) {
+                    //    tblVendorList.row.add({
+                    //        "VendorName": result.aadata[i].VendorName,
+                    //        "VendorInvoiceNo": result.aadata[i].VendorInvoiceNo,
+                    //        "InvoiceDate": result.aadata[i].InvoiceDate,
+                    //        "GrossDue": result.aadata[i].GrossDue,
+                    //        "Status": result.aadata[i].Status,
+                    //        "VendorId": result.aadata[i].VendorId,
+                    //        "VendorInvoiceId": result.aadata[i].VendorInvoiceId
+                    //    }).draw();
+                    //}
+                }
+            });
+        }
+        var tblVendorListData = [];
+
+        GetDataByRegion();
+        function VendorCheck(i) {
+            var _selectedAmount = 0.0;
+            var _selectedVendor = [];
+            $.each(tblVendorListData.aadata, function (index, value) {
+
+                if (_selectedVendor.length == 0) {
+                    _selectedVendor.push({ "VendorId": -1, "VendorName": 'All', "GrossDue": 0 });
+                }
+                if ($('#chkSelect' + value.VendorInvoiceId).is(":checked")) {
+                    _selectedAmount += value.GrossDue;
+
+
+                    _selectedVendor[0].GrossDue += value.GrossDue;
+                    var _isFound = false;
+                    $.each(_selectedVendor, function (index1, value1) {
+                        if (value1.VendorId == value.VendorId )
+                        {
+                            _isFound = true;
+                            value1.GrossDue += value.GrossDue;
+
+                        }
+                    });
+                    if (!_isFound) {
+                        _selectedVendor.push({ "VendorId": value.VendorId, "VendorName": $.trim(value.VendorName), "GrossDue": value.GrossDue });
+                        _isFound = false;
+                    }
+                }
+            });
+            var rFFA = "";
+            for (var k = 0; k < _selectedVendor.length; k++) {
+                rFFA += "<option value=" + _selectedVendor[k].VendorId + ">" + $.trim(_selectedVendor[k].VendorName) + "</option>";
+            }
+            $('#select_vendorlist').html(rFFA);
+            $('#select_vendorlist').val(-1);
+            $('#txtTotalSelectedAmount').val(_selectedAmount);
+
+            applyMaskCurrency('#txtTotalSelectedAmount');
+        }
+        $('#select_vendorlist').change(function () {
+
+            if (_selectedVendor.length == 0)
+            {
+                $('#txtTotalSelectedAmount').val(0);
+            }
+            for (var k = 0; k < _selectedVendor.length; k++) {
+                if(_selectedVendor[k].VendorId== $(this).val())
+                {
+                    $('#txtTotalSelectedAmount').val(_selectedVendor[k].GrossDue);
+                }
+            }
+
+        });
+        function setPaging() {
+            var z = $("#pageSize").val();
+            var table = $("#tblVendorList").DataTable();
+            if (z > 0) {
+                table.page.len(z).draw();
+            }
+            else if (z == -1) {
+                table.page.len(table.rows().count()).draw();
+            }
+            else {
+                table.page.page.len(25).draw();
+            }
+        }
+
+
+        function formatCurrency(total, dollar) {
+            dollar = (dollar == true ? true : false);
+            var neg = false;
+            if (total < 0) {
+                neg = true;
+                total = Math.abs(total);
+            }
+            return (neg ? "-" : '') + (dollar ? "$" : "") + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        };
+
+
+        var app = {};
+
+        (function (app) {
+
+            var _id;
+
+            app.init = function (id) {
+                if (id != '') {
+                    _id = id;
+                    $("#hdfCustomerId").val(_id);
+                    bindcustomerdetail(_id);
+                }
+            }
+
+        })(app);
+
+
+
+
+        function OnlyNumber(id) {
+            $(id).keydown(function (event) {
+                if (event.shiftKey == true) { event.preventDefault(); }
+                if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105) || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46) { }
+                else { event.preventDefault(); }
+            });
+        }
+
+        function applyMaskCurrency(id) {
+            $(id).inputmask("currency", {
+                alias: 'currency',
+                prefix: '$ ',
+                digits: 2,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                unmaskAsNumber: true,
+                allowPlus: false,
+                allowMinus: false,
+                autoGroup: true,
+                groupSeparator: ",",
+            });
+        }
+
+        $(window).load(function () {
+            if ('@ViewBag.selectedRegionId' == 0) {
+                $("#modal_RegionModel").modal({ backdrop: 'static' });
+            }
+
+        });
+
+
+    </script>
+}

@@ -1,0 +1,862 @@
+﻿
+@{
+    ViewBag.Title = "IncreaseDecreaseReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+
+    <style type="text/css">
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        #IncreaseDecreaseHistoryList tfoot > tr > td {
+            padding: 5px !important;
+            padding-top: 5px !important;
+            padding-right: 5px !important;
+            padding-bottom: 5px !important;
+            padding-left: 5px !important;
+            font-size: 12px !important;
+        }
+
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+            font-weight: normal;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        #modal_RegionModel .modal-content {
+            width: 55% !important;
+            margin-left: 30% !important;
+        }
+    </style>
+
+}
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    INCREASE/DECREASE REPORT
+                </div>
+                <div class="col-md-2 pull-right" style="padding-right:5px;">
+                    <div style="display:table-cell;padding-right: 5px;">
+                        Region
+                    </div>
+                    <div style="display:table-cell;width:100%;">
+                        @if (ViewBag.regionlist != null)
+                        {
+                            <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                                @foreach (var item in (SelectList)ViewBag.regionlist)
+                                {
+                                    <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="custom-listbox" id="divfranchiseList" style="margin-top:4px;margin-bottom:3px;">
+    <div class="headerbox">
+        <div class="row no-padding">
+            <div class="col-sm-1 page-size">
+                <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                    <option value="-1">All</option>
+                    <option value="100" selected>100</option>
+                    <option value="50">50</option>
+                    <option value="25">25</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <div class="input-icon">
+                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                    <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search" value="" class="form-control input-sm typeahead" />
+                </div>
+            </div>
+
+            <div class="col-md-5 pull-right no-padding">
+
+                <div class="col-md-10 pull-right no-padding" style="text-align:center;">
+                    <div class="col-md-6 no-padding" style="margin-left:30px;">
+                        <select id="select_timeduration" class="form-control input-sm">
+                            <option value="1">This Week</option>
+                            <option value="2">This Week-to-date</option>
+                            <option value="3">This Month</option>
+                            <option value="4">This Month-to-date</option>
+                            <option value="5">This Quarter</option>
+                            <option value="6">This Quarter-to-date</option>
+                            <option value="7" selected="selected">This Fiscal Year</option>
+                            <option value="8">This Fiscal Year-to-date</option>
+                            <option value="9" >Today</option>
+                            <option value="10">Yesterday</option>
+                            <option value="11">Last Week</option>
+                            <option value="12">Last Month</option>
+                            <option value="13">Last Quarter</option>
+                            <option value="14">Last Year</option>
+                            <option value="15">Custom Date</option>
+                            <option value="16">Period</option>
+                        </select>
+                    </div>
+                    <div class="col-md-5 divspandate no-padding" style="margin-top: 3px; margin-left: 0px; display: block; float: right;" id="divspandate">
+                        <span id="spnStartDate"></span> - <span id="spnEndtDate"></span>
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divSD">
+                        <input type="text" name="txtStartDate" id="txtStartDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divED">
+                        <input type="text" name="txtEndtDate" id="txtEndtDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divmonth">
+                        <select id="monthlist" class="form-control input-sm">
+                            <option value=""></option>
+                            <option value="1">Jan</option>
+                            <option value="2">Feb</option>
+                            <option value="3">Mar</option>
+                            <option value="4">Apr</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">Aug</option>
+                            <option value="9">Sep</option>
+                            <option value="10">Oct</option>
+                            <option value="11">Nov</option>
+                            <option value="12">Dec</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divyear">
+                        <select class="form-control input-sm" id="yearlist" style="padding-left: 2px;">
+                            <option value=""></option>
+                            <option value="2018">2018</option>
+                            <option value="2017">2017</option>
+                            <option value="2016">2016</option>
+                            <option value="2015">2015</option>
+                            <option value="2014">2014</option>
+                            <option value="2013">2013</option>
+                            <option value="2012">2012</option>
+                            <option value="2011">2011</option>
+                            <option value="2010">2010</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="tablebox">
+    <div class="row padding-tb1">
+        <div class="row no-padding">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover order-column dataTable" id="IncreaseDecreaseHistoryList" style="display:none">
+                    <thead>
+
+                        <tr>
+                            <th style="text-align:center;width:75px;font-size: 10px !important;font-weight: normal;">
+                                Customer No.
+                            </th>
+                            <th style="width:240px;text-align:center;font-size: 10px !important;font-weight: normal;">
+                                Customer Name
+                            </th>
+
+                            <th style="text-align:center;width:40px;font-size: 10px !important;font-weight: normal;">
+                                Increase/Decrease
+                            </th>                            
+                            <th style="text-align:center;width:40px;font-size: 10px !important;font-weight: normal;">
+                                Type
+                            </th>
+                            <th style="width:240px;text-align:center;font-size: 10px !important;font-weight: normal;">
+                                Description
+                            </th>
+                            <th style="text-align:center;width:70px;font-size: 10px !important;font-weight: normal;">
+                                Date
+                            </th>
+                            @*<th style="text-align:center;width:105px;font-size: 10px !important;font-weight: normal;">
+            Detail Prev Amt
+        </th>
+        <th style="text-align:center;width:80px;font-size: 10px !important;font-weight: normal;">
+            Detail Var
+        </th>
+        <th style="text-align:center;width:105px;font-size: 10px !important;font-weight: normal;">
+            Detail New Amt
+        </th>*@
+                            <th style="text-align:center;width:105px;font-size: 10px !important;font-weight: normal;">
+                                Old Amount
+                            </th>
+                            <th style="text-align:center;width:80px;font-size: 10px !important;font-weight: normal;">
+                                New Amount
+                            </th>
+                            <th style="text-align:center;width:105px;font-size: 10px !important;font-weight: normal;">
+                                Incr/Decr Amount
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        @*<tr style="background:#95a5a6;color:white;">
+                            <td style="text-align:center;" colspan="7"><strong>Total:</strong> </td>
+                            
+                            <td style="text-align:right;width:60px;">&nbsp;</td>
+                            <td style="text-align:right;width:60px;">&nbsp;</td>
+                            <td style="text-align:right;width:60px;" class="totFInvAmount">&nbsp;</td>
+                            <td style="text-align:right;width:60px;" class="totFPayAmount">&nbsp;</td>
+                            <td style="text-align:right;width:60px;" class="totFInvBalAmount">&nbsp;</td>
+                            <td style="width:1px;"></td>
+                        </tr>*@
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<div class="modal fade in" id="modal_RegionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Select Region
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Select Region</label>
+                                @if (ViewBag.regionlist != null)
+                                {
+                                    <select class="form-control input-sm" id="selectregionlist">
+                                        <option value="">Select Region</option>
+                                        @foreach (var item in (SelectList)ViewBag.regionlist)
+                                        {
+                                            <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div class="col-md-12">
+                        <button type="button" name="SaveNew" id="btnRegion" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:0px;">Select Region</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+ 
+@section scripts{
+    <script>
+
+        var paymentList;
+
+        function getTableURL() {
+
+            var _regionId = $("#regionlist").val();
+            var _fromDateVal = $('#spnStartDate').text();
+            var _toDateVal = $('#spnEndtDate').text();
+            var _monthVal = $('#monthlist').val();
+            var _yearVal = $('#yearlist').val();
+
+            if (_monthVal > 0 && _yearVal > 0)
+            {
+                var date = new Date(_monthVal + '/01/' + _yearVal);
+                var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+                var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+                $('#spnStartDate').html(moment(firstDay).format('L'));
+                $('#spnEndtDate').html(moment(lastDay).format('L'));
+
+                _fromDateVal = $('#spnStartDate').text();
+                _toDateVal = $('#spnEndtDate').text();
+            }
+             
+            var sURL = '@Url.Action("IncreaseDecreaseHistoryListDataTable", "Customer", new { area = "Portal" })?regionIds=' + _regionId + '&from=' + _fromDateVal + '&to=' + _toDateVal + '&month=' + _monthVal + '&year=' + _yearVal
+
+            return sURL;
+        }
+
+        function refreshTable() {
+            var url = getTableURL();
+
+            $.blockUI();//$.blockUI({ message: $('#throbberBlock'), theme: true, baseZ: 12000 });
+
+            paymentList.DataTable().ajax.url(url).load(function () {
+                //calculateTotals();
+                $.unblockUI();
+            });
+        }
+
+        $(window).load(function () {
+             
+            if ('@ViewBag.selectedRegionId' == 0) {
+                $("#modal_RegionModel").modal({ backdrop: 'static' });
+            } else {
+                refreshTable();
+            }
+        });
+
+        function GetParameterValues(param) {
+            var url = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for (var i = 0; i < url.length; i++) {
+                var urlparam = url[i].split('=');
+                if (urlparam[0] == param) {
+                    return urlparam[1];
+                }
+            }
+        }
+
+        jQuery(document).ready(function () {
+
+            $("#regionlist").multiselect({
+                includeSelectAllOption: false,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2,
+            });
+
+            $("#regionlist").change(function () {
+                if ($("#regionlist").val() != null)
+                    refreshTable();
+            });
+
+            $("#btnRegion").click(function () {
+                if ($("#selectregionlist").val() != "") {
+                    $("#regionlist option[value='" + $("#selectregionlist").val() + "']").attr("selected", 1);
+                    $("#regionlist").multiselect("refresh");
+                    refreshTable();
+                    $(".close").click();
+                }
+            });
+
+            $("#pageSize").change(function () {
+                setPaging();
+            });
+
+            $('#divspandate').show();
+            $('#divSD').hide();
+            $('#divED').hide();
+
+            //$('#select_timeduration').val(9);
+            //firstDay = moment().toString();
+            //lastDay = moment().toString();
+
+            $('#select_timeduration').val(7);
+            firstDay = moment().startOf('year').toString();;
+            lastDay = moment().endOf('year').toString();
+
+            //var durationId = GetParameterValues('duration');
+            //if (durationId != undefined) {
+            //    if (durationId == 9)
+            //    {
+            //        $('#select_timeduration').val(durationId);
+            //        firstDay = moment().toString();
+            //        lastDay = moment().toString();
+            //    }
+
+            //} else {
+            //    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+            //    lastDay = moment().subtract(0, 'month').endOf('month').toString();
+            //}             
+
+            $('#spnStartDate').html(moment(firstDay).format('L'));
+            $('#spnEndtDate').html(moment(lastDay).format('L'));
+            //$('#txtStartDate').inputmask("mm/dd/yyyy", {});
+            //$('#txtEndtDate').inputmask("mm/dd/yyyy", {});
+
+            //setSearchTime(3);
+            //var sURL = getTableURL();
+            var ps = $('#pageSize').val();
+            paymentList = $('#IncreaseDecreaseHistoryList').dataTable({
+                "bAutoWidth": false,
+                cache: false,
+                "ordering": true,
+                "iDisplayLength": ps == '-1' ? 25 : ps,
+                "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                "aaSorting": [[0, "desc"]],
+                "sAjaxDataProp": "aadata",  // Internationalisation. For more info refer to http://datatables.net/manual/i18n
+                "rowCallback": function (nRow, data) {
+                },
+
+                "aoColumns": [
+                     {
+                         "sName": "CustomerNo",
+                         "bSortable": true,
+                         "sClass": "alignCenter",
+                         "mRender": function (data, type, full) {
+                             return full.CustomerNo;
+                         }
+                     },
+                    {
+                        "sName": "CustomerName",
+                        "bSortable": true,
+                        "sClass": "alignLeft",
+                        "mRender": function (data, type, full) {
+                            return full.CustomerName;
+                        }
+                    },
+                    {
+                        "sName": "MaintenanceTypeListName",
+                        "bSortable": true,
+                        "sClass": "alignCenter",
+                        "mRender": function (data, type, full) {
+                            return full.MaintenanceTypeListName;
+                        }
+                    },
+                     {
+                         "sName": "RegionName",
+                         "bSortable": true,
+                         "sClass": "alignCenter",
+                         "mRender": function (data, type, full) {
+                             return full.IncreaseDecreaseTypeListName;
+                         }
+                     },
+                      {
+                          "sName": "Description",
+                          "bSortable": true,                          
+                          "mRender": function (data, type, full) {
+                              return full.Description;
+                          }
+                      },
+                    {
+                        "sName": "TransactionDate",
+                        "bSortable": true,
+                        "sClass": "alignCenter",
+                        "mRender": function (data, type, full) {
+                            var date = formatJSONDateUtc(full.TransactionDate);
+                            return date;
+                        }
+                    },                      
+                    //{
+                    //    "sName": "DetailPrevAmt",
+                    //    "bSortable": true,
+                    //    "sClass": "alignRight",
+                    //    "mRender": function (data, type, full) {
+                    //        return full.DetailPrevAmt;
+                    //    }
+                    //},
+                    //{
+                    //    "sName": "DetailVarAmt",
+                    //    "bSortable": true,
+                    //    "sClass": "alignRight",
+                    //    "mRender": function (data, type, full) {
+                    //        return full.DetailVarAmt;
+                    //    }
+                    //},
+                    //{
+                    //    "sName": "DetailNewAmt",
+                    //    "bSortable": true,
+                    //    "sClass": "alignRight",
+                    //    "mRender": function (data, type, full) {
+                    //        return full.DetailNewAmt;
+                    //    }
+                    //},
+                    {
+                        "sName": "ContractPrevAmt",
+                        "bSortable": true,
+                        "sClass": "alignRight",
+                        "mRender": function (data, type, full) {
+                            return full.ContractPrevAmt;
+                        }
+                    },
+                    {
+                        "sName": "ContractNewAmt",
+                        "bSortable": true,
+                        "sClass": "alignRight",
+                        "mRender": function (data, type, full) {
+                            return full.ContractNewAmt;
+                        }
+                    }, 
+                    {
+                        "sName": "ContractVarAmt",
+                        "bSortable": true,
+                        "sClass": "alignRight",
+                        "mRender": function (data, type, full) {
+                            return full.ContractVarAmt;
+                        }
+                    }
+                    
+                ],
+                //    "footerCallback": function (row, data, start, end, display) {
+                //        var api = this.api(), data;
+
+                //        // Remove the formatting to get integer data for summation
+                //        var intVal = function (i) {
+                //            return typeof i === 'string' ?
+                //                i.replace(/[\$,]/g, '') * 1 :
+                //                typeof i === 'number' ?
+                //                    i : 0;
+                //        };
+
+                //        // Total over all pages
+                //        var total = api
+                //            .column(7)
+                //            .data()
+                //            .reduce(function (a, b) {
+                //                return intVal(a) + intVal(b);
+                //            }, 0);
+
+                //        // Total over this page
+                //        pageTotal = api
+                //            .column(7, { page: 'current' })
+                //            .data()
+                //            .reduce(function (a, b) {
+                //                return intVal(a) + intVal(b);
+                //            }, 0);
+
+                //        // Update footer
+                //        $(api.column(7).footer()).html(
+                //            '$' + pageTotal
+                //        );
+                //    }
+            });
+
+            $("#input_Search").keyup(function () {
+                var table = $("#IncreaseDecreaseHistoryList").DataTable();
+                table.search($(this).val()).draw();
+
+                //calculateTotals();
+            });
+
+            $('#IncreaseDecreaseHistoryList').on('draw.dt', function () {
+                //calculateTotals();
+            })
+            $('#IncreaseDecreaseHistoryList').show();
+
+        })
+        function calculateTotals() {
+            var InvAmt = 0;
+            $(".clsInvoiceAmount").each(function (index) {
+                InvAmt = parseFloat(InvAmt) + parseFloat($(this).text().replace('$', '').replace(',', ''));
+            });
+            $(".totFInvAmount").html("$" + formatCurrency(InvAmt));
+
+            /*Added this because we now have negative amount on payments. Please look Payment.AmountTypeListId = 1 = debit, Payment.AmountTypeListId = 2 = credit.
+              These show on the UI as (amount) = negative number
+            */
+
+            var InvAmt = 0
+            var PayCreditAmount = 0;
+            $(".clsPaymentAmount").each(function (index) {
+                if ($(this).text().indexOf('(') > -1) {
+                    PayCreditAmount = parseFloat(PayCreditAmount) + parseFloat($(this).text().replace('$', '').replace(',', '').replace('(', '').replace(')', ''));
+                } else {
+                    InvAmt = parseFloat(InvAmt) + parseFloat($(this).text().replace('$', '').replace(',', ''));
+                }
+            });
+
+            var PaymentTotal = parseFloat(InvAmt - PayCreditAmount);
+            InvAmt = PaymentTotal
+
+            $(".totFPayAmount").html("$" + formatCurrency(InvAmt));
+
+
+            //Check amount total
+
+            var contents = {},
+            duplicates = false;
+            $(".clschknotd").each(function () {
+                var tdContent = $(this).text();
+                if (contents[tdContent]) {
+                    duplicates = true;
+                    $(".clschkAmt_" + $(this).attr('rel')).html("");
+                    //return false;
+                }
+                else {
+                    contents[tdContent] = true;
+                }
+            });
+
+            var InvChkAmt = 0;
+            $(".clsCheckAmount").each(function (index) {
+                if ($(this).text() != "" && $(this).text()  != null) {
+                    InvChkAmt = parseFloat(InvChkAmt) + parseFloat($(this).text().replace('$', '').replace(',', ''));
+                }
+            });
+            $(".totFCheckAmount").html("$" + formatCurrency(InvChkAmt));
+
+
+        }
+
+        function setPaging() {
+            var z = $("#pageSize").val();
+            var table = $("#IncreaseDecreaseHistoryList").DataTable();
+            if (z > 0) {
+                table.page.len(z).draw();
+            }
+            else if (z == -1) {
+                table.page.len(table.rows().count()).draw();
+            }
+            else {
+                table.page.page.len(25).draw();
+            }
+        }
+
+        var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+        var firstDay;
+        var lastDay;
+        Date.prototype.getWeek = function (start) {
+            //Calcing the starting point
+            start = start || 0;
+            var today = new Date(this.setHours(0, 0, 0, 0));
+            var day = today.getDay() - start;
+            var date = today.getDate() - day;
+
+            // Grabbing Start/End Dates
+            var StartDate = new Date(today.setDate(date));
+            var EndDate = new Date(today.setDate(date + 6));
+            return [StartDate, EndDate];
+        }
+
+        $('#txtStartDate').change(function () {
+            $('#spnStartDate').html($(this).val());
+            if ($('#txtStartDate').val() != '' && $('#txtEndtDate').val() != '')
+                refreshTable();
+        });
+        $('#txtEndtDate').change(function () {
+            $('#spnEndtDate').html($(this).val());
+            if ($('#txtStartDate').val() != '' && $('#txtEndtDate').val() != '')
+                refreshTable();
+        });
+
+        $('#monthlist').change(function () {
+            $('#spnStartDate').html('');
+            if ($('#monthlist').val() != '' && $('#yearlist').val() != '')
+                refreshTable();
+        });
+
+        $('#yearlist').change(function () {
+            $('#spnEndtDate').html('');
+            if ($('#monthlist').val() != '' && $('#yearlist').val() != '')
+                refreshTable();
+        });
+
+        $('#select_timeduration').change(function () {
+            //alert($(this).val());
+            $('#spnStartDate').html('');
+            $('#spnEndtDate').html('');
+            $('#divspandate').show();
+            $('#divSD').hide();
+            $('#divED').hide();
+            $('#divmonth').hide();
+            $('#divyear').hide();
+            $('#monthlist').val('');
+            $('#yearlist').val('');
+            switch (parseInt($(this).val())) {
+                case 1:
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = moment().endOf('isoWeek').toString();
+                    break;
+                case 2:
+                    //code block
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 3:
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                    break;
+                case 4:
+                    //code block
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 5:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = moment().endOf('quarter').toString();
+                    break;
+                case 6:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 7:
+                    //code block
+                    firstDay = moment().startOf('year').toString();;
+                    lastDay = moment().endOf('year').toString();
+                    break;
+                case 8:
+                    //code block
+                    firstDay = moment().startOf('year').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 9:
+                    //code block
+                    firstDay = moment().toString();
+                    lastDay = moment().toString();
+                    break;
+                case 10:
+                    //code block
+                    firstDay = moment().add(-1, 'days').toString();
+                    lastDay = moment().add(-1, 'days').toString();
+                    break;
+                case 11:
+                    //code block
+                    firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                    lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                    break;
+                case 12:
+                    //code block
+                    firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                    break;
+                case 13:
+                    //code block
+                    firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                    lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                    break;
+                case 14:
+                    //code block
+                    firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                    lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                    break;
+                case 15:
+                    //code block
+                    $('#divspandate').hide();
+                    $('#divSD').show();
+                    $('#divED').show();
+                    $('#txtStartDate').val('');
+                    $('#txtEndtDate').val('')
+                    break;
+                case 16:
+                    //code block
+                    $('#divspandate').hide();
+                    $('#divSD').hide();
+                    $('#divED').hide();
+                    $('#divmonth').show();
+                    $('#divyear').show();
+                    break;
+                default:
+                    //code block
+            }
+            $('#spnStartDate').html(moment(firstDay).format('L'));
+            $('#spnEndtDate').html(moment(lastDay).format('L'));
+
+            refreshTable();
+
+        });
+
+        function formatJSONDate(jsonDate) {
+            if (jsonDate != null) {
+                var dateString = jsonDate.substr(6);
+                var currentTime = new Date(parseInt(dateString));
+                var month = currentTime.getMonth() + 1;
+                var day = currentTime.getDate();
+                var year = currentTime.getFullYear();
+                var date = month + "/" + day + "/" + year;
+                return date;
+            }
+            return null;
+        }
+
+        function formatCurrency(total, dollar) {
+            dollar = (dollar == true ? true : false);
+            var neg = false;
+            if (total < 0) {
+                neg = true;
+                total = Math.abs(total);
+            }
+            return (neg ? "-" : '') + (dollar ? "$" : "") + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        };
+
+        function formatJSONDateUtc(jsonDate) {
+            if (jsonDate != null) {
+                var dtstr = jsonDate.substr(6);
+                var dateString = dtstr.substring(0, dtstr.length - 2);
+                var currentTime = new Date(parseInt(dateString));
+                var date = moment.utc(currentTime).format("MM/DD/YYYY");
+                return date;
+            }
+            return null;
+        }
+         
+    </script>
+}

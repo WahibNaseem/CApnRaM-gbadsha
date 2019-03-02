@@ -1,0 +1,1267 @@
+﻿@model JKViewModels.Customer.CustomerContractViewModel
+
+@{
+    /**/
+
+    decimal AmountTot = 0;
+}
+<style type="text/css">
+    .close {
+        background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+        height: 12px !important;
+        width: 12px !important;
+        margin-top: 0px !important;
+    }
+</style>
+<style type="text/css">
+    #cnfrm_customercontract.form-horizontal .form-group {
+        margin-left: 15px !important;
+        margin-right: 15px !important;
+    }
+</style>
+<div class="custom-form light" id="">
+    <div class="portlet-body">
+        <h4 class="blocktop" style="margin-top:-23px">
+            Customer Contract
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+        </h4>
+        <form id="cnfrm_customercontract" action="/portal/Customer/SaveContractDetailMaintenance" method="post" class="form form-horizontal" style="margin: 0 15px 15px 15px;">
+
+            <input type="hidden" id="hdnContractCustomerId" name="hdnContractCustomerId" value="@Model.CustomerId" />
+            <input type="hidden" id="hdnContractId" name="hdnContractId" value="@Model.ContractId" />
+            <input type="hidden" id="hdnStatuslistId" name="hdnStatuslistId" value="@Model.StatusListId" />
+            <input type="hidden" id="hdncallfrom" name="hdncallfrom" value="@ViewBag.callfrom" />
+            <input type="hidden" id="hdnContractTypeListId" name="hdnContractTypeListId" value="@Model.ContractTypeListId" />
+            <input type="hidden" id="hdnRedirect" name="hdnRedirect" value="" />
+            <input type="hidden" id="hdnIsAddressChange" name="hdnIsAddressChange" value="0" />
+            <input type="hidden" id="hdnAddress1" name="hdnAddress1" value="@(Model.Address1 != null ? Model.Address1 : string.Empty)" />
+            <input type="hidden" id="hdnAddress2" name="hdnAddress2" value="@(Model.Address2 != null ? Model.Address2 : string.Empty)" />
+            <input type="hidden" id="hdnCity" name="hdnCity" value="@(Model.City != null ? Model.City : string.Empty)" />
+            <input type="hidden" id="hdnStateListId" name="hdnStateListId" value="@Model.StateListId.ToString()" />
+            <input type="hidden" id="hdnPostalCode" name="hdnPostalCode" value="@(Model.PostalCode != null ? Model.PostalCode : string.Empty)" />
+            <input type="hidden" id="hdnAmount" value="@Model.Amount" />
+
+            <div class="row">
+                <div class="col-md-12">
+                    <label class="control-label col-md-2" style="font-weight:600;">
+                        Customer No.:
+                    </label>
+                    <div class="col-md-2" style="padding-top: 9px;">
+                        @Html.DisplayFor(one => one.CustomerNo)
+                    </div>
+                    <label class="control-label col-md-2" style="font-weight:600;">
+                        Customer Name
+                    </label>
+                    <div class="col-md-6" style="padding-top: 9px;">
+                        @Html.DisplayFor(one => one.CustomerName)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label class="control-label col-md-2" style="font-weight:600;padding-left:15px;">
+                        Address:
+                    </label>
+                    <div class="col-md-10" style="padding-top: 9px;">
+                        @Model.Address1, @Model.City, @Model.StateName @Model.PostalCode
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <hr style="margin-top: 2px;margin-bottom: 1px;" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label class="control-label col-md-2">
+                        <b>Service Location</b>
+                    </label>
+                    <div class="col-md-10">
+                        <label class="mt-checkbox">
+                            <input type="checkbox" id="chkcopyaddresstoContract" class="clsContractview">Same as Main Address
+                            <span></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label class="control-label col-md-2">
+                        Address<span class="required"> * </span>:
+                    </label>
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(one => one.Address1, new { @class = "form-control input-sm clsContractview", placeholder = "Required", required = "required" })
+                    </div>
+                    <label class="control-label col-md-1">
+                        Address2:
+                    </label>
+                    <div class="col-md-5">
+                        @Html.TextBoxFor(one => one.Address2, new { @class = "form-control input-sm clsContractview", placeholder = "" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label class="control-label col-md-2">
+                        City<span class="required"> * </span>:
+                    </label>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(one => one.City, new { @class = "form-control input-sm clsContractview", required = "required", placeholder = "Required" })
+                    </div>
+                    <label class="control-label col-md-1">
+                        State<span class="required"> * </span>:
+                    </label>
+                    <div class="col-md-3">
+                        @Html.DropDownList("ContractStatesList", null, "Select", new { @class = "form-control input-sm clsContractview", required = "required", @id = "ContractStatesList" })
+                    </div>
+                    <label class="control-label col-md-1">
+                        Zip<span class="required"> * </span>:
+                    </label>
+                    <div class="col-md-2">
+                        @Html.TextBoxFor(one => one.PostalCode, new { @class = "form-control input-sm clsContractview", required = "required", placeholder = "Required" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <hr style="margin-top: 2px;margin-bottom: 1px;" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label class="control-label col-md-2">
+                        Account Type <span class="required">*</span>:
+                    </label>
+                    <div class="col-md-3">
+                        @Html.DropDownList("AccountTypeList", null, "Select", new { @class = "form-control input-sm clsContractview", required = "required", @id = "AccountTypeList" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-2">
+                        Contract Type:
+                    </label>
+                    <div class="col-md-3">
+                        @Html.DropDownList("ContractTypeList", null, new { @class = "form-control input-sm clsContractview", @id = "ContractTypeList", required = "required" })
+                    </div>
+                </div>
+                <div id="divContractTypeHide1">
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                            Agreement Type<span class="required"> * </span>:
+                        </label>
+                        <div class="col-md-3">
+                            @Html.DropDownList("AgreementTypeList", null, "Select", new { @class = "form-control input-sm clsContractview", @id = "AgreementTypeList", required = "required" })
+                            <input type="hidden" id="hdnAgreementTypeCPI" value="@((Convert.ToBoolean(ViewBag.AgreementTypeCPI) == true ? 1 : 0))" />
+                        </div>
+                        <label class="control-label col-md-2">
+                            Acct Exec:
+                        </label>
+                        <div class="col-md-3">
+                            @Html.DropDownListFor(x => x.SoldById, (IEnumerable<SelectListItem>)ViewBag.userList, new { @class = "form-control input-sm editmain1 clsContractview" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                            PO Number:
+                        </label>
+                        <div class="col-md-3">
+                            @Html.TextBoxFor(one => one.PurchaseOrderNo, new { @class = "form-control input-sm clsContractview", id = "Contract_PurchaseOrderNo" })
+                        </div>
+                    </div>
+                    <div class="form-group" style="display:none;">
+                        <label class="control-label col-md-2">
+                            Agreement Used:
+                        </label>
+                        <div class="col-md-2" style="padding-top: 7px;">
+                            <label class="mt-checkbox">
+                                @Html.CheckBoxFor(one => one.Qualified, new { @class = "i-checks clsContractview", @checked = "true", id = "Contract_Qualified" }) Qualified
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                            Sign Date:
+                        </label>
+                        <div class="col-md-2">
+                            <div class="input-group date" data-date-format="mm/dd/yyyy">
+                                <input id="Contract_SignDate" name="Contract.SignDate" class="form-control input-sm date date-picke clsContractview" value="@(Model.SignDate != null ? Convert.ToDateTime(Model.SignDate).ToString("MM/dd/yyyy") : string.Empty )" />
+                                <span class="input-group-btn cal-btn">
+                                    <button class="btn default cal-btn" type="button">
+                                        <i class="fa fa-calendar"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+
+                        <label class="control-label col-md-3">
+                            Start Date:
+                        </label>
+                        <div class="col-md-2">
+                            <div class="input-group date" data-date-format="mm/dd/yyyy">
+                                <input id="Contract_StartDate" name="Contract.StartDate" class="form-control input-sm date date-picker clsContractview" value="@(Model.StartDate != null ? Convert.ToDateTime(Model.StartDate).ToString("MM/dd/yyyy") : string.Empty )" />
+                                <span class="input-group-btn cal-btn">
+                                    <button class="btn default cal-btn" type="button">
+                                        <i class="fa fa-calendar"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                            Term Months:
+                        </label>
+                        <div class="col-md-2">
+                            @Html.TextBoxFor(one => one.ContractTermMonth, new { @class = "form-control input-sm clsContractview", id = "Contract_ContractTermMonth", style = "width: 43px;float:left;", maxlength = "3" })<span style="float:left;padding:7px 4px;"></span>
+                        </div>
+
+                        <label class="control-label col-md-3">
+                            Auto Renew Date:
+                        </label>
+                        <div class="col-md-2">
+                            <div class="input-group">
+                                <input id="Contract_ExpirationDate" name="Contract.ExpirationDate" class="form-control input-sm clsContractview" readonly="readonly" value="@(Model.ExpirationDate != null ? Convert.ToDateTime(Model.ExpirationDate).ToString("MM-dd-yyyy") : string.Empty )" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                            Amount<span class="required"> * </span>:
+                        </label>
+                        <div class="col-md-2">
+                            @Html.TextBoxFor(one => one.Amount, new { @class = "form-control input-sm clsContractview", id = "Contract_Amount", style = "text-align:right;" })
+                        </div>
+
+                        <span id="errmsg" style="color:red;display:none;">Contract Amount should not be less than the contract detail total amount!</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                            Description:
+                        </label>
+                        <div class="col-md-10">
+                            @Html.TextAreaFor(one => one.ContractDescription, new { @class = "form-control input-sm clsContractview", @cols = "35", @rows = "3", id = "Contract_ContractDescription" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="divContractTypeHide2">
+                <div class="row">
+                    <h4 class="block">Contract Detail</h4>
+                    <div id="tblContractDescriptionData">
+                        <button type="button" class="btn red dropdown-toggle pull-right subsectionBtn" onclick="AddContractDetailDescription(0,@Model.ContractId,0)">
+                            <i class="fa fa-plus"></i>&nbsp;<span class="hidden-sm hidden-xs">Add Contract Detail</span>
+                        </button>
+                        <div class="portlet-body flip-scroll">
+                            <table class="table table-bordered table-striped table-condensed flip-content" id="generalCustomerList">
+                                <thead class="flip-content">
+                                    <tr>
+                                        <th width="10%;" style="text-align:center;">Line No </th>
+                                        <th width="25%" style="text-align:center;">Type</th>
+                                        <th width="20%" style="text-align:center;">Description</th>
+                                        <th width="10%" style="text-align:center;">Amount</th>
+                                        <th width="10%" style="text-align:center;">CPI</th>
+                                        <th width="10%" style="text-align:center;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.lstContractDetail.Count() > 0)
+                                    {
+                                        foreach (var item in Model.lstContractDetail)
+                                        {
+                                            AmountTot = AmountTot + item.Amount;
+                                            <tr id="@("cdrowrel_"+item.LineNumber)">
+                                                <td style="text-align:center;">
+                                                    <input type="hidden" id="@("cdhdfLineNumber"+item.LineNumber)" name="@("cdhdfLineNumber"+item.LineNumber)" value="@item.LineNumber" />
+                                                    <input type="hidden" id="@("cdhdfContractDetailId"+item.LineNumber)" name="@("cdhdfContractDetailId"+item.LineNumber)" value="@item.ContractDetailId" />
+                                                    <input type="hidden" id="@("cdhdfServiceTypeListId"+item.LineNumber)" name="@("cdhdfServiceTypeListId"+item.LineNumber)" value="@item.ServiceTypeListId" />
+                                                    <input type="hidden" id="@("cdhdfContractId"+item.LineNumber)" name="@("cdhdfContractId"+item.LineNumber)" value="@item.ContractId" />
+                                                    <input type="hidden" id="@("cdhdfCleanFrequencyListId"+item.LineNumber)" name="@("cdhdfCleanFrequencyListId"+item.LineNumber)" value="@item.CleanFrequencyListId" />
+                                                    <input type="hidden" id="@("cdhdfBillingFrequencyListId"+item.LineNumber)" name="@("cdhdfBillingFrequencyListId"+item.LineNumber)" value="@item.BillingFrequencyListId" />
+                                                    @item.LineNumber
+                                                </td>
+                                                <td>
+                                                    <span id="@("cdhdfServiceTypeListName"+item.LineNumber)"
+                                                          name="@("cdhdfServiceTypeListName"+item.LineNumber)">
+                                                        @item.ServiceTypeListName
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span id="@("cdhdfContractDetailDescription"+item.LineNumber)"
+                                                          name="@("cdhdfContractDetailDescription"+item.LineNumber)">
+                                                        @item.Description
+                                                    </span>
+
+                                                </td>
+                                                <td class="clsamt" style="text-align:right;">
+                                                    <span id="@("cdhdfContractDetailAmount"+item.LineNumber)"
+                                                          name="@("cdhdfContractDetailAmount"+item.LineNumber)">
+                                                        @string.Format("{0:c}", item.Amount)
+                                                    </span>
+
+                                                </td>
+                                                <td style="text-align:center;">
+                                                    @if (item.CPIIncrease == true)
+                                                    {
+                                                        <text>Yes</text>
+                                                    }
+                                                    else
+                                                    { <text>No</text>}
+                                                </td>
+                                                <td class="numeric">
+                                                    <a javascript:void(0);><i onclick="AddContractDetailDescription(@item.ContractDetailId,@item.ContractId,@item.LineNumber)" class="fa fa-2x fa-edit subsectioneditBtn"></i></a>
+                                                    <a class="clsdelitem"><i onclick="RemoveContractDetail(@item.ContractDetailId,@item.ContractId)" class="fa fa-2x fa-remove"></i></a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                            <input type="hidden" id="hdnContractCount" value="@Model.lstContractDetail.Count()" />
+                            <input type="hidden" id="hdnTotAmount" value="@AmountTot" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions" style="padding: 10px 0px 5px 0px;background-color: transparent;border:none;">
+                <button type="button" class="btn btn-primary" id="btnEditContract" onclick="btnEditClick()" style="margin-left: 10px;display:none;">
+                    Edit
+                    <i class="fa fa-edit"></i>
+                </button>
+                <button type="button" class="btn btn-primary button-next  pull-right" id="btnContractSave" style="margin-right: 30px;">
+                    Save
+                    <i class="fa fa-check"></i>
+                </button>
+                <button type="button" class="btn btn-primary  pull-right" id="btnContractCancel" style="margin-right: 22px;" onclick="ClickContractCancel()">
+                    Cancel
+                    <i class="fa fa-angle-right"></i>
+                </button>
+                <button type="button" class="btn btn-primary button-next  pull-right" id="btnContractClose" style="margin-right: 30px;" data-dismiss="modal">
+                    Close
+                    <i class="fa fa-close"></i>
+                </button>
+            </div>
+
+            <div id="renderContractDetailData">
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    if ($("#hdncallfrom") != null && $("#hdncallfrom").val() != "0" && $("#hdncallfrom").val() == "1") {
+        $(".subsectionBtn").hide();
+        $(".subsectioneditBtn").hide();
+
+        $(".clsdelitem").hide();
+    }
+        //$(".date-picker").datepicker();
+    $("#Contract_ContractTermMonth").keypress(function (e) {
+        if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+            return false;
+        }
+    });
+        $("#ContractAddress_PostalCode").keypress(function (e) {
+            if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+                return false;
+            }
+        });
+
+    function contractDetailPopupInIt() {
+    }
+        var _StartDateCD = '@(Model.StartDate != null ? Convert.ToDateTime(Model.StartDate).ToString("MM/dd/yyyy") : string.Empty )';
+
+        var _SignDateCD = '@(Model.SignDate != null ? Convert.ToDateTime(Model.SignDate).ToString("MM/dd/yyyy") : string.Empty )';
+        $(document).ready(function () {
+            $("#btnContractSave").hide();
+            $("#btnContractCancel").hide();
+            $("#btnEditContract").show();
+            $("#btnContractClose").show();
+            $(".subsectionBtn").hide();
+            $(".subsectioneditBtn").hide();
+            $(".clsContractview").attr("disabled", "disabled");
+            if ($("#ContractTypeList").val() == 2) {
+                $("#divContractTypeHide1").hide();
+                $("#divContractTypeHide2").hide();
+            }
+            else {
+                $("#divContractTypeHide1").show();
+                $("#divContractTypeHide2").show();
+            }
+
+            $("#ContractTypeList").change(function (e) {
+
+            //swal({
+            //    title: "Are you sure you want to change Customer Contract Type?",
+            //    text: "To complete change customer contract type please go to Region Operation \ Customer Pending",
+            //    type: "warning",
+            //    showCancelButton: true,
+            //    confirmButtonClass: "btn-confirmr",
+            //    confirmButtonText: "Yes",
+            //    cancelButtonText: "No",
+            //    closeOnConfirm: false,
+            //    closeOnCancel: false
+            //},
+            //    function (isConfirm) {
+            //        if (isConfirm) {
+            //            //if ($("#hdnStatuslistId").val() == 1) {
+            //            //        $("#divContractTypeHide1").hide();
+            //            //        $("#divContractTypeHide2").hide();
+            //            //    }
+            //            //    else {
+            //            //        if (this.value == 2) {
+            //            //            $("#divContractTypeHide1").hide();
+            //            //            $("#divContractTypeHide2").hide();
+            //            //        }
+            //            //        else {
+            //            //            $("#divContractTypeHide1").show();
+            //            //            $("#divContractTypeHide2").show();
+            //            //        }
+            //            //    }
+            //        } else {
+            //            swal("Cancelled", "Contract Type change has been cancelled", "error");
+            //        }
+            //    });
+            });
+
+            //$('.date-picker').datepicker({ autoclose: true, dateFormat: 'mm/dd/yy' });
+            //$('.date-picker').attr("placeholder", "mm/dd/yyyy");
+
+            $("#Contract_SignDate").datepicker({
+                numberOfMonths: 1,
+                //beforeShowDay: function (date) {
+                //    if (new Date(date) <= new Date(_StartDateCD))
+                //        return [true, '', ''];
+                //    else
+                //        return [false, '', ''];
+                //},
+                onSelect: function (selected) {
+                    var dt = new Date(selected);
+                    dt.setDate(dt.getDate());
+                    _SignDateCD = dt;
+                    if (new Date(_SignDateCD) < new Date(_StartDateCD)) {
+                        _StartDateCD = _SignDateCD;
+                        $("#Contract_StartDate").datepicker("setDate", new Date(_StartDateCD));
+                    }
+                    $("#Contract_StartDate").datepicker("option", "minDate", dt);
+
+                    var monthadd = $("#Contract_ContractTermMonth").val();
+                    var startdate = $("#Contract_StartDate").val();
+                    var contractstartdate = new Date(startdate);
+
+                    if (monthadd == "")
+                        monthadd = 0;
+
+                    contractstartdate.setMonth(contractstartdate.getMonth() + parseInt(monthadd));
+                    var c = (contractstartdate.getMonth() + 1) + '/' + contractstartdate.getDate() + '/' + contractstartdate.getFullYear()
+                    //$("#Contract_ExpirationDate").val(c);
+
+                }
+            });
+            $("#Contract_StartDate").datepicker({
+                numberOfMonths: 1,
+                beforeShowDay: function (date) {
+                    if (new Date(date) >= new Date(_SignDateCD))
+                        return [true, '', ''];
+                    else
+                        return [false, '', ''];
+                },
+                onSelect: function (selected) {
+                    var dt = new Date(selected);
+                    dt.setDate(dt.getDate());
+                    _StartDateCD = dt;
+
+                    var monthadd = $("#Contract_ContractTermMonth").val();
+                    var startdate = $("#Contract_StartDate").val();
+                    var contractstartdate = new Date(startdate);
+
+                    if (monthadd == "")
+                        monthadd = 0;
+
+                    contractstartdate.setMonth(contractstartdate.getMonth() + parseInt(monthadd));
+                    var c = (contractstartdate.getMonth() + 1) + '/' + contractstartdate.getDate() + '/' + contractstartdate.getFullYear()
+                    $("#Contract_ExpirationDate").val(c);
+                    //$("#Contract_SignDate").datepicker("option", "maxDate", dt);
+                }
+            });
+
+            //$("#Contract_SignDate").datepicker("setDate", new Date(_SignDate));
+            //$("#Contract_StartDate").datepicker("setDate", new Date(_StartDate));
+
+            function getDate(element) {
+                var date;
+                try {
+                    date = $.datepicker.parseDate(dateFormat, element.value);
+                } catch (error) {
+                    date = null;
+                }
+                return date;
+            }
+
+            applyMaskCurrency('#Contract_Amount');
+
+            $("#Contract_Amount").change(function () {
+                $("#hdnAmount").val($(this).val());
+            });
+
+            if ($('#Contract_ContractId').val() != null && $('#Contract_ContractId').val() != "") {
+                loadOwners($('#Contract_ContractId').val());
+            }
+
+            $("#btnContractClose").click(function () {
+                $("#modal_CustomerContractPopup").modal("hide");
+            })
+
+            $('#btnContractSave').click(function () {
+
+                var isvalid = true;
+                if ($("#ContractTypeList").val() == 2) {
+                    if ($('#ContractAddress_Address1').val() == '') { $('#ContractAddress_Address1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContractAddress_Address1').css('border-color', ''); }
+                    if ($('#ContractAddress_City').val() == '') { $('#ContractAddress_City').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContractAddress_City').css('border-color', ''); }
+                    if ($('#ContractStatesList').val() == '') { $('#ContractStatesList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContractStatesList').css('border-color', ''); }
+                    if ($('#ContractAddress_PostalCode').val() == '') { $('#ContractAddress_PostalCode').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContractAddress_PostalCode').css('border-color', ''); }
+                    if ($('#AccountTypeList').val() == '') { $('#AccountTypeList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#AccountTypeList').css('border-color', ''); }
+                }
+                else {
+                    if ($("#hdnContractTypeListId").val() == 2) {
+                        if ($('#ContractAddress_Address1').val() == '') { $('#ContractAddress_Address1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContractAddress_Address1').css('border-color', ''); }
+                        if ($('#ContractAddress_City').val() == '') { $('#ContractAddress_City').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContractAddress_City').css('border-color', ''); }
+                        if ($('#ContractStatesList').val() == '') { $('#ContractStatesList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContractStatesList').css('border-color', ''); }
+                        if ($('#ContractAddress_PostalCode').val() == '') { $('#ContractAddress_PostalCode').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContractAddress_PostalCode').css('border-color', ''); }
+                        if ($('#AccountTypeList').val() == '') { $('#AccountTypeList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#AccountTypeList').css('border-color', ''); }
+                        $("#hdnRedirect").val("38");
+                    }
+                    else {
+                        if ($('#ContractAddress_Address1').val() == '') { $('#ContractAddress_Address1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContractAddress_Address1').css('border-color', ''); }
+                        if ($('#ContractAddress_City').val() == '') { $('#ContractAddress_City').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContractAddress_City').css('border-color', ''); }
+                        if ($('#ContractStatesList').val() == '') { $('#ContractStatesList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContractStatesList').css('border-color', ''); }
+                        if ($('#ContractAddress_PostalCode').val() == '') { $('#ContractAddress_PostalCode').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContractAddress_PostalCode').css('border-color', ''); }
+                        //if ($('#Contract_PurchaseOrderNo').val() == '') { $('#Contract_PurchaseOrderNo').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_PurchaseOrderNo').css('border-color', ''); }
+                        if ($('#AccountTypeList').val() == '') { $('#AccountTypeList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#AccountTypeList').css('border-color', ''); }
+
+                        if ($('#AgreementTypeList').val() == '') { $('#AgreementTypeList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#AgreementTypeList').css('border-color', ''); }
+
+                        if ($('#Contract_SignDate').val() == '') { $('#Contract_SignDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_SignDate').css('border-color', ''); }
+                        if ($('#Contract_StartDate').val() == '') { $('#Contract_StartDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_StartDate').css('border-color', ''); }
+
+                        //if ($('#Contract_ContractTermListId').val() == '') { $('#Contract_ContractTermListId').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_ContractTermListId').css('border-color', ''); }
+                        if ($('#Contract_ContractTermMonth').val() == '') { $('#Contract_ContractTermMonth').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_ContractTermMonth').css('border-color', ''); }
+                        if ($('#Contract_ExpirationDate').val() == '') { $('#Contract_ExpirationDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_ExpirationDate').css('border-color', ''); }
+
+                        if ($('#Contract_Amount').val() == '') { $('#Contract_Amount').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_Amount').css('border-color', ''); }
+                        if ($('#Contract_AmountSubjectToFee').val() == '') { $('#Contract_AmountSubjectToFee').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_AmountSubjectToFee').css('border-color', ''); }
+
+                        if ($('#Contract_StatusDate').val() == '') { $('#Contract_StatusDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_StatusDate').css('border-color', ''); }
+                        if ($('#Contract_ResumeDate').val() == '') { $('#Contract_ResumeDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_ResumeDate').css('border-color', ''); }
+                        if ($('#Contract_AmountSubjectToFee').val() == '') { $('#Contract_AmountSubjectToFee').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_AmountSubjectToFee').css('border-color', ''); }
+
+                        if (parseFloat($("#Contract_Amount").val()) != parseFloat($("#hdnTotAmount").val())) {
+                            $('#Contract_Amount').css('border-color', 'red');
+                            $('.clsamt').css('border-color', 'red');
+                            $('.clsamt').css('border-left', '2px solid red');
+                            $('.clsamt').css('border-right', '2px solid red');
+                            $("#errmsg").show();
+                            isvalid = false;
+                        }
+                        else {
+
+                            $('#Contract_Amount').css('border-color', '');
+                            $('.clsamt').css('border-color', '');
+                            $("#errmsg").hide();
+                        }
+
+                        if ($('#generalCustomerList>tbody>tr').length == 0) {
+                            $('#generalCustomerList>thead>tr').css('border', '1px solid red');
+                            isvalid = false;
+
+                        } else {
+                            $('#generalCustomerList>thead>tr').css('border-color', '');
+                        }
+
+                    }
+                }
+                if (isvalid == true) {
+
+                    if ($("#hdnAddress1").val() != $("#ContractAddress_Address1").val() || $("#hdnAddress2").val() != $("#ContractAddress_Address2").val() || $("#hdnCity").val() != $("#ContractAddress_City").val()
+                        || $("#hdnStateListId").val() != $("#ContractStatesList").val() || $("#hdnPostalCode").val() != $("#ContractAddress_PostalCode").val()) {
+                        $("#hdnIsAddressChange").val("1");
+                    }
+                    else {
+                        $("#hdnIsAddressChange").val("0");
+                    }
+
+                    var ContractAmount = 0;
+                    //if ($("#ContractId").val() == "0" || $("#ContractId").val() == "") {
+                    ContractAmount = parseFloat(parseFloat($("#hdnAmount").val()).toFixed(2) - parseFloat($("#hdnTotAmount").val()).toFixed(2)).toFixed(2);
+                    /*}
+                    else {
+                        var EditAmt = parseFloat($("#hdnTotAmount").val()); // - parseFloat($("#hdnContractDetailAmount").val());
+                        ContractAmount = parseFloat(parseFloat($("#hdnAmount").val()) - parseFloat(parseFloat(EditAmt) + parseFloat($("#ContractDetail_Amount").val()))).toFixed(2);
+                    }*/
+                    //if (parseFloat(parseFloat($("#ContractDetail_Amount").val()).toFixed(2)) <= (parseFloat(ContractAmount) + parseFloat($("#ContractDetail_Amount").val())).toFixed(2)) {
+
+                    $("#errmsg").hide();
+                    $('#ContractDetail_Amount').css('border-color', '');
+
+                    //$("#btnSubmit").hide();
+                    //$("#SaveCustomerContractform_wizard_1").submit();
+
+                    $.ajax({
+                        url: '@Url.Action("SaveContractDetailMaintenance", "Customer",new { area = "Portal" })',
+                        type: "POST",
+                        data: $('#cnfrm_customercontract').serialize(),
+                        success: function (data) {
+                            //swal('congrats!', 'Contract Information save successfully.', 'info');
+                            //$('#modal_CustomerContractPopup').modal('hide');
+                            //$("#modal_CustomerContractPopup .close").click()
+
+                            $("#btnContractSave").hide();
+                            $("#btnContractCancel").hide();
+                            $("#btnEditContract").show();
+                            $("#btnContractClose").show();
+                            //$("#btnSubmit").hide();
+                            $(".subsectionBtn").hide();
+                            $(".subsectioneditBtn").hide();
+                            $(".clsContractview").attr("disabled", "disabled");
+                            if (data != "0" && data != "") {
+                                $("#ContractAddress_AddressId").val(data);
+                            }
+                            $("#hdnAddress1").val($("#ContractAddress_Address1").val());
+                            $("#hdnAddress2").val($("#ContractAddress_Address2").val());
+                            $("#hdnCity").val($("#ContractAddress_City").val());
+                            $("#hdnStateListId").val($("#ContractStatesList").val());
+                            $("#hdnPostalCode").val($("#ContractAddress_PostalCode").val());
+                            if ($("#hdnRedirect").val() == 38)
+                            {
+                                var url = '/CRM/CRMRegionOperation/Index';
+                                window.location.href = url;
+                            }
+                            $("#btnContractClose").click(function () {
+                                $("#modal_CustomerContractPopup").modal("hide");
+                            })
+
+                        },
+                        error: function () { }
+                    });
+                    //}
+                    //else {
+                    //    $("#errmsg").show();
+                    //    $('#ContractDetail_Amount').css('border-color', 'red');
+
+                    //swal('Oops...', 'Contract detail amount should not be higher than contract amount!', 'warning');
+                    //    return false;
+                    //}
+                }
+            });
+
+            $('#chkcopyaddresstoContract').change(function () {
+
+                var ContractAddress_Address1 = $('#ContractAddress_Address1');
+                var ContractAddress_Address2 = $('#ContractAddress_Address2');
+                var ContractAddress_City = $('#ContractAddress_City');
+                var ContractStatesList = $('#ContractStatesList');
+                var ContractAddress_PostalCode = $('#ContractAddress_PostalCode');
+
+                if ($(this).prop('checked')) {
+                    ContractAddress_Address1.val($('#MainAddress_Address1').val());
+                    ContractAddress_Address2.val($('#MainAddress_Address2').val());
+                    ContractAddress_City.val($('#MainAddress_City').val());
+                    ContractStatesList.val($('#MainAddress_StateListId').val());
+                    ContractAddress_PostalCode.val($('#MainAddress_PostalCode').val());
+
+                    ContractAddress_Address1.attr("readonly", "readonly");
+                    ContractAddress_Address2.attr("readonly", "readonly");
+                    ContractAddress_City.attr("readonly", "readonly");
+                    ContractStatesList.attr("readonly", "readonly");
+                    ContractAddress_PostalCode.attr("readonly", "readonly");
+                }
+                else {
+                    ContractAddress_Address1.val('');
+                    ContractAddress_Address2.val('');
+                    ContractAddress_City.val('');
+                    ContractStatesList.val('');
+                    ContractAddress_PostalCode.val('');
+
+                    ContractAddress_Address1.removeAttr("readonly");
+                    ContractAddress_Address2.removeAttr("readonly");
+                    ContractAddress_City.removeAttr("readonly");
+                    ContractStatesList.removeAttr("readonly");
+                    ContractAddress_PostalCode.removeAttr("readonly");
+                }
+            });
+            $(".subsectionBtn").hide();
+            $(".subsectioneditBtn").hide();
+        });
+
+        $(function () {
+            // AddContractDetailDescription = function (ContractId, ContractDetailId) {
+            window.AddContractDetailDescription = function (ContractDetailId, ContractId, ln) {
+
+                //debugger;
+                //var ContractId = 0;
+                //if ($('#ContractDetail_ContractId').val() != "") {
+                //    ContractId = ($('#ContractDetail_ContractId').val() != undefined ? $('#ContractDetail_ContractId').val() : 0);
+                //}
+                //if ($('#Contract_ContractId').val() != 0) {
+                //    ContractId = ($('#Contract_ContractId').val() != undefined ? $('#Contract_ContractId').val() : 0);
+                //}
+                //else {
+                //    swal(
+                //        'Oops...',
+                //        'Save Customer Contract First, Before add Contract Detail!',
+                //        'warning'
+                //    );
+                //}
+
+                console.log(ContractId);
+                console.log(ContractDetailId);
+
+                if (ln == 0)
+                    ln = parseInt($('#hdnContractCount').val()) + 1;
+
+                var url = '';
+                if (ContractId > 0 && ContractDetailId > 0) {
+
+                    url = '/Portal/Customer/RenderCustomerContractDetail/?ContractDetailId=' + ContractDetailId + '&ContractId=' + ContractId + '&lineNumber=' + ln;
+                    if ($('#modalDataCusContractPopup' + ln).html() == undefined) {
+                        $.get(url, function (data) {
+                            $('#renderContractDetailData').append(data);
+                            $('#modalDataCusContractPopup' + ln).modal();
+                        });
+                    } else {
+                        $('#modalDataCusContractPopup' + ln).modal();
+                    }
+
+                }
+                else if (ContractId > 0) {
+                    url = '/Portal/Customer/RenderCustomerContractDetail/?ContractDetailId=' + ContractDetailId + '&ContractId=' + ContractId + '&lineNumber=' + ln;
+                    if ($('#modalDataCusContractPopup' + ln).html() == undefined) {
+                        $.get(url, function (data) {
+                            $('#renderContractDetailData').append(data);
+                            $('#modalDataCusContractPopup' + ln).modal();
+                        });
+                    } else {
+                        $('#modalDataCusContractPopup' + ln).modal();
+                    }
+                }
+                else if (ContractDetailId > 0) {
+                    url = '/Portal/Customer/RenderCustomerContractDetail/?ContractDetailId=' + ContractDetailId + '&ContractId=' + ContractId + '&lineNumber=' + ln;
+                    if ($('#modalDataCusContractPopup' + ln).html() == undefined) {
+                        $.get(url, function (data) {
+                            $('#renderContractDetailData').append(data);
+                            $('#modalDataCusContractPopup' + ln).modal();
+                        });
+                    } else {
+                        $('#modalDataCusContractPopup' + ln).modal();
+                    }
+                }
+
+
+                if (ContractDetailId == 0)
+                    EditContractDetailsClick(ln);
+            };
+
+        });
+
+        function btnSubmitClick()
+        {
+            if ($("#ContractTypeList").val() == 2) {
+                var isvalid = true;
+
+                if ($('#AccountTypeList').val() == '') { $('#AccountTypeList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#AccountTypeList').css('border-color', ''); }
+
+                if ($('#Address1').val() == '') { $('#Address1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Address1').css('border-color', ''); }
+
+                if ($('#City').val() == '') { $('#City').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#City').css('border-color', ''); }
+
+                if ($('#PostalCode').val() == '') { $('#PostalCode').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#PostalCode').css('border-color', ''); }
+                if (isvalid == true) {
+
+                    $.ajax({
+                        url: '@Url.Action("SaveContractDetailMaintenance", "Customer",new { area = "Portal" })',
+                        type: "POST",
+                        data: $('#cnfrm_customercontract').serialize(),
+                        success: function (data) {
+                            swal('congrats!', 'Contract Information save successfully.', 'info');
+
+                        },
+                        error: function () { }
+                    });
+
+                }
+            }
+            $("#modal_CustomerContractPopup .close").click();
+        }
+        function btnEditClick()
+        {
+            $("#btnContractSave").show();
+            $("#btnContractCancel").show();
+            $("#btnEditContract").hide();
+            $("#btnContractClose").hide();
+            if ($("#ContractTypeList").val() == 2) {
+                //$("#btnSubmit").hide();
+            }
+            else {
+                //$("#btnSubmit").show();
+            }
+            $(".subsectionBtn").show();
+            $(".subsectioneditBtn").show();
+            //$(".clsContractview").attr("disabled", "disabled");
+            $(".clsContractview").removeAttr("disabled");
+        }
+        function ClickContractCancel()
+        {
+            $("#btnContractSave").hide();
+            $("#btnContractCancel").hide();
+            $("#btnEditContract").show();
+            $("#btnContractClose").show();
+            //$("#btnSubmit").hide();
+            $(".subsectionBtn").hide();
+            $(".subsectioneditBtn").hide();
+            $(".clsContractview").attr("disabled", "disabled");
+        }
+
+        $(document).ready(function () {
+
+            $("#AgreementTypeList").change(function (e) {
+                var AgreementTypeListId = $("#AgreementTypeList").val();
+                if (AgreementTypeListId != null && AgreementTypeListId != "") {
+                    var url = "@Url.Action("GetAgreementTypeDetailWithId", "Customer", new { area = "Portal" })" + "?Id=" + AgreementTypeListId;
+                    $.get(url, function (data) {
+                        $('#hdnAgreementTypeCPI').val(data);
+                    })
+                }
+            })
+            if ($('#Contract_ContractId').val() != null && $('#Contract_ContractId').val() != "" && $('#Contract_ContractId').val() != 0) {
+                if ($.trim($('#ContractAddress_Address1').val().toLowerCase()) == $.trim($('#MainAddress_Address1').val().toLowerCase()) &&
+                        $.trim($('#ContractAddress_Address2').val().toLowerCase()) == $.trim($('#MainAddress_Address2').val().toLowerCase()) &&
+                        $.trim($('#ContractAddress_City').val().toLowerCase()) == $.trim($('#MainAddress_City').val().toLowerCase()) &&
+                        $.trim($('#ContractStatesList').val().toLowerCase()) == $.trim($('#MainAddress_StateListId').val().toLowerCase()) &&
+                        $.trim($('#ContractAddress_PostalCode').val().toLowerCase()) == $.trim($('#MainAddress_PostalCode').val().toLowerCase())) {
+                    $("#chkcopyaddresstoContract").attr("checked", true);
+                    $("#ContractAddress_Address1").attr("readonly", "readonly");
+                    $("#ContractAddress_Address2").attr("readonly", "readonly");
+                    $("#ContractAddress_City").attr("readonly", "readonly");
+                    $("#ContractStatesList").attr("readonly", "readonly");
+                    $("#ContractStatesList").attr("style", "pointer-events: none;")
+                    $("#ContractAddress_PostalCode").attr("readonly", "readonly");
+                }
+            }
+
+        });
+
+        function RemoveContractDetail(ContractDetailId, ContractId) {
+            $.blockUI({
+                baseZ: 99999,
+                message: '<center><img height: src="/Images/loading_icon.gif" /><h3> <b>Processing....</br> Please wait! and do not refresh page.</b></h3></center>',
+                css: { backgroundColor: 'rgb{0,0,0}', border: '0', color: '#fff', "z-index": 99999 }
+            });
+            $.ajax({
+                type: "post",
+                url: '@Url.Action("RemoveContractDetail", "Customer")',
+                ajaxasync: true,
+                data: { ContractDetailId: ContractDetailId, ContarctId: ContractId },
+                success: function (response) {
+                    loadOwners(response.id);
+
+                    $.unblockUI();
+                },
+                error: function (data) {
+                    $.unblockUI();
+                }
+            })
+            $.unblockUI();
+        }
+        function loadOwners(id) {
+            $.blockUI({
+                baseZ: 99999,
+                message: '<center><img height: src="/Images/loading_icon.gif" /><h3> <b>Processing....</br> Please wait! and do not refresh page.</b></h3></center>',
+                css: { backgroundColor: 'rgb{0,0,0}', border: '0', color: '#fff', "z-index": 99999 }
+            });
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetContractDetail", "Customer", new { @area = "Portal" })?id=' + id,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    $('#tblContractDescriptionData').html(response);
+                    $.unblockUI();
+                },
+                error: function (xhr, textStatus, error) {
+                    if (typeof console == "object") {
+
+                        $('#tblContractDescriptionData').html(xhr.responseText);
+                        //console.log(xhr.status + "," + xhr.responseText + "," + textStatus + "," + error);
+                    }
+                    $.unblockUI();
+                }
+            });
+
+            $.unblockUI();
+        }
+
+        $("#Contract_ContractTermMonth").change(function () {
+
+            var monthadd = $("#Contract_ContractTermMonth").val();
+            var startdate = $("#Contract_StartDate").val();
+            var contractstartdate = new Date(startdate);
+
+            if (monthadd == "")
+                monthadd = 0;
+
+            contractstartdate.setMonth(contractstartdate.getMonth() + parseInt(monthadd));
+            var c = (contractstartdate.getMonth() + 1) + '/' + contractstartdate.getDate() + '/' + contractstartdate.getFullYear()
+            if (startdate == "")
+                $("#Contract_ExpirationDate").val("");
+            else
+                $("#Contract_ExpirationDate").val(c);
+
+        });
+        $("#Contract_StartDate").change(function () {
+
+            if ($("#Contract_StartDate").val() == "") {
+                $("#Contract_ExpirationDate").val("");
+            }
+            else {
+                var monthadd = $("#Contract_ContractTermMonth").val();
+                var startdate = $("#Contract_StartDate").val();
+                var contractstartdate = new Date(startdate);
+
+                if (monthadd == "")
+                    monthadd = 0;
+
+                contractstartdate.setMonth(contractstartdate.getMonth() + parseInt(monthadd));
+                var c = (contractstartdate.getMonth() + 1) + '/' + contractstartdate.getDate() + '/' + contractstartdate.getFullYear()
+                if (startdate == "")
+                    $("#Contract_ExpirationDate").val("");
+                else
+                    $("#Contract_ExpirationDate").val(c);
+            }
+
+        });
+
+        function applyMaskCurrency(id) {
+            $(id).inputmask("currency", {
+                alias: 'currency',
+                prefix: '$ ',
+                digits: 2,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                unmaskAsNumber: false,
+                allowPlus: false,
+                allowMinus: false,
+                autoGroup: true,
+                groupSeparator: ",",
+            });
+    }
+    function addEditContractDetail(ln) {
+        debugger;
+        $("#diverrmsg"+ln).hide();
+        $("#spndayerr"+ln).hide();
+        $('#ContractDetail_Amount'+ln).css('border-color', '');
+
+        var isvalid = true;
+        if ($('#ServiceTypeListModel' + ln).val() == '') {
+            $('#ServiceTypeListModel' + ln).css('border-color', 'red');
+            if (isvalid == true) { isvalid = false; }
+        } else {
+            $('#ServiceTypeListModel').css('border-color', '');
+        }
+
+        if ($('#ContractTypeList' + ln).val() == "3" && ($('#ContractDetail_Amount' + ln).val() == '0' || $('#ContractDetail_Amount' + ln).val() == '0.00')) {
+            $('#ContractDetail_Amount'+ln).css('border-color', '');
+        }
+        else if ($('#ContractDetail_Amount'+ln).val() == '' || $('#ContractDetail_Amount'+ln).val() == '0' || $('#ContractDetail_Amount'+ln).val() == '0.00') {
+            $('#ContractDetail_Amount'+ln).css('border-color', 'red'); if (isvalid == true) { isvalid = false; }
+        } else {
+            $('#ContractDetail_Amount'+ln).css('border-color', '');
+        }
+
+        if ($('#ContractDetail_CleanFrequency' + ln).val() == '') {
+            $('#ContractDetail_CleanFrequency' + ln).css('border-color', 'red');
+            if (isvalid == true) { isvalid = false; }
+        } else {
+            $('#ContractDetail_CleanFrequency' + ln).css('border-color', '');
+        }
+        if ($('#ContractDetail_CleanTimes' + ln).val() == '') {
+            $('#ContractDetail_CleanTimes' + ln).css('border-color', 'red');
+            if (isvalid == true) { isvalid = false; }
+        } else {
+            $('#ContractDetail_CleanTimes' + ln).css('border-color', '');
+        }
+
+        if ($("#ContractDetail_CleanFrequency"+ln).val() == "1") {
+            if ($("#ContractDetail_CleanTimes"+ln).val() >= 1) {
+                if ($("#ContractDetail_Mon" + ln).prop('checked') == false &&
+                    $("#ContractDetail_Tues" + ln).prop('checked') == false &&
+                    $("#ContractDetail_Wed" + ln).prop('checked') == false &&
+                    $("#ContractDetail_Thur" + ln).prop('checked') == false &&
+                    $("#ContractDetail_Fr" + ln).prop('checked') == false &&
+                    $("#ContractDetail_Sat" + ln).prop('checked') == false &&
+                    $("#ContractDetail_Sun" + ln).prop('checked') == false) {
+                        $("#spndayerr"+ln).show();
+                        if (isvalid == true) { isvalid = false; }
+                }
+                else {
+                    $("#spndayerr"+ln).hide();
+                }
+            }
+        }
+
+        if (isvalid == true) {
+            var ContractAmount = 0;
+
+            //hdnContractDetailAmount
+            $("#ContractDetailId" + ln).val()
+            if ($("#ContractDetailId"+ln).val() == "0" || $("#ContractDetailId"+ln).val() == "") {
+                ContractAmount = parseFloat(parseFloat($("#hdnAmount").val()).toFixed(2) - parseFloat($("#hdnTotAmount").val()).toFixed(2)).toFixed(2);
+                //$("#hdnTotAmount").val((parseFloat($("#hdnAmount").val()) - parseFloat($("#hdnContractDetailAmount" + ln).val())).toFixed(2));
+                $("#hdnTotAmount").val((parseFloat($("#hdnTotAmount").val()) + parseFloat($("#ContractDetail_Amount" + ln).val())).toFixed(2));
+            }
+            else {
+               // $("#hdnTotAmount").val(parseFloat(parseFloat($("#hdnAmount").val()).toFixed(2) - parseFloat($("#hdnContractDetailAmount" + ln).val()).toFixed(2)).toFixed(2));
+
+                var EditAmt = parseFloat($("#hdnTotAmount").val()).toFixed(2) - parseFloat($("#hdnContractDetailAmount" + ln).val()).toFixed(2);
+                ContractAmount = parseFloat(parseFloat($("#hdnAmount").val()) - parseFloat(parseFloat(EditAmt))).toFixed(2);
+                //ContractAmount = parseFloat(parseFloat($("#hdnAmount").val()) - parseFloat(parseFloat(EditAmt) + parseFloat($("#ContractDetail_Amount").val()))).toFixed(2);
+
+                $("#hdnTotAmount").val((parseFloat($("#hdnAmount").val()) - parseFloat($("#hdnContractDetailAmount" + ln).val())).toFixed(2));
+
+                $("#hdnTotAmount").val((parseFloat($("#hdnTotAmount").val()) + parseFloat($("#ContractDetail_Amount" + ln).val())).toFixed(2));
+
+                $("#cdhdfContractDetailAmount" + ln).html('$ ' + (parseFloat($("#ContractDetail_Amount" + ln).val())).toFixed(2));
+                $("#cdhdfServiceTypeListName" + ln).html($("#ServiceTypeListModel" + ln + ' option:selected').text());
+                $("#cdhdfContractDetailDescription" + ln).html($("#ContractDetail_Description" + ln).val());
+
+
+
+
+            }
+            if (parseFloat(parseFloat($("#ContractDetail_Amount"+ln).val()).toFixed(2)) <= parseFloat(ContractAmount).toFixed(2)) {
+                $("#diverrmsg"+ln).hide();
+                $('#ContractDetail_Amount' + ln).css('border-color', '');
+                $("#hdnContractDetailAmount" + ln).val(parseFloat($("#ContractDetail_Amount" + ln).val()).toFixed(2))
+
+                $('#modalDataCusContractPopup' + ln).modal('toggle');
+
+                //
+                if ($('#ContractDetailId' + ln).val() == 0) {
+                    AddNewRowInContractDetail(ln);
+                    ClickEditContractDetailCancel(ln);
+                }   
+
+            @*var url = '@Url.Action("SaveCustomerContractPopupDetail", "Customer", new { area="Portal" })';
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: $("#form_service_ContractDetail"+ln).serialize(),
+                success: function (result) {
+
+                    loadOwners(result.id);
+                    $('#modalDataCusContractPopup'+ln).modal('toggle');
+                },
+                error: function (result) {
+
+                    loadOwners(result.id);
+                    $('#modalDataCusContractPopup'+ln).modal('toggle');
+                }
+
+            });*@
+            }
+            else {
+                $("#diverrmsg").show();
+                $('#ContractDetail_Amount'+ln).css('border-color', 'red');
+                return false;
+            }
+        }
+    }
+
+    @*function loadOwners(id) {
+        $.blockUI({
+            baseZ: 99999,
+            message: '<center><img height: src="/Images/loading_icon.gif" /><h3> <b>Processing....</br> Please wait! and do not refresh page.</b></h3></center>',
+            css: { backgroundColor: 'rgb{0,0,0}', border: '0', color: '#fff', "z-index": 99999 }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetContractDetail", "Customer", new { @area = "Portal" })?id=' + id,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                $('#tblContractDescriptionData').html(response);
+                $.unblockUI();
+            },
+            error: function (xhr, textStatus, error) {
+                if (typeof console == "object") {
+
+                    $('#tblContractDescriptionData').html(xhr.responseText);
+                    console.log(xhr.status + "," + xhr.responseText + "," + textStatus + "," + error);
+                }
+                $.unblockUI();
+            }
+        });
+        $.unblockUI();
+    }*@
+
+    $("#FranchiseeOwner_OwnerInfoPhone_Phone1").focus(function () {
+
+        $('#FranchiseeOwner_OwnerIdentification_IdentifierNumer').inputmask("mask", {
+            "mask": "aaa-aa-aaaa"
+        });
+        $('#FranchiseeOwner_OwnerInfoPhone_Phone1').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+
+        $('#FranchiseeOwner_OwnerInfoPhone_Cell').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+        $('#FranchiseeOwner_OwnerInfoPhone_Fax').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+    });
+    $("#FranchiseeOwner_OwnerIdentification_IdentifierNumer").focus(function () {
+
+        $('#FranchiseeOwner_OwnerIdentification_IdentifierNumer').inputmask("mask", {
+            "mask": "aaa-aa-aaaa"
+        });
+        $('#FranchiseeOwner_OwnerInfoPhone_Phone1').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+
+        $('#FranchiseeOwner_OwnerInfoPhone_Cell').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+        $('#FranchiseeOwner_OwnerInfoPhone_Fax').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+    });
+    $("#FranchiseeOwner_OwnerInfoPhone_Cell").focus(function () {
+
+        $('#FranchiseeOwner_OwnerIdentification_IdentifierNumer').inputmask("mask", {
+            "mask": "aaa-aa-aaaa"
+        });
+        $('#FranchiseeOwner_OwnerInfoPhone_Phone1').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+
+        $('#FranchiseeOwner_OwnerInfoPhone_Cell').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+        $('#FranchiseeOwner_OwnerInfoPhone_Fax').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+    });
+    $("#FranchiseeOwner_OwnerInfoPhone_Fax").focus(function () {
+
+        $('#FranchiseeOwner_OwnerIdentification_IdentifierNumer').inputmask("mask", {
+            "mask": "aaa-aa-aaaa"
+        });
+        $('#FranchiseeOwner_OwnerInfoPhone_Phone1').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+
+        $('#FranchiseeOwner_OwnerInfoPhone_Cell').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+        $('#FranchiseeOwner_OwnerInfoPhone_Fax').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+    });
+
+    function ClickEditContractDetailCancel(ln)
+    {
+        $('#modalDataCusContractPopup'+ln).modal("hide");
+    }
+    function EditContractDetailsClick(ln)
+    {
+        $("#form_service_ContractDetail" + ln+" .clsContractview").removeAttr("disabled");
+        $("#modalDataCusContractPopup" + ln +" .btnContractviewsave").show();
+        $("#btnEditContractDetails").hide();
+    }
+    function CancelContractDetailsClickEvent(ln) {
+        $("#modalDataCusContractPopup" + ln +" .clsContractview").attr("disabled", "disabled");
+        $("#modalDataCusContractPopup" + ln +" .btnContractviewsave").hide();
+        $("#btnEditContractDetails"+ln).show();
+    }
+
+
+    function AddNewRowInContractDetail(ln) {
+        debugger;
+        var ContractDetailId = $('#ContractDetailId' + ln).val(); 
+        var ServiceTypeListId = $('#ServiceTypeListModel' + ln).val();
+        var ServiceTypeListName = $('#ServiceTypeListModel' + ln + ' option:selected').text();
+        var ContractId = $('#ContractId' + ln).val();
+        var CleanFrequencyListId = $('#ContractDetail_CleanFrequency' + ln).val();
+        var BillingFrequencyListId = $('#FrequencyListModel' + ln).val();
+        var Description = $('#ContractDetail_Description' + ln).val();
+        var CPIIncrease = $('#ContractDetail_CPIIncrease' + ln).val();
+        var Amount = $('#ContractDetail_Amount' + ln).val();
+
+
+        
+        //
+        //
+        //ContractDetail_SquareFootage2
+        //ContractDetail_Amount2
+        //ContractDetail_CPIIncrease2
+        //ContractDetail_CleanFrequency2
+        //ContractDetailId2
+        //
+        var _strow = '';
+
+        _strow += '<tr id="cdrowrel_' + ln +'">';
+        _strow += '<td style="text-align:center;">';
+        _strow += '    <input type="hidden" id="cdhdfLineNumber' + ln +'" name="cdhdfLineNumber' + ln +'" value="' + ln +'" />';
+        _strow += '    <input type="hidden" id="cdhdfContractDetailId' + ln +'" name="cdhdfContractDetailId' + ln +'" value="-1" />';
+        _strow += '    <input type="hidden" id="cdhdfServiceTypeListId' + ln +'" name="cdhdfServiceTypeListId' + ln +'" value="'+ServiceTypeListId + '" />';
+        _strow += '    <input type="hidden" id="cdhdfContractId' + ln + '" name="cdhdfContractId' + ln + '" value="' + ContractId+'" />';
+        _strow += '    <input type="hidden" id="cdhdfCleanFrequencyListId' + ln + '" name="cdhdfCleanFrequencyListId' + ln + '" value="' + CleanFrequencyListId+'" />';
+        _strow += '    <input type="hidden" id="cdhdfBillingFrequencyListId' + ln + '" name="cdhdfBillingFrequencyListId' + ln + '" value="' + BillingFrequencyListId+'" />';
+        _strow += ln;
+        _strow += '</td>';
+        _strow += '<td>';
+        _strow += '    <span id="cdhdfServiceTypeListName' + ln +'"';
+        _strow += '          name="cdhdfServiceTypeListName' + ln +'">';
+        _strow += ServiceTypeListName;
+        _strow += '    </span>';
+        _strow += '</td>';
+        _strow += '<td>';
+        _strow += '    <span id="cdhdfContractDetailDescription' + ln +'"';
+        _strow += '          name="cdhdfContractDetailDescription' + ln +'">';
+        _strow += Description;
+        _strow += '    </span>';
+        _strow += '';
+        _strow += '</td>';
+        _strow += '<td class="clsamt" style="text-align:right;">';
+        _strow += '    <span id="cdhdfContractDetailAmount' + ln +'';
+        _strow += '          name="cdhdfContractDetailAmount' + ln +'">';
+        _strow += Amount;
+        _strow += '    </span>';
+        _strow += '';
+        _strow += '</td>';
+        _strow += '<td style="text-align:center;">';
+        _strow += '    <span id="cdhdfContractDetailCPIIncrease' + ln + '';
+        _strow += '          name="cdhdfContractDetailCPIIncrease' + ln + '">';
+        _strow += CPIIncrease ? '<text>Yes</text>' : '<text>No</text>';
+        _strow += '    </span>';
+        _strow += '</td>';
+        _strow += '<td class="numeric">';
+        _strow += '    <a javascript:void(0);><i onclick="AddContractDetailDescription(' + ContractDetailId+',' + ContractDetailId+',' + ln +')" class="fa fa-2x fa-edit subsectioneditBtn"></i></a>';
+        _strow += '    <a class="clsdelitem"><i onclick="RemoveContractDetail(' + ContractId + ',' + ContractId+')" class="fa fa-2x fa-remove"></i></a>';
+        _strow += '</td>';
+        _strow += '</tr>';
+
+
+
+        $('#generalCustomerList>tbody').append(_strow);
+    }
+
+
+
+</script>

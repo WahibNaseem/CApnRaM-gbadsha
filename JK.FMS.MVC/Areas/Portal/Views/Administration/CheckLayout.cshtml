@@ -1,0 +1,223 @@
+﻿
+@model JKApi.Service.Service.Company.CheckConfigurationViewModel
+@using JKApi.Service.Helper
+@using JKApi.Service.Service
+@using JKViewModels.Administration.System
+@using JKViewModels.Administration.Company
+@using JKApi.Service.Service.Company
+@using JKApi.Service.Service.Administration.Company
+
+@{
+    ViewBag.Title = "Check Layout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .textalign {
+        text-align: center;
+    }
+
+    #edit {
+        padding: 0px 15px;
+        font-size: 18px;
+        background-color: #67809F;
+        color: white;
+    }
+
+    #btnview {
+        padding: 0px 15px;
+        font-size: 18px;
+        background-color: #67809F;
+        color: white;
+    }
+
+    ul.img-list li {
+        display: inline-block;
+        width: 50%;
+        float: left;
+    }
+</style>
+
+@using (Html.BeginForm())
+{
+
+    @Html.AntiForgeryToken()
+
+    if (Model.DefaultCheckLayout != null)
+    {
+        @Html.Hidden("checkLayoutId", Model.DefaultCheckLayout.Id)
+    }
+
+    if (Model.Calibration != null)
+    {
+        @Html.Hidden("checkCalibrationId", Model.Calibration.Id)
+    }
+
+    <div class="form-horizontal panel">
+        <div class="custom-listbox custom-form">
+            <div class="portlet-body" style="padding: 10px">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="portlet box blue-hoki">
+                            <div class="portlet-title compact">
+                                <div class="caption">Check Properties</div>
+                            </div>
+                            <div class="portlet-body form">
+                                <div class="form-body" style="padding: 5px">
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label pnd5 text-left">Layout Name</label>
+                                        <div class="col-md-6">
+                                            @Html.TextBox("checkName", Model.DefaultCheckLayout.Name, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label pnd5 text-left">Check Position</label>
+                                        <div class="col-md-9">
+                                            <div style="display: inline-block; float: left">
+                                                @Html.RadioButton("checkPosition", "Top", Model.DefaultCheckLayout.Position == 0)
+                                                <label class="control-label pnd5 text-left">Top</label>
+                                            </div>
+                                            <div style="display: inline-block; float: left">
+                                                @Html.RadioButton("checkPosition", "Bottom", Model.DefaultCheckLayout.Position == 1)
+                                                <label class="control-label pnd5 text-left">Bottom</label>
+                                            </div>
+                                            <!--<div style="display: inline-block; float: left">
+                                                @Html.RadioButton("checkPosition", "Custom")
+                                                <label class="control-label pnd5 text-left">Custom</label>
+                                                <label class="control-label pnd5 text-left">X</label>
+                                                @Html.TextBox("checkX", Model.DefaultCheckLayout.X, new { @class = "form-control inline" })
+                                                <label class="control-label pnd5 text-left">Y</label>
+                                                @Html.TextBox("checkY", Model.DefaultCheckLayout.Y, new { @class = "form-control" })
+                                            </div>-->
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <div class="portlet box blue-hoki">
+                            <div class="portlet-title compact">
+                                <div class="caption">Check Layout</div>
+                            </div>
+                            <div class="portlet-body form">
+                                <div class="form-body" style="padding: 5px">
+                                    <div class="form-group">
+                                        <ul style="column-count: 3; list-style-type: none; margin: 0; padding: 0;">
+                                            @foreach (SelectListItem type in ViewBag.ElementTypes)
+                                            {
+                                                var elem = Model.DefaultCheckLayout.Elements.Where(o => o.ElementTypeId.ToString() == type.Value).FirstOrDefault();
+                                                <li>
+                                                    @Html.CheckBox(string.Format("type{0}_chk", type.Value), (elem != null) ? elem.IsActive : false)
+                                                    @type.Text
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="portlet box blue-hoki">
+                            <div class="portlet-title compact">
+                                <div class="caption">Upload Images</div>
+                            </div>
+                            <div class="portlet-body form">
+                                <div class="form-body" style="padding: 5px">
+
+                                    <div class="form-group">
+                                        <ul class="img-list" style="list-style-type: none; margin: 0; padding: 0;">
+                                            <li>
+                                                Logo<br />
+                                                <input type="file" id="input_logoImage" class="preview-image form-control" />
+                                                <img style="max-height: 200px" id="preview_logoImage" />
+                                            </li>
+                                            <li>
+                                                Signature<br />
+                                                <input type="file" id="input_signatureImage" class="preview-image form-control" />
+                                                <img style="max-height: 200px" id="preview_signatureImage" />
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="portlet box blue-hoki">
+                            <div class="portlet-title compact">
+                                <div class="caption">Calibration</div>
+                            </div>
+                            <div class="portlet-body form">
+                                <div class="form-body" style="padding: 5px">
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label pnd5 text-left">Shift Check Position (in inches)</label>
+                                        <label class="col-md-1 control-label pnd5 text-left">X</label>
+                                        <div class="col-md-2">
+                                            @Html.TextBox("calibrationShiftX", Model.Calibration.ShiftX, new { @class = "form-control" })
+                                        </div>
+                                        <label class="col-md-1 control-label pnd5 text-left">Y</label>
+                                        <div class="col-md-2">
+                                            @Html.TextBox("calibrationShiftY", Model.Calibration.ShiftY, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group" style="text-align:center;">
+                            <input type="submit" value="Save" name="Save" id="btnSave" class="btn btn-default" style="height:40px;width:80px;" />
+                            <input type="button" value="Cancel" name="Cancel" id="btnCancel" class="btn btn-default" style="height:40px;width:80px;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts{
+    <script type="text/javascript">
+
+        $(document).ready(function ($) {
+
+            $(".preview-image").change(function () {
+                previewImage(this);
+            });
+
+        });
+
+
+        function previewImage(input) {
+
+            var name = $(input).attr('id').split('_')[1];
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#preview_' + name).attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+    </script>
+}

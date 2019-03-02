@@ -1,0 +1,240 @@
+﻿@model JKApi.Service.Service.Customer.RevenueDistributionInvoiceDetailViewModel
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+    </style>
+}
+<div class="modal fade custom-model custom-form-design" id="modal_partialrevenueinvoicedetail" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:1000px">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;" onclick="btnInvoicePopupClose()"></button>
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Revenue Distribution
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px 10px 15px 10px;">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="col-md-2">Invoice :</div>
+                        <div class="col-md-3" style="padding:5px;background-color:#e8e8e8;font-weight:bold;text-align:center;">@Html.DisplayFor(one => one.InvoiceDetail.InvoiceNo)</div>
+                        <div class="col-md-3" style="text-align:right">
+                            <b>Effective Date: <span id="spnTransEffectiveDateR"></span></b>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 text-right" style="padding-top: 4px;">
+                        <div class="col-md-3 pull-right text-left" style="padding:5px;background-color:#e8e8e8;font-weight:bold;text-align:center;">
+                            <input type="hidden" name="hdfInvoiceDetail_InvoiceWorkingDay" id="hdfInvoiceDetail_InvoiceWorkingDay" value="@ViewBag.defDays" />
+                            <input type="hidden" name="hdfInvoiceDetail_InvoiceAllDay" id="hdfInvoiceDetail_InvoiceAllDay" value="@ViewBag.MonthDays" />
+                            @Html.HiddenFor(one => one.InvoiceDetail.InvoiceDate, new { @id = "hdfInvoiceDetail_InvoiceDate", @name = "hdfInvoiceDetail_InvoiceDate" })
+                            @Convert.ToDateTime(Model.InvoiceDetail.InvoiceDate).ToString("MM/dd/yyyy")
+                        </div>
+                        <div class="col-md-3 pull-right" style="padding:5px;">Invoice Date:</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="custom-form portlet light" style="max-width:400px;margin: 0px auto;padding:0;min-height: 100px;">
+                            <div class="headerbox">
+                                <div class="row">
+                                    Customer #: @Html.DisplayFor(one => one.InvoiceDetail.CustomerNo)@Html.HiddenFor(one => one.InvoiceDetail.InvoiceId, new { @id = "hdfInvoiceDetail_InvoiceId", @name = "hdfInvoiceDetail_InvoiceId" })
+                                </div>
+                            </div>
+                            <div class="portlet-body form" style="border:1px solid #e7ecf1;">
+                                <div class="form-body">
+                                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.InvoiceDetail.Customer)</div>
+                                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.InvoiceDetail.Address1),@Html.DisplayFor(one => one.InvoiceDetail.Address2)</div>
+                                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.InvoiceDetail.City), @Html.DisplayFor(one => one.InvoiceDetail.State) @Html.DisplayFor(one => one.InvoiceDetail.PostalCode)</div>
+                                    <div class="row" style="margin-top: -5px;margin-bottom: -10px;">@(Model.InvoiceDetail.Phone != null ? String.Format("{0: (###) ###-####}", long.Parse(Model.InvoiceDetail.Phone)) : "")</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        <div class="custom-form portlet light" style="max-width:400px;margin: 0px auto;padding:0;min-height: 100px;">
+                            <div class="headerbox">
+                                <div class="row">
+                                    Bill To
+                                </div>
+                            </div>
+                            <div class="portlet-body form" style="border:1px solid #e7ecf1;">
+                                <div class="form-body">
+                                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.InvoiceDetail.B_Name)</div>
+                                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.InvoiceDetail.B_Address1),@Html.DisplayFor(one => one.InvoiceDetail.B_Address2)</div>
+                                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.InvoiceDetail.B_City), @Html.DisplayFor(one => one.InvoiceDetail.B_State) @Html.DisplayFor(one => one.InvoiceDetail.B_PostalCode)</div>
+                                    <div class="row" style="padding: 0px;margin: 0;">@(Model.InvoiceRegion.Phone != null ? String.Format("{0: (###) ###-####}", long.Parse(Model.InvoiceRegion.Phone.ToString().Trim())) : "")</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                        <tr>
+                            <th style="width:100px;text-align:center;">Invoice Date</th>
+                            <th style="width:100px;text-align:center;">Due Date</th>
+                            <th style="text-align:center;">Description</th>
+                            <th style="width:100px;text-align:center;">PO Number</th>
+                        </tr>
+                        <tr>
+                            <td style="text-align:center;">@Convert.ToDateTime(Model.InvoiceDetail.InvoiceDate).ToString("MM/dd/yyyy")</td>
+                            <td style="text-align:center;">@(Model.InvoiceDetail.DueDate != null ? Convert.ToDateTime(Model.InvoiceDetail.DueDate).ToString("MM/dd/yyyy") : "")</td>
+
+                            <td style="white-space:pre-line;text-align:center;">@Html.DisplayFor(one => one.InvoiceDetail.Message)</td>
+                            <td style="text-align:center;">@Html.DisplayFor(one => one.InvoiceDetail.PurchaseOrderNo)</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="row">
+                    <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                        <tr>
+
+                            <th style="width:50px;text-align:center">QTY</th>
+                            <th style="text-align:center;">Detail</th>
+                            <th style="width:100px;text-align:center">Unit Price</th>
+                            <th style="width:120px;text-align:center">Extended Price</th>
+                            <th style="width:100px;text-align:center">Tax</th>
+                            <th style="width:100px;text-align:center">Total</th>
+                        </tr>
+                        @foreach (var item in Model.InvoiceDetailItems)
+                        {
+                            <tr>
+                                <td style="text-align:center">@item.Quantity</td>
+                                <td style="white-space:pre-line">@item.Description</td>
+                                <td style="text-align:right">$ @string.Format("{0:N}", item.UnitPrice)</td>
+                                <td style="text-align:right">$ @string.Format("{0:N}", item.ExtendedPrice)</td>
+                                <td style="text-align:right">$ <span id="@("spnDetailItemAmount"+item.LineNumber)">@string.Format("{0:N}", item.TAXAmount)</span> </td>
+                                <td style="text-align:right">$ @string.Format("{0:N}", item.Total) </td>
+                            </tr>
+                        }
+
+                        <tr>
+                            <td style="text-align:right" colspan="2"> </td>
+                            <td style="text-align:right"> <b>TOTAL </b></td>
+                            <td style="text-align:right"><b>@string.Format("{0:c}", Model.InvoiceDetailItems.Select(s => s.ExtendedPrice).Sum())</b></td>
+                            <td style="text-align:right"><b>@string.Format("{0:c}", Model.InvoiceDetailItems.Select(s => s.TAXAmount).Sum())</b> </td>
+                            <td style="text-align:right"><b>@string.Format("{0:c}", Model.InvoiceDetailItems.Select(s => s.Total).Sum()) </b></td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <hr />
+                <div class="row">
+                    <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%" id="tblRevenueDistributionInvoiceDetail">
+                        <thead>
+                            <tr>
+                                <th style="width:70px;text-align:center;">Line No</th>
+                                <th style="width:100px;text-align:center;">Franchisee No</th>
+                                <th style="text-align:center;">Franchisee Name</th>
+                                <th style="width:120px;text-align:center;">Amount</th>
+                                <th style="width:100px;text-align:center;">Fee</th>
+                                <th style="width:100px;text-align:center;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.FranchiseeDistributionItems)
+                            {
+                                <tr>
+                                    <td style="text-align:center">
+                                        <input type="hidden" reltfline="@item.DetailLineNumber" id="@("fdt_INV_hdfDistributionId"+item.DetailLineNumber)" name="@("fdt_INV_hdfDistributionId"+item.DetailLineNumber)" value="@item.DistributionId" />
+                                        <input type="hidden" reltfline="@item.DetailLineNumber" id="@("fdt_INV_hdfcontractdetailid"+item.DetailLineNumber)" name="@("fdt_INV_hdfcontractdetailid"+item.DetailLineNumber)" value="@item.ContractDetailId" />
+                                        <input type="hidden" reltfline="@item.DetailLineNumber" id="@("fdt_INV_hdfFrenchiseeId"+item.DetailLineNumber)" name="@("fdt_INV_hdfFrenchiseeId"+item.DetailLineNumber)" value="@item.FranchiseeId" />
+                                        @item.DetailLineNumber
+                                    </td>
+                                    <td style="text-align:center;">@item.FranchiseeNo</td>
+                                    <td style="white-space:pre-line;text-align:center;">@item.FranchiseeName</td>
+                                    <td style="text-align:right;color:red;">(<span id="@("spnFDetailItemAmount"+item.DetailLineNumber)">@string.Format("{0:C}", item.Amount)</span>)</td>
+                                    <td style="text-align:right">@string.Format("{0:C}", item.Fee) </td>
+                                    <td style="text-align:right;color:red;">(@string.Format("{0:C}", item.Total))</td>
+                                </tr>
+
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                    </div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-5">
+                        <input type="button" class="btn btn-primary pull-right" id="btnRevenueDistributionInvoiceDetail_OnSave" name="btnRevenueDistributionInvoiceDetail_OnSave" value="Save" onclick="btnRevenueDistributionInvoiceDetail_OnClickSave()" style="width:100px;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+</div>
+
+@section scripts{
+    <script>
+        $(document).on('click', '#btnClosemodel', function () {
+            $("#modal_invoicedetail").modal('hide');
+        });
+
+        
+
+    </script>
+}

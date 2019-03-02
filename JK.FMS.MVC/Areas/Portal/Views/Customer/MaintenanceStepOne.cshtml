@@ -1,0 +1,1545 @@
+﻿
+@model JKViewModels.Customer.FullCustomerViewModel
+@{
+    ViewBag.Title = "MaintenanceStepOne";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <style type="text/css">
+        .modal-dialog {
+            width: 750px;
+        }
+
+        .portlet.light .portlet-body {
+            padding-top: 0px;
+        }
+    </style>
+
+}
+@using (Html.BeginForm("MaintenanceStepOne", "Customer", FormMethod.Post, new { @id = "form_wizard_1", @role = "form", @class = "form form-horizontal" }))
+{
+
+    @Html.HiddenFor(one => one.ButtonType)
+    @Html.HiddenFor(one => one.CustomerViewModel.CustomerId)
+    @Html.HiddenFor(one => one.CustomerViewModel.CreatedBy)
+    @Html.HiddenFor(one => one.CustomerViewModel.CreatedDate)
+    @Html.HiddenFor(one => one.CustomerViewModel.CustomerNo)
+    @Html.HiddenFor(one => one.MainContact.ContactId)
+    @Html.HiddenFor(one => one.MainContact.IsActive)
+    @Html.HiddenFor(one => one.MainContact.CreatedBy)
+    @Html.HiddenFor(one => one.MainContact.CreatedDate)
+    @Html.HiddenFor(one => one.MainAddress.AddressId)
+    @Html.HiddenFor(one => one.MainAddress.IsActive)
+    @Html.HiddenFor(one => one.MainAddress.CreatedBy)
+    @Html.HiddenFor(one => one.MainAddress.CreatedDate)
+    @Html.HiddenFor(one => one.MainEmail.EmailId)
+    @Html.HiddenFor(one => one.MainEmail.IsActive)
+    @Html.HiddenFor(one => one.MainEmail.CreatedBy)
+    @Html.HiddenFor(one => one.MainEmail.CreatedDate)
+    @Html.HiddenFor(one => one.MainPhone.PhoneId)
+    @Html.HiddenFor(one => one.MainPhone.IsActive)
+    @Html.HiddenFor(one => one.MainPhone.CreatedBy)
+    @Html.HiddenFor(one => one.MainPhone.CreatedDate)
+
+    @Html.HiddenFor(one => one.BillingContact.ContactId)
+    @Html.HiddenFor(one => one.BillingContact.IsActive)
+    @Html.HiddenFor(one => one.BillingContact.CreatedBy)
+    @Html.HiddenFor(one => one.BillingContact.CreatedDate)
+    @Html.HiddenFor(one => one.BillingAddress.AddressId)
+    @Html.HiddenFor(one => one.BillingAddress.IsActive)
+    @Html.HiddenFor(one => one.BillingAddress.CreatedBy)
+    @Html.HiddenFor(one => one.BillingAddress.CreatedDate)
+
+    @Html.HiddenFor(one => one.ContactInformation.ContactId)
+    @Html.HiddenFor(one => one.ContactInformation.IsActive)
+    @Html.HiddenFor(one => one.ContactInformation.CreatedDate)
+
+    @Html.HiddenFor(one => one.ContactInformationAddress.AddressId)
+    @Html.HiddenFor(one => one.ContactInformationAddress.CreatedBy)
+    @Html.HiddenFor(one => one.ContactInformationAddress.CreatedDate)
+
+    @Html.HiddenFor(one => one.ContactInformationEmail.EmailId)
+    @Html.HiddenFor(one => one.ContactInformationEmail.IsActive)
+    @Html.HiddenFor(one => one.ContactInformationEmail.CreatedBy)
+    @Html.HiddenFor(one => one.ContactInformationEmail.CreatedDate)
+    @Html.HiddenFor(one => one.ContactInformationPhone.PhoneId)
+    @Html.HiddenFor(one => one.ContactInformationPhone.IsActive)
+    @Html.HiddenFor(one => one.ContactInformationPhone.CreatedBy)
+    @Html.HiddenFor(one => one.ContactInformationPhone.CreatedDate)
+    @Html.HiddenFor(one => one.BillingInformation.IsActive)
+    @Html.HiddenFor(one => one.BillingInformation.CreatedBy)
+    @Html.HiddenFor(one => one.BillingInformation.CreatedDate)
+    @Html.HiddenFor(one => one.BillingInformationAddress.AddressId)
+    @Html.HiddenFor(one => one.BillingInformationAddress.IsActive)
+    @Html.HiddenFor(one => one.BillingInformationAddress.CreatedBy)
+    @Html.HiddenFor(one => one.BillingInformationAddress.CreatedDate)
+    @Html.HiddenFor(one => one.BillingInformationEmail.EmailId)
+    @Html.HiddenFor(one => one.BillingInformationEmail.IsActive)
+    @Html.HiddenFor(one => one.BillingInformationEmail.CreatedBy)
+    @Html.HiddenFor(one => one.BillingInformationEmail.CreatedDate)
+    @Html.HiddenFor(one => one.BillingInformationPhone.PhoneId)
+    @Html.HiddenFor(one => one.BillingInformationPhone.IsActive)
+    @Html.HiddenFor(one => one.BillingInformationPhone.CreatedBy)
+    @Html.HiddenFor(one => one.BillingInformationPhone.CreatedDate)
+    @Html.HiddenFor(one => one.CustomerViewModel.ParentId)
+    @Html.HiddenFor(one => one.MainAddress.StateName)
+
+
+    @Html.HiddenFor(one => one.MainContact.ContactId)
+    @Html.HiddenFor(one => one.MainPhone2.PhoneId)
+    @Html.HiddenFor(one => one.MainEmail.EmailId)
+
+    @Html.HiddenFor(one => one.BillingContactInformation2.ContactId)
+    @Html.HiddenFor(one => one.BillingPhone.PhoneId)
+    @Html.HiddenFor(one => one.BillingEmail.EmailId)
+    @Html.HiddenFor(one => one.CustomerViewModel.RegionId, new { @id = "hdnRegionId" })
+
+
+    @Html.HiddenFor(one => one.EBill_Emails, new { id = "hdfEBill_Emails" })
+
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+    <style type="text/css">
+        table.detailbillrunList thead > tr > td, table.detailbillrunList tbody > tr > td {
+            font-size: 12px;
+        }
+
+        .table td, .table th {
+            font-size: 12px;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .row {
+            margin: 0;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .custom-form .headerbox {
+            padding: 3px 0px 3px 5px;
+            font-weight: normal;
+        }
+
+        .error {
+            border-color: red;
+        }
+    </style>
+
+    <div class="custom-form portlet light" id="">
+        <div class="portlet-body">
+            <div class="tab-pane active" id="tb_fr_page1">
+                @*<h4 class="blocktop">Customer Maintenance</h4>*@
+                <div class="headerbox">
+                    <div class="row" style="background-color: #3598DC;color: #fff;">
+                        <div class="col-md-12 no-padding">
+                            <div class="alignCenter">
+                                <div class="col-md-8" style="text-align:left;    font-size: 15px;">
+                                    Customer Maintenance
+                                </div>
+                                <div class="col-md-4" style="padding-right:5px;">
+                                    <div class="col-md-7 pull-right no-padding">
+                                        <div style="display:table-cell;padding-right: 5px;text-transform:none">
+                                            Region
+                                        </div>
+                                        <div style="display:table-cell;width:100%;">
+                                            @if (ViewBag.regionlist != null)
+                                            {
+                                                <select class="form-control input-sm" id="regionlist" SectionMode="Single" style="display:none;">
+                                                    @foreach (var item in (SelectList)ViewBag.regionlist)
+                                                    {
+                                                        <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                                    }
+                                                </select>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="width: 50%;float:left;">
+                    <h4 class="subblock">Main Information</h4>
+
+                    <div class="form-group" style="padding-top:0px;">
+                        <label id="lblCustomerID" hidden>@Model.CustomerDetail.CustomerId</label>
+                        <label class="control-label col-md-3">
+                            Name
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(one => one.CustomerViewModel.Name, new { @class = "form-control input-sm", required = "required" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                            Address
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-5">
+                            @Html.TextBoxFor(one => one.MainAddress.Address1, new { @class = "form-control input-sm", required = "required", placeholder = "Required" })
+                        </div>
+                        <div class="col-md-3">
+                            @Html.TextBoxFor(one => one.MainAddress.Address2, new { @class = "form-control input-sm", placeholder = "" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                            City/State/Zip
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-3">
+                            @Html.TextBoxFor(one => one.MainAddress.City, new { @class = "form-control input-sm", required = "required", placeholder = "Required" })
+                        </div>
+                        <div class="col-md-3">
+                            @*@Html.DropDownListFor(model => model.MainAddress.StateListId, new SelectList(ViewBag.MainStatesList, "StatesListId", "Name"), "--Select--", new { @class = "form-control input-sm", required = "required", @id = "MainStatesList" })*@
+                            @Html.DropDownList("MainStatesList", null, "Select", new { @class = "form-control input-sm", required = "required", @id = "MainStatesList" })
+                        </div>
+                        <div class="col-md-2">
+                            @Html.TextBoxFor(one => one.MainAddress.PostalCode, new { @class = "form-control input-sm", required = "required", placeholder = "Required", maxlength = "5" })                            
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                            Phone
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(one => one.MainPhone.Phone1, new { @class = "form-control input-sm", placeholder = "Required" })
+                        </div>
+                        <label class="control-label col-md-1">
+                            Fax
+                        </label>
+                        <div class="col-md-3">
+                            @Html.TextBoxFor(one => one.MainPhone.Fax, new { @class = "form-control input-sm", placeholder = "" })
+                        </div>
+                    </div>
+                    @*<div class="form-group">
+                            <label class="control-label col-md-3">
+                                Email
+                            </label>
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(one => one.MainEmail.EmailAddress, new { @class = "form-control input-sm", placeholder = "" })
+                            </div>
+                        </div>*@
+                    <h4 class="subblock">Billing Address</h4>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                        </label>
+                        <div class="col-md-8">
+                            <label class="mt-checkbox">
+                                <input type="checkbox" name="chkbillingsameas" id="chkbillingsameas">Same as Main Address
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                            Name
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(one => one.BillingContact.Name, new { @class = "form-control input-sm", required = "required", placeholder = "Required" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                            Attention
+                        </label>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(one => one.BillingContact.Attention, new { @class = "form-control input-sm", placeholder = "" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+
+                        <label class="control-label col-md-3">
+                            Address<span class="required"> * </span>
+                        </label>
+                        <div class="col-md-5">
+                            @Html.TextBoxFor(one => one.BillingAddress.Address1, new { @class = "form-control input-sm", placeholder = "Required" })
+                        </div>
+                        <div class="col-md-3">
+                            @Html.TextBoxFor(one => one.BillingAddress.Address2, new { @class = "form-control input-sm", placeholder = "" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                            City/State/Zip
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-3">
+                            @Html.TextBoxFor(one => one.BillingAddress.City, new { @class = "form-control input-sm", required = "required", placeholder = "Required" })
+                        </div>
+                        <div class="col-md-3">
+                            @Html.DropDownList("BillingStatesList", null, "Select", new { @class = "form-control input-sm", required = "required", @id = "BillingStatesList" })
+                        </div>
+                        <div class="col-md-2">
+                            @Html.TextBoxFor(one => one.BillingAddress.PostalCode, new { @class = "form-control input-sm", required = "required", placeholder = "Required", maxlength = "5" })
+                        </div>
+                    </div>
+
+                    <h4 class="subblock">Bill Setting</h4>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                            Effective Date
+                        </label>
+                        <div class="col-md-5">
+                            <div class="input-group date" data-date-format="mm/dd/yyyy">
+                                @Html.TextBoxFor(one => one.BillSetting.EffectiveDate, new { @class = "form-control input-sm date-picker RemovePeriodvalidation", required = "required" })
+                                <span class="input-group-btn cal-btn">
+                                    <button class="btn default cal-btn" type="button">
+                                        <i class="fa fa-calendar"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                            Invoice Date
+                        </label>
+                        <div class="col-md-5">
+                            @Html.DropDownList("InvoiceDate", null, new { @class = "form-control input-sm", required = "required", @id = "statusList" })
+                            @*<select class="form-control input-sm">
+                                    <option>BOM</option>
+                                    <option>EOM</option>
+                                </select>*@
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                            Term
+                        </label>
+                        <div class="col-md-5">
+                            @Html.DropDownList("TermDate", null, new { @class = "form-control input-sm TermstatusList", required = "required", @id = "statusList" })
+                            @*<select class="form-control input-sm">
+                                    <option>Due uponReceipt</option>
+                                    <option>EOM</option>
+                                    <option>Net 30</option>
+                                    <option>Net 40</option>
+                                </select>*@
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                            AR Status
+                        </label>
+                        <div class="col-md-5">
+                            @Html.DropDownList("ArStatus", null, new { @class = "form-control input-sm", @id = "ARStatusListId" })
+                            @*<select class="form-control input-sm">
+                                    <option>AutoPay</option>
+                                    <option>Bankruptcy</option>
+                                </select>*@
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                            Notes
+                        </label>
+                        <div class="col-md-8">
+                            @Html.TextAreaFor(one => one.BillSetting.Notes, new { @class = "form-control input-sm", row = 2 })
+                        </div>
+                    </div>
+
+                </div>
+                <div style="width: 50%;margin:0px; padding: 0em; background: white;float:right; border-left:solid #95A5A6 1px; ">
+                    <h4 class="subblock">Contact Information</h4>
+
+
+
+                    <div class="form-group" style="padding-top:0px; text-wrap:none">
+                        <label class="control-label col-md-3">
+                            Name<span class="required"> * </span>
+                        </label>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(one => one.MainContact.Name, new { @class = "form-control input-sm", required = "required", placeholder = "Required" })
+                        </div>
+                    </div>
+
+                    @*<div class="form-group">
+                            <label class="control-label col-md-3">
+                                Last Name
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(one => one.ContactInformation.LastName, new { @class = "form-control input-sm", required = "required", placeholder = "Required" })
+                            </div>
+                        </div>*@
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                            Title
+                        </label>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(one => one.MainContact.Title, new { @class = "form-control input-sm", placeholder = "" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                            Phone <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-3">
+                            @Html.TextBoxFor(one => one.MainPhone2.Phone1, new { @class = "form-control input-sm", placeholder = "Required" })
+                        </div>
+                        <div class="col-md-2">
+                            @Html.TextBoxFor(one => one.MainPhone2.PhoneExt, new { @class = "form-control input-sm", placeholder = "Ext" })
+                        </div>
+                        @*<label class="control-label col-md-1">
+                                Cell
+                            </label>*@
+                        <div class="col-md-3">
+                            @Html.TextBoxFor(one => one.MainPhone2.Cell, new { @class = "form-control input-sm", placeholder = "Cell" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                            Fax
+                        </label>
+                        <div class="col-md-3">
+                            @Html.TextBoxFor(one => one.MainPhone2.Fax, new { @class = "form-control input-sm", placeholder = "" })
+                        </div>
+                        <label class="control-label col-md-1">
+                            Email
+                        </label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(one => one.MainEmail.EmailAddress, new { @class = "form-control input-sm", placeholder = "" })
+                        </div>
+                    </div>
+
+                    <h4 class="subblock">Billing Contact Information</h4>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                        </label>
+                        <div class="col-md-8">
+                            <label class="mt-checkbox">
+                                <input type="checkbox" name="chkbillingcontactsameas" id="chkbillingcontactsameas">Same as Contact Information
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="padding-top:0px;">
+                        <label class="control-label col-md-3">
+                            Name
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(one => one.BillingContactInformation2.Name, new { @class = "form-control input-sm", required = "required", placeholder = "Required" })
+                        </div>
+                    </div>
+                    @*<div class="form-group">
+                            <label class="control-label col-md-3">
+                                LastName
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(one => one.BillingContact.LastName, new { @class = "form-control input-sm", required = "required", placeholder = "Required" })
+                            </div>
+                        </div>*@
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                            Title
+                        </label>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(one => one.BillingContactInformation2.Title, new { @class = "form-control input-sm", placeholder = "" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                            Phone <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-3">
+                            @Html.TextBoxFor(one => one.BillingPhone.Phone1, new { @class = "form-control input-sm", placeholder = "Required", required = "required" })
+                        </div>
+                        <div class="col-md-2">
+                            @Html.TextBoxFor(one => one.BillingPhone.PhoneExt, new { @class = "form-control input-sm", placeholder = "Ext" })
+                        </div>
+                        <div class="col-md-3">
+                            @Html.TextBoxFor(one => one.BillingPhone.Cell, new { @class = "form-control input-sm", placeholder = "Cell" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                            Fax
+                        </label>
+                        <div class="col-md-3">
+                            @Html.TextBoxFor(one => one.BillingPhone.Fax, new { @class = "form-control input-sm", placeholder = "" })
+                        </div>
+
+                        <label class="control-label col-md-1">
+                            Email
+                        </label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(one => one.BillingEmail.EmailAddress, new { @class = "form-control input-sm", placeholder = "" })
+                        </div>
+                    </div>
+                    <h4 class="subblock">Bill Setting</h4>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                        </label>
+                        <div class="col-md-3">
+                            <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                @Html.CheckBoxFor(one => one.BillSetting.CreateInvoice, new { @class = "i-checks" }) Create Invoice @*Create Invoice*@
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="display:none" id="Errmsg">
+                        <span style="color:red;padding-left:42px;">Print Invoice Or E-Bill only one required </span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3" style="margin-top:-7px;">
+                            <label class="mt-checkbox" id="lblPBill">
+                                @Html.CheckBoxFor(one => one.BillSetting.PBill, new { @class = "i-checks" }) Print Invoice
+                                <span></span>
+                            </label>
+                        </label>
+                        <div class="col-md-4">
+                            <label class="mt-checkbox" style="margin-bottom: 8px;" id="lblEBill">
+                                @Html.CheckBoxFor(one => one.BillSetting.EBill, new { @class = "i-checks" }) E-Bill
+                                <span></span>
+                            </label>
+                            <input type="button" name="btnshowbillingcontactemail" value="Add Email" id="btnshowbillingcontactemail" class="btn btn-primary button-next" style="margin-left:15px;" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                        </label>
+                        <div class="col-md-3">
+                            <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                @Html.CheckBoxFor(one => one.BillSetting.PrintPastDue, new { @class = "i-checks" }) Print Past Due
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                        </label>
+                        <div class="col-md-8">
+                            <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                @Html.CheckBoxFor(one => one.BillSetting.TaxExcempt, new { @class = "i-checks" }) Tax Exempt
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">
+                        </label>
+                        <div class="col-md-5">
+                            <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                @Html.CheckBoxFor(one => one.BillSetting.ConsolidatedInvoice, new { @class = "i-checks" }) Consolidated Invoice
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+                <div style="overflow:auto;width: 100%; margin: 0em auto;padding-left:200px;padding-top:20px;">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <label class="mt-checkbox">
+                                @Html.CheckBoxFor(one => one.CustomerViewModel.Reference, new { @class = "i-checks", @checked = "true" })  Reference
+                                <span></span>
+                            </label>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="mt-checkbox">
+                                @Html.CheckBoxFor(one => one.CustomerViewModel.NationalAccount, new { @class = "i-checks", @checked = "true" }) National Account
+                                <span></span>
+                            </label>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="mt-checkbox">
+                                <input type="checkbox" name="chkChildAccount" data-toggle="modal" id="chkChildAccount">Child Account
+                                @*@Html.CheckBoxFor(one => one.CustomerViewModel.Parent, new { @class = "i-checks", @checked = "true" }) Child Account*@
+                                <span></span>
+                            </label>
+                        </div>
+                        <div class="col-md-3">
+                            <label style="text-align:left;" id="lblParentName"></label>
+                            <label style="text-align:left;" id="lblParentid" hidden></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+
+                    </div>
+                </div>
+                <!-- /.modal-dialog -->
+                <div class="form-actions">
+                    <div class="col-md-12" style="padding-right: 28px;">
+                        <button type="submit" class="btn btn-primary button-next  pull-right" id="btnContinue" style="margin-left: 10px;">
+                            Save & Continue
+                            <i class="fa fa-angle-right"></i>
+                        </button>&nbsp;&nbsp;&nbsp;&nbsp;
+                        @*<button type="submit" class="btn btn-primary  pull-right" id="btnSave" style="margin-left: 10px;">
+                                Save
+                                <i class="fa fa-check"></i>
+                            </button>*@
+                    </div>
+                </div>
+
+            </div>
+            <div class="tab-pane active" id="tb_fr_page2"></div>
+        </div>
+    </div>
+}
+
+
+<div class="modal fade in" id="childmodal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" id="childmodal_modalview_header" style="padding-top: 7px;padding-bottom: 0px;background-color: deepskyblue;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title" style="font-weight: bold;color: white;">Select Parent Account</h4>
+            </div>
+            <div class="modal-body" id="childmodal_modalview_body">
+                <div class="row">
+                    <form action="#" id="childmodal_form">
+                        <div class="form-body">
+                            <div class="col-md-12">
+                                <h4 class="text-center">Search Parent by Name</h4>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="select_stagestatus" class="control-label col-md-3 text-right" style="padding-top: 8px;"></label>
+                            <div class="col-md-6">
+                                <div class="ui-widget">
+                                    <div class="input-icon right">
+                                        <i class="icon-magnifier"></i>
+                                        <input class="form-control" id="input_parentnamemodel" />
+                                    </div>
+                                    <div id="container">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label id="lblerror" class="text-right" style="color: red;padding-top:10px;"></label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="col-md-3"></div>
+                                @*<div class="col-md-2 text-right">Parent Id</div>*@
+                                <div class="col-md-1"><label id="lblCustomerId" class="text-right" style="padding-top:10px;font-size:14px;"></label></div>
+                                @*<div class="col-md-2 text-right">Parent Name</div>*@
+                                <div class="col-md-5"><label id="lblCustomername" class="text-right" style="padding-top:10px;font-size:14px;"></label></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer" id="childmodal_modalview_footer">
+                <button id="cancel_childmodal_button" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button id="childmodalSave_button" type="button" class="btn btn-success" onclick="addChildData();">Add</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>
+
+
+
+<div class="modal fade bs-modal-sm in" id="mdlAppendemail" aria-hidden="true">
+    <div class="modal-dialog modal-sm" style="width:300px;">
+        <div class="modal-content">
+            <div class="modal-header" id="mdlAppendemail_header" style="padding-top: 7px;padding-bottom: 7px;background: #3598DC !important;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title" style="font-weight: bold;color:white;font-size: 12px;">Add Emails</h4>
+            </div>
+            <div class="modal-body" id="mdlAppendemail_body" style="padding: 0;">
+                <form action="#" id="mdlAppendemail_form">
+                    <div class="col-md-12" id="divEBill_Emails"></div>
+                    <div class="col-md-9"><input type="email" name="txtemailaddress_ebill" id="txtemailaddress_ebill" value="" class="form-control input-sm" /></div>
+                    <div class="col-md-2"><input type="button" name="btnaddemailaddress_ebill" id="btnaddemailaddress_ebill" value="Add" class="btn btn-primary button-next" style="padding: 3px 8px;font-size: 12px;" /></div>
+                </form>
+
+            </div>
+
+            <div class="modal-footer" id="childmodal_modalview_footer">
+                &nbsp;
+                @*<button id="cancel_childmodal_button" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="childmodalSave_button" type="button" class="btn btn-success" onclick="addChildData();">Add</button>*@
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>
+
+
+
+@section pageplugins{
+    @if (Request.IsSecureConnection)
+    {
+        <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    }
+    else
+    {
+        <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    }
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+}
+@section scripts{
+    <script>
+
+        $(document).ready(function () {
+            $("#regionlist").multiselect({
+                includeSelectAllOption: false,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2
+            });
+            $("#ARStatusListId").val("3");
+            $(".TermstatusList").val("5");
+
+            var encodedStr = '@ViewBag.CustomerName';
+            var parser = new DOMParser;
+            var dom = parser.parseFromString(
+                '<!doctype html><body>' + encodedStr,
+                'text/html');
+            var decodedString = dom.body.textContent;
+             $("#CustomerViewModel_Name").val(decodedString);
+            $("#MainPhone_Phone1").val('@ViewBag.CustomerPhone');
+        });
+
+        var ebill_email=[];
+
+        var addChildData = function () {
+            var summaryForm = $("#childmodal_form");
+            if (!summaryForm.valid()) {
+                return;
+            }
+            else {
+                var postData = {
+                    "parentname": $("#input_parentnamemodel").val(),
+                };
+                $.ajax({
+                    url: "@Url.Action("AddParent", "Customer", new { area = "Portal" })",
+                    //url: "/Portal/Customer/AddParent",
+                    type: "POST",
+                    data: postData,
+                    dataType: "json",
+                    cache: false,
+                    success: function (response) {
+                        if (response.success == true) {
+                            $('#lblParentName').text(response.result);
+                            $('#lblParentid').text(response.id);
+                            $("#chkChildAccount").prop("checked", true);
+                        }
+                        else {
+                            $("#chkChildAccount").prop("checked", false);
+                        }
+                        $('#childmodal').modal('hide');
+                    },
+                    error: function (error) {
+
+                    }
+                });
+            }
+        }
+
+        var MaintenanceFormWizard = function () {
+
+
+            return {
+                //main function to initiate the module
+                init: function () {
+                    if (!jQuery().bootstrapWizard) {
+                        return;
+                    }
+
+                    function format(state) {
+                        if (!state.id) return state.text; // optgroup
+                        return "<img class='flag' src='../../assets/global/img/flags/" + state.id.toLowerCase() + ".png'/>&nbsp;&nbsp;" + state.text;
+                    }
+
+                    //$("#country_list").select2({
+                    //    placeholder: "Select",
+                    //    allowClear: true,
+                    //    formatResult: format,
+                    //    width: 'auto',
+                    //    formatSelection: format,
+                    //    escapeMarkup: function (m) {
+                    //        return m;
+                    //    }
+                    //});
+
+                    var form = $('#submit_form');
+                    var error = $('.alert-danger', form);
+                    var success = $('.alert-success', form);
+
+                    form.validate({
+                        doNotHideMessage: true, //this option enables to show the error/success messages on tab switch.
+                        errorElement: 'span', //default input error message container
+                        errorClass: 'help-block help-block-error', // default input error message class
+                        focusInvalid: false, // do not focus the last invalid input
+                        rules: {},
+                        messages: { // custom messages for radio buttons and checkboxes
+                            'payment[]': {
+                                required: "Please select at least one option",
+                                minlength: jQuery.validator.format("Please select at least one option")
+                            }
+                        },
+
+                        errorPlacement: function (error, element) { // render error placement for each input type
+                        },
+
+                        invalidHandler: function (event, validator) { //display error alert on form submit
+                            success.hide();
+                            error.show();
+                            App.scrollTo(error, -200);
+                        },
+
+                        highlight: function (element) { // hightlight error inputs
+                            $(element)
+                                .closest('.form-group').removeClass('has-success').addClass('has-error'); // set error class to the control group
+                        },
+
+                        unhighlight: function (element) { // revert the change done by hightlight
+                            $(element)
+                                .closest('.form-group').removeClass('has-error'); // set error class to the control group
+                        },
+
+                        success: function (label) {
+                            if (label.attr("for") == "gender" || label.attr("for") == "payment[]") { // for checkboxes and radio buttons, no need to show OK icon
+                                label
+                                    .closest('.form-group').removeClass('has-error').addClass('has-success');
+                                label.remove(); // remove error label here
+                            } else { // display success icon for other inputs
+                                label
+                                    .addClass('valid') // mark the current input as valid and display OK icon
+                                    .closest('.form-group').removeClass('has-error').addClass('has-success'); // set success class to the control group
+                            }
+                        },
+
+                        submitHandler: function (form) {
+                            success.show();
+                            error.hide();
+                            form[0].submit();
+                            //add here some ajax code to submit your form or just call form.submit() if you want to submit the form without ajax
+                        }
+
+                    });
+
+                }
+
+            };
+
+        }();
+
+        var MaintenanceFormWizardOwner = function () {
+
+
+            return {
+                //main function to initiate the module
+                init: function () {
+                    if (!jQuery().bootstrapWizard) {
+                        //  return;
+                    }
+
+                    function format(state) {
+                        if (!state.id) return state.text; // optgroup
+                        return "<img class='flag' src='../../assets/global/img/flags/" + state.id.toLowerCase() + ".png'/>&nbsp;&nbsp;" + state.text;
+                    }
+
+                    //$("#country_list").select2({
+                    //    placeholder: "Select",
+                    //    allowClear: true,
+                    //    formatResult: format,
+                    //    width: 'auto',
+                    //    formatSelection: format,
+                    //    escapeMarkup: function (m) {
+                    //        return m;
+                    //    }
+                    //});
+
+                    var form = $('#submit_form_owner');
+                    var error = $('.alert-danger', form);
+                    var success = $('.alert-success', form);
+
+                    form.validate({
+                        doNotHideMessage: true, //this option enables to show the error/success messages on tab switch.
+                        errorElement: 'span', //default input error message container
+                        errorClass: 'help-block help-block-error', // default input error message class
+                        focusInvalid: false, // do not focus the last invalid input
+                        rules: {},
+                        messages: { // custom messages for radio buttons and checkboxes
+                            'payment[]': {
+                                required: "Please select at least one option",
+                                minlength: jQuery.validator.format("Please select at least one option")
+                            }
+                        },
+
+                        errorPlacement: function (error, element) { // render error placement for each input type
+                        },
+
+                        invalidHandler: function (event, validator) { //display error alert on form submit
+                            success.hide();
+                            error.show();
+                            App.scrollTo(error, -200);
+                        },
+
+                        highlight: function (element) { // hightlight error inputs
+                            $(element)
+                                .closest('.form-group').removeClass('has-success').addClass('has-error'); // set error class to the control group
+                        },
+
+                        unhighlight: function (element) { // revert the change done by hightlight
+                            $(element)
+                                .closest('.form-group').removeClass('has-error'); // set error class to the control group
+                        },
+
+                        success: function (label) {
+                            if (label.attr("for") == "gender" || label.attr("for") == "payment[]") { // for checkboxes and radio buttons, no need to show OK icon
+                                label
+                                    .closest('.form-group').removeClass('has-error').addClass('has-success');
+                                label.remove(); // remove error label here
+                            } else { // display success icon for other inputs
+                                label
+                                    .addClass('valid') // mark the current input as valid and display OK icon
+                                    .closest('.form-group').removeClass('has-error').addClass('has-success'); // set success class to the control group
+                            }
+                        },
+
+                        submitHandler: function (form) {
+                            success.show();
+                            error.hide();
+                            form[0].submit();
+                            //add here some ajax code to submit your form or just call form.submit() if you want to submit the form without ajax
+                        }
+
+                    });
+
+                    var displayConfirm = function () {
+                        //$('#tab4 .form-control-static', form).each(function () {
+                        //    var input = $('[name="' + $(this).attr("data-display") + '"]', form);
+                        //    if (input.is(":radio")) {
+                        //        input = $('[name="' + $(this).attr("data-display") + '"]:checked', form);
+                        //    }
+                        //    if (input.is(":text") || input.is("textarea")) {
+                        //        $(this).html(input.val());
+                        //    } else if (input.is("select")) {
+                        //        $(this).html(input.find('option:selected').text());
+                        //    } else if (input.is(":radio") && input.is(":checked")) {
+                        //        $(this).html(input.attr("data-title"));
+                        //    } else if ($(this).attr("data-display") == 'payment[]') {
+                        //        var payment = [];
+                        //        $('[name="payment[]"]:checked', form).each(function () {
+                        //            payment.push($(this).attr('data-title'));
+                        //        });
+                        //        $(this).html(payment.join("<br>"));
+                        //    }
+                        //});
+                    }
+
+                    var handleTitle = function (tab, navigation, index) {
+                        var total = navigation.find('li').length;
+                        var current = index + 1;
+                        // set wizard title
+                        $('.step-title', $('#form_wizard_1')).text('Step ' + (index + 1) + ' of ' + total);
+                        // set done steps
+                        jQuery('li', $('#form_wizard_1')).removeClass("done");
+                        var li_list = navigation.find('li');
+                        for (var i = 0; i < index; i++) {
+                            jQuery(li_list[i]).addClass("done");
+                        }
+
+                        if (current == 1) {
+                            $('#form_wizard_1').find('.button-previous').hide();
+                        } else {
+                            $('#form_wizard_1').find('.button-previous').show();
+                        }
+
+                        if (current >= total) {
+                            $('#form_wizard_1').find('.button-next').hide();
+                            $('#form_wizard_1').find('.button-submit').show();
+                            displayConfirm();
+                        } else {
+                            $('#form_wizard_1').find('.button-next').show();
+                            $('#form_wizard_1').find('.button-submit').hide();
+                        }
+                        App.scrollTo($('.page-title'));
+                    }
+
+
+                    //apply validation on select2 dropdown value change, this only needed for chosen dropdown integration.
+                    $('#country_list', form).change(function () {
+                        form.validate().element($(this)); //revalidate the chosen dropdown value and show error or success message for the input
+                    });
+
+
+
+
+                }
+
+            };
+
+        }();
+
+        var GetCustomerId = function ()
+        {
+            var postData = {
+                "parentname": $("#input_parentnamemodel").val(),
+            };
+            $.ajax({
+                url: "@Url.Action("GetCustomerId", "Customer", new { area = "Portal" })",
+                //url: "/Portal/Customer/GetCustomerId",
+                type: "POST",
+                data: postData,
+                dataType: "json",
+                cache: false,
+                success: function (response) {
+                    if (response.success == true) {
+                        $("#lblCustomerId").text(response.id);
+                        $("#lblCustomername").text(response.result);
+                        $("#lblerror").text(" ");
+                    }
+                    else {
+                        $("#chkChildAccount").prop("checked", false);
+                    }
+                },
+                error: function (error) {
+
+                }
+            });
+        }
+
+        function resetmodel() {
+            $("#lblerror").text(" ");
+            $("#input_parentnamemodel").val("");
+            $("#lblCustomerId").text("");
+            $("#lblCustomername").text("");
+
+        }
+
+        $(document).ready(function () {
+
+            if(@ViewBag.IsExist == "1")
+            {
+                swal('Oops...!', 'Customer name already exists.', 'info');
+            }
+
+            $(".input-group-btn").click(function () {
+                $(this).prev().trigger("focus");
+                $(this).prev().trigger("focus");
+            });
+            $("#input_parentnamemodel").autocomplete({
+                appendTo: $("#container"),
+                source: function (request, response) {
+                    $.ajax({
+                        url: "@Url.Action("ParentAutoComplete", "Customer", new { area = "Portal" })",
+                        type: "POST",
+                        dataType: "json",
+                        data: { namePrefix: request.term },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                $("#lblerror").text(" ")
+                                return { label: item.Name, value: item.Name };
+                            }))
+                            if (data.length == 0){
+                                $("#lblerror").text(" ")
+                                $("#lblerror").append("No Parent found")
+                            }
+                        },
+                        error: function (result) {
+
+                        }
+                    })
+                }
+
+            });
+
+            $('.date-picker').datepicker({ autoclose: true ,dateFormat: 'mm/dd/yyyy'});
+            $('.date-picker').attr("placeholder","mm/dd/yyyy");
+
+            $("#input_parentnamemodel").change(function () {
+                GetCustomerId();
+            });
+            $("#input_parentnamemodel").keyup(function () {
+                GetCustomerId();
+            });
+
+            //  MaintenanceFormWizard.init();
+            //   MaintenanceFormWizardOwner.init();
+            //SearchText();
+            $('#divachsubsection').hide();
+            $('#MainPhone_Phone1').inputmask("mask", {
+                "mask": "(999) 999-9999", removeMaskOnSubmit: true,
+            });
+            $('#MainPhone_Fax').inputmask("mask", {
+                "mask": "(999) 999-9999", removeMaskOnSubmit: true,
+            });
+
+            $('#MainPhone2_Phone1').inputmask("mask", {
+                "mask": "(999) 999-9999"
+            });
+            $('#MainPhone2_Fax').inputmask("mask", {
+                "mask": "(999) 999-9999", removeMaskOnSubmit: true,
+            });
+            $('#MainPhone2_Cell').inputmask("mask", {
+                "mask": "(999) 999-9999", removeMaskOnSubmit: true,
+            });
+
+
+            $('#BillingPhone_Phone1').inputmask("mask", {
+                "mask": "(999) 999-9999", removeMaskOnSubmit: true,
+            });
+            $('#BillingPhone_Cell').inputmask("mask", {
+                "mask": "(999) 999-9999", removeMaskOnSubmit: true,
+            });
+            $('#BillingPhone_Fax').inputmask("mask", {
+                "mask": "(999) 999-9999", removeMaskOnSubmit: true,
+            });
+
+
+            $('#chkbillingsameas').click(function () {
+                var checked = $('#chkbillingsameas').is(':checked');
+
+                var MainAddress_Name = $('#BillingContact_Name'),
+                    MainAddress_Address1 = $('#BillingAddress_Address1'),
+                    MainAddress_City = $('#BillingAddress_City'),
+                    MainAddress_State = $('#BillingStatesList'),
+                    MainAddress_PostalCode = $('#BillingAddress_PostalCode'),
+                    MainAddress_Address2 = $('#BillingAddress_Address2');
+
+                if (checked) {
+                    MainAddress_Name.val($('#CustomerViewModel_Name').val());
+                    MainAddress_Address1.val($('#MainAddress_Address1').val());
+                    MainAddress_City.val($('#MainAddress_City').val());
+                    MainAddress_State.val($('#MainStatesList').val());
+                    MainAddress_PostalCode.val($('#MainAddress_PostalCode').val());
+                    MainAddress_Address2.val($('#MainAddress_Address2').val());
+
+                    MainAddress_Name.attr("readonly", "readonly");
+                    MainAddress_Address1.attr("readonly", "readonly");
+                    MainAddress_City.attr("readonly", "readonly");
+                    MainAddress_State.attr("readonly", "readonly");
+                    MainAddress_PostalCode.attr("readonly", "readonly");
+                    MainAddress_Address2.attr("readonly", "readonly");
+
+
+                }
+                else {
+                    MainAddress_Name.val('');
+                    MainAddress_Address1.val('');
+                    MainAddress_City.val('');
+                    MainAddress_State.val('');
+                    MainAddress_PostalCode.val('');
+                    MainAddress_Address2.val('');
+
+
+                    MainAddress_Name.removeAttr("readonly");
+                    MainAddress_Address1.removeAttr("readonly");
+                    MainAddress_City.removeAttr("readonly");
+                    MainAddress_State.removeAttr("readonly");
+                    MainAddress_PostalCode.removeAttr("readonly");
+                    MainAddress_Address2.removeAttr("readonly");
+
+                }
+            });
+            $('#chkbillingcontactsameas').click(function () {
+                var MainContactAddress_FName = $('#BillingContactInformation2_Name'),
+                    //MainContactAddress_LastName = $('#BillingContact_LastName'),
+                    MainContactAddress_Title = $('#BillingContactInformation2_Title'),
+                    MainContactAddress_Phone = $('#BillingPhone_Phone1'),
+                    MainContactAddress_PhoneExt = $('#BillingPhone_PhoneExt'),
+                    MainContactAddress_Cell = $('#BillingPhone_Cell'),
+                    MainContactAddress_Fax = $('#BillingPhone_Fax'),
+                    MainContactAddress_Email = $('#BillingEmail_EmailAddress');
+                if ($(this).prop('checked')) {
+                    MainContactAddress_FName.val($('#MainContact_Name').val());
+                    // MainContactAddress_LastName.val($('#ContactInformation_LastName').val());
+                    MainContactAddress_Title.val($('#MainContact_Title').val());
+                    MainContactAddress_Phone.val($('#MainPhone2_Phone1').val());
+                    MainContactAddress_PhoneExt.val($('#MainPhone2_PhoneExt').val());
+                    MainContactAddress_Cell.val($('#MainPhone2_Cell').val());
+                    MainContactAddress_Fax.val($('#MainPhone2_Fax').val());
+                    MainContactAddress_Email.val($('#MainEmail_EmailAddress').val());
+
+                    MainContactAddress_FName.attr("readonly", "readonly");
+                    //MainContactAddress_LastName.attr("readonly", "readonly");
+                    MainContactAddress_Title.attr("readonly", "readonly");
+                    MainContactAddress_Phone.attr("readonly", "readonly");
+                    MainContactAddress_PhoneExt.attr("readonly", "readonly");
+                    MainContactAddress_Cell.attr("readonly", "readonly");
+                    MainContactAddress_Fax.attr("readonly", "readonly");
+                    MainContactAddress_Email.attr("readonly", "readonly");
+                }
+                else {
+                    MainContactAddress_FName.val('');
+                    //MainContactAddress_LastName.val('');
+                    MainContactAddress_Title.val('');
+                    MainContactAddress_Phone.val('');
+                    MainContactAddress_PhoneExt.val('');
+                    MainContactAddress_Cell.val('');
+                    MainContactAddress_Fax.val('');
+                    MainContactAddress_Email.val('');
+
+                    MainContactAddress_FName.removeAttr("readonly");
+                    //MainContactAddress_LastName.removeAttr("readonly");
+                    MainContactAddress_Title.removeAttr("readonly");
+                    MainContactAddress_Phone.removeAttr("readonly");
+                    MainContactAddress_PhoneExt.removeAttr("readonly");
+                    MainContactAddress_Cell.removeAttr("readonly");
+                    MainContactAddress_Fax.removeAttr("readonly");
+                    MainContactAddress_Email.removeAttr("readonly");
+                }
+            });
+
+
+            ///
+
+            var checkvalue = $('#BillSetting_EBill').prop('checked')
+            if (checkvalue)
+            {
+                $('#btnshowbillingcontactemail').show();
+            }
+            else
+            {
+                $('#btnshowbillingcontactemail').hide();
+            }
+        })
+
+        // Prevent the form to be submitted on ENTER
+        $('#form_wizard_1').submit(function (e) {
+            e.preventDefault();
+            //  e.preventDefault();
+        });
+
+        // Controll data
+        $('#btnContinue').click(function () {
+            var btnCount = @Convert.ToInt32(JKApi.Business.Enumeration.ButtonType.Continue);
+            $("#ButtonType").val(btnCount);
+            checkMandatoryFields(btnCount);
+
+        });
+
+        // Controll data
+        $('#btnSave').click(function () {
+
+            var btnCount = @Convert.ToInt32(JKApi.Business.Enumeration.ButtonType.Save);
+            $("#ButtonType").val(btnCount);
+            checkMandatoryFields(btnCount);
+        });
+
+        $('#chkChildAccount').click(function () {
+            var checkvalue = $('#chkChildAccount').prop('checked')
+            if (checkvalue)
+            {
+                $('#childmodal').modal('show');
+                resetmodel();
+            }
+            else
+                $('#childmodal').modal('hide');
+        });
+        function checkNameinDb()
+        {
+            if ($('#MainContact_FirstName').val() != '') {
+                var customername = $('#MainContact_FirstName').val();
+                $.ajax({
+                    url: "/Portal/Customer/getName?_Customer=" + customername,
+                    type: "GET",
+                    dataType: "json",
+                    cache: false,
+                    success: function (response) {
+                        console.log(response.result);
+                        if (response == 1) {
+                            swal(
+                                'Oops...',
+                                'Customer Name already exist in our database.',
+                                'error'
+                            )
+                        }
+                        else { $('#form_wizard_1')[0].submit(); }
+                    },
+                    error: function (error) {
+                        console.log(error.message);
+                    }
+                })
+            }
+        }
+
+        // Check mandatory fields before subitting:
+        function checkMandatoryFields(count) {
+
+            var form = $('#form_wizard_1');
+            var error = $('.alert-danger', form);
+            var success = $('.alert-success', form);
+            var isvalid = true;
+            if ($('#MainContact_FirstName').val() == '') { $('#MainContact_FirstName').css('border-color', 'red'); } else { $('#MainContact_FirstName').css('border-color', ''); }
+            if ($('#MainAddress_Address1').val() == '') { $('#MainAddress_Address1').css('border-color', 'red'); } else { $('#MainAddress_Address1').css('border-color', ''); }
+            if ($('#MainAddress_City').val() == '') { $('#MainAddress_City').css('border-color', 'red'); } else { $('#MainAddress_City').css('border-color', ''); }
+            if ($('#MainStatesList').val() == '') { $('#MainStatesList').css('border-color', 'red'); } else { $('#MainStatesList').css('border-color', ''); }
+            if ($('#MainAddress_PostalCode').val() == '' || $('#MainAddress_PostalCode').val().length != 5) { $('#MainAddress_PostalCode').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainAddress_PostalCode').css('border-color', ''); }
+            if ($('#MainPhone_Phone1').val() == '') { $('#MainPhone_Phone1').css('border-color', 'red'); } else { $('#MainPhone_Phone1').css('border-color', ''); }
+
+            if ($('#BillingContact_DisplayName').val() == '') { $('#BillingContact_DisplayName').css('border-color', 'red'); } else { $('#BillingContact_DisplayName').css('border-color', ''); }
+            if ($('#BillingAddress_Address1').val() == '') { $('#BillingAddress_Address1').css('border-color', 'red'); } else { $('#BillingAddress_Address1').css('border-color', ''); }
+            if ($('#BillingAddress_City').val() == '') { $('#BillingAddress_City').css('border-color', 'red'); } else { $('#BillingAddress_City').css('border-color', ''); }
+            if ($('#BillingStatesList').val() == '') { $('#BillingStatesList').css('border-color', 'red'); } else { $('#BillingStatesList').css('border-color', ''); }
+            if ($('#BillingAddress_PostalCode').val() == '' || $('#BillingAddress_PostalCode').val().length != 5) { $('#BillingAddress_PostalCode').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingAddress_PostalCode').css('border-color', ''); }
+
+            if ($('#BillingPhone_Phone1').val() == '') { $('#BillingPhone_Phone1').css('border-color', 'red'); } else { $('#BillingPhone_Phone1').css('border-color', ''); }
+
+
+            if ($('#ContactInformation_FirstName').val() == '') { $('#ContactInformation_FirstName').css('border-color', 'red'); } else { $('#ContactInformation_FirstName').css('border-color', ''); }
+            if ($('#ContactInformation_LastName').val() == '') { $('#ContactInformation_LastName').css('border-color', 'red'); } else { $('#ContactInformation_LastName').css('border-color', ''); }
+            if ($('#ContactInformationPhone_Phone1').val() == '') { $('#ContactInformationPhone_Phone1').css('border-color', 'red'); } else { $('#ContactInformationPhone_Phone1').css('border-color', ''); }
+
+            if ($('#BillingContact_FirstName').val() == '') { $('#BillingContact_FirstName').css('border-color', 'red'); } else { $('#BillingContact_FirstName').css('border-color', ''); }
+            if ($('#BillingContact_LastName').val() == '') { $('#BillingContact_LastName').css('border-color', 'red'); } else { $('#BillingContact_LastName').css('border-color', ''); }
+            if ($('#BillingInformationPhone_Phone1').val() == '') { $('#BillingInformationPhone_Phone1').css('border-color', 'red'); } else { $('#BillingInformationPhone_Phone1').css('border-color', ''); }
+            //if ($('#BillingAddress_PostalCode').val() == '') { $('#BillingAddress_PostalCode').css('border-color', 'red'); } else { $('#BillingAddress_PostalCode').css('border-color', ''); }
+
+
+           
+
+            if ($('#BillSetting_EffectiveDate').val() == '') { $('#BillSetting_EffectiveDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillSetting_EffectiveDate').css('border-color', ''); }
+
+            if ($("#BillSetting_PrintInvoice").is(':checked')) {
+
+                if($("#BillSetting_EBill").is(':checked') == false && $("#BillSetting_PBill").is(':checked') == false)
+                {
+                    //if (isvalid == true) { isvalid = false; }
+                    //$("#Errmsg").show();
+                }
+                else{
+                    $("#Errmsg").hide();
+                }
+
+                //if (!$("#BillSetting_EBill").is(':checked')) {
+                //    if (isvalid == true) { isvalid = false; }
+                //    $('#lblEBill').css('color', 'red');
+                //}
+                //else
+                //{
+                //    $('#lblEBill').css('color', '');
+                //}
+                //if (!$("#BillSetting_PBill").is(':checked')) {
+                //    if (isvalid == true) { isvalid = false; }
+                //    $('#lblPBill').css('color', 'red');
+                //}
+                //else
+                //{
+                //    $('#lblPBill').css('color', '');
+                //}
+            }
+            else
+            {
+                //$('#lblEBill').css('color', '');
+                //$('#lblPBill').css('color', '');
+                $("#Errmsg").hide();
+            }
+
+            //if ($('#regionlist').val() == '')
+            //{
+            //    $('#regionlist').css('border-color', 'red');
+            //} else {
+            //    $('#regionlist').css('border-color', '');
+            //}
+            $("#hdnRegionId").val($('#regionlist').val());
+
+            if (isvalid == true) {
+
+                form.validate({
+                    doNotHideMessage: true, //this option enables to show the error/success messages on tab switch.
+                    errorElement: 'span', //default input error message container
+                    errorClass: 'help-block help-block-error', // default input error message class
+                    focusInvalid: false, // do not focus the last invalid input
+                    rules: {},
+                    messages: { // custom messages for radio buttons and checkboxes
+                        'payment[]': {
+                            required: "Please select at least one option",
+                            minlength: jQuery.validator.format("Please select at least one option")
+                        }
+                    },
+
+                    errorPlacement: function (error, element) { // render error placement for each input type
+                    },
+
+                    invalidHandler: function (event, validator) { //display error alert on form submit
+                        success.hide();
+                        error.show();
+                        App.scrollTo(error, -200);
+                    },
+
+                    highlight: function (element) { // hightlight error inputs
+                        $(element)
+                            .closest('.form-group').removeClass('has-success').addClass('has-error'); // set error class to the control group
+                    },
+
+                    unhighlight: function (element) { // revert the change done by hightlight
+                        $(element)
+                            .closest('.form-group').removeClass('has-error'); // set error class to the control group
+                    },
+
+                    success: function (label) {
+                        if (label.attr("for") == "gender" || label.attr("for") == "payment[]") { // for checkboxes and radio buttons, no need to show OK icon
+                            label
+                                .closest('.form-group').removeClass('has-error').addClass('has-success');
+                            label.remove(); // remove error label here
+                        } else { // display success icon for other inputs
+                            label
+                                .addClass('valid') // mark the current input as valid and display OK icon
+                                .closest('.form-group').removeClass('has-error').addClass('has-success'); // set success class to the control group
+                        }
+                    },
+
+                    submitHandler: function (form) {
+                        success.show();
+                        error.hide();
+                        //checkNameinDb();
+                        //if (status == 0) {
+                        //form[0].submit();
+                        if (count > 0) {
+                            if ($("#lblCustomerID").text() == null) {
+                                checkNameinDb();
+                            }
+                            else {
+                                $.blockUI();
+                                $("#btnContinue").hide();
+                                $('#form_wizard_1')[0].submit();
+                                //$.unblockUI();
+                            }
+                        }
+                    }
+
+                });
+
+                // Set "error" message and abort submission
+            }
+        }
+
+        function ValidateEmail(email) {
+            var expr = /^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/;
+            return expr.test(email);
+        };
+        $('#BillSetting_EBill').click(function () {
+            var checkvalue = $('#BillSetting_EBill').prop('checked')
+            if (checkvalue)
+            {
+                $('#btnshowbillingcontactemail').show();
+            }
+            else
+            {
+                $('#btnshowbillingcontactemail').hide();
+            }
+
+        });
+        $('#btnshowbillingcontactemail').click(function () {
+
+            bindEBillEmails();
+            $('#divEBill_Emails').html('');
+            $('#txtemailaddress_ebill').val('')
+            var strEmail='';
+            $.each(ebill_email, function (index, value) {
+                $('#divEBill_Emails').append('<span style="padding:3px;float:left;width:100%">'+ value +'</span><br />');
+                strEmail+=(strEmail!=""? ",":"")+value;
+            });
+            $('#mdlAppendemail').modal({ backdrop: 'static' });
+
+        });
+
+        $('#btnaddemailaddress_ebill').click(function () {
+
+            if (!ValidateEmail($("#txtemailaddress_ebill").val())) {
+                alert("Invalid email address.");
+            }
+            else {
+                var strEmail= $('#hdfEBill_Emails').val();
+                ebill_email.push($('#txtemailaddress_ebill').val());
+                $('#divEBill_Emails').append('<span style="padding:3px;float:left;width:100%">'+ $('#txtemailaddress_ebill').val() +'</span><br />');
+                strEmail+=(strEmail!=""? ",":"")+ $('#txtemailaddress_ebill').val();
+                $('#hdfEBill_Emails').val(strEmail);
+                $('#txtemailaddress_ebill').val('')
+            }
+        });
+
+
+        function bindEBillEmails()
+        {
+            ebill_email=[];
+            var strEma=$('#hdfEBill_Emails').val();
+            $('#divEBill_Emails').html('');
+            if(strEma.length>0)
+            {
+                $.each(strEma.split(','), function (index, value) {
+                    console.log(value);
+                    ebill_email.push(value);
+                });
+            }
+            else
+            {
+                if($('#BillingEmail_EmailAddress').val()!='')
+                {
+                    $('#divEBill_Emails').append('<span style="padding:3px;float:left;width:100%">'+$('#BillingEmail_EmailAddress').val()+'</span><br />');
+                    ebill_email.push($('#BillingEmail_EmailAddress').val());
+                    $('#hdfEBill_Emails').val($('#BillingEmail_EmailAddress').val());
+                }
+            }
+        }
+
+
+
+    </script>
+}

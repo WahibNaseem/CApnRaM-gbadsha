@@ -1,0 +1,1804 @@
+﻿@model JKViewModels.DashboardViewModel
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = null;
+    int startYear = DateTime.Now.Year;
+}
+
+<style>
+    .panel-title-fd {
+        color: #e4681c;
+        font-weight: 600;
+        font-size: 13px;
+        margin: 0;
+    }
+
+    .panel-bottom {
+        margin-top: 0;
+        margin-bottom: 10px;
+        padding: 0;
+        border-radius: 4px;
+    }
+
+    .panel-heading-fd {
+        background: #39b1cc;
+        background: -moz-linear-gradient(top, #f2f3f4 0%, #d7dbdd 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f2f3f4), color-stop(100%, #d7dbdd));
+        background: -webkit-linear-gradient(top, #f2f3f4 0%, #d7dbdd 100%);
+        background: -o-linear-gradient(top, #f2f3f4 0%, #d7dbdd 100%);
+        background: -ms-linear-gradient(top, #f2f3f4 0%, #d7dbdd 100%);
+        background: linear-gradient(to bottom, #f2f3f4 0%, #d7dbdd 100%);
+        color: #ffffff;
+        padding: 5px 17px 8px;
+    }
+
+    .panel-body.border {
+        border: 1px solid #e9ecef !important;
+    }
+
+    .panel-body.border-secondary {
+        border-color: #868e96 !important;
+    }
+
+    .quicklinks .padding0 {
+        padding: 0;
+    }
+
+    .quicklinks .item-count > h3 {
+        font-weight: 700;
+        font-size: 14px;
+        text-align: right;
+        margin-top: 9px;
+    }
+
+    .quicklinks .media-heading > a {
+        color: #000;
+        font-weight: 600;
+        font-size: 11px;
+    }
+
+    .media:first-child {
+        margin-top: -15px;
+        margin-bottom: -20px;
+    }
+
+    .portlet.quickportlet {
+        padding: 0px;
+        background-color: #fff;
+    }
+
+    .quicklinks .media-body {
+        color: #999;
+    }
+
+    .amcharts-chart-div, .amChartsLegend.amcharts-legend-div, .amcharts-chart-div {
+        margin-left: 0%;
+    }
+
+    .itemDiv::-webkit-scrollbar {
+        width: 3px;
+        height: 2px;
+    }
+
+
+    .itemDiv::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+
+    .itemDiv.itemDiv::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+
+    .raphael-group-44-dataset-axis {
+        font-size: 8px !important;
+    }
+
+    .itemDiv::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    .amcharts-pie-slice {
+        transform: scale(1);
+        transform-origin: 50% 50%;
+        transition-duration: 0.3s;
+        transition: all .3s ease-out;
+        -webkit-transition: all .3s ease-out;
+        -moz-transition: all .3s ease-out;
+        -o-transition: all .3s ease-out;
+        cursor: pointer;
+        box-shadow: 0 0 30px 0 #000;
+    }
+
+        .amcharts-pie-slice:hover {
+            transform: scale(1.1);
+            filter: url(#shadow);
+        }
+
+    .hideTitle {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    .table > tfoot > tr > td, .table > tfoot > tr > th {
+        padding: 5px 3px !important;
+    }
+
+    .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12 {
+        padding: 0px 2px 0px 2px;
+    }
+
+        .col-lg-2:after, .col-lg-3:after, .col-lg-4:after, .col-lg-5:after, .col-lg-6:after, .col-lg-7:after, .col-lg-8:after, .col-lg-9:after, .col-lg-10:after, .col-lg-11:after, .col-lg-12:after {
+            content: none !important;
+        }
+
+    .row {
+        padding: 0px 2px 0px 2px;
+    }
+
+        .row:before {
+            content: none;
+        }
+
+    .dashboard-stat:before, .dashboard-stat:after {
+        content: none !important;
+    }
+
+    #AccountTypeChartdiv {
+        width: 100%;
+        height: 400px;
+    }
+
+    .rowOverLap {
+        position: absolute;
+        top: 345px;
+        right: 10px;
+    }
+
+    .rowOverLapTwo {
+        position: absolute;
+        top: 466px;
+        right: 20px;
+    }
+
+    .dashboard-stat.dashboard-stat-v2 .visual {
+        padding-top: 0px;
+        margin-bottom: 0px;
+    }
+
+    .dashboard-stat .details .desc {
+        text-align: right;
+        font-size: 14px;
+        letter-spacing: 0;
+        font-weight: 300;
+    }
+
+    .dashboard-stat .details .number {
+        padding-top: 4px;
+        text-align: right;
+        line-height: 36px;
+        letter-spacing: -1px;
+        margin-bottom: 0;
+        font-weight: 300;
+    }
+
+    .dashboard-stat .visual {
+        width: 80px;
+        height: 70px;
+        display: block;
+        float: left;
+        padding-left: 15px;
+        font-size: 35px;
+        line-height: 35px;
+    }
+
+    .dashboard-stat {
+        display: block;
+        margin-bottom: 6px;
+        overflow: hidden;
+        border-radius: 4px;
+    }
+
+    /*#BillingBreakdownByContractChartlegenddiv {
+        font-size: 9px;
+        border: 1px dotted #ccc;
+        float: left;
+    }*/
+</style>
+
+<div class="row" style="margin-top: -7px;">
+    @{
+        var totalRevenue = Model.dashboardModel.lstQuickLinks.Where(x => x.DashBoardBox == "TotalRevenue").FirstOrDefault();
+        if (totalRevenue != null)
+        {
+            <div class="col-lg-2 col-sm-6 col-xs-12">
+                <a class="dashboard-stat dashboard-stat-v2 blue" href="@totalRevenue.PageUrl">
+                    <div class="visual">
+                        <i class="fa fa-comments"></i>
+                    </div>
+                    <div class="details">
+                        <div class="number" style="font-size: 16px;">
+                            <span data-value="0" id="TotalAccountReceivable"></span>
+                        </div>
+                        <div class="desc">
+                            @totalRevenue.LinkText
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    }
+    <div class="col-lg-2 col-sm-6 col-xs-12">
+        <a class="dashboard-stat dashboard-stat-v2 red" javascript:void(0);>
+            <div class="visual">
+                <i class="fa fa-bar-chart-o"></i>
+            </div>
+            <div class="details">
+                <div class="number" style="font-size: 16px;">
+                    <span data-value="0" id="TotalRevenue"></span>
+                </div>
+                <div class="desc">Total Payment this Period</div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-lg-2 col-sm-6 col-xs-12">
+        <a class="dashboard-stat dashboard-stat-v2 purple" javascript:void(0);>
+            <div class="visual">
+                <i class="fa fa-money"></i>
+            </div>
+            <div class="details">
+                <div class="number" style="font-size: 16px;">
+                    <span data-value="0" id="TotalPayment"></span>
+                </div>
+                <div class="desc">Total Payment Received</div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-lg-2 col-sm-6 col-xs-12">
+        <a class="dashboard-stat dashboard-stat-v2 green" javascript:void(0);>
+            <div class="visual">
+                <i class="fa fa-shopping-cart"></i>
+            </div>
+            <div class="details">
+                <div class="number" style="font-size: 16px;">
+                    <span data-value="0" id="TotalInvoices"></span>
+                </div>
+                <div class="desc"> Total Invoices </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-lg-2 col-sm-6 col-xs-12">
+        <a class="dashboard-stat dashboard-stat-v2 orange" style="background-color:darkgray" javascript:void(0);>
+            <div class="visual">
+                <i class=""></i>
+            </div>
+            <div class="details">
+                <div class="number" style="font-size: 16px;">
+                    <span style="color:white" data-value="0" id="TotalCustomer"></span>
+                </div>
+                <div class="desc" style="color:white">New Customers</div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-lg-2 col-sm-6 col-xs-12">
+        <a class="dashboard-stat dashboard-stat-v2" style="background-color:sandybrown" javascript:void(0);>
+            <div class="visual">
+                <i class=""></i>
+            </div>
+            <div class="details">
+                <div class="number" style="font-size: 16px;">
+                    <span style="color:white" data-value="0" id="TotalFranchisee"></span>
+                </div>
+                <div class="desc" style="color:white">New Franchisees</div>
+            </div>
+        </a>
+    </div>
+</div>
+<div class="clearfix"></div>
+
+<!-- END DASHBOARD STATS 1-->
+
+<div class="row">
+    <div class="col-lg-9 col-xs-12 col-sm-12" style="padding-left: 0px;">
+        <div class="col-lg-6 col-xs-12 col-sm-12">
+            <div class="col-lg-12 col-xs-12 col-sm-12">
+                <div class="portlet light panel-bottom">
+                    <div class="portlet-title">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="col-md-6">
+                                    <select id="select_timeduration" class="form-control input-sm">
+                                        <option value="1">This Week</option>
+                                        <option value="2">This Week-to-date</option>
+                                        <option value="3">This Month</option>
+                                        <option value="4">This Month-to-date</option>
+                                        <option value="5">This Quarter</option>
+                                        <option value="6">This Quarter-to-date</option>
+                                        <option value="7" selected="selected">This Fiscal Year</option>
+                                        <option value="8">This Fiscal Year-to-date</option>
+                                        <option value="9">Today</option>
+                                        <option value="10">Yesterday</option>
+                                        <option value="11">Last Week</option>
+                                        <option value="12">Last Month</option>
+                                        <option value="13">Last Quarter</option>
+                                        <option value="14">Last Year</option>
+                                        @*<option value="15">Custom Date</option>*@
+                                        <option value="16">Period</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 divspandate no-padding" style="margin-top: 3px; margin-left: 0px; display: block; float: left;">
+                                    <span id="spnStartDate"></span> - <span id="spnEndtDate"></span>
+                                </div>
+                                <div class="col-md-4 no-padding" style="display: none;" id="divSD">
+                                    <input type="text" name="txtStartDate" id="txtStartDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" />
+                                </div>
+                                <div class="col-md-4 no-padding" style="display: none;" id="divED">
+                                    <input type="text" name="txtEndtDate" id="txtEndtDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" />
+                                </div>
+                                <div class="col-md-3 no-padding" style="display: none;" id="divmonth">
+                                    <select id="BillMonth" class="form-control input-sm" style="padding-left: 0px;">
+                                        <option value="">-Select-</option>
+                                        <option value="1">January</option>
+                                        <option value="2">February</option>
+                                        <option value="3">March</option>
+                                        <option value="4">April</option>
+                                        <option value="5">May</option>
+                                        <option value="6">June</option>
+                                        <option value="7">July</option>
+                                        <option value="8">August</option>
+                                        <option value="9">September</option>
+                                        <option value="10">October</option>
+                                        <option value="11">November</option>
+                                        <option value="12">December</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 no-padding" style="display: none;" id="divyear">
+                                    <select class="form-control input-sm" id="BillYear" style="padding-left: 2px;">
+                                        <option value="">-Select-</option>
+                                        @for (int i = 0; i <= 4; i++)
+                                        {
+                                            var value = startYear - i;
+                                            var selected = value == startYear ? "selected" : "";
+                                            <option value="@value">@value</option>
+                                        }
+                                    </select>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div class="row">
+                            <div id="BillingBreakdownBySizeChart" style="width:100%;height:400px;margin-top: -16px;"></div>
+                        </div>
+                        <div class="row rowOverLap">
+                            <div class="col-lg-2"></div>
+                            <div class="col-lg-8">
+                                <table class="table table-responsive table-borderd" id="tblRevenueChart">
+                                    <thead>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-lg-6 col-xs-12 col-sm-12">
+            <div class="col-lg-12 col-xs-12 col-sm-12">
+                <div class="portlet light panel-bottom">
+                    <div class="portlet-title">
+                        <div class="col-lg-12">
+                            <div class="col-lg-6">
+                                <label style="float:right;"><strong>Number Of Top Customers&nbsp; &nbsp;&nbsp;</strong> </label>
+                            </div>
+                            <div class="col-lg-3">
+                                <select class="form-control input-sm" id="RecordNumber" style="float:left;">
+                                    @for (int i = 2; i <= 30; i++)
+                                    {
+                                        <option value="@i">@i</option>
+                                    }
+
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div class="row">
+                            <div id="RevenueWiseTopCustomerChart" style="width:100%;height:400px;margin-top: -16px;"></div>
+                            @*<div id="BillingBreakdownByContractChart" style="width:100%;height:550px;"></div>*@
+                        </div>
+                        @*<div class="row rowOverLapTwo">
+                                <div class="col-lg-6"></div>
+                                <div class="col-lg-6">
+                                    <table class="table table-responsive table-borderd" id="tblBillingBreakdownByContractChart">
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>*@
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-xs-12 col-sm-12" style="padding-left: 0px;">
+
+        <div class="col-lg-12 col-xs-12 col-sm-12">
+            <div class="portlet quickportlet bordered panel-bottom">
+                <div class="portlet-title tabbable-line" style="background-color: #a3efd9;padding-left: 5px;padding-top:0px;">
+                    <div class="caption">
+                        <i class="icon-social-twitter font-dark hide"></i>
+                        <span class="caption-subject font-dark bold uppercase">Quick Actions</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="tab-content" style="height:427px;">
+                        @if (Model.dashboardModel.lstQuickLinks != null)
+                        {
+                            var groupLinks = Model.dashboardModel.lstQuickLinks.Where(x => x.DashBoardBox == "QuickLimks").GroupBy(k => k.TypeName).ToList();
+                            foreach (var links in groupLinks)
+                            {
+                                <div class="panel panel-default quicklinks" style="margin-bottom: 12px;">
+                                    <div class="panel-heading-fd">
+                                        <h3 class="panel-title-fd">@links.Key</h3>
+                                    </div>
+                                    @foreach (var link in links)
+                                    {
+                                        <div class="panel-body border border-light" style="padding:17px;">
+                                            <div class="media col-xs-12 padding0">
+                                                <div class="col-xs-1 padding0">
+                                                    <a class="pull-left" href="@link.PageUrl">
+                                                        @if (!string.IsNullOrWhiteSpace(link.iconURL))
+                                                        {
+                                                            <img class="media-object" data-src="holder.js/35x35" alt="35x35" src="@link.iconURL" style="width:24px;height:24px; margin-top: 4px">
+                                                        }
+                                                        else
+                                                        {
+                                                            <img class="media-object" data-src="holder.js/35x35" alt="35x35" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjZWVlIi8+PHRleHQgdGV4dC1hbmNob3I9Im1pZGRsZSIgeD0iMzIiIHk9IjMyIiBzdHlsZT0iZmlsbDojYWFhO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjEycHg7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NjR4NjQ8L3RleHQ+PC9zdmc+" style="width:24px;height:24px;margin-top: 4px">
+                                                        }
+                                                    </a>
+                                                </div>
+                                                <div class="col-xs-9">
+                                                    <div class="media-body">
+                                                        <h4 class="media-heading">
+                                                            <a href="@link.PageUrl">@link.LinkText</a>
+                                                        </h4>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-2 padding0 item-count">
+                                                    <h3>@link.ItemCount</h3>                                                   
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-lg-9 col-xs-12 col-sm-12" style="padding-right: 6px;">
+        <div class="portlet light ">
+            <div class="portlet-body">
+                <div id="AccountTypeChartdiv"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-xs-12 col-sm-12">
+        <div class="portlet quickportlet bordered">
+            <div class="portlet-title tabbable-line" style="background-color: #a3efd9;padding-left: 5px;">
+                <div class="caption">
+                    <i class="icon-bubbles font-dark hide"></i>
+                    <span class="caption-subject font-dark bold uppercase">Comments</span>
+                </div>
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#portlet_comments_1" data-toggle="tab"> Rejected </a>
+                    </li>
+                    <li>
+                        <a href="#portlet_comments_2" data-toggle="tab"> Approved </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="portlet-body itemDiv" style="overflow: scroll;height: 368px;overflow-x: hidden;">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="portlet_comments_1">
+                        <!-- BEGIN: Comments -->
+                        <div class="mt-comments">
+                            @if (Model.dashboardModel.lstPendingData != null)
+                            {
+                                var groups = Model.dashboardModel.lstPendingData.Where(r => r.IsRejacted == true).ToList();
+                                foreach (var links in groups)
+                                {
+                                    <div class="mt-comment">
+                                        <div class="mt-comment-img">
+                                            <img src="~/Content/admin/assets/pages/media/users/avatar1.jpg" />
+                                        </div>
+                                        <div class="mt-comment-body">
+                                            <div class="mt-comment-info">
+                                                <span class="mt-comment-author">@links.FirstName @links.LastName</span>
+                                                <span class="mt-comment-date">@links.MessageDate.ToShortDateString()</span>
+                                            </div>
+                                            <div class="mt-comment-text"> @links.Message </div>
+                                            <div class="mt-comment-details">
+                                                <span class="mt-comment-status mt-comment-status-rejected">Rejected</span>
+                                                <ul class="mt-comment-actions">
+                                                    <li>
+                                                        <a href='@Url.Action("DashboardRejectedActionClick", "Customer", new { area = "Portal", CustomerId=links.CustomerID })'>Action</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <!-- END: Comments -->
+                    </div>
+                    <div class="tab-pane" id="portlet_comments_2">
+                        <!-- BEGIN: Comments -->
+                        <div class="mt-comments">
+                            @if (Model.dashboardModel.lstPendingData != null)
+                            {
+                                var groups = Model.dashboardModel.lstPendingData.Where(r => r.Isapproved == true).ToList();
+                                foreach (var links in groups)
+                                {
+                                    <div class="mt-comment">
+                                        <div class="mt-comment-img">
+                                            <img src="~/Content/admin/assets/pages/media/users/avatar4.jpg" />
+                                        </div>
+                                        <div class="mt-comment-body">
+                                            <div class="mt-comment-info">
+                                                <span class="mt-comment-author">@links.FirstName @links.LastName</span>
+                                                <span class="mt-comment-date">@links.MessageDate.ToShortDateString()</span>
+                                            </div>
+                                            <div class="mt-comment-text"> @links.Message  </div>
+                                            <div class="mt-comment-details">
+                                                <span class="mt-comment-status mt-comment-status-approved">Approved</span>
+                                                <ul class="mt-comment-actions">
+                                                    <li>
+                                                        <a javascript:void(0);>Quick Edit</a>
+                                                    </li>
+                                                    <li>
+                                                        <a javascript:void(0);>View</a>
+                                                    </li>
+                                                    <li>
+                                                        <a javascript:void(0);>Delete</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <!-- END: Comments -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="modal fade custom-model custom-form-design" id="modal_BillingAccountBreakdownBySize" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:1000px">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;" onclick="btnBillingAccountBreakdownBySizeModalClose()"></button>
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Billing Account Breakdown By Size Details
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px 10px 15px 10px;">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div id="BillingAccountBreakdownBySize" style="margin-left:5px;margin-right:5px;"></div>
+                        @*<div class="table-responsive" style="margin:0px 5px 0px 5px;">
+                                <table class="table table-striped table-bordered table-hover order-column" id="tblBillingAccountBreakdownBySize" style="margin-top:0 !important;">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align:center;width:20px;">SL</th>
+                                            <th style="text-align:center;width:90px;">
+                                                Region Name
+                                            </th>
+                                            <th style="text-align:center;width:200px;">
+                                                Selected Type
+                                            </th>
+                                            <th style="text-align:center;width:100px;">
+                                                Customer No
+                                            </th>
+                                            <th style="text-align:center;width:400px;">
+                                                Customer Name
+                                            </th>
+                                            <th style="text-align:center;width:200px;">
+                                                Total Revenues
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <tfoot>
+                                        <tr style="background:#95a5a6;color:white;">
+                                            <td colspan="5" style="width:530px;text-align:center;"><strong>Total:</strong> </td>
+                                            <td style="text-align:center;width:200px;"><strong><span id="totalAmount1" style="float: right"></span> </strong> </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>*@
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary button-next  pull-right" onclick="btnBillingAccountBreakdownBySizeModalClose()">
+                    Close
+                    <i class="fa fa-close"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade custom-model custom-form-design" id="modal_BillingBreakdownByContract" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:1000px">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;" onclick="btnshowBillingBreakdownByContractModalClose()"></button>
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Billing Breakdown by Recurring Contract, Variable and ExtraWork Details
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px 10px 15px 10px;">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div id="BillingBreakdownByContract" style="margin-left:5px;margin-right:5px;"></div>
+                        @*<div class="table-responsive" style="margin:0px 5px 0px 5px;">
+
+                                <table class="table table-striped table-bordered table-hover order-column" id="tblBillingBreakdownByContract" style="margin-top:0 !important;">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align:center;width:20px;">SL</th>
+                                            <th style="text-align:center;width:90px;">
+                                                Region Name
+                                            </th>
+                                            <th style="text-align:center;width:200px;">
+                                                Selected Type
+                                            </th>
+                                            <th style="text-align:center;width:100px;">
+                                                Customer No
+                                            </th>
+                                            <th style="text-align:center;width:400px;">
+                                                Customer Name
+                                            </th>
+                                            <th style="text-align:center;width:200px;">
+                                                Total Revenues
+                                            </th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <tfoot>
+                                        <tr style="background:#95a5a6;color:white;">
+                                            <td colspan="5" style="width:530px;text-align:center;"><strong>Total:</strong> </td>
+                                            <td style="text-align:center;width:200px;"><strong><span id="totalAmount2" style="float: right"></span> </strong> </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>*@
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary button-next  pull-right" onclick="btnshowBillingBreakdownByContractModalClose()">
+                    Close
+                    <i class="fa fa-close"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade custom-model custom-form-design" id="modal_BillingAccountRevenueByAccountType" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:1000px">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;" onclick="btnshowBillingAccountRevenueByAccountTypeModalClose()"></button>
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Billing Account Revenues By Account Type Details
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px 10px 15px 10px;">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div id="BillingAccountRevenueByAccountType" style="margin-left:5px;margin-right:5px;"></div>
+
+                        @*<div class="table-responsive" style="margin:0px 5px 0px 5px;">
+
+                                <table class="table table-striped table-bordered table-hover order-column" id="tblBillingAccountRevenueByAccountType" style="margin-top:0 !important;">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align:center;width:20px;">SL</th>
+                                            <th style="text-align:center;width:90px;">
+                                                Region Name
+                                            </th>
+                                            <th style="text-align:center;width:200px;">
+                                                Account Type
+                                            </th>
+                                            <th style="text-align:center;width:100px;">
+                                                Customer No
+                                            </th>
+                                            <th style="text-align:center;width:400px;">
+                                                Customer Name
+                                            </th>
+                                            <th style="text-align:center;width:200px;">
+                                                Total Revenues
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <tfoot>
+                                        <tr style="background:#95a5a6;color:white;">
+                                            <td colspan="5" style="text-align:center;"><strong>Total:</strong> </td>
+                                            <td style="text-align:center;width:200px;"><strong><span id="totalAmount3" style="float: right"></span> </strong> </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>*@
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary button-next  pull-right" onclick="btnshowBillingAccountRevenueByAccountTypeModalClose()">
+                    Close
+                    <i class="fa fa-close"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade custom-model custom-form-design" id="modal_RevenueWiseTopCustomerChartDataDetails" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:1000px">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;" onclick="btnRevenueWiseTopCustomerChartDataDetailsModalClose()"></button>
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Revenue Wise Top Customer Details
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px 10px 15px 10px;">
+                <div class="row">
+                    <div class="col-lg-12" style="margin-left:5px;margin-right:5px;">
+                        <div id="RevenueWiseTopCustomerChartDataDetails"></div>
+                        @*<div class="table-responsive" style="margin:0px 5px 0px 5px;">
+                                <table class="table table-striped table-bordered table-hover order-column" id="tblRevenueWiseTopCustomerChartDataDetails" style="margin-top:0 !important;">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align:center;width:20px;">SL</th>
+                                            <th style="text-align:center;width:90px;">
+                                                Region Name
+                                            </th>
+                                            <th style="text-align:center;width:200px;">
+                                                Customer Name
+                                            </th>
+                                            <th style="text-align:center;width:100px;">
+                                                Invoice No
+                                            </th>
+                                            <th style="text-align:center;width:300px;">
+                                                Detail Description
+                                            </th>
+
+                                            <th style="text-align:center;width:100px;">
+                                                Invoice Date
+                                            </th>
+                                            <th style="text-align:center;width:200px;">
+                                                Total
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <tfoot>
+                                        <tr style="background:#95a5a6;color:white;">
+                                            <td colspan="6" style="width:530px;text-align:center;"><strong>Total:</strong> </td>
+                                            <td style="text-align:center;width:200px;"><strong><span id="totalAmountTopCustomer" style="float: right"></span> </strong> </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>*@
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary button-next  pull-right" onclick="btnRevenueWiseTopCustomerChartDataDetailsModalClose()">
+                    Close
+                    <i class="fa fa-close"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="@Url.Content("~/Scripts/fusioncharts/js/fusioncharts.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/fusioncharts/js/fusioncharts.charts.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/fusioncharts/js/themes/fusioncharts.theme.fint.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/fusioncharts/js/themes/fusioncharts.theme.ocean.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/fusioncharts/js/themes/fusioncharts.theme.zune.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/fusioncharts/js/themes/fusioncharts.theme.carbon.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+
+<script>
+
+    runWhenReady();
+
+    function runWhenReady() {
+        if (window.$)
+            onReady();
+        else
+            setTimeout(runWhenReady, 100);
+    }
+
+    function onReady() {
+
+        $('#RecordNumber').val(10);
+        $('#tblRevenueChart').hide();
+        $('#tblBillingBreakdownByContractChart').hide();
+
+        applyDurationFilter(7);
+        $('#select_timeduration').change(function () {
+            var value = parseInt($(this).val());
+            applyDurationFilter(value);
+        });
+        $('#RecordNumber').change(function () {
+            getDashboardData();
+            //getRevenueWiseTopCustomerChartData();
+        });
+
+        $('#txtStartDate').change(function () {
+            $("#spnStartDate").text($(this).val())
+            var spnStartDate = $("#spnStartDate").text();
+            var spnEndDate = $("#spnEndtDate").text();
+            if (spnStartDate && spnEndDate) {
+                getDashboardData();
+                //getBillingBreakdownBySizeChartData();
+                //getRevenueWiseTopCustomerChartData();
+                ////getBillingBreakdownByContractChartData();
+                //getDashboardAccountTypeWiseChartData();
+            }
+        });
+        $('#txtEndtDate').change(function () {
+            $("#spnEndtDate").text($(this).val())
+            var spnStartDate = $("#spnStartDate").text();
+            var spnEndDate = $("#spnEndtDate").text();
+            if (spnStartDate && spnEndDate) {
+                getDashboardData();
+                //getBillingBreakdownBySizeChartData();
+                //getRevenueWiseTopCustomerChartData();
+                ////getBillingBreakdownByContractChartData();
+                //getDashboardAccountTypeWiseChartData();
+            }
+        });
+        $('#BillMonth').change(function () {
+            var billMonth = parseInt($(this).val());
+            var billYear = parseInt($('#BillYear').val());
+            if (billMonth > 0 && billYear > 0) {
+                $('#spnStartDate').html('');
+                $('#spnEndtDate').html('');
+
+                getDashboardData();
+                //getBillingBreakdownBySizeChartData();
+                //getRevenueWiseTopCustomerChartData();
+                ////getBillingBreakdownByContractChartData();
+                //getDashboardAccountTypeWiseChartData();
+
+            }
+        });
+
+        $('#BillYear').change(function () {
+            var billYear = parseInt($(this).val());
+            var billMonth = parseInt($('#BillMonth').val());
+            if (billMonth > 0 && billYear > 0) {
+                $('#spnStartDate').html('');
+                $('#spnEndtDate').html('');
+
+                getDashboardData();
+                //getBillingBreakdownBySizeChartData();
+                //getRevenueWiseTopCustomerChartData();
+                ////getBillingBreakdownByContractChartData();
+                //getDashboardAccountTypeWiseChartData();
+            }
+        });
+
+        //getDashboardData();
+    }
+
+    function formatJSONDateUtc(jsonDate) {
+        if (jsonDate != null) {
+            var dtstr = jsonDate.substr(6);
+            var dateString = dtstr.substring(0, dtstr.length - 2);
+            var currentTime = new Date(parseInt(dateString)).toUTCString();
+            var date = moment.utc(currentTime).format("MM/DD/YYYY");
+            return date;
+        }
+        return null;
+    }
+
+    function getRevenueWiseTopCustomerChartData() {
+        var recordNumber = $('#RecordNumber').val();
+        var spnStartDate = $("#spnStartDate").text();
+        var spnEndDate = $("#spnEndtDate").text();
+        var billYear = $('#BillYear').val();
+        var billMonth = $('#BillMonth').val();
+
+        $('#RevenueWiseTopCustomerChart').empty();
+
+        var sURL = '@Url.Action("GetRevenueWiseTopCustomerChartData", "Customer", new { area = "Portal" })?recordNumber=' + recordNumber + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate + '&billMonth=' + billMonth + '&billYear=' + billYear;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (res) {
+
+                var data = [];
+                $.each(res, function (index, value) {
+
+                    var objData = {
+                        link: "JavaScript:getRevenueWiseTopCustomerChartDataDetails(" + value.CustomerId + ");",
+                        label: value.RangeName,
+                        value: value.TotalRevenue,
+                        color: value.ColorCode
+                    }
+                    data.push(objData);
+
+                });
+
+                FusionCharts.ready(function () {
+                    var salesChart = new FusionCharts({
+                        type: 'bar3d',
+                        renderAt: 'RevenueWiseTopCustomerChart',
+                        width: '100%',
+                        height: '400',
+                        dataFormat: 'json',
+                        dataSource: {
+                            "chart": {
+                                "caption": "Top Revenued customer",
+                                "subCaption": "",
+                                "xAxisName": "Customer Name",
+                                "yAxisName": "Revenue ($)",
+                                "numberPrefix": "$",
+                                "alignCaptionWithCanvas": "0",
+                                "canvasBgAlpha": "0",
+                                "theme": "fint"
+                            },
+                            "data": data
+                        }
+                    })
+                    .render();
+                });
+
+            },
+            error: function () {
+
+            }
+        });
+    };
+
+    function btnRevenueWiseTopCustomerChartDataDetailsModalClose() {
+        $("#modal_RevenueWiseTopCustomerChartDataDetails").modal('hide');
+    }
+
+    function getRevenueWiseTopCustomerChartDataDetails(flag) {
+        $('#modal_RevenueWiseTopCustomerChartDataDetails').modal('show');
+        var spnStartDate = $("#spnStartDate").text();
+        var spnEndDate = $("#spnEndtDate").text();
+        var billYear = $('#BillYear').val();
+        var billMonth = $('#BillMonth').val();
+
+        //var elem = $('#tblRevenueWiseTopCustomerChartDataDetails tbody');
+        //$('#tblRevenueWiseTopCustomerChartDataDetails tbody').empty('');
+        //var sl = 0;
+        //$(elem).html('');
+        var url = '@Url.Action("GetRevenueWiseTopCustomerChartDataDetailsView", "Customer", new { area = "Portal" })?flag=' + encodeURIComponent(flag) + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate + '&billMonth=' + billMonth + '&billYear=' + billYear;
+
+        $('#RevenueWiseTopCustomerChartDataDetails').load(url);
+
+        @*$.ajax({
+            url: '@Url.Action("GetRevenueWiseTopCustomerChartDataDetails", "Customer", new { area = "Portal" })?flag=' + flag + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate + '&billMonth=' + billMonth + '&billYear=' + billYear,
+            success: function (res) {
+                var tempRow = "";
+                var totalAmount = 0.0;
+
+                var sl = 0;
+                $('#totalAmountTopCustomer').text('');
+
+                $.each(res, function (index, value) {
+
+                    tempRow = "";
+
+                    totalAmount = totalAmount + parseFloat(value.Total);
+
+                    sl = sl + 1;
+                    tempRow += '<tr>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + sl + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.RegionName + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.RangeName + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.InvoiceNo + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.DetailDescription + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + formatJSONDateUtc(value.InvoiceDate) + '</td>';
+                    tempRow += '<td style="text-align: right;font-size: 12px;">' + formatCurrency(value.Total, true) + '</td>';
+                    tempRow += '</tr>';
+
+                    $(elem).append(tempRow);
+                });
+
+                $('#totalAmountTopCustomer').text(formatCurrency(totalAmount, true));
+
+            },
+            error: function () { }
+
+        });*@
+    }
+
+
+
+    function btnshowBillingBreakdownByContractModalClose() {
+        $("#modal_BillingBreakdownByContract").modal('hide');
+    }
+    function showBillingBreakdownByContractDetail(flag) {
+        $('#modal_BillingBreakdownByContract').modal('show');
+
+        var spnStartDate = $("#spnStartDate").text();
+        var spnEndDate = $("#spnEndtDate").text();
+        var billYear = $('#BillYear').val();
+        var billMonth = $('#BillMonth').val();
+
+        var url = '@Url.Action("GetBillingAccountBreakdownByContractDataView", "DashBoard", new { area = "Portal" })?flagId=' + encodeURIComponent(flag) + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate + '&billMonth=' + billMonth + '&billYear=' + billYear;
+
+        $('#BillingBreakdownByContract').load(url);
+
+        @*var sl = 0;
+        $(elem).html('');
+        $.ajax({
+            url: '@Url.Action("GetBillingAccountBreakdownByContractData", "DashBoard", new { area = "Portal" })?flagId=' + flag + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate + '&billMonth=' + billMonth + '&billYear=' + billYear,
+            success: function (res) {
+                var tempRow = "";
+                var totalAmount = 0.0;
+
+                var sl = 0;
+                $('#totalAmount2').text('');
+
+                $.each(res, function (index, value) {
+
+                    tempRow = "";
+
+                    totalAmount = totalAmount + parseFloat(value.Total);
+                    sl = sl + 1;
+                    tempRow += '<tr>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + sl + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.RegionName + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.RangeName + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.CustomerNo + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.CustomerName + '</td>';
+                    tempRow += '<td style="text-align: right;font-size: 12px;">' + formatCurrency(value.Total, true) + '</td>';
+                    tempRow += '</tr>';
+
+                    $(elem).append(tempRow);
+                });
+
+                $('#totalAmount2').text(formatCurrency(totalAmount, true));
+
+            },
+            error: function () { }
+
+        });*@
+    }
+
+    function btnBillingAccountBreakdownBySizeModalClose() {
+        $("#modal_BillingAccountBreakdownBySize").modal('hide');
+    }
+    function showBillingBreakdownBySizeDetail(flag) {
+        $('#modal_BillingAccountBreakdownBySize').modal('show');
+
+        var spnStartDate = $("#spnStartDate").text();
+        var spnEndDate = $("#spnEndtDate").text();
+        var billYear = $('#BillYear').val();
+        var billMonth = $('#BillMonth').val();
+
+        //var elem = $('#tblBillingAccountBreakdownBySize tbody');
+        //$('#tblBillingAccountBreakdownBySize tbody').empty('');
+
+
+        var url = '@Url.Action("GetBillingAccountBreakdownBySizeDataView", "DashBoard", new { area = "Portal" })?flagId=' + encodeURIComponent(flag) + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate + '&billMonth=' + billMonth + '&billYear=' + billYear;
+
+        $('#BillingAccountBreakdownBySize').load(url);
+
+        @*var sl = 0;
+        $(elem).html('');
+        $.ajax({
+            url: '@Url.Action("GetBillingAccountBreakdownBySizeData", "DashBoard", new { area = "Portal" })?flagId=' + flag + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate + '&billMonth=' + billMonth + '&billYear=' + billYear,
+            success: function (res) {
+                var tempRow = "";
+                var totalAmount = 0.0;
+                var sl = 0;
+                $('#totalAmount1').text('');
+
+                $.each(res, function (index, value) {
+
+                    tempRow = "";
+
+                    totalAmount = totalAmount + parseFloat(value.Total);
+                    sl = sl + 1;
+                    tempRow += '<tr>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + sl + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.RegionName + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.RangeName + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.CustomerNo + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.CustomerName + '</td>';
+                    tempRow += '<td style="text-align: right;font-size: 12px;">' + formatCurrency(value.Total, true) + '</td>';
+                    tempRow += '</tr>';
+
+                    $(elem).append(tempRow);
+                });
+
+                $('#totalAmount1').text(formatCurrency(totalAmount, true));
+            },
+            error: function () { }
+
+        });*@
+    };
+
+    function btnshowBillingAccountRevenueByAccountTypeModalClose() {
+        $("#modal_BillingAccountRevenueByAccountType").modal('hide');
+    }
+    function showBillingAccountRevenueByAccountTypeDetail(flag) {
+        $('#modal_BillingAccountRevenueByAccountType').modal('show');
+
+        var spnStartDate = $("#spnStartDate").text();
+        var spnEndDate = $("#spnEndtDate").text();
+        var billYear = $('#BillYear').val();
+        var billMonth = $('#BillMonth').val();
+
+        var url = '@Url.Action("GetBillingAccountRevenueByAccountTypeDataView", "DashBoard", new { area = "Portal" })?flagId=' + encodeURIComponent(flag) + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate + '&billMonth=' + billMonth + '&billYear=' + billYear;
+
+        $('#BillingAccountRevenueByAccountType').load(url);
+
+
+        @*var elem = $('#tblBillingAccountRevenueByAccountType tbody');
+        var sl = 0;
+        $(elem).html('');
+        $.ajax({
+            url: '@Url.Action("GetBillingAccountRevenueByAccountTypeData", "DashBoard", new { area = "Portal" })?flagId=' + flag + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate + '&billMonth=' + billMonth + '&billYear=' + billYear,
+            success: function (res) {
+                var tempRow = "";
+                var totalAmount = 0.0;
+                var sl = 0;
+                $('#totalAmount3').text('');
+
+                $.each(res, function (index, value) {
+
+                    tempRow = "";
+
+                    totalAmount = totalAmount + parseFloat(value.Total);
+                    sl = sl + 1;
+                    tempRow += '<tr>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + sl + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.RegionName + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.RangeName + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.CustomerNo + '</td>';
+                    tempRow += '<td style="text-align: center;font-size: 12px;">' + value.CustomerName + '</td>';
+                    tempRow += '<td style="text-align: right;font-size: 12px;">' + formatCurrency(value.Total, true) + '</td>';
+                    tempRow += '</tr>';
+
+                    $(elem).append(tempRow);
+                });
+
+                $('#totalAmount3').text(formatCurrency(totalAmount, true));
+
+            },
+            error: function () { }
+
+        });*@
+
+    }
+
+
+    function applyDurationFilter(v) {
+
+        $('#spnStartDate').html('');
+        $('#spnEndtDate').html('');
+        $('.divspandate').show();
+        $('#divSD').hide();
+        $('#divED').hide();
+        $('#divmonth').hide();
+        $('#divyear').hide();
+        $('#spnStartDate').html('');
+        $('#spnEndtDate').html('');
+        $('#BillMonth').val('');
+        $('#BillYear').val('');
+
+        switch (v) {
+            case 1:
+                firstDay = moment().startOf('isoWeek').toString();
+                lastDay = moment().endOf('isoWeek').toString();
+                break;
+            case 2:
+                //code block
+                firstDay = moment().startOf('isoWeek').toString();
+                lastDay = new Date().toString();
+                break;
+            case 3:
+                firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                break;
+            case 4:
+                //code block
+                firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                lastDay = new Date().toString();
+                break;
+            case 5:
+                //code block
+                firstDay = moment().startOf('quarter').toString();
+                lastDay = moment().endOf('quarter').toString();
+                break;
+            case 6:
+                //code block
+                firstDay = moment().startOf('quarter').toString();
+                lastDay = new Date().toString();
+                break;
+            case 7:
+                //code block
+                firstDay = moment().startOf('year').toString();;
+                lastDay = moment().endOf('year').toString();
+                break;
+            case 8:
+                //code block
+                firstDay = moment().startOf('year').toString();
+                lastDay = new Date().toString();
+                break;
+            case 9:
+                //code block
+                firstDay = moment().toString();
+                lastDay = moment().toString();
+                break;
+            case 10:
+                //code block
+                firstDay = moment().add(-1, 'days').toString();
+                lastDay = moment().add(-1, 'days').toString();
+                break;
+            case 11:
+                //code block
+                firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                break;
+            case 12:
+                //code block
+                firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                break;
+            case 13:
+                //code block
+                firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                break;
+            case 14:
+                //code block
+                firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                break;
+            case 15:
+                //code block
+                $('#divspandate').hide();
+                $('#divSD').show();
+                $('#divED').show();
+                $('#txtStartDate').val('');
+                $('#txtEndtDate').val('')
+                break;
+            case 16:
+                $('.divspandate').hide();
+                $('#divSD').hide();
+                $('#divED').hide();
+                $('#divmonth').show();
+                $('#divyear').show();
+                break
+            default:
+                //code block
+        }
+        $('#spnStartDate').html(moment(firstDay).format('L'));
+        $('#spnEndtDate').html(moment(lastDay).format('L'));
+
+        var value = parseInt($('#select_timeduration').val());
+
+        if (value != 16) {
+            //getBillingBreakdownBySizeChartData();
+            //getRevenueWiseTopCustomerChartData();
+            ////getBillingBreakdownByContractChartData();
+            //getDashboardAccountTypeWiseChartData();
+            getDashboardData();
+        } else {
+            $("#spnStartDate").text('');
+            $("#spnEndtDate").text('');
+
+        }
+    };
+    function getBillingBreakdownBySizeChartData() {
+        var dataProvider = [];
+        var totalAmount = 0.0;
+        var spnStartDate = $("#spnStartDate").text();
+        var spnEndDate = $("#spnEndtDate").text();
+        var billYear = $('#BillYear').val();
+        var billMonth = $('#BillMonth').val();
+        $('#BillingBreakdownBySizeChart').empty();
+
+
+        var sURL = '@Url.Action("GetDashboardRevenueChartData", "DashBoard", new { area = "Portal" })?spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate + '&billMonth=' + billMonth + '&billYear=' + billYear;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (res) {
+                var total = 0;
+                var data = [];
+                $.each(res, function (index, value) {
+                    total = total + parseFloat(value.TotalAccountReceivable);
+                    var objData = {
+                        link: "JavaScript:showBillingBreakdownBySizeDetail(" + value.RangeName + ");",
+                        label: value.RangeName,
+                        value: value.TotalAccountReceivable,
+                        color: value.ColorCode
+                    }
+                    data.push(objData);
+
+                });
+
+                loadChartRevenueTable(res, total);
+                FusionCharts.ready(function () {
+                    var demographicsChart = new FusionCharts({
+                        type: 'pie3d',
+                        renderAt: 'BillingBreakdownBySizeChart',
+                        width: '100%',
+                        height: '275',
+                        dataFormat: 'json',
+                        dataSource: {
+                            "chart": {
+                                "caption": "Billing Account Breakdown By Size",
+                                "subCaption": "Revenue($)",
+                                "startingAngle": "120",
+                                "showLabels": "0",
+                                "showLegend": "1",
+                                "enableMultiSlicing": "0",
+                                "slicingDistance": "15",
+                                "showPercentValues": "1",
+                                "showPercentInTooltip": "0",
+                                "plotTooltext": "$label : $datavalue",
+                                "theme": "fint"
+                            },
+                            "data": data
+                        }
+                    });
+                    demographicsChart.render();
+
+                });
+            },
+            error: function () {
+
+            }
+        });
+    };
+
+    function getBillingBreakdownByContractChartData() {
+        var dataProvider = [];
+        var spnStartDate = $("#spnStartDate").text();
+        var spnEndDate = $("#spnEndtDate").text();
+        var billYear = $('#BillYear').val();
+        var billMonth = $('#BillMonth').val();
+
+        var totalAmount = 0.0;
+        $('#BillingBreakdownByContractChart').empty();
+
+        var sURL = '@Url.Action("GetBillingBreakdownByContractChartDataForDashboard", "Management", new { area = "Portal" })?spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate + '&billMonth=' + billMonth + '&billYear=' + billYear;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (res) {
+                var data = [];
+                var totalAmount = 0;
+                $.each(res, function (index, value) {
+                    totalAmount = totalAmount + value.TotalAccountReceivable;
+                    var objData = {
+                        link: "JavaScript:showBillingBreakdownByContractDetail(" + value.RangeName + ");",
+                        label: value.RangeName,
+                        value: value.TotalAccountReceivable,
+                        color: value.ColorCode
+                    }
+                    data.push(objData);
+
+                });
+
+                loadBillingBreakdownByContractChartTable(res, totalAmount);
+                FusionCharts.ready(function () {
+                    var demographicsChart = new FusionCharts({
+                        type: 'pie3d',
+                        renderAt: 'BillingBreakdownByContractChart',
+                        width: '100%',
+                        height: '550',
+                        dataFormat: 'json',
+                        dataSource: {
+                            "chart": {
+                                "caption": "Billing Breakdown by Recurring Contract, Variable and ExtraWork",
+                                "subCaption": "Revenue($)",
+                                "startingAngle": "120",
+                                "showLabels": "0",
+                                "showLegend": "1",
+                                "enableMultiSlicing": "0",
+                                "slicingDistance": "15",
+                                "showPercentValues": "1",
+                                "showPercentInTooltip": "0",
+                                "plotTooltext": "$label : $datavalue",
+                                "theme": "fint"
+                            },
+                            "data": data
+                        }
+                    });
+                    demographicsChart.render();
+
+                });
+            },
+            error: function () {
+
+            }
+        });
+    };
+
+    function formatCurrency(total, dollar) {
+        dollar = (dollar == true ? true : false);
+        var neg = false;
+        if (total < 0) {
+            neg = true;
+            total = Math.abs(total);
+        }
+        return (neg ? "-" : '') + (dollar ? "$" : "") + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+    };
+
+    function getDashboardData() {
+        var dataProvider = [];
+        var totalAmount = 0.0;
+        var recordNumber = $('#RecordNumber').val();
+        $('#BillingBreakdownBySizeChart').empty();
+        var spnStartDate = $("#spnStartDate").text();
+        var spnEndDate = $("#spnEndtDate").text();
+        var billYear = $('#BillYear').val();
+        var billMonth = $('#BillMonth').val();
+
+        $('#TotalAccountReceivable').text(0);
+        $('#TotalRevenue').text(0);
+        $('#TotalInvoices').text(0);
+        $('#TotalPayment').text(0);
+        $('#TotalCustomer').text(0);
+        $('#TotalFranchisee').text(0);
+
+        var sURL = '@Url.Action("GetDashboardData", "DashBoard", new { area = "Portal" })?spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate + '&billMonth=' + billMonth + '&billYear=' + billYear + '&recordNumber=' + recordNumber;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                if (data.DashboardModel != null) {
+                    //var percentage = data.TotalAccountReceivable > 0 ? ((data.TotalRevenue * 100.00) / data.TotalAccountReceivable) : 0.00;
+                    $('#TotalAccountReceivable').text(formatCurrency(data.DashboardModel.TotalAccountReceivable, true));
+                    $('#TotalAccountReceivable').data('value', data.DashboardModel.TotalAccountReceivable);
+
+                    $('#TotalRevenue').text(formatCurrency(data.DashboardModel.TotalRevenue, true));
+                    $('#TotalRevenue').data('value', data.DashboardModel.TotalRevenue);
+
+                    $('#TotalInvoices').text(data.DashboardModel.TotalInvoices.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                    $('#TotalInvoices').data('value', data.DashboardModel.TotalInvoices);
+
+                    $('#TotalPayment').data('value', data.DashboardModel.TotalPayment);
+                    $('#TotalPayment').text(formatCurrency(data.DashboardModel.TotalPayment, true));
+
+                    $('#TotalCustomer').data('value', data.DashboardModel.TotalCustomer.toFixed(0));
+                    $('#TotalCustomer').text(data.DashboardModel.TotalCustomer.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+
+                    $('#TotalFranchisee').data('value', data.DashboardModel.TotalFranchisee.toFixed(0));
+                    $('#TotalFranchisee').text(data.DashboardModel.TotalFranchisee.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                } else {
+                    $('#TotalAccountReceivable').text(0);
+                    $('#TotalRevenue').text(0);
+                    $('#TotalInvoices').text(0);
+                    $('#TotalPayment').text(0);
+                    $('#TotalCustomer').text(0);
+                    $('#TotalFranchisee').text(0);
+                }
+
+                //01
+                var res = data.BillingBreakdownBySizeChartData;
+                var total = 0;
+                var data_01 = [];
+                $.each(res, function (index, value) {
+                    total = total + parseFloat(value.TotalAccountReceivable);
+                    var objData = {
+                        link: "JavaScript:showBillingBreakdownBySizeDetail(" + value.RangeName + ");",
+                        label: value.RangeName,
+                        value: value.TotalAccountReceivable,
+                        color: value.ColorCode
+                    }
+                    data_01.push(objData);
+
+                });
+
+                loadChartRevenueTable(res, total);
+                FusionCharts.ready(function () {
+                    var demographicsChart = new FusionCharts({
+                        type: 'pie3d',
+                        renderAt: 'BillingBreakdownBySizeChart',
+                        width: '100%',
+                        height: '275',
+                        dataFormat: 'json',
+                        dataSource: {
+                            "chart": {
+                                "caption": "Billing Account Breakdown By Size",
+                                "subCaption": "Revenue($)",
+                                "startingAngle": "120",
+                                "showLabels": "0",
+                                "showLegend": "1",
+                                "enableMultiSlicing": "0",
+                                "slicingDistance": "15",
+                                "showPercentValues": "1",
+                                "showPercentInTooltip": "0",
+                                "plotTooltext": "$label : $datavalue",
+                                "theme": "fint"
+                            },
+                            "data": data_01
+                        }
+                    });
+                    demographicsChart.render();
+
+                });
+                //02
+                $('#RevenueWiseTopCustomerChart').empty();
+                var res02 = data.RevenueWiseTopCustomerChartData;
+                var data02 = [];
+                $.each(res02, function (index, value) {
+
+                    var objData = {
+                        link: "JavaScript:getRevenueWiseTopCustomerChartDataDetails(" + value.CustomerId + ");",
+                        label: value.RangeName,
+                        value: value.TotalRevenue,
+                        color: value.ColorCode
+                    }
+                    data02.push(objData);
+
+                });
+
+                FusionCharts.ready(function () {
+                    var salesChart = new FusionCharts({
+                        type: 'bar3d',
+                        renderAt: 'RevenueWiseTopCustomerChart',
+                        width: '100%',
+                        height: '400',
+                        dataFormat: 'json',
+                        dataSource: {
+                            "chart": {
+                                "caption": "Top Revenued customer",
+                                "subCaption": "",
+                                "xAxisName": "Customer Name",
+                                "yAxisName": "Revenue ($)",
+                                "numberPrefix": "$",
+                                "alignCaptionWithCanvas": "0",
+                                "canvasBgAlpha": "0",
+                                "theme": "fint"
+                            },
+                            "data": data02
+                        }
+                    })
+                        .render();
+                });
+                //03
+                $('#AccountTypeChartdiv').empty();
+                var res03 = data.DashboardAccountTypeWiseChartData;
+                var data_03 = [];
+                $.each(res03, function (index, value) {
+
+                    var objData = {
+                        link: "JavaScript:showBillingAccountRevenueByAccountTypeDetail(" + value.RangeName + ");",
+                        label: value.RangeName,
+                        value: value.TotalAccountReceivable,
+                        color: value.ColorCode
+                    }
+                    data_03.push(objData);
+
+                });
+
+                FusionCharts.ready(function () {
+                    var revenueChart = new FusionCharts({
+                        type: 'column3d',
+                        renderAt: 'AccountTypeChartdiv',
+                        width: '100%',
+                        height: '400',
+                        dataFormat: 'json',
+                        dataSource: {
+                            "chart": {
+                                "caption": "Billing Account Revenues By Account Type",
+                                "subCaption": "",
+                                "xAxisName": "Account Type",
+                                "yAxisName": "Revenues($)",
+                                "paletteColors": "#0075c2",
+                                "valueFontColor": "#ffffff",
+                                "baseFont": "Helvetica Neue,Arial",
+                                "captionFontSize": "14",
+                                "subcaptionFontSize": "14",
+                                "subcaptionFontBold": "0",
+                                "placeValuesInside": "1",
+                                "labelDisplay": "rotate",
+                                "rotateValues": "1",
+                                "showShadow": "0",
+                                "divlineColor": "#999999",
+                                "divLineIsDashed": "1",
+                                "divlineThickness": "1",
+                                "divLineDashLen": "1",
+                                "divLineGapLen": "1",
+                                "canvasBgColor": "#ffffff"
+                            },
+
+                            "data": data_03
+                        }
+                    });
+                    revenueChart.render();
+                });
+
+
+
+
+
+
+            },
+            error: function () {
+
+            }
+        });
+    };
+    function getDashboardAccountTypeWiseChartData() {
+        var spnStartDate = $("#spnStartDate").text();
+        var spnEndDate = $("#spnEndtDate").text();
+        var billYear = $('#BillYear').val();
+        var billMonth = $('#BillMonth').val();
+
+        $('#AccountTypeChartdiv').empty();
+        var sURL = '@Url.Action("GetDashboardAccountTypeWiseChartData", "DashBoard", new { area = "Portal" })?spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate + '&billMonth=' + billMonth + '&billYear=' + billYear;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (res) {
+                var data = [];
+                $.each(res, function (index, value) {
+
+                    var objData = {
+                        link: "JavaScript:showBillingAccountRevenueByAccountTypeDetail(" + value.RangeName + ");",
+                        label: value.RangeName,
+                        value: value.TotalAccountReceivable,
+                        color: value.ColorCode
+                    }
+                    data.push(objData);
+
+                });
+
+                FusionCharts.ready(function () {
+                    var revenueChart = new FusionCharts({
+                        type: 'column3d',
+                        renderAt: 'AccountTypeChartdiv',
+                        width: '100%',
+                        height: '400',
+                        dataFormat: 'json',
+                        dataSource: {
+                            "chart": {
+                                "caption": "Billing Account Revenues By Account Type",
+                                "subCaption": "",
+                                "xAxisName": "Account Type",
+                                "yAxisName": "Revenues($)",
+                                "paletteColors": "#0075c2",
+                                "valueFontColor": "#ffffff",
+                                "baseFont": "Helvetica Neue,Arial",
+                                "captionFontSize": "14",
+                                "subcaptionFontSize": "14",
+                                "subcaptionFontBold": "0",
+                                "placeValuesInside": "1",
+                                "labelDisplay": "rotate",
+                                "rotateValues": "1",
+                                "showShadow": "0",
+                                "divlineColor": "#999999",
+                                "divLineIsDashed": "1",
+                                "divlineThickness": "1",
+                                "divLineDashLen": "1",
+                                "divLineGapLen": "1",
+                                "canvasBgColor": "#ffffff"
+                            },
+
+                            "data": data
+                        }
+                    });
+                    revenueChart.render();
+                });
+
+            },
+            error: function () {
+
+            }
+        });
+    };
+
+
+    function loadChartRevenueTable(data, totalAmount) {
+        $('#tblRevenueChart').show();
+        var elem = $('#tblRevenueChart tbody');
+        var tempRow = "";
+        $(elem).html('');
+        var totalActiveAccountC1 = 0.0;
+        var totalAccountReceivableC1 = 0.0;
+        var totalPercentC1 = 0.0;
+        $('#TotalActiveAccountC1').text(totalActiveAccountC1);
+        $('#TotalAccountReceivableC1').text(formatCurrency(totalAccountReceivableC1, true));
+
+        $.each(data, function (index, value) {
+            tempRow = "";
+            totalActiveAccountC1 = totalActiveAccountC1 + value.TotalAccount;
+            totalAccountReceivableC1 = totalAccountReceivableC1 + value.TotalAccountReceivable;
+            tempRow += '<tr>';
+            tempRow += '<td style="width: 20px; height: 10px; background:' + value.ColorCode + '"></td>'
+            tempRow += '<td style="width: 270px;text-align: left;font-size: 9px;font-weight: bold;">' + value.RangeName + '</td>';
+            tempRow += '<td style="width: 20px;text-align: right;font-size: 10px;font-weight: bold;">' + value.TotalAccount + '</td>';
+            tempRow += '<td style="width: 150px;text-align: right;font-size: 10px;font-weight: bold;">' + formatCurrency(value.TotalAccountReceivable, true) + '</td>';
+            tempRow += '</tr>';
+
+            $(elem).append(tempRow);
+
+        });
+
+    };
+
+    function loadBillingBreakdownByContractChartTable(data, totalAmount) {
+        $('#tblBillingBreakdownByContractChart').show();
+        var elem = $('#tblBillingBreakdownByContractChart tbody');
+        var tempRow = "";
+        $(elem).html('');
+
+        $.each(data, function (index, value) {
+            tempRow = "";
+            tempRow += '<tr >';
+            tempRow += '<td style="width: 20px; height: 10px; background:' + value.ColorCode + '"></td>'
+            tempRow += '<td style="width: 270px;text-align: left;font-size: 9px;font-weight: bold;">' + value.RangeName + '</td>';
+            tempRow += '<td style="width: 20px;text-align: right;font-size: 10px;font-weight: bold;">' + value.TotalAccount + '</td>';
+            tempRow += '<td style="width: 150px;text-align: right;font-size: 10px;font-weight: bold;">' + formatCurrency(value.TotalAccountReceivable, true) + '</td>';
+            tempRow += '</tr>';
+
+            $(elem).append(tempRow);
+        });
+    };
+
+
+</script>

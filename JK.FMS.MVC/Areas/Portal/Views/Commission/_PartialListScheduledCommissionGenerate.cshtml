@@ -1,0 +1,264 @@
+﻿@model JKViewModels.Commission.ScheduledCommissionGenerateViewModel
+<div class="headerbox" style="margin-top:10px;">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="">
+                    <div class="col-md-7 pull-left no-padding">
+                        <div style="display:table-cell;width:100%;">
+                            @*@if (Model.lstScheduledCommission.Where(o => o.CommissionTrxId > 0).Count() == 0)
+                            {
+                                <button type="button" class="btn red dropdown-toggle pull-left subsectionBtn" onclick="GenerateCommissionCurrentList()"
+                                        style="padding: 3px 12px; font-size: 12px;">
+                                    <i class="fa fa-plus"></i>&nbsp;<span class="hidden-sm hidden-xs">Generate Payout</span>
+                                </button>
+                            }*@
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 topheader">
+                    @ViewBag.SelectedPeriod Scheduled Compensations
+                </div>
+                <div class="col-md-4" style="padding-right:5px;">
+                    <div class="col-md-12 pull-right no-padding">
+                        @if (Model.lstScheduledCommission.Count() > 0 || Model.lstScheduledCommissionProcessed.Count() > 0)
+                        {
+                            <button type="button" class="btn red dropdown-toggle pull-right subsectionBtn" onclick="BindReviewCurrentList()"
+                                    style="padding: 3px 12px; font-size: 12px;">
+                                <span class="hidden-sm hidden-xs">Back</span>
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="tablebox">
+    <div class="table-responsive" id="divcustomerList" style="background-color:#ffffff;min-height: 100%;">
+        <table class="table table-striped table-bordered order-column dataTable no-footer" id="AdditionalBonusScheduleList" style="margin-top:0 !important;">
+            <thead>
+                <tr style="background-color: #6fa0c1;color: #fff;">
+                    <th style="text-align:center;width:150px;vertical-align:middle;">
+                        Customer No
+                    </th>
+                    <th style="text-align:center;vertical-align:middle;">
+                        Customer
+                    </th>
+                    <th style="text-align:center;vertical-align:middle;">
+                        Start Date
+                    </th>
+                    <th style="text-align:center;vertical-align:middle;">
+                        Contract Bill
+                    </th>
+                    <th style="text-align:center;vertical-align:middle;">
+                        CommissionType
+                    </th>
+                    <th style="text-align:center;vertical-align:middle;">
+                        Commission Pct
+                    </th>
+                    <th style="text-align:center;vertical-align:middle;">
+                        Commission Amount
+                    </th>
+
+                </tr>
+            </thead>
+            @if (Model.lstScheduledCommission.Count() == 0)
+            {
+                <tr>
+                    <td colspan="6" style="text-align:center"> No records available for curent period.</td>
+                </tr>
+            }
+            else
+            {
+
+                int LastUserId = 0;
+
+                foreach (var item in Model.lstScheduledCommission.OrderBy(f => f.SalesPersonId))
+                {
+                    if (LastUserId != item.SalesPersonId)
+                    {
+                        <tr style="background-color: #6fa0c1;color: #fff;">
+                            <td colspan="2" style="vertical-align:middle;">
+                                <strong>User : @item.SalesPersonName</strong>
+                            </td>
+                            <td colspan="2" style="vertical-align:middle;">
+                                <strong>Title : @item.RoleName</strong>
+                            </td>
+                            <td colspan="3" style="vertical-align:middle;">
+                                <strong>Totel Sales : $ @Model.lstScheduledCommission.Where(o => o.SalesPersonId == item.SalesPersonId).ToList().Sum(d => d.ContractAmount)</strong>
+                                <span style="display:none;">@(LastUserId = item.SalesPersonId);</span>
+                            </td>
+                        </tr>
+
+
+                    }
+
+                    <tr>
+                        <td style="text-align:center;vertical-align:middle;">
+                            @item.CustomerNo
+                        </td>
+                        <td style="text-align:left;vertical-align:middle;">
+                            @item.CustomerName
+                        </td>
+                        <td style="text-align:center;vertical-align:middle;">
+                            @String.Format("{0:MM/dd/yyyy}", item.ContractStartDate)
+                        </td>
+                        <td style="text-align:center;vertical-align:middle;">
+                            @String.Format("{0:c}", item.ContractAmount)
+                        </td>
+                        <td style="text-align:center;vertical-align:middle;">
+                            @item.CompensationTypeListDescription
+                        </td>
+                        <td style="text-align:center;vertical-align:middle;">
+                            @if (item.CompensationAmountTypeId == 2)
+                            {
+                                @String.Format("{0:0.0%}", item.BonusPercentage / 100)
+                            }
+                            else
+                            {
+                                @String.Format("{0:c}", item.BonusPercentage)
+                            }
+
+                        </td>
+                        <td style="text-align:center;vertical-align:middle;">
+                            @String.Format("{0:c}", item.BonusAmount)
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="4"></td>
+                    <td colspan="2" style="text-align:right;">Total Commission</td>
+                    <td style="text-align:center;width:200px;vertical-align:middle;">
+                        @String.Format("{0:c}", Model.lstScheduledCommission.Sum(d => d.ContractAmount))
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+
+<div class="tablebox">
+    <div class="table-responsive" id="divcustomerList" style="background-color:#ffffff;min-height:100%;">
+        <table class="table table-striped table-bordered order-column dataTable no-footer" id="AdditionalBonusScheduleList" style="margin-top:0 !important;">
+            <tr style="background-color: #6fa0c1;color: #fff;">
+                <td style="text-align:center;vertical-align:middle;">
+                    Customer No
+                </td>
+                <td style="text-align:center;vertical-align:middle;">
+                    Customer Name
+                </td>
+                <td style="text-align:center;vertical-align:middle;">
+                    Start Date
+                </td>
+                <th style="text-align:center;vertical-align:middle;">
+                    Contract Bill
+                </th>
+                <th style="text-align:center;vertical-align:middle;">
+                    CommissionType
+                </th>
+                <td style="text-align:center;vertical-align:middle;">
+                    Pymnt No
+                </td>
+                <td style="text-align:center;vertical-align:middle;">
+                    Commission Pct
+                </td>
+                <td style="text-align:center;vertical-align:middle;">
+                    Commission Amount
+                </td>
+
+            </tr>
+            @if (Model.lstScheduledCommissionProcessed.Count() == 0)
+            {
+                <tr>
+                    <td colspan="9" style="text-align:center"> No records available for this period.</td>
+                </tr>
+            }
+            else
+            {
+                int LastUserId = 0;
+                foreach (var item in Model.lstScheduledCommissionProcessed.OrderBy(f => f.SalePersonId))
+                {
+                    @*if (LastUserId != item.SalePersonId)
+                    {
+                        <tr style="background-color: #6fa0c1;color: #fff;">
+                        <td colspan="4" style="vertical-align:middle;">
+                            <strong>User : <a style="color:#fff;" onclick="PrintPayout(@item.SalePersonId)">@item.SalePersonName</a> </strong>
+                        </td>
+                        <td colspan="4" style="vertical-align:middle;">
+                            <strong>Title : @item.SalePersonRoleName</strong>
+                        </td>
+                        <td colspan="5" style="vertical-align:middle;"></td>
+                    </tr>
+
+                        <span style="display:none">@(LastUserId = item.SalePersonId);</span>
+
+                    }*@                    
+                    <tr>                        
+                        <td style="text-align:center;vertical-align:middle;">
+                            @item.CustomerNo
+                        </td>
+                        <td style="text-align:left;vertical-align:middle;">
+                            @item.CustomerName
+                        </td>
+                        <td style="text-align:center;vertical-align:middle;">
+
+                            @*@String.Format("{0:MM/dd/yyyy}", item.ContractStartDate)*@
+                        </td>
+                        @*<td style="text-align:center;vertical-align:middle;">
+                            @item.CancellationDate                            
+                        </td>
+                        <td style="text-align:right;vertical-align:middle;">
+                            @String.Format("{0:c}", item.InitialContract)
+                        </td>
+                        <td style="text-align:right;vertical-align:middle;">
+                            @String.Format("{0:c}", item.CurrentBilling)
+                        </td>
+                        <td style="text-align:right;vertical-align:middle;">
+                            @String.Format("{0:c}", item.OpenAR)
+                        </td>
+                        <td style="text-align:right;vertical-align:middle;">
+                            @String.Format("{0:c}", item.CurrentCredits)
+                        </td>*@
+                        <td style="text-align:right;vertical-align:middle;">
+                            @String.Format("{0:c}", item.ContractAmount)
+                        </td>
+                        <td style="text-align:center;vertical-align:middle;">
+                            @item.CommissionCompensationScheduleDescription
+                        </td>
+                        <td style="text-align:center;vertical-align:middle;">
+                            @item.PaymentNumber of @item.TotalPaymentNumber
+                        </td>
+                        <td style="text-align:center;vertical-align:middle;">
+                            @item.CommissionPercentage %
+                        </td>
+                        <td style="text-align:right;vertical-align:middle;">
+                            @String.Format("{0:c}", item.CommissionAmount)
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="5"></td>
+                    <td colspan="2" style="text-align:right;">Total Commissions:</td>
+                    <td style="text-align:right;vertical-align:middle;">
+                        @String.Format("{0:c}", Model.lstScheduledCommissionProcessed.Sum(d => d.CommissionAmount))
+                    </td>
+                </tr>
+
+            }
+        </table>
+    </div>
+</div>
+
+<div class="row" style="background-color:white;padding-bottom: 10px;">
+    <div class="col-md-12">
+        @if (Model.lstScheduledCommission.Where(o => o.CommissionTrxId > 0).Count() == 0 || Model.lstScheduledCommission.Count() > 0)
+        {
+            <button type="button" class="btn red dropdown-toggle pull-right subsectionBtn" onclick="GenerateCommissionCurrentList()"
+                    style="padding: 3px 12px; font-size: 12px;">
+                <span class="hidden-sm hidden-xs">POST</span>
+            </button>
+        }
+        
+    </div>
+</div>

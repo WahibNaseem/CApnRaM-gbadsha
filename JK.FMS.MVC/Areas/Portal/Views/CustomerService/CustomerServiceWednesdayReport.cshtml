@@ -1,0 +1,1079 @@
+﻿@model List<JKViewModels.Customer.CustomerServiceWednesdayReportResultViewModel>
+
+@{
+    ViewBag.Title = "CustomerServiceWednesdayReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var filters = ViewBag.AgingReportFilters as JKViewModels.AccountReceivable.AgingReportViewModel;
+
+
+    var Accountsonthisreport = 0;
+    var Callsonthisreport = 0;
+
+    var CallsInitiatedbyCustomer = 0;
+    var CallsInitiatedbyJaniKing = 0;
+    var CallsInitiatedbyFranchisee = 0;
+
+    decimal count = Model.Count();
+
+
+    var Regular = Model.Where(x => x.ServiceCallLogTypeListName == "Regular").Count();
+    var Cancellation = Model.Where(x => x.ServiceCallLogTypeListName == "Cancellation").Count(); ;
+    var ClaimIncident = Model.Where(x => x.ServiceCallLogTypeListName == "Claim/Incident").Count(); ;
+    var ClearAtRisk = Model.Where(x => x.ServiceCallLogTypeListName == "Clear At Risk").Count(); ;
+    var ClearClaimIncident = Model.Where(x => x.ServiceCallLogTypeListName == "Clear Claim/Incident").Count(); ;
+    var Complaint = Model.Where(x => x.ServiceCallLogTypeListName == "Complaint").Count(); ;
+    var ComplaintResolved = Model.Where(x => x.ServiceCallLogTypeListName == "Complaint Resolved").Count(); ;
+    var ContactEvaluation = Model.Where(x => x.ServiceCallLogTypeListName == "Contact Evaluation").Count(); ;
+    var Decrease = Model.Where(x => x.ServiceCallLogTypeListName == "Decrease").Count();
+    var EmailedInvoice = Model.Where(x => x.ServiceCallLogTypeListName == "Emailed Invoice").Count(); ;
+    var FailedInspection = Model.Where(x => x.ServiceCallLogTypeListName == "Failed Inspection").Count(); ;
+    var FaxAComment = Model.Where(x => x.ServiceCallLogTypeListName == "Fax-A-Comment").Count(); ;
+    var FollowUp = Model.Where(x => x.ServiceCallLogTypeListName == "Follow Up").Count(); ;
+    var Increase = Model.Where(x => x.ServiceCallLogTypeListName == "Increase").Count();
+    var Inspection = Model.Where(x => x.ServiceCallLogTypeListName == "Inspection").Count();
+    var Misc = Model.Where(x => x.ServiceCallLogTypeListName == "Misc").Count();
+    var MissedClean = Model.Where(x => x.ServiceCallLogTypeListName == "Missed Clean").Count();
+    var NewAccount = Model.Where(x => x.ServiceCallLogTypeListName == "New Account").Count();
+    var PendingCancellation = Model.Where(x => x.ServiceCallLogTypeListName == "Pending Cancellation").Count();
+    var Request = Model.Where(x => x.ServiceCallLogTypeListName == "Request").Count();
+    var RoutineCall = Model.Where(x => x.ServiceCallLogTypeListName == "Routine Call").Count();
+    var Suspension = Model.Where(x => x.ServiceCallLogTypeListName == "Suspension").Count();
+    var Transfer = Model.Where(x => x.ServiceCallLogTypeListName == "Transfer").Count();
+
+    var upto500 = Model.Where(x => x.Amount <= 500).Count();
+    var morethan500 = Model.Where(x => x.Amount > 500 && x.Amount <= 1000).Count();
+    var morethan1000 = Model.Where(x => x.Amount > 1000 && x.Amount <= 5000).Count();
+    var morethan5000 = Model.Where(x => x.Amount > 5000).Count();
+
+}
+@section styles{
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")' rel="stylesheet" type="text/css" />
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")' rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+}
+<style>
+    .close {
+        background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+        height: 12px !important;
+        width: 12px !important;
+        margin-top: 0px !important;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .row {
+        margin: 0;
+        padding: 3px 0;
+    }
+
+    .page-size {
+        padding-left: 0;
+        padding-right: 0;
+        width: 62px;
+    }
+
+    .topheader {
+        font-size: 14px;
+        font-weight: bold;
+        Regularcolor: #FFF !important;
+        text-transform: uppercase;
+        margin-top: 3px;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+
+    .alignCenter {
+        text-align: center;
+    }
+
+    #CustomerList th {
+        vertical-align: middle;
+    }
+
+    .no-padding {
+        padding: 0;
+    }
+
+    .no-margin {
+        margin: 0;
+    }
+
+    .padding-tb1 {
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+
+    .margin-tb1 {
+        margin-top: 1px;
+        margin-bottom: 1px;
+    }
+
+    .custom-listbox .headerbox {
+        padding: 3px 0px 3px 5px;
+    }
+
+    .custom-listbox {
+        margin-top: 4px;
+        margin-bottom: 0px;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .multiselect-container.dropdown-menu {
+        text-transform: none;
+        font-size: 14px;
+    }
+
+    .td1 {
+        text-align: center;
+        width: 100px;
+        background: #337ab7;
+        color: white;
+        font-size: 12px;
+    }
+
+    .td2 {
+        width: 70px;
+        text-align: center;
+        background: #337ab7;
+        color: white;
+        font-size: 12px;
+    }
+
+    .td3 {
+        width: 70px;
+        text-align: center;
+        background: #337ab7;
+        color: white;
+        font-size: 12px;
+    }
+
+    .td4 {
+        text-align: center;
+        width: 90px;
+        background: #337ab7;
+        color: white;
+        font-size: 12px;
+    }
+
+    .td5 {
+        text-align: center;
+        width: 90px;
+        background: #337ab7;
+        color: white;
+        font-size: 12px;
+    }
+
+    .td6 {
+        text-align: center;
+        width: 90px;
+        background: #337ab7;
+        color: white;
+        font-size: 12px;
+    }
+
+    .td7 {
+        text-align: center;
+        width: 220px;
+        background: #337ab7;
+        color: white;
+        font-size: 12px;
+    }
+
+    .td8 {
+        text-align: center;
+        width: 90px;
+        background: #337ab7;
+        color: white;
+        font-size: 12px;
+    }
+
+    .td9 {
+        text-align: center;
+        width: 90px;
+        background: #337ab7;
+        color: white;
+        font-size: 12px;
+    }
+
+    .pageSize, .ddlSort {
+        width: 100px;
+        display: inline;
+    }
+
+    .listHeader2 td {
+        font-weight: bolder;
+        font-size: 12px;
+        font-family: Verdana,san serif;
+        height: 20px;
+
+        color: black;
+    }
+</style>
+
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    Wednesday Report
+                </div>
+                <div class="col-md-4" style="padding-right:5px;">
+                    <input type="hidden" id="hdndays" value="@ViewBag.days" />
+                    <input type="hidden" id="hdnacctypeId" value="@ViewBag.acctypeId" />
+                    <input type="hidden" id="hdngroupBy" value="@ViewBag.groupBy" />
+                    <input type="hidden" id="hdnregionids" value="@ViewBag.regionids" />
+                    <input type="hidden" id="hdnAtLeast" value="@ViewBag.AtLeast" />
+                    <input type="hidden" id="hdnSearchAmount" value="@ViewBag.SearchAmount" />
+                    <input type="hidden" id="hdnAtRisk" value="@ViewBag.AtRisk" />
+                     
+
+                    <div class="col-md-7 pull-right no-padding">
+                        <div style="display:table-cell;padding-right: 5px;">
+                            Region
+                        </div>
+                        <div style="display:table-cell;width:100%;">
+                            @if (ViewBag.regionlist != null)
+                            {
+                                <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                                    @{
+                                        foreach (var item in (SelectList)ViewBag.regionlist)
+                                        {
+                                            <option @( item.Selected == true ? "selected" : "") value="@item.Value"> @item.Text </option>
+                                        }
+                                    }
+                                </select>
+                                        }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="custom-listbox">
+
+    <div class="headerbox">
+        <div class="row no-padding">
+            @*<div class="col-md-1 page-size">
+                    <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                        <option value="-1">All</option>
+                        <option value="100" selected>100</option>
+                        <option value="50">50</option>
+                        <option value="25">25</option>
+                    </select>
+                </div>*@
+            <div class="col-md-3">
+                <div class="input-icon">
+                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                    <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search..." value="" class="form-control input-sm typeahead" />
+                </div>
+            </div>
+            <div class="col-md-5" style="text-align:center">
+                @*<div class="radio-list">
+                        <label class="radio-inline">
+                            <input type="radio" name="optionsRadios" id="rbDetail" value="option1" onclick="showAgingReport(false)" checked="@(!isSummaryView)"> Detail
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="optionsRadios" id="rbSummary" value="option2" onclick="showAgingReport(true)" checked="@(isSummaryView)"> Summary
+                        </label>
+                    </div>*@
+            </div>
+            <div class="col-md-4" style="padding-right:5px; text-align:right">
+                <span class="">
+                    <input type="button" class="btn btn-primary" id="btnExportInExcel" value="Export To Excel" />
+                    <a class="btn btn-primary" id="btnBack" href="@Url.Action("CustomerServiceSearchWednesdayReport","CustomerService")">Back to Search</a>
+                </span>
+                <span class="">
+
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div id="dvReportContainer" class="tablebox">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered order-column" id="CustomerList" style="margin-top:0 !important;">
+                <thead>
+
+                    <tr>
+                        <td class="td1">
+                            Date/Time
+                        </td>
+                        <td class="td1">
+                            Status
+                        </td>
+                        <td class="td2">
+                            Spoke With
+                        </td>
+                        <td class="td3">
+                            Initiated
+                        </td>
+                        <td class="td4">
+                            Action
+                        </td>
+                        <td class="td5">
+                            Call Back
+                        </td>
+                        <td class="td6">
+                            Type
+                        </td>
+                        <td class="td7">
+                            Comment
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (Model != null && Model.Count() > 0)
+                    {
+                        var unique_customer_ids = Model.Select(s => s.CustomerId).Distinct().ToList();
+                        foreach (var customer_id in unique_customer_ids)
+                        {
+                            var entries = Model.Where(s => s.CustomerId == customer_id).ToList();
+
+                            if (entries.Count() != 0)
+                            {
+                                Accountsonthisreport++;
+                                var first_item = entries.First();
+                                <tr relcusn="@Html.DisplayFor(modelItem => first_item.CustomerNo) @Html.DisplayFor(modelItem => first_item.CustomerName)">
+                                    <td style="font-size:13px" colspan="8">
+                                        <b>@Html.DisplayFor(modelItem => first_item.CustomerNo) </b>&nbsp;&nbsp;&nbsp;&nbsp;<b style="color: red;">Account At Risk </b> &nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue;"> <b>@Html.DisplayFor(modelItem => first_item.CustomerName) </b></span> &nbsp;&nbsp;&nbsp;&nbsp;<b> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Convert.ToDecimal(first_item.Amount))</b>&nbsp; &nbsp;&nbsp; &nbsp;<b> @first_item.CleanTimes &nbsp; &nbsp;&nbsp; Per &nbsp; &nbsp;&nbsp;@first_item.CleanFrequencyListName</b>&nbsp;&nbsp;&nbsp;&nbsp;<b>Start Date:&nbsp; </b>@(first_item.StartDate != null ? Convert.ToDateTime(first_item.StartDate).ToString("MM/dd/yyyy") : string.Empty)
+                                    </td>
+                                </tr>
+                                foreach (var item in entries)
+                                {
+                                    Callsonthisreport++;
+
+                                    CallsInitiatedbyCustomer = item.InitiatedById == "2" ? 1 : 0;
+                                    CallsInitiatedbyJaniKing = item.InitiatedById == "1" ? 1 : 0;
+                                    CallsInitiatedbyFranchisee = item.InitiatedById == "0" ? 1 : 0;
+
+                                    <tr style="display: table-row;">
+                                        <td style="padding:5px; text-align:left;font-size:13px">
+                                            @Convert.ToDateTime(item.CallDate).ToString("MM/dd/yyyy") <br />
+                                            @{
+                                                string strtime = DateTime.Now.ToShortDateString() + " " + item.CallTime.ToString();
+                                                if (strtime != "")
+                                                {
+                                                    <text>@Convert.ToDateTime(strtime).ToString("hh:mm tt")</text>
+                                                }
+                                            }
+                                        </td>
+                                        <td style="padding:5px; text-align:center;font-size:13px">@item.StatusResultListName</td>
+                                        <td style="padding:5px; text-align:left;font-size:13px">@item.SpokeWith</td>
+                                        <td style="padding:5px; text-align:center;font-size:13px">@item.CallLogInitiatedByTypeListName</td>
+                                        <td style="padding:5px; text-align:center;font-size:13px">@item.Action</td>
+                                        <td style="padding:5px; text-align:left;font-size:13px">@item.CallBack</td>
+                                        <td style="padding:5px; text-align:left;font-size:13px">@item.ServiceCallLogTypeListName</td>
+                                        <td style="padding:5px; text-align:left;font-size:13px">@item.Comments</td>
+                                    </tr>
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                </tbody>
+            </table>
+            <br />
+            <div class="col-md-12">
+                <hr style="margin-top: 0px;margin-bottom: 0px;border-top: 1px solid #cac0c0;" />
+            </div>
+
+            <div class="col-md-12">
+                <table width="100%" align="center" class="listHeader2" border="0" cellspacing="1" cellpadding="1">
+                    <tbody>
+                        <tr><td align="center" class="fieldHeader" colspan="4">Call Log Summary</td></tr>
+                        <tr>
+                            <td align="center" class="fieldHeader" colspan="4">
+                                <table cellspacing="0" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    Accounts on this report: @Accountsonthisreport – Calls on this report: @Callsonthisreport
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center" class="listHeader" colspan="4">
+                                <table width="100%" class="listHeader" cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td align="left" class="tableprintnoborder" nowrap="">
+                                                <table cellspacing="1" cellpadding="0">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="tableprintnoborder">
+                                                                <font class="smreadonly">
+                                                                    Calls Initiated by Customer: &nbsp;&nbsp;@CallsInitiatedbyCustomer
+                                                                    &nbsp;&nbsp;
+                                                                    @{
+                                                                        decimal CustPer = 0;
+                                                                        if (CallsInitiatedbyCustomer > 0)
+                                                                        {
+                                                                            CustPer = CallsInitiatedbyCustomer / count;
+                                                                        }
+                                                                    }
+                                                                    (@( CallsInitiatedbyCustomer > 0 ? Math.Round(CustPer * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                                </font>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td align="center" class="tableprintnoborder" nowrap="">
+                                                <table cellspacing="1" cellpadding="0">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="tableprintnoborder">
+                                                                <font class="smreadonly">
+                                                                    Calls Initiated by Jani-King:&nbsp;&nbsp;@CallsInitiatedbyJaniKing
+                                                                    &nbsp;&nbsp;
+                                                                    @{
+                                                                        decimal JanikingPer = 0;
+                                                                        if (CallsInitiatedbyJaniKing > 0)
+                                                                        {
+                                                                            JanikingPer = CallsInitiatedbyJaniKing / count;
+                                                                        }
+                                                                    }
+                                                                    (@( CallsInitiatedbyJaniKing > 0 ? Math.Round(JanikingPer * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                                </font>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td align="right" class="tableprintnoborder" nowrap="">
+                                                <table cellspacing="1" cellpadding="0">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="tableprintnoborder">
+                                                                <font class="smreadonly">
+                                                                    Calls Initiated by Franchisee:&nbsp;&nbsp;@CallsInitiatedbyFranchisee
+                                                                    &nbsp;&nbsp;
+                                                                    @{
+                                                                        decimal FranPer = 0;
+                                                                        if (CallsInitiatedbyFranchisee > 0)
+                                                                        {
+                                                                            FranPer = CallsInitiatedbyFranchisee / count;
+                                                                        }
+                                                                    }
+                                                                    (@( CallsInitiatedbyFranchisee > 0 ? Math.Round(FranPer * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                                </font>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>morethan1000Per
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr><td align="center" class="fieldHeader" colspan="4">Call Breakdown By Type</td></tr>
+                        <tr class="fieldHeader">
+
+
+                            <td width="25%" nowrap="">
+                                <table width="100%" border="0" cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td width="68%" class="tableprintnoborder"><font class="smreadonly">Cancellation:</font></td>
+                                            <td width="25" class="tableprintnoborder"><font class="smreadonly">@Cancellation</font></td>
+                                            <td width="25" class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    @{
+                                                        decimal CancellationPer = 0;
+                                                        if (Cancellation > 0)
+                                                        {
+                                                            CancellationPer = Cancellation / count;
+                                                        }
+                                                    }
+                                                    &nbsp;(@( Cancellation > 0 ? Math.Round(CancellationPer * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+
+                            <td width="25%" nowrap="">
+                                <table width="100%" border="0" cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td width="68%" class="tableprintnoborder"><font class="smreadonly">Complaint Calls:</font></td>
+                                            <td width="25" class="tableprintnoborder"><font class="smreadonly">@Complaint</font></td>
+                                            <td width="25" class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    @{
+                                                        decimal ComplaintPer = 0;
+                                                        if (Complaint > 0)
+                                                        {
+                                                            ComplaintPer = Complaint / count;
+                                                        }
+                                                    }
+                                                    &nbsp;(@( Complaint > 0 ? Math.Round(ComplaintPer * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+
+                            <td width="25%" nowrap="">
+                                <table width="100%" border="0" cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td width="68%" class="tableprintnoborder"><font class="smreadonly">Contact Evaluation:</font></td>
+                                            <td width="25" class="tableprintnoborder"><font class="smreadonly">@ContactEvaluation</font></td>
+                                            <td width="25" class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    @{
+                                                        decimal ContactEvaluationPer = 0;
+                                                        if (ContactEvaluation > 0)
+                                                        {
+                                                            ContactEvaluationPer = ContactEvaluation / count;
+                                                        }
+                                                    }
+                                                    &nbsp;(@( ContactEvaluation > 0 ? Math.Round(ContactEvaluationPer * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+
+                            <td width="25%" nowrap="">
+                                <table width="100%" border="0" cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td width="68%" class="tableprintnoborder"><font class="smreadonly">Decrease:</font></td>
+                                            <td width="25" class="tableprintnoborder"><font class="smreadonly">@Decrease</font></td>
+                                            <td width="25" class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                   @{
+                                                       decimal DecreasePer = 0;
+                                                       if (Decrease > 0)
+                                                       {
+                                                           DecreasePer = Decrease / count;
+                                                       }
+                                                }
+                                                &nbsp;(@( Decrease > 0 ? Math.Round(DecreasePer * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr class="fieldHeader">
+
+
+                            <td width="25%" nowrap="">
+                                <table width="100%" border="0" cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td width="68%" class="tableprintnoborder"><font class="smreadonly">Failed Inspection:</font></td>
+                                            <td width="25" class="tableprintnoborder"><font class="smreadonly">@FailedInspection</font></td>
+                                            <td width="25" class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    @{
+                                                        decimal FailedInspectionPer = 0;
+                                                        if (FailedInspection > 0)
+                                                        {
+                                                            FailedInspectionPer = FailedInspection / count;
+                                                        }
+                                                    }
+                                                    &nbsp;(@( FailedInspection > 0 ? Math.Round(FailedInspectionPer * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+
+                            <td width="25%" nowrap="">
+                                <table width="100%" border="0" cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td width="68%" class="tableprintnoborder"><font class="smreadonly">Fax-A-Comment:</font></td>
+                                            <td width="25" class="tableprintnoborder"><font class="smreadonly">@FaxAComment</font></td>
+                                            <td width="25" class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    @{
+                                                        decimal FaxACommentPer = 0;
+                                                        if (FaxAComment > 0)
+                                                        {
+                                                            FaxACommentPer = FaxAComment / count;
+                                                        }
+                                                    }
+                                                    &nbsp;(@( FaxAComment > 0 ? Math.Round(FaxACommentPer * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+
+                            <td width="25%" nowrap="">
+                                <table width="100%" border="0" cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td width="68%" class="tableprintnoborder"><font class="smreadonly">Follow Up:</font></td>
+                                            <td width="25" class="tableprintnoborder"><font class="smreadonly">@FollowUp</font></td>
+                                            <td width="25" class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    @{
+                                                        decimal FollowUpPer = 0;
+                                                        if (FollowUpPer > 0)
+                                                        {
+                                                            FaxACommentPer = FollowUp / count;
+                                                        }
+                                                    }
+                                                    &nbsp;(@( FollowUp > 0 ? Math.Round(FollowUpPer * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+
+                            <td width="25%" nowrap="">
+                                <table width="100%" border="0" cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td width="68%" class="tableprintnoborder"><font class="smreadonly">Increase:</font></td>
+                                            <td width="25" class="tableprintnoborder"><font class="smreadonly">@Increase</font></td>
+                                            <td width="25" class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    @{
+                                                        decimal IncreasePer = 0;
+                                                        if (Increase > 0)
+                                                        {
+                                                            IncreasePer = Increase / count;
+                                                        }
+                                                    }
+                                                    &nbsp;(@( Increase > 0 ? Math.Round(IncreasePer * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr class="fieldHeader">
+
+
+                            <td width="25%" nowrap="">
+                                <table width="100%" border="0" cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td width="68%" class="tableprintnoborder"><font class="smreadonly">Inspection:</font></td>
+                                            <td width="25" class="tableprintnoborder"><font class="smreadonly">@Inspection</font></td>
+                                            <td width="25" class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    @{
+                                                        decimal InspectionPer = 0;
+                                                        if (Inspection > 0)
+                                                        {
+                                                            InspectionPer = Inspection / count;
+                                                        }
+                                                    }
+                                                    &nbsp;(@( Inspection > 0 ? Math.Round(InspectionPer * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+
+                            <td width="25%" nowrap="">
+                                <table width="100%" border="0" cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td width="68%" class="tableprintnoborder"><font class="smreadonly">Left Message:</font></td>
+                                            <td width="25" class="tableprintnoborder"><font class="smreadonly">0</font></td>
+                                            <td width="25" class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    &nbsp;(0%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+
+                            <td width="25%" nowrap="">
+                                <table width="100%" border="0" cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td width="68%" class="tableprintnoborder"><font class="smreadonly">Missed Cleans:</font></td>
+                                            <td width="25" class="tableprintnoborder"><font class="smreadonly">@MissedClean</font></td>
+                                            <td width="25" class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    @{
+                                                        decimal MissedCleanPer = 0;
+                                                        if (MissedClean > 0)
+                                                        {
+                                                            MissedCleanPer = MissedClean / count;
+                                                        }
+                                                    }
+                                                    &nbsp;(@( MissedClean > 0 ? Math.Round(MissedCleanPer * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+
+                            <td width="25%" nowrap="">
+                                <table width="100%" border="0" cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td width="68%" class="tableprintnoborder"><font class="smreadonly">New Account:</font></td>
+                                            <td width="25" class="tableprintnoborder"><font class="smreadonly">@NewAccount</font></td>
+                                            <td width="25" class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    @{
+                                                        decimal NewAccountPer = 0;
+                                                        if (NewAccount > 0)
+                                                        {
+                                                            NewAccountPer = NewAccount / count;
+                                                        }
+                                                    }
+                                                    &nbsp;(@( NewAccount > 0 ? Math.Round(NewAccountPer * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr class="fieldHeader">
+
+
+                            <td width="25%" nowrap="">
+                                <table width="100%" border="0" cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td width="68%" class="tableprintnoborder"><font class="smreadonly">Pending Cancellation:</font></td>
+                                            <td width="25" class="tableprintnoborder"><font class="smreadonly">@PendingCancellation</font></td>
+                                            <td width="25" class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    @{
+                                                        decimal PendingCancellationPer = 0;
+                                                        if (PendingCancellation > 0)
+                                                        {
+                                                            PendingCancellationPer = PendingCancellation / count;
+                                                        }
+                                                    }
+                                                    &nbsp;(@( PendingCancellation > 0 ? Math.Round(PendingCancellationPer * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+
+                            <td width="25%" nowrap="">
+                                <table width="100%" border="0" cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td width="68%" class="tableprintnoborder"><font class="smreadonly">Regular Calls:</font></td>
+                                            <td width="25" class="tableprintnoborder"><font class="smreadonly">@Regular</font></td>
+                                            <td width="25" class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    @{
+                                                        decimal RegularPer = 0;
+                                                        if (Regular > 0)
+                                                        {
+                                                            RegularPer = Regular / count;
+                                                        }
+                                                    }
+                                                    &nbsp;(@( Regular > 0 ? Math.Round(RegularPer * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+
+                            <td width="25%" nowrap="">
+                                <table width="100%" border="0" cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td width="68%" class="tableprintnoborder"><font class="smreadonly">Request:</font></td>
+                                            <td width="25" class="tableprintnoborder"><font class="smreadonly">@Request</font></td>
+                                            <td width="25" class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    @{
+                                                        decimal RequestPer = 0;
+                                                        if (Request > 0)
+                                                        {
+                                                            RequestPer = Request / count;
+                                                        }
+                                                    }
+                                                    &nbsp;(@( Request > 0 ? Math.Round(RequestPer * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+
+                            <td width="25%" nowrap="">
+                                <table width="100%" border="0" cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td width="68%" class="tableprintnoborder"><font class="smreadonly">Risks Cleared:</font></td>
+                                            <td width="25" class="tableprintnoborder"><font class="smreadonly">@ClearAtRisk</font></td>
+                                            <td width="25" class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    @{
+                                                        decimal ClearAtRiskPer = 0;
+                                                        if (ClearAtRisk > 0)
+                                                        {
+                                                            ClearAtRiskPer = ClearAtRisk / count;
+                                                        }
+                                                    }
+                                                    &nbsp;(@( ClearAtRisk > 0 ? Math.Round(ClearAtRiskPer * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr class="fieldHeader">
+
+
+                            <td width="25%" nowrap="">
+                                <table width="100%" border="0" cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td width="68%" class="tableprintnoborder"><font class="smreadonly">Suspension:</font></td>
+                                            <td width="25" class="tableprintnoborder"><font class="smreadonly">@Suspension</font></td>
+                                            <td width="25" class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    @{
+                                                        decimal SuspensionPer = 0;
+                                                        if (Suspension > 0)
+                                                        {
+                                                            SuspensionPer = Suspension / count;
+                                                        }
+                                                    }
+                                                    &nbsp;(@( SuspensionPer > 0 ? Math.Round(SuspensionPer * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr class="fieldHeader"><td colspan="4">&nbsp;</td></tr>
+                        <tr class="fieldHeader">
+                            <td align="center" nowrap="" colspan="4">Call Breakdown By Account Size</td>
+                        </tr>
+                        <tr>
+                            <td nowrap="" colspan="2">
+                                <table cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    Billing up to 500.00:&nbsp;&nbsp;&nbsp;&nbsp;@upto500
+                                                    @{
+                                                        decimal upto500Per = 0;
+                                                        if (upto500 > 0)
+                                                        {
+                                                            upto500Per = upto500 / count;
+                                                        }
+                                                    }
+                                                    &nbsp;&nbsp;(@( upto500 > 0 ? Math.Round(upto500Per * 100, 0).ToString().Replace(".00", "") : "0")%)
+
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                            <td nowrap="" colspan="2">
+                                <table cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    Billing more than 500.00 up to 1,000.00:&nbsp;&nbsp;&nbsp;&nbsp;@morethan500
+                                                   @{
+                                                       decimal morethan500Per = 0;
+                                                       if (morethan500 > 0)
+                                                       {
+                                                           morethan500Per = morethan500 / count;
+                                                       }
+                                                }
+                                                &nbsp;&nbsp;(@( morethan500 > 0 ? Math.Round(morethan500Per * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr class="fieldHeader">
+                            <td nowrap="" colspan="2">
+                                <table cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    Billing more than 1,000.00 up to 5,000.00:&nbsp;&nbsp;&nbsp;&nbsp;@morethan1000
+                                                    @{
+                                                        decimal morethan1000Per = 0;
+                                                        if (morethan1000 > 0)
+                                                        {
+                                                            morethan1000Per = morethan1000 / count;
+                                                        }
+                                                    }
+                                                    &nbsp;&nbsp;(@( morethan1000 > 0 ? Math.Round(morethan1000Per * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                            <td nowrap="" colspan="2">
+                                <table cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td class="tableprintnoborder">
+                                                <font class="smreadonly">
+                                                    Billing more than 5,000.00:&nbsp;&nbsp;&nbsp;&nbsp;@morethan5000
+                                                    @{
+                                                        decimal morethan5000Per = 0;
+                                                        if (morethan5000 > 0)
+                                                        {
+                                                            morethan5000Per = morethan5000 / count;
+                                                        }
+                                                    }
+                                                    &nbsp;&nbsp;(@( morethan5000 > 0 ? Math.Round(morethan5000Per * 100, 0).ToString().Replace(".00", "") : "0")%)
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+
+        </div>
+    </div>
+
+
+    @section scripts{
+        <script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+
+        <script type="text/javascript">
+
+
+            $(document).ready(function () {
+                $(document).on('init.dt', function (e, settings) {
+                    var api = new $.fn.dataTable.Api(settings);
+                    if ($(api.table().node()).attr('id') == 'CustomerList') {
+                        setPaging();
+                    }
+                });
+
+
+
+                $(".selectable").selectable();
+
+                $("#regionlist").multiselect({
+                    includeSelectAllOption: false,
+                    selectAllText: 'Select all',
+                    buttonWidth: '100%',
+                    nonSelectedText: 'Select region..',
+                    dropRight: true,
+                    numberDisplayed: 2,
+                });
+
+                if ($("#hdnregionids").val() != "") {
+                    var data = $("#hdnregionids").val();
+                    var dataarray = data.split(",");
+                    $("#regionlist").val(dataarray);
+                    $("#regionlist").multiselect("refresh");
+                }
+                //$("#input_Search").keyup(function () {
+
+                //    if ($(this).val() != '') {
+                //        $("#CustomerList tbody>tr").hide()
+                //        $("#CustomerList tbody>tr[relcusn*='" + $(this).val().toUpperCase() + "']").show()
+                //    } else {
+                //        $("#CustomerList tbody>tr").show()
+                //    }
+
+                //    //var table = $("#CustomerList").DataTable();
+                //    //table.search($(this).val()).draw();
+                //});
+
+                $("#regionlist").change(function () {
+                    //AgingRpt().RegionChange();
+                    Recallredirect();
+                });
+
+                function Recallredirect() {
+                    var regionids = $('#regionlist').val();
+
+                    var days = $("#hdndays").val();
+                    var acctypeId = $("#hdnacctypeId").val();
+                    var groupBy = $("#hdngroupBy").val();
+                    //var regionids = $("#hdnregionids").val();
+
+                    //var UrlPath = "?days=" + days + "&acctypeId=" + acctypeId + "&groupBy=" + groupBy + "&regionids=" + regionids;
+                    var UrlPath = "?Days=" + days + "&ServiceLogTypeListId=" + acctypeId + "&GroupByValue=" + groupBy + "&AtLeast=" + $('#hndAtLeast').val() + "&SearchAmount=" + $("#hndSearchAmount").val() + "&AtRisk=" + $("#hndAtRisk").val() + "&regionId=" + regionids;;
+
+                    window.location.href = '@Url.Action("CustomerServiceWednesdayReport", "CustomerService", new { area = "Portal" })' + UrlPath;;
+                }
+            });
+        </script>
+    }

@@ -1,0 +1,321 @@
+﻿@model JKViewModels.ControlView
+
+@{
+    var jsonString = Json.Decode(Model.FormValue);
+}
+
+@switch (Model.FormType)
+{
+    case "checkin":
+        {
+            <label class="control-label col-md-2">
+                @(jsonString.Label)
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control input-sm datepicker" id="checkIn_@Model.ControlId" placeholder="Time Stamp" value="@(jsonString.TimeStamp)" style="width: 250px;" />
+                <img src="/Contents/Theme/images/icons/fugue/calendar-month.png" width="16" height="16">
+            </div>
+
+            <script>
+                $(function () {
+                    $('#hdnValue_@Model.ControlId').val(@(new HtmlString(Json.Encode(Model.FormValue))));
+
+                    @*if ('@(jsonString.TimeStamp)' != null)
+                        $('#checkIn_@Model.ControlId').datepick("setDate", '@Convert.ToDateTime(jsonString.TimeStamp).ToString("MM/dd/yyyy")');*@
+
+                    $('#checkIn_@Model.ControlId').change(function () {
+                        var jsonStr = JSON.parse($('#hdnValue_@Model.ControlId').val());
+                        jsonStr.TimeStamp = $('#checkIn_@Model.ControlId').val();
+                        $('#hdnValue_@Model.ControlId').val(JSON.stringify(jsonStr));
+                    });
+
+
+
+                });
+            </script>
+
+            break;
+        }
+    case "textarea":
+        {
+            <label class="control-label col-md-2">
+                @(jsonString.Label)
+            </label>
+            <div class="col-md-9">
+                <textarea id="TextArea_@Model.ControlId" class="form-control input-sm" placeholder="@(jsonString.Label)" cols="20" rows="2">@(jsonString.Text)</textarea>
+            </div>
+
+            <script>
+                $(function () {
+                    $('#hdnValue_@Model.ControlId').val(@(new HtmlString(Json.Encode(Model.FormValue))));
+
+                    $('#TextArea_@Model.ControlId').change(function () {
+                        var jsonStr = JSON.parse($('#hdnValue_@Model.ControlId').val());
+                        jsonStr.Text = $('#TextArea_@Model.ControlId').val();
+                        $('#hdnValue_@Model.ControlId').val(JSON.stringify(jsonStr));
+                    });
+                });
+            </script>
+            break;
+        }
+    case "personname":
+        {
+            <label class="control-label col-md-2">
+                @(jsonString.Label)
+            </label>
+            <div class="col-md-3">
+                <input type="text" class="form-control input-sm" id="PersonName_FirstName_@Model.ControlId" placeholder="First Name" value="@(jsonString.FirstName)" />
+            </div>
+            <div class="col-md-3">
+                <input type="text" class="form-control input-sm" id="PersonName_MiddleInitial_@Model.ControlId" placeholder="Middle Initial" value="@(jsonString.MiddleInitial)" />
+            </div>
+            <div class="col-md-3">
+                <input type="text" class="form-control input-sm" placeholder="Last Name" id="PersonName_LastName_@Model.ControlId" value="@(jsonString.LastName)" />
+            </div>
+
+            <script>
+                $(function () {
+                    $('#hdnValue_@Model.ControlId').val(@(new HtmlString(Json.Encode(Model.FormValue))));
+
+                    $('#PersonName_FirstName_@Model.ControlId').change(function () {
+                        var jsonStr = JSON.parse($('#hdnValue_@Model.ControlId').val());
+                        jsonStr.FirstName = $('#PersonName_FirstName_@Model.ControlId').val();
+                        $('#hdnValue_@Model.ControlId').val(JSON.stringify(jsonStr));
+                    });
+
+                    $('#PersonName_MiddleInitial_@Model.ControlId').change(function () {
+                        var jsonStr = JSON.parse($('#hdnValue_@Model.ControlId').val());
+                        jsonStr.MiddleInitial = $('#PersonName_MiddleInitial_@Model.ControlId').val();
+                        $('#hdnValue_@Model.ControlId').val(JSON.stringify(jsonStr));
+                    });
+
+                    $('#PersonName_LastName_@Model.ControlId').change(function () {
+                        var jsonStr = JSON.parse($('#hdnValue_@Model.ControlId').val());
+                        jsonStr.LastName = $('#PersonName_LastName_@Model.ControlId').val();
+                        $('#hdnValue_@Model.ControlId').val(JSON.stringify(jsonStr));
+                    });
+                });
+            </script>
+            break;
+        }
+    case "photocomment":
+        {
+            <div class="columns">
+                @if (jsonString.ImageUrl != null && !string.IsNullOrWhiteSpace(jsonString.ImageUrl))
+                {
+                    <label class="control-label col-md-2">
+                        @(jsonString.Label)
+                    </label>
+                    <div class="col-md-3">
+                        <img id="blah" src="@(jsonString.ImageUrl)" class="story-small" width="100%" />
+                    </div>
+
+                    <label class="control-label col-md-2">
+                        Comment
+                    </label>
+                    <div class="col-md-3">
+                        <textarea id="PhotoComment_Comment_@Model.ControlId" class="form-control input-sm" cols="20" rows="4">@(jsonString.Comment)</textarea>
+                    </div>
+                }
+                else
+                {
+                    <label class="control-label col-md-2">
+                        @(jsonString.Label)
+                    </label>
+                    <div class="col-md-3">
+                        <img src="~/Contents/Theme/images/image_placeholder.png" width="100%">
+                    </div>
+
+                    <label class="control-label col-md-2">
+                        Comment
+                    </label>
+                    <div class="col-md-3">
+                        <textarea id="PhotoComment_Comment_@Model.ControlId" class="form-control input-sm" cols="20" rows="4">@(jsonString.Comment)</textarea>
+                    </div>
+                }
+
+                <script>
+                    $(function () {
+                        $('#hdnValue_@Model.ControlId').val(@(new HtmlString(Json.Encode(Model.FormValue))));
+
+                        $('#PhotoComment_Comment_@Model.ControlId').change(function () {
+                            var jsonStr = JSON.parse($('#hdnValue_@Model.ControlId').val());
+                            jsonStr.Comment = $('#PhotoComment_Comment_@Model.ControlId').val();
+                            $('#hdnValue_@Model.ControlId').val(JSON.stringify(jsonStr));
+                        });
+                    });
+                </script>
+            </div>
+            break;
+        }
+    case "photocollection":
+        {
+            <label class="control-label col-md-2">
+                @(jsonString.Label)
+            </label>
+            <div class="col-md-10">
+                @if (jsonString.Items.Length > 0)
+                        {
+                    <ul class="gallery with-padding">
+                        @for (int i = 0; i < jsonString.Items.Length; i++)
+                            {
+
+                            <li style="width: 21em;height: 14em;"><a href="@(jsonString.Items[i])"><img src="@(jsonString.Items[i])" width="200" height="150"></a></li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <ul class="gallery with-padding">
+                        @for (int i = 0; i < Convert.ToInt32(jsonString.ItemCount); i++)
+                            {
+                            <li style="width: 21em;height: 14em;"><img src="~/Contents/Theme/images/image_placeholder.png" width="200" height="150"></li>
+                        }
+                    </ul>
+                }
+
+                <script>
+                    $(function () {
+                        $('#hdnValue_@Model.ControlId').val(@(new HtmlString(Json.Encode(Model.FormValue))));
+                    });
+                </script>
+            </div>
+
+            break;
+        }
+    case "segment":
+        {
+            <label class="control-label col-md-2">
+                @(jsonString.Label)
+            </label>
+            <div class="col-md-10">
+                <span class="relative" id="radioOption">
+                    @for (int i = 0; i < jsonString.Labels.Length; i++)
+                        {
+                            if (jsonString.Values.Length > 0 && jsonString.Values[i] == "true")
+                            {
+                            <input type="radio" name="Segment_@Model.ControlId" value="@(jsonString.Labels[i])" checked="checked" /><span>&nbsp;</span> @(jsonString.Labels[i])
+                        }
+                        else
+                        {
+                            <input type="radio" name="Segment_@Model.ControlId" value="@(jsonString.Labels[i])" /><span>&nbsp;</span> @(jsonString.Labels[i])
+                        }
+                    }
+                </span>
+            </div>
+
+            <script>
+                $(function () {
+                    $('input[type=radio][name=Segment_@Model.ControlId]').change(function () {
+                        var jsonStr = JSON.parse($('#hdnValue_@Model.ControlId').val());
+                        var radios = document.getElementsByName('Segment_@Model.ControlId');
+                        jsonStr.Values = [];
+                        for (i = 0; i < radios.length; i++) {
+                            if (radios[i].checked) {
+                                jsonStr.Values.push("true");
+                            }
+                            else {
+                                jsonStr.Values.push("false");
+                            }
+                        }
+                        $('#hdnValue_@Model.ControlId').val(JSON.stringify(jsonStr));
+                    });
+
+                });
+            </script>
+            break;
+        }
+    case "options":
+        {
+            <label class="control-label col-md-2">
+                @(jsonString.Label)
+            </label>
+            <div class="col-md-10">
+                <span class="relative" id="radioOption">
+                    @if (jsonString.Labels.Length > 0)
+                        {
+                        <select class="form-control input-sm" name="Options_@Model.ControlId" id="Options_@Model.ControlId">
+                            @for (int i = 0; i < jsonString.Labels.Length; i++)
+                            {
+                                if (jsonString.Values.Length > 0 && jsonString.Values[i] == "true")
+                                {
+                                    <option selected="selected" value="@(jsonString.Labels[i])">@(jsonString.Labels[i])</option>
+                                }
+                                else
+                                {
+                                    <option value="@(jsonString.Labels[i])">@(jsonString.Labels[i])</option>
+                                }
+                            }
+                        </select>
+                    }
+                </span>
+            </div>
+
+            <script>
+                $(function () {
+                    $('#Options_@Model.ControlId').change(function () {
+
+                        var jsonStr = JSON.parse($('#hdnValue_@Model.ControlId').val());
+                        var selecteditem = $("#Options_@Model.ControlId option:selected").text();
+                        jsonStr.Values = [];
+                        $("#Options_@Model.ControlId option").each(function () {
+                            if ($(this).val() == selecteditem) {
+                                jsonStr.Values.push("true");
+                            }
+                            else {
+                                jsonStr.Values.push("false");
+                            }
+                        });
+                        $('#hdnValue_@Model.ControlId').val(JSON.stringify(jsonStr));
+                    });
+
+                });
+            </script>
+            break;
+        }
+    case "checklist":
+        {
+            <label class="control-label col-md-2">
+                @(jsonString.Label)
+            </label>
+            <div class="col-md-10">
+                <span class="relative" id="radioOption">
+                    @for (int i = 0; i < jsonString.Labels.Length; i++)
+                        {
+                            if (jsonString.Values.Length > 0 && jsonString.Values[i] == "true")
+                            {
+                            <input type="checkbox" name="CheckList_@Model.ControlId" value="@(jsonString.Labels[i])" checked="checked" /><span>&nbsp;</span> @(jsonString.Labels[i])
+                        }
+                        else
+                        {
+                            <input type="checkbox" name="CheckList_@Model.ControlId" value="@(jsonString.Labels[i])" /><span>&nbsp;</span> @(jsonString.Labels[i])
+                        }
+                    }
+                </span>
+            </div>
+
+            <script>
+                $(function () {
+                    $('input[type=checkbox][name=CheckList_@Model.ControlId]').change(function () {
+                        var jsonStr = JSON.parse($('#hdnValue_@Model.ControlId').val());
+                        var radios = document.getElementsByName('CheckList_@Model.ControlId');
+                        jsonStr.Values = [];
+                        for (i = 0; i < radios.length; i++) {
+                            if (radios[i].checked) {
+                                jsonStr.Values.push("true");
+                            }
+                            else {
+                                jsonStr.Values.push("false");
+                            }
+                        }
+                        $('#hdnValue_@Model.ControlId').val(JSON.stringify(jsonStr));
+                    });
+
+                });
+            </script>
+            break;
+        }
+    default:
+        break;
+}
+

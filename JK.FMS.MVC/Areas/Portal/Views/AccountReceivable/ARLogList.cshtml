@@ -1,0 +1,150 @@
+﻿@model IEnumerable<JKViewModels.AccountReceivable.ARLogViewModel>
+
+@{
+    ViewBag.Title = "ARLogList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- BEGIN EXAMPLE TABLE PORTLET-->
+<div class="portlet light ">
+
+    <div class="portlet-body">
+        <div class="table-toolbar">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="btn-group pull-right">
+                        <button class="btn green  btn-outline dropdown-toggle" data-toggle="dropdown">
+                            Tools
+                            <i class="fa fa-angle-down"></i>
+                        </button>
+                        <ul class="dropdown-menu pull-right">
+                            <li>
+                                <a href="javascript:;">
+                                    <i class="fa fa-print"></i> Print
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:;">
+                                    <i class="fa fa-file-pdf-o"></i> Save as PDF
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:;">
+                                    <i class="fa fa-file-excel-o"></i> Export to Excel
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <table class="table table-striped table-bordered table-hover table-checkable order-column" id="arLogList">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.customerNo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.customerName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.invoiceNo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.referenceNo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.date)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.total)
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+            {
+                <tr class="odd gradeX">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.customerNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.customerName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.invoiceNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.referenceNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.date)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.total)
+                    </td>
+                    @*<td>
+                            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                        </td>*@
+                </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- END EXAMPLE TABLE PORTLET-->
+
+
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('#arLogList').dataTable({
+                destroy: true,
+                "dom": "<'row'<'col-md-8 col-sm-12'><'col-md-4 col-sm-12'<'table-group-actions pull-right'>>r><'table-responsive't><'row'<'col-md-8 col-sm-12 dompagination'pli><'col-md-4 col-sm-12'>>", // datatable layout
+                //  "dom": "<r><'table-responsive't><'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'>>", // datatable layout
+                "autoWidth": false,
+                "pageLength": 5, // default records per page
+                "paging": true,
+                "sorting": true,
+                "lengthMenu": [
+                      [5, 25, 50, 100, -1],
+                      [5, 25, 50, 100, "All"] // change per page values here
+                ],
+                "language": {
+                    "lengthMenu": "<span class='seperator'>|</span>View _MENU_ Records",
+                    "info": "<span class='seperator'>|</span>Found total _TOTAL_ records",
+                    "infoEmpty": "<span class='seperator'>|</span>No records found to show",
+                    "emptyTable": "No data available in table",
+                    "zeroRecords": "No matching records found",
+                },
+
+                //"pagingType": "bootstrap_extended",
+                //"bSort": true,
+                //"bSortable": true,
+                "aaSorting": []
+
+
+            });
+            //caliberSys.ResizeGridColumns("workFlowPortfolioDatatable");
+            //$("#workFlowPortfolioDatatable_wrapper").find(".dataTables_info").css("display", "none");
+            //// $("#workFlowPortfolioDatatable_wrapper").find(".dompagination").eq(0).css("display", "none");
+            //$('#workfFlowPortfolioTools > li > a.tool-action').on('click', function () {
+            //    var action = $(this).attr('data-action');
+            //    $("#workFlowPortfolioDatatable").DataTable().button(action).trigger();
+            //});
+
+        });
+
+
+
+    </script>
+}

@@ -1,0 +1,993 @@
+﻿
+@{
+    ViewBag.Title = "BankStatement";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section styles{
+    <link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+    <style type="text/css">
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+            font-weight: normal;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        #modal_RegionModel .modal-content {
+            width: 55% !important;
+            margin-left: 30% !important;
+        }
+
+        table.dataTable thead th {
+            padding: 4px !important;
+        }
+    </style>
+}
+
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    Bank Statement
+                </div>
+                <div class="col-md-2 pull-right" style="padding-right:5px;">
+                    <div style="display:table-cell;padding-right: 5px;">
+                        Region
+                    </div>
+                    <div style="display:table-cell;width:100%;">
+                        @if (ViewBag.regionlist != null)
+                        {
+                            <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                                @foreach (var item in (SelectList)ViewBag.regionlist)
+                                {
+                                    <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="custom-listbox" style="margin-top:4px;margin-bottom:3px;">
+    <div class="headerbox">
+        <div class="row no-padding">
+            <div class="col-sm-1 page-size">
+                <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                    <option value="-1">All</option>
+                    <option value="100" selected>100</option>
+                    <option value="50">50</option>
+                    <option value="25">25</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <div class="input-icon">
+                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                    <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search" value="" class="form-control input-sm typeahead" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <select class="form-control input-sm" id="TRX_TYPE" style="padding-left:6px;">
+                    <option value="All">All</option>
+                    <option value='Accounting Fee Rebate Check To Franchisee'>Accounting Fee Rebate Check To Franchisee</option>
+                    <option value='Advance To Franchisee'>Advance To Franchisee</option>
+                    <option value='Bank Charges'>Bank Charges</option>
+                    <option value='Charge Back Paid'>Charge Back Paid</option>
+                    <option value='Credit Line Paid'>Credit Line Paid</option>
+                    <option value='Deposit - Int Uncollected Fees'>Deposit - Int Uncollected Fees</option>
+                    <option value='Deposit - JKI Insurance Pymnt'>Deposit - JKI Insurance Pymnt</option>
+                    <option value='Deposit - Reg Uncollected Fees'>Deposit - Reg Uncollected Fees</option>
+                    <option value='Deposit From Credit Line'>Deposit From Credit Line</option>
+                    <option value='Due Franchisee'>Due Franchisee</option>
+                    <option value='Equipment Lease'>Equipment Lease</option>
+                    <option value='Franchisee Business Protection'>Franchisee Business Protection</option>
+                    <option value='Franchisee Pagers'>Franchisee Pagers</option>
+                    <option value='Insurance Claim'>Insurance Claim</option>
+                    <option value='Loan To Office'>Loan To Office</option>
+                    <option value='Miscellaneous'>Miscellaneous</option>
+                    <option value='Other Deposit'>Other Deposit</option>
+                    <option value='Other Payable'>Other Payable</option>
+                    <option value='Pay Advertising Fee To Region'>Pay Advertising Fee To Region</option>
+                    <option value='Pay Negative Due Transferred To Region'>Pay Negative Due Transferred To Region</option>
+                    <option value='Refund Check'>Refund Check</option>
+                    <option value='Remittance Received'>Remittance Received</option>
+                    <option value='Sales Tax'>Sales Tax</option>
+                    <option value='Side To A/R'>Side To A/R</option>
+                    <option value='Transfer To Regular'>Transfer To Regular</option>
+                    <option value='Voided Check'>Voided Check</option>
+                    <option value='Wire - DRO'>Wire - DRO</option>
+                    <option value='Wire - Equipment'>Wire - Equipment</option>
+                    <option value='Wire - Sales Tax'>Wire - Sales Tax</option>
+                </select>
+            </div>
+            <div class="col-md-3" style="text-align:center;">
+                <input type="button" class="btn btn-primary" id="btnExportInExcel" value="Export" />
+                <input type="button" class="btn btn-primary " id="btnPrint" onclick="onclickPrint()" value="Print" style="margin-left:10px;margin-right:15px !important">
+            </div>
+            <div class="col-md-4 pull-right no-padding">
+                <div class="col-md-12 pull-right no-padding" style="text-align:center;">
+                    <div class="col-md-5 no-padding" style="margin-left:30px;">
+                        <select id="select_dateRange" class="form-control input-sm">
+                            <option value="1">This Week</option>
+                            <option value="2">This Week-to-date</option>
+                            <option value="3" selected="selected">This Month</option>
+                            <option value="4">This Month-to-date</option>
+                            <option value="5">This Quarter</option>
+                            <option value="6">This Quarter-to-date</option>
+                            <option value="7">This Fiscal Year</option>
+                            <option value="8">This Fiscal Year-to-date</option>
+                            <option value="9">Today</option>
+                            <option value="10">Yesterday</option>
+                            <option value="11">Last Week</option>
+                            <option value="12">Last Month</option>
+                            <option value="13">Last Quarter</option>
+                            <option value="14">Last Year</option>
+                            <option value="15">Custom Date</option>
+                            <option value="16">Period</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 divspandate no-padding" style="margin-top: 3px; margin-left: 0px; display: block; float: right;text-align:left" id="divspandate">
+                        <span id="spnStartDate"></span> - <span id="spnEndtDate"></span>
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 80px; display: none;" id="divSD">
+                        <input type="text" name="txtStartDate" id="txtStartDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 80px; display: none;" id="divED">
+                        <input type="text" name="txtEndtDate" id="txtEndtDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 80px; display: none;" id="divmonth">
+                        <select id="monthlist" class="form-control input-sm">
+                            <option value=""></option>
+                            <option value="1">Jan</option>
+                            <option value="2">Feb</option>
+                            <option value="3">Mar</option>
+                            <option value="4">Apr</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">Aug</option>
+                            <option value="9">Sep</option>
+                            <option value="10">Oct</option>
+                            <option value="11">Nov</option>
+                            <option value="12">Dec</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 80px; display: none;" id="divyear">
+                        <select class="form-control input-sm" id="yearlist" style="padding-left: 2px;">
+                            <option value=""></option>
+                            <option value="2018">2018</option>
+                            <option value="2017">2017</option>
+                            <option value="2016">2016</option>
+                            <option value="2015">2015</option>
+                            <option value="2014">2014</option>
+                            <option value="2013">2013</option>
+                            <option value="2012">2012</option>
+                            <option value="2011">2011</option>
+                            <option value="2010">2010</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="tablebox">
+    <div class="row padding-tb1">
+        <div class="row no-padding">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover" id="BankStatementList" style="display:none">
+                    <thead>
+                        <tr>
+                            <th class="tblBSL_date" style="width:70px;text-align:center;">
+                                Date
+                            </th>
+                            <th class="tblBSL_referenceNo" style="text-align:center;width:70px;">
+                                CheckNo/Reference
+                            </th>
+                            <th class="tblBSL_trxType" style="width:220px;text-align:center;">
+                                TRX Type
+                            </th>
+                            <th class="tblBSL_payeeNo" style="width:90px;text-align:center;">
+                                Payer No
+                            </th>
+                            <th class="tblBSL_payee" style="width:210px;text-align:center;">
+                                Payee/Payer
+                            </th>
+                            <th class="tblBSL_payment" style="text-align:center;width:40px;">
+                                Code
+                            </th>
+                            <th class="tblBSL_payment" style="text-align:center;width:40px;">
+                                Account
+                            </th>
+                            <th class="tblBSL_trxType" style="width:250px;text-align:center;">
+                                Decription/Reason
+                            </th>
+                            <th class="tblBSL_payment" style="text-align:center;width:80px;">
+                                Debit
+                            </th>
+                            <th class="tblBSL_deposit" style="text-align:center;width:80px;">
+                                Credit
+                            </th>
+                            <th class="tblBSL_balance" style="text-align:center;width:100px;">
+                                Balance
+                            </th>
+                            @*<th class="tblBSL_action" style="text-align:center;width:20px;">
+                                    Action
+                                </th>*@
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="8" style="text-align:right"><b>Total:</b></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade in" id="modal_RegionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Select Region
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Select Region</label>
+                                @if (ViewBag.regionlist != null)
+                                {
+                                    <select class="form-control input-sm" id="selectregionlist">
+                                        <option value="">Select Region</option>
+                                        @foreach (var item in (SelectList)ViewBag.regionlist)
+                                        {
+                                            <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div class="col-md-12">
+                        <button type="button" name="SaveNew" id="btnRegion" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:0px;">Select Region</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section pageplugins{
+    @if (Request.IsSecureConnection)
+    {
+        <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    }
+    else
+    {
+        <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    }
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+}
+@section scripts{
+    <script>
+        var bankStatementList;
+
+        function getTableURL() {
+
+            var _regionId = $("#regionlist").val();
+            var _fromDateVal = $('#spnStartDate').text();
+            var _toDateVal = $('#spnEndtDate').text();
+            var _monthVal = $('#monthlist').val();
+            var _yearVal = $('#yearlist').val();
+            if (_monthVal > 0 && _yearVal > 0) {
+                var date = new Date(_monthVal + '/01/' + _yearVal);
+                var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+                var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+                $('#spnStartDate').html(moment(firstDay).format('L'));
+                $('#spnEndtDate').html(moment(lastDay).format('L'));
+
+                _fromDateVal = $('#spnStartDate').text();
+                _toDateVal = $('#spnEndtDate').text();
+            }
+            var sURL = '@Url.Action("GetBankStatementDetailList", "Company", new { area = "Portal" })?regionIds=' + _regionId + '&from=' + _fromDateVal + '&to=' + _toDateVal;
+
+            return sURL;
+        }
+
+        function refreshTable() {
+            var url = getTableURL();
+
+            $.blockUI();
+
+            bankStatementList.DataTable().ajax.url(url).load(function () { $.unblockUI(); });
+        }
+        function onclickPrint() {
+
+            var _regionId = $("#regionlist").val();
+            var _fromDateVal = $('#spnStartDate').text();
+            var _toDateVal = $('#spnEndtDate').text();
+
+
+            if (_monthVal > 0 && _yearVal > 0) {
+                var date = new Date(_monthVal + '/01/' + _yearVal);
+                var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+                var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+                $('#spnStartDate').html(moment(firstDay).format('L'));
+                $('#spnEndtDate').html(moment(lastDay).format('L'));
+
+                _fromDateVal = $('#spnStartDate').text();
+                _toDateVal = $('#spnEndtDate').text();
+            }
+
+            var sURL = '@Url.Action("BankStatementListReportPrint", "Franchise", new { area = "Portal" })?regionIds=' + _regionId + '&from=' + _fromDateVal + '&to=' + _toDateVal;
+
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    var tUrl = data;
+                    printJS({ printable: document.location.origin + tUrl, type: 'pdf', showModal: false });
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+        }
+
+        $(window).load(function () {
+            if ('@ViewBag.selectedRegionId' == 0) {
+                $("#modal_RegionModel").modal({ backdrop: 'static' });
+            } else {
+                refreshTable();
+            }
+        });
+
+        jQuery(document).ready(function () {
+            $("#regionlist").multiselect({
+                includeSelectAllOption: false,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2,
+            });
+
+            $("#regionlist").change(function () {
+                if ($("#regionlist").val() != null)
+                    refreshTable();
+            });
+
+            $('#monthlist').change(function () {
+                $('#spnStartDate').html('');
+                if ($('#monthlist').val() != '' && $('#yearlist').val() != '')
+                    refreshTable();
+            });
+
+            $('#yearlist').change(function () {
+                $('#spnEndtDate').html('');
+                if ($('#monthlist').val() != '' && $('#yearlist').val() != '')
+                    refreshTable();
+            });
+
+            $("#btnRegion").click(function () {
+                if ($("#selectregionlist").val() != "") {
+                    $("#regionlist option[value='" + $("#selectregionlist").val() + "']").attr("selected", 1);
+                    $("#regionlist").multiselect("refresh");
+                    refreshTable();
+                    $(".close").click();
+                }
+            });
+
+            $("#pageSize").change(function () {
+                setPaging();
+            });
+
+            $("#TRX_TYPE").change(function () {
+                //setPaging();
+                if ($(this).val() != "All") {
+                    var table = $("#BankStatementList").DataTable();
+                    table.search($(this).val()).draw();
+                }
+                else {
+                    var table = $("#BankStatementList").DataTable();
+                    table.search('').draw();
+                }
+            });
+
+            $('#divspandate').show();
+            $('#divSD').hide();
+            $('#divED').hide();
+
+            firstDay = moment().subtract(0, 'month').startOf('month').toString();
+            lastDay = moment().subtract(0, 'month').endOf('month').toString();
+
+            $('#spnStartDate').html(moment(firstDay).format('L'));
+            $('#spnEndtDate').html(moment(lastDay).format('L'));
+
+            var ps = $('#pageSize').val();
+            bankStatementList = $('#BankStatementList').dataTable({
+                "bAutoWidth": false,
+                cache: false,
+
+                "iDisplayLength": ps == '-1' ? 25 : ps,
+                "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                "ordering": false,
+                "aaSorting": [[0, "desc"]],
+                "sAjaxDataProp": "aadata",  // Internationalisation. For more info refer to http://datatables.net/manual/i18n
+                "rowCallback": function (nRow, data) {
+
+                },
+                "aoColumns": [
+                    {
+                        "sName": "Date",
+                        "bSortable": true,
+                        "sClass": "alignCenter",
+                        "mRender": function (data, type, full) {
+                            return moment(new Date(parseInt(full.TransactionDate.substr(6)))).format("MM/DD/YYYY");
+                        }
+                    },
+                     {
+                         "sName": "Reference",
+                         "bSortable": false,
+                         "sClass": "alignCenter",
+                         "mRender": function (data, type, full) {
+                             return full.ReferenceNumber;
+                         }
+                     },
+                    {
+                        "sName": "TrxType",
+                        "bSortable": false,
+                        "mRender": function (data, type, full) {
+                            return full.TrxType;
+                        }
+                    },
+                    {
+                        "sName": "PayeeNo",
+                        "bSortable": false,
+                        "sClass": "alignCenter",
+                        "mRender": function (data, type, full) {
+                            return full.PayeeNo;
+                        }
+                    },
+                    {
+                        "sName": " Payee/Payer",
+                        "bSortable": false,
+                        //"sClass": "alignCenter",
+                        "mRender": function (data, type, full) {
+                            return full.Name;
+                        }
+                    },
+                    {
+                        "sName": "Code",
+                        "bSortable": false,
+                        "sClass": "alignCenter",
+                        "mRender": function (data, type, full) {
+                            return full.Code;
+                        }
+                    },
+                                        {
+                                            "sName": "LegerAccount",
+                                            "bSortable": false,
+                                            "sClass": "alignCenter",
+                                            "mRender": function (data, type, full) {
+                                                return full.LegerAccount;
+                                            }
+                                        },
+                     {
+                         "sName": "Notes",
+                         "bSortable": false,
+                         "mRender": function (data, type, full) {
+                             return full.Notes;
+                         }
+                     },
+                     {
+                         "sName": "Debit",
+                         "bSortable": false,
+                         "sClass": "alignRight",
+                         "mRender": function (data, type, full) {
+                             var data = "";
+                             //if (full.AmountTypeListId == 1)
+                             data = full.Debit;
+                             return (formatCurrency(data) != '' ? ('$ ' + formatCurrency(data)) : '');
+
+                         }
+                     },
+                      {
+                          "sName": "Credit",
+                          "bSortable": false,
+                          "sClass": "alignRight",
+                          "mRender": function (data, type, full) {
+                              var data = "";
+                              //if (full.AmountTypeListId == 2)
+                              data = full.Credit;
+                              return (formatCurrency(data) != '' ? ('$ ' + formatCurrency(data)) : '');
+
+                          }
+                      },
+                      {
+                          "sName": "Balance",
+                          "bSortable": false,
+                          "sClass": "alignRight",
+                          "mRender": function (data, type, full) {
+                              //return '$ ' + formatCurrency(full.Balance);
+                              if (full.Balance >= 0) {
+                                  return (formatCurrency(full.Balance) != '' ? ('$ ' + formatCurrency(full.Balance)) : '');
+                              }
+                              else {
+                                  return '<span style="color:red">($ ' + (formatCurrency(full.Balance) != '' ? formatCurrency(-(full.Balance)) : '0.00') + ')</span>';
+                              }
+                          }
+                      },
+                     //{
+                     //    "sName": "Action",
+                     //    "bSortable": false,
+                     //    "sClass": "alignCenter",
+                     //    "mRender": function (data, type, full) {
+                     //        return '<a>view</a>';
+                     //    }
+                     //}
+
+                ],
+                "footerCallback": function (row, data, start, end, display) {
+                    var api = this.api(), data;
+
+                    var _TotalDebit = 0;
+                    var _TotalCredit = 0;
+
+                    $.each(data, function (key, value) {
+
+                        if (value.Credit != null) {
+                            _TotalCredit += value.Credit;
+                        }
+                        if (value.Debit != null) {
+                            _TotalDebit += value.Debit;
+                        }
+                    });
+
+
+
+                    // Update footer
+                    $(api.column(8).footer()).html(
+                        '$' + formatCurrency(_TotalDebit)
+                    );
+                    $(api.column(9).footer()).html(
+                      '$' + formatCurrency(_TotalCredit)
+                  );
+                }
+            });
+
+            $("#input_Search").keyup(function () {
+                var table = $("#BankStatementList").DataTable();
+                table.search($(this).val()).draw();
+            });
+
+            $('#BankStatementList').show();
+
+            $('#btnExportInExcel').click(function (e) {
+
+                var _regionId = $("#regionlist").val();
+                var _fromDateVal = $('#spnStartDate').text();
+                var _toDateVal = $('#spnEndtDate').text();
+                var _monthVal = $('#monthlist').val();
+                var _yearVal = $('#yearlist').val();
+                if (_monthVal > 0 && _yearVal > 0) {
+                    var date = new Date(_monthVal + '/01/' + _yearVal);
+                    var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+                    var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+                    $('#spnStartDate').html(moment(firstDay).format('L'));
+                    $('#spnEndtDate').html(moment(lastDay).format('L'));
+
+                    _fromDateVal = $('#spnStartDate').text();
+                    _toDateVal = $('#spnEndtDate').text();
+                }
+                var sURLexcel = '@Url.Action("ExportToExcelBankStatementDetail", "Company", new { area = "Portal" })?regionIds=' + _regionId + '&from=' + _fromDateVal + '&to=' + _toDateVal;
+
+                $.ajax({
+                    type: "GET",
+                    url: sURLexcel,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (data) {
+                        var strHTML = data;
+                        var ua = window.navigator.userAgent;
+                        var msie = ua.indexOf("MSIE ");
+
+                        var dt = new Date();
+                        var day = dt.getDate();
+                        var month = dt.getMonth() + 1;
+                        var year = dt.getFullYear();
+                        var hour = dt.getHours();
+                        var mins = dt.getMinutes();
+                        var postfix = month + "." + day + "." + year;
+                        //creating a temporary HTML link element (they support setting file names)
+                        var a = document.createElement('a');
+                        //getting data from our div that contains the HTML table
+                        var data_type = 'data:application/vnd.ms-excel';
+                        //var table_div = document.getElementById('dvData');
+                        //var table_html = table_div.outerHTML.replace(/ /g, '%20');
+                        a.href = data_type + ', ' + encodeURIComponent(strHTML);
+                        //setting the file name
+                        a.download = 'BankStatementList_' + postfix + '.xls';
+                        //triggering the function
+                        a.click();
+                        //just in case, prevent default behaviour
+                        e.preventDefault();
+
+                    },
+                    error: function () {
+                        alert("Content load failed.");
+                    }
+                });
+
+            });
+        });
+
+        function setPaging() {
+            var z = $("#pageSize").val();
+            var table = $("#BankStatementList").DataTable();
+            if (z > 0) {
+                table.page.len(z).draw();
+            }
+            else if (z == -1) {
+                table.page.len(table.rows().count()).draw();
+            }
+            else {
+                table.page.page.len(25).draw();
+            }
+        }
+
+        var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+        var firstDay;
+        var lastDay;
+        Date.prototype.getWeek = function (start) {
+            //Calcing the starting point
+            start = start || 0;
+            var today = new Date(this.setHours(0, 0, 0, 0));
+            var day = today.getDay() - start;
+            var date = today.getDate() - day;
+
+            // Grabbing Start/End Dates
+            var StartDate = new Date(today.setDate(date));
+            var EndDate = new Date(today.setDate(date + 6));
+            return [StartDate, EndDate];
+        }
+
+        $('#txtStartDate').datepicker({
+
+            onSelect: function (dateText, inst) {
+                $('#txtEndtDate').datepicker('option', 'minDate', new Date(dateText));
+
+                $('#spnStartDate').html($(this).val());
+
+                if ($('#txtStartDate').val() != '' && $('#txtEndtDate').val() != '')
+                    refreshTable();
+            },
+        });
+
+        $('#txtEndtDate').datepicker({
+            onSelect: function (dateText, inst) {
+                $('#txtStartDate').datepicker('option', 'maxDate', new Date(dateText));
+
+                $('#spnEndtDate').html($(this).val());
+
+                if ($('#txtStartDate').val() != '' && $('#txtEndtDate').val() != '')
+                    refreshTable();
+            }
+        });
+
+        $('#select_dateRange').change(function () {
+            //alert($(this).val());
+            $('#spnStartDate').html('');
+            $('#spnEndtDate').html('');
+            $('#divspandate').show();
+            $('#divSD').hide();
+            $('#divED').hide();
+            $('#divmonth').hide();
+            $('#divyear').hide();
+            $('#monthlist').val('');
+            $('#yearlist').val('');
+            switch (parseInt($(this).val())) {
+                case 1:
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = moment().endOf('isoWeek').toString();
+                    break;
+                case 2:
+                    //code block
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 3:
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                    break;
+                case 4:
+                    //code block
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 5:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = moment().endOf('quarter').toString();
+                    break;
+                case 6:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 7:
+                    //code block
+                    firstDay = moment().startOf('year').toString();;
+                    lastDay = moment().endOf('year').toString();
+                    break;
+                case 8:
+                    //code block
+                    firstDay = moment().startOf('year').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 9:
+                    //code block
+                    firstDay = moment().toString();
+                    lastDay = moment().toString();
+                    break;
+                case 10:
+                    //code block
+                    firstDay = moment().add(-1, 'days').toString();
+                    lastDay = moment().add(-1, 'days').toString();
+                    break;
+                case 11:
+                    //code block
+                    firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                    lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                    break;
+                case 12:
+                    //code block
+                    firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                    break;
+                case 13:
+                    //code block
+                    firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                    lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                    break;
+                case 14:
+                    //code block
+                    firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                    lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                    break;
+                case 15:
+                    //code block
+                    $('#divspandate').hide();
+                    $('#divSD').show();
+                    $('#divED').show();
+                    $('#txtStartDate').val('');
+                    $('#txtEndtDate').val('')
+                    break;
+                case 16:
+                    //code block
+                    $('#divspandate').hide();
+                    $('#divSD').hide();
+                    $('#divED').hide();
+                    $('#divmonth').show();
+                    $('#divyear').show();
+                    break;
+                default:
+                    //code block
+            }
+            $('#spnStartDate').html(moment(firstDay).format('L'));
+            $('#spnEndtDate').html(moment(lastDay).format('L'));
+
+
+
+            //if (parseInt($(this).val()) != 15 )
+            refreshTable();
+
+        });
+
+        function applyDurationFilter(v) {
+            $('#divspandate').show();
+            $('#divSD').hide();
+            $('#divED').hide();
+            var firstDay, lastDay;
+            switch (v) {
+                case 1:
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = moment().endOf('isoWeek').toString();
+                    break;
+                case 2:
+                    //code block
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 3:
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                    break;
+                case 4:
+                    //code block
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 5:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = moment().endOf('quarter').toString();
+                    break;
+                case 6:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 7:
+                    //code block
+                    firstDay = moment().startOf('year').toString();;
+                    lastDay = moment().endOf('year').toString();
+                    break;
+                case 8:
+                    //code block
+                    firstDay = moment().startOf('year').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 9:
+                    //code block
+                    firstDay = moment().add(-1, 'days').toString();
+                    lastDay = moment().add(-1, 'days').toString();
+                    break;
+                case 10:
+                    //code block
+                    firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                    lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                    break;
+                case 11:
+                    //code block
+                    firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                    break;
+                case 12:
+                    //code block
+                    firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                    lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                    break;
+                case 13:
+                    //code block
+                    firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                    lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                    break;
+                case 14:
+                    //code block
+                    $('#txtStartDate').val($('#spnStartDate').text());
+                    $('#txtEndtDate').val($('#spnEndtDate').text());
+                    $('#divspandate').hide();
+                    $('#divSD').show();
+                    $('#divED').show();
+                    break;
+                default:
+                    //code block
+            }
+
+            if (v != 14) {
+                $('#spnStartDate').html(moment(firstDay).format('L'));
+                $('#spnEndtDate').html(moment(lastDay).format('L'));
+            }
+        }
+        function formatCurrency(total) {
+            if (total === null)
+                return '';
+            var neg = false;
+            if (total < 0) {
+                neg = true;
+                total = Math.abs(total);
+            }
+            return (neg ? "-" : '') + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        }
+
+    </script>
+}

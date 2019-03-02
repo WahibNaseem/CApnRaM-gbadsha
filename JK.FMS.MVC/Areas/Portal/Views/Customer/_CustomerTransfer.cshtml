@@ -1,0 +1,1280 @@
+﻿<style type="text/css">
+    .input-sm.pp {
+        margin-top: 0;
+        margin-bottom: 0;
+        text-align: right;
+        padding: 3px;
+        border-radius: 0;
+    }
+
+    .has-error {
+        border-color: red;
+    }
+</style>
+<form class="form-horizontal" action="@Url.Action("CustomerDetailTransferDistribution", "Customer", new { area = "Portal" })" id="submit_form_Transdistributioncustomer" method="POST">
+    
+    <div class="modal fade custom-model custom-form-design" id="modal_CustomerTransferFranchiseeDistribution" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" style="width:1000px">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                        CUSTOMER TRANSFER
+                    </h4>
+                </div>
+                <div class="modal-body" style="padding: 5px;padding-top:0px;">
+                    <input type="hidden" id="hdftransfer_customerid" name="hdftransfer_customerid" value="" />
+                    <input type="hidden" id="hdftransfercontractdetail_linecount" name="hdftransfercontractdetail_linecount" value="" />
+                    <input type="hidden" id="hdftransferfrenchiseedetail_linecount" name="hdftransferfrenchiseedetail_linecount" value="" />
+
+                    <div class="row">
+                        <div style="max-width: 98%;margin: 0px auto;">
+                            <div class="custom-form portlet light">
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-1 control-label">
+                                            Reason:
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select class="form-control input-sm" id="trans_ddlTransferReason" name="trans_ddlTransferReason">
+                                                <option>Select</option>
+                                                <option value="1">Regular Transfer</option>
+                                                <option value="2">Trouble Transfer</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4"></div>
+                                        <div class="col-md-2 control-label">
+                                            Effective Date:
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input type="text" id="trans_ddlTransferEffectiveDate" name="trans_ddlTransferEffectiveDate" class="form-control input-sm date-picker" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="portlet-body form">
+                                    <div style="width: 100%; margin: 0em auto;">
+                                        <div class="tab-content">
+                                            <div class="tab-pane active" id="tb_fr_page1">
+                                                <div class="form-group">
+                                                    <div class="col-md-8">
+                                                        <b>Customer Name: <span id="spnTransCustomerName"></span></b>
+                                                    </div>
+                                                    <div class="col-md-4 text-right">
+                                                        <b>Customer No: <span id="spnTransCustomerNo"></span></b>
+                                                    </div>
+                                                </div>
+                                                <hr style="margin-top: 1px;margin-bottom: 1px;" />
+                                                <div style="margin-bottom: 20px;">
+                                                    <div class="table-responsive">
+                                                        <table class="table" id="tblTransFranchiseeDistributionList">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th style="width:20px;text-align:center;">
+                                                                        PO No.
+                                                                    </th>
+                                                                    <th style="width:140px;text-align:center;">
+                                                                        Account Type
+                                                                    </th>
+                                                                    <th style="width:30px;text-align:center;">
+                                                                        Term (m)
+                                                                    </th>
+                                                                    <th style="text-align:center;width:50px;">
+                                                                        Start Date
+                                                                    </th>
+                                                                    <th style="text-align:center;width:30px;">
+                                                                        Expiration Date
+                                                                    </th>
+                                                                    <th style="text-align:center;width:30px;">
+                                                                        Total Amount
+                                                                    </th>
+                                                                    <th style="text-align:center;width:30px;">
+                                                                        Status
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody></tbody>
+                                                        </table>
+                                                    </div>
+
+                                                </div>
+                                                <hr />
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <table class="table table-striped table-bordered table-hover order-column" style="border:1px solid #e8e8e8" id="frTransdestributionTable">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th style="width:130px;padding:3px;margin: 0px;">Contract Detail Line</th>
+                                                                    <th style="width:100px;padding:3px;margin: 0px;text-align:center;">Franchisee No.</th>
+                                                                    <th style="width:300px;padding:3px;text-align:center;">Franchisee Name</th>
+                                                                    <th style="width:130px;padding:3px;">Distribution Amount</th>
+                                                                    <th style="width:25px;padding:3px;">Fees</th>
+                                                                    <th style="width:25px;padding:3px;"></th>
+                                                                    <th style="width:100px;padding:3px;"></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody></tbody>
+                                                        </table>
+
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <button type="button" id="btnTransferAppendDistributionTransNew" onclick="showAddTransferAppendDistribution()" class="btn btn-primary" style="margin-left: 10px;display:none;">Add New Franchisee</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <div class="col-md-12" style="padding-right: 28px;">
+                                            <button type="button" id="btnTransferDistributionContinue" onclick="showStopfindersfee()" class="btn btn-primary pull-right" style="margin-left: 10px;display:none;">Continue</button>
+                                        </div>
+                                    </div>
+                                    <div class="modal fade custom-model custom-form-design" id="modalData" tabindex="-1" role="basic" aria-hidden="true" style="display: none;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    
+    
+    
+     <div class="modal fade custom-model custom-form-design" id="modal_customercontractdetailschedule" tabindex="-1" role="basic" aria-hidden="true" style="display: none;margin-top: 100px;">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                        Contract Detail Service
+                    </h4>
+                </div>
+                <div class="modal-body" style="padding: 0px 30px 15px 30px;">
+                    <section>
+                        <div class="row">
+                            <div style="max-width: 98%;margin: 0px auto;">
+                                <div class="custom-form portlet light">
+                                    <div class="portlet-body form">
+
+                                        <div class="form-body-outer" style="padding: 0px;">
+                                            <div style="overflow:auto;width: 100%; margin: 0em auto;">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-4">
+                                                    </label>
+                                                    <div class="col-md-3">
+                                                        <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                            <input type="checkbox" id="chkTRScheduleMonday" class="i-checks editcheck">Monday
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-4">
+                                                    </label>
+                                                    <div class="col-md-3">
+                                                        <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                            <input type="checkbox" id="chkTRScheduleTuesday" class="i-checks editcheck">Tuesday
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-4">
+                                                    </label>
+                                                    <div class="col-md-3">
+                                                        <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                            <input type="checkbox" id="chkTRScheduleWednesday" class="i-checks editcheck">Wednesday
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-4">
+                                                    </label>
+                                                    <div class="col-md-3">
+                                                        <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                            <input type="checkbox" id="chkTRScheduleThursday" class="i-checks editcheck">Thursday
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-4">
+                                                    </label>
+                                                    <div class="col-md-3">
+                                                        <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                            <input type="checkbox" id="chkTRScheduleFriday" class="i-checks editcheck">Friday
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-4">
+                                                    </label>
+                                                    <div class="col-md-3">
+                                                        <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                            <input type="checkbox" id="chkTRScheduleSaturday" class="i-checks editcheck">Saturday
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-4">
+                                                    </label>
+                                                    <div class="col-md-3">
+                                                        <label class="mt-checkbox" style="margin-bottom: 8px;">
+                                                            <input type="checkbox" id="chkTRScheduleSunday" class="i-checks editcheck">Sunday
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </section>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+        </div>
+    </div>
+    <div class="modal fade custom-model custom-form-design" id="modal_Distribution" tabindex="-1" role="basic" aria-hidden="true" style="display: none;margin-top: 100px;">
+        <div class="modal-dialog modal-sm" style="width: 400px;">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                        Fee
+                    </h4>
+                </div>
+                <div class="modal-body" style="padding: 0px">
+                    <section>
+                        <div class="row">
+                            <div style="max-width: 98%;margin: 0px auto;">
+                                <div class="custom-form portlet light">
+                                    <div class="portlet-body form">
+                                        <input type="hidden" name="hdfDestributionFee_FranchiseeId" id="hdfDestributionFee_FranchiseeId" value="" />
+                                        <input type="hidden" name="hdfDestributionFee_ContractDetailId" id="hdfDestributionFee_ContractDetailId" value="" />
+                                        <input type="hidden" name="hdfDestributionFee_DestributionId" id="hdfDestributionFee_DestributionId" value="" />
+                                        <input type="hidden" name="hdfDestributionFee_Linenumber" id="hdfDestributionFee_Linenumber" value="" />
+                                        <div class="form-body-outer" style="padding: 0px;">
+                                            <div style="overflow:auto;width: 100%; margin: 0em auto;">
+                                                <div class="form-group">
+                                                    <table class="table table-striped table-bordered table-hover order-column" id="feelist">
+                                                        <thead>
+                                                            <tr style="background-color: #e8e8e8;font-weight: bold;">
+                                                                <td>
+                                                                    Fee Name
+                                                                </td>
+                                                                <td>
+                                                                    Type
+                                                                </td>
+                                                                <td style="width:50px;">
+                                                                    Amount
+                                                                </td>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody></tbody>
+                                                    </table>
+
+                                                </div>
+                                                <div class="form-group">
+                                                    <a href="javascript:void(0);" id="btnTransDistributionFeeAddLink" onclick="TransFranchiseeserviceAddDestribution()">Include Another Fee</a>
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="button" id="btnTransDistributionFeeSave" name="btnTransDistributionFeeSave" onclick="btnTransDistributionFeeSaveOnClick()" value="Save" class="btn btn-primary input-sm pull-right" />
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </section>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+        </div>
+    </div>
+    <div class="modal fade custom-model custom-form-design" id="modal_AddDistribution" tabindex="-1" role="basic" aria-hidden="true" style="display: none;margin-top: 100px;">
+        <div class="modal-dialog modal-sm" style="width: 400px;">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                        Fee
+                    </h4>
+                </div>
+                <div class="modal-body" style="padding: 0px">
+                    <section>
+                        <div class="row">
+                            <div style="max-width: 98%;margin: 0px auto;">
+                                <div class="custom-form portlet light">
+                                    <div class="portlet-body form">
+
+                                        <div class="form-body-outer" style="padding: 0px;">
+                                            <div style="overflow:auto;width: 100%; margin: 0em auto;">
+                                                <div class="form-group">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-striped table-bordered table-hover order-column" id="feeListAdd">
+                                                            <thead>
+                                                                <tr style="background-color: #e8e8e8;font-weight: bold;">
+                                                                    <td></td>
+                                                                    <td>
+                                                                        Fee Name
+                                                                    </td>
+                                                                    <td>
+                                                                        Type
+                                                                    </td>
+                                                                    <td style="width:50px;">
+                                                                        Amount
+                                                                    </td>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody></tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="button" name="btnAddDistributionFeeSave" onclick="btnAddDistributionFeeSaveOnClick()" value="Add" class="btn btn-primary input-sm pull-right" />
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </section>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+        </div>
+    </div>
+    <div class="modal fade custom-model custom-form-design" id="modal_SearchFranchiseeforTransfer" tabindex="-1" role="basic" aria-hidden="true" style="display: none;margin-top: 100px;">
+        <div class="modal-dialog modal-sm" style="width: 400px;">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-body" style="padding: 0px">
+                    <section>
+                        <div class="row">
+                            <div style="max-width: 98%;margin: 0px auto;">
+                                <div class="custom-form portlet light">
+                                    <div class="portlet-body form">
+                                        <div class="form-body-outer" style="padding: 0px;">
+                                            <div style="overflow:auto;width: 100%; margin: 0em auto;">
+                                                <div class="form-group" id="fsearch-box-div">
+                                                    <input type="text" id="fsearch-boxI" autocomplete="off" name="name" value="" placeholder="Search Pay To by Number or Name" class="form-control input-sm typeahead" style="padding: 5px;border-radius: 0px;margin: 0px;" />
+
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="button" name="btnAddDistributionFeeSave" onclick="btnAddDistributionFeeSaveOnClick()" value="Add" class="btn btn-primary input-sm pull-right" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </section>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+        </div>
+    </div>
+    <div class="modal fade custom-model custom-form-design" id="modal_stopfindersfee" tabindex="-1" role="basic" aria-hidden="true" style="display: none;padding-right: 35px;">
+        <div class="modal-dialog" style="width: 1000px;">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                        STOP FINDER'S FEE & TROUBLE TRANSFER FEE
+                    </h4>
+                </div>
+                <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                    <div class="form-body">
+                        <div class="form-group" style="margin-right: 0px !important;">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="col-md-8">
+                                        <b>Customer Name: <span id="spnTransCustomerNameTT"></span></b>
+                                    </div>
+                                    <div class="col-md-4 text-right">
+                                        <b>Customer No: <span id="spnTransCustomerNoTT"></span></b>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="col-md-6" style="padding-top: 0px;">
+                                        <span><b>Bill Month/Year: 11/2017</b></span>
+                                    </div>
+                                    <div class="col-md-6" style="padding-top: 0px;text-align:right;">
+                                        <span><b>Trouble Transfer Fee: $50.00</b></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-bordered table-hover order-column" id="tblstopfindersfee">
+                                            <thead>
+                                                <tr>
+
+                                                    <td class="text-center"><b>Type</b></td>
+
+                                                    <td class="text-center">Regular Billing</td>
+
+                                                    <td class="text-center"></td>
+
+                                                    <td class="text-center"></td>
+
+                                                    <td class="text-center"></td>
+
+                                                    <td class="text-center"></td>
+
+                                                    <td class="text-center"></td>
+
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-center" style="vertical-align:middle;background: lightgray;width: 85px;">Franchisee No</th>
+                                                    <th class="text-center" style="vertical-align:middle;background: lightgray;width: 220px;">Franchisee Name</th>
+                                                    <th class="text-center" style="vertical-align:middle;background: lightgray;width: 100px;">Finders Fee Stop Date</th>
+                                                    <th class="text-center" style="vertical-align:middle;background: lightgray;">Note</th>
+                                                    <th class="text-center" style="vertical-align:middle;background: lightgray;width:100px;">Trouble With Fee</th>
+                                                    <th class="text-center" style="vertical-align:middle;background: lightgray;width:100px;">Trouble Without Fee</th>
+                                                    <th class="text-center" style="vertical-align:middle;background: lightgray;width:100px;">Not a Trouble Account</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions" style="padding: 10px;">
+                        <div class="col-md-12" style="padding-right: 28px;">
+                            <button type="button" id="btnTransferDistributionTransferfeeContinue" onclick="saveCustomerDetailTransferDistribution()" class="btn btn-primary pull-right" style="margin-left: 10px;">Continue</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-horizontal" id="form_revenuedistribution"></div>
+    <input type="hidden" id="hdfFranchiseeDistFeeCount" name="hdfFranchiseeDistFeeCount" value="" />
+    <table style="display:none;width:100%" id="tbfranchiseedistributionfeelisthidden">
+        <thead><tr><th>T</th></tr></thead>
+        <tbody></tbody>
+    </table>
+</form>
+<script>
+
+    //Step-1 :: Customer Transfer
+    var lstContractDetailServiceTypeList = [];
+    var lineNo = 0;
+    var flineNo = 0;
+
+    var app = {};
+    $(document).ready(function () {
+
+
+
+    });
+
+    function deleteFrenchisee(linenumber, flineNo) {
+        $("tr[id=row_" + flineNo + "]").remove();
+    }
+
+    function bindfranchiseedetail(linenumber, franchiseeid, franchiseename, ln) {
+        flineNo++;
+
+        FDistributionFinal.push({ FranchiseeId: franchiseeid, })
+        //var txtmarkup = parseFloat($('#txtmarkup' + linenumber).val() == '' ? 0 : $('#txtmarkup' + linenumber).val())
+        var txtqty = parseFloat($('#txtqty' + linenumber).val() == '' ? 0 : $('#txtqty' + linenumber).val())
+        var txtunitprice = parseFloat($('#txtunitprice' + linenumber).inputmask('unmaskedvalue') == '' ? 0 : $('#txtunitprice' + linenumber).inputmask('unmaskedvalue'))
+        var txttotal = (txtqty * txtunitprice)
+
+        var lineTotalAmount = 0;
+        $('input[relLinea="' + linenumber + '"]').each(function (el) {
+            lineTotalAmount += parseFloat(this.defaultValue);
+        });
+
+        if (lineTotalAmount + txttotal > txttotal) {
+            if (lineTotalAmount < txttotal) {
+                txttotal = txttotal - lineTotalAmount;
+            }
+            else {
+                txttotal = 0;
+            }
+        }
+
+        var someString = franchiseename;
+        var index = someString.indexOf(" ");  // Gets the first index where a space occours
+        var FranchiseeNo = someString.substr(0, index); // Gets the first part
+        var franchiseename = someString.substr(index + 1);
+
+        AppendDistribution(ln, franchiseeid, FranchiseeNo, franchiseename, txttotal, linenumber, 0);
+
+        setTimeout(function () {
+            $("#hdfFrenchiseeId").val(0);
+            document.getElementById('ddldetaillinenumber').selectedIndex = 0;
+            $('#fsearch-boxI').val('');
+        }, 500);
+
+    }
+
+
+
+    function viewDestribution() {
+        $("#modal_view").modal({ backdrop: 'static' });
+    }
+
+    function ValidatefrenchiseeData() {
+        var isNotValidForm = true;
+
+        
+        if ($('input[relcdamt="cd_relcdamt"]').length > 0) {
+            var cdlinenumber = 0;
+            var cdamount = 0;
+            var fbamount = 0;
+            $('input[relcdamt="cd_relcdamt"]').each(function (index, value) {
+                cdamount = $(this).val();
+                cdlinenumber = $(this)[index].id.toString().replace('cd_relcdamt', '');
+                fbamount = 0.00;
+                $('input[relfbamt="fb_amt' + cdlinenumber + '"]').each(function (index1, value1) {
+                    fbamount += parseFloat($(this).val());
+                    if (parseFloat(this.value) == 0) {
+                        this.style.border = "1px solid red";
+                        isNotValidForm = false;
+                    }
+                    else
+                        this.style.border = "1px solid #c2cad8";
+                });
+                var isNotValid = true;
+                if (fbamount != parseFloat(cdamount)) {
+                    isNotValid = false;
+                    //alert('Please enter distribution amount equals contract detail amount!');
+
+                }
+
+                $('input[relfbamt="fb_amt' + cdlinenumber + '"]').each(function (index1, value1) {
+                    if (!isNotValid || parseFloat(this.value) == 0) {
+                        this.style.border = "1px solid red";
+                        isNotValidForm = false;
+                        isNotValid = false;
+                    }
+                    else
+                        this.style.border = "1px solid #c2cad8";
+                });
+
+            });
+            return isNotValidForm;
+        }
+        return false;
+    }
+
+
+
+    var DistributionfeeList = [];
+    var DistributionfeeListFinal = [];
+
+    function TransferDistributionfee(fid, ContractDetailId, DistributionId, ln, isReadonly) {
+        
+        $('#hdfDestributionFee_FranchiseeId').val(fid);
+        $('#hdfDestributionFee_ContractDetailId').val(ContractDetailId);
+        $('#hdfDestributionFee_DestributionId').val(DistributionId);
+        $('#hdfDestributionFee_Linenumber').val($('#fdt_ddldetaillinenumber' + ln).val());
+
+        var new_arr = $.grep(DistributionfeeListFinal, function (n, i) { return (n.ContractDetailId == ContractDetailId && n.FranchiseeId == fid) });
+        if (new_arr.length > 0) {
+            DistributionfeeBindData(new_arr);
+            DistributionfeeList = new_arr;
+            if (isReadonly == 1) {
+                $('#btnTransDistributionFeeSave').hide();
+                $('#btnTransDistributionFeeAddLink').hide();
+
+            }
+            else {
+                $('#btnTransDistributionFeeSave').show();
+                $('#btnTransDistributionFeeAddLink').show();
+            }
+
+
+            $("#modal_Distribution").modal({ backdrop: 'static' });
+        }
+        else {
+            var sURL = '@Url.Action("FranchiseeDistributionFeeData", "Customer", new { area = "Portal" })?FranchiseeId=' + fid + '&ContractDetailId=' + ContractDetailId + '&DistributionId=' + DistributionId;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#feelist>tbody').html('');
+                    DistributionfeeList = data;
+                    DistributionfeeBindData(DistributionfeeList);
+
+                    if (DistributionfeeList.ContractDetailId != undefined) {
+                        DistributionfeeList.push({
+                            DistributionFeesId: DistributionfeeList.DistributionFeesId, DistributionId: DistributionfeeList.DistributionId, CustomerId: $('#hdftransfer_customerid').val(), ContractDetailId: DistributionfeeList.ContractDetailId,
+                            FranchiseeId: DistributionfeeList.FranchiseeId, DetailLineNumber: DistributionfeeList.DetailLineNumber, FeeId: DistributionfeeList.FeeId, Amount: DistributionfeeList.Amount
+                        });
+                    }
+
+                    if (isReadonly == 1) {
+                        $('#btnTransDistributionFeeSave').hide();
+                        $('#btnTransDistributionFeeAddLink').hide();
+
+                    }
+                    else {
+                        $('#btnTransDistributionFeeSave').show();
+                        $('#btnTransDistributionFeeAddLink').show();
+                    }
+
+
+                    $("#modal_Distribution").modal({ backdrop: 'static' });
+
+                }
+            });
+        }
+    }
+    //Method to sort the DistributionfeeList fee by amount
+    function SortByName(a, b) {
+        
+        var aName = a.Amount;
+        var bName = b.Amount;
+        return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+
+    }
+
+    
+
+    function DistributionfeeBindData(DistributionfeeList) {
+        
+        var _DistributionfeeList = DistributionfeeList.sort(SortByName);
+
+        $('#feelist>tbody').html('');
+        $.each(_DistributionfeeList, function (index, value) {
+
+            tempRow = "";
+            tempRow += '<tr relDistributionFeeId="' + value.FranchiseeId + '_' + value.ContractDetailId + '_' + value.FeeId + '">';
+            tempRow += '<td style="vertical-align: middle;">' + value.FeeName + '</td>';
+            tempRow += '<td style="vertical-align: middle;">' + value.FeeRateTypeName + '</td>';
+            tempRow += '<td><input type="text" id="DistributionFeeAmount_' + value.FranchiseeId + '_' + value.ContractDetailId + '_' + value.FeeId + '" class="form-control input-sm pp" value="' + value.Amount + '" /></td>';
+            tempRow += '</tr>';
+            $('#feelist>tbody').append(tempRow);
+
+            $('#DistributionFeeAmount_' + value.FranchiseeId + '_' + value.ContractDetailId + '_' + value.FeeId).change(function () {
+                var new_arr = $.grep(DistributionfeeList, function (n, i) { return (n.FranchiseeId == value.FranchiseeId && n.ContractDetailId == value.ContractDetailId && n.FeeId == value.FeeId); });
+                if (new_arr.length > 0) {
+                    var amt = parseFloat($(this).val());
+                    new_arr[0].Amount = amt;
+                }
+            });
+        });
+    }
+
+
+    var FDistributionFinal = [];
+
+    var tempRowDistribution = "";
+    var tempRowLineNo = 0;
+    var tempFRowLineNo = 0;
+    var Translineitems = [];
+    function CFranchiseeDistributionData(id) {
+        var sURL = '@Url.Action("GetCustomerFranchiseeDistributionData", "Customer", new { area = "Portal" })?Id=' + id;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+
+                $('#hdftransfer_customerid').val(data.CustomerId);
+                $('#spnTransCustomerName').html(data.CustomerName);
+                $('#spnTransCustomerNo').html(data.CustomerNo);
+                $('#spnTransCustomerNameTT').html(data.CustomerName);
+                $('#spnTransCustomerNoTT').html(data.CustomerNo);
+                $('#tblTransFranchiseeDistributionList>tbody').html('');
+                tempRow = "";
+                tempRow += '<tr><td style="width:100px;text-align:center;">' + data.PONumber + '</td>';
+                tempRow += '<td style="text-align:center;width:140px;">' + data.AccountTypeName + '</td>';
+                tempRow += '<td style="text-align:center;width:30px;">' + data.Term + '</td>';
+                tempRow += '<td style="text-align:center;width:50px;">' + formatJSONDate(data.StartDate) + '</td>';
+                tempRow += '<td style="text-align:center;width:50px;">' + formatJSONDate(data.ExpirationDate) + '</td>';
+                tempRow += '<td style="text-align:right;width:30px;">$<span id="contractAmountCT">' + data.TotalAmount + '</span></td>';
+                tempRow += '<td style="text-align:center;width:30px;">' + data.Status + '</td>';
+
+                tempRow += '<tr><td colspan="7" style="padding:5px;"><div class="table-responsive">';
+                tempRow += '<table class="table table-striped table-bordered table-hover order-column" id="TransFranchiseeDistributionDetailList">';
+                tempRow += '<thead>';
+                tempRow += '<tr><th style="width:150px;text-align:center;">Contract Detail Line</th>';
+                tempRow += '<th style="text-align:center;"> Service Description</th>';
+                tempRow += '<th style="width:120px;text-align:center;">Amount</th>';
+                tempRow += '<th style="width:100px;text-align:center;">Frequency</th>';
+                tempRow += '<th style="width:50px;text-align:center;">Schedule</th>';
+                tempRow += '</tr></thead><tbody></tbody></table></div></td></tr>';
+
+
+                $('#tblTransFranchiseeDistributionList>tbody').append(tempRow);
+                $('#ddldetaillinenumber').html('');
+                Translineitems.push("<option value='0'>Select</option>");
+
+                $.each(data.listContractDetail, function (index, value) {
+                    tempRowLineNo = value.LineNumber;
+                    tempRowDistribution = "";
+                    tempRowDistribution += '<tr>'
+                    tempRowDistribution += '<td style="text-align:center;">'
+                    tempRowDistribution += '<input type="hidden" relcdamt="cd_relcdamt" id="cd_relcdamt' + tempRowLineNo + '" value="' + value.Amount + '" />'
+                    tempRowDistribution += '<input type="hidden" id="tcd_contractdetailId' + tempRowLineNo + '" value="' + value.Amount + '" />'
+                    tempRowDistribution += '<input type="hidden" id="tcd_contractdetailNumber' + tempRowLineNo + '" value="' + value.LineNumber + '" />'
+                    tempRowDistribution += value.LineNumber + '</td>';
+                    tempRowDistribution += '<td style="text-align:center;">' + value.ServiceTypeName + '</td>';
+                    tempRowDistribution += '<td style="text-align:right;"><input type="text" value="' + value.Amount + '" class="form-control input-sm editvalue" style="text-align:right;" readonly="readonly"/></td>';
+                    tempRowDistribution += '<td style="text-align:center;">' + value.BillingFrequencyListName + '</td>';
+                    tempRowDistribution += '<td style="text-align:center;"><a href="javascript:void(0);" onclick="showContractDetailSchedule(' + value.Mon + ',' + value.Tues + ',' + value.Wed + ',' + value.Thur + ',' + value.Fri + ',' + value.Sat + ',' + value.Sun + ')">View</a></td>'
+                    tempRowDistribution += '</tr>'
+
+                    $('#TransFranchiseeDistributionDetailList>tbody').append(tempRowDistribution);
+
+                    Translineitems.push("<option value=" + value.ContractDetailId + ">" + value.LineNumber + "</option>");
+
+                    $('#frTransdestributionTable>tbody').html('');
+                    var flineNo = 0;
+                    $.each(data.listFranchiseeDistribution, function (index, value) {
+                        AppendDistribution(value.DetailLineNumber, value.FranchiseeId, value.FranchiseeNo, value.FranchiseeName, value.Amount, value.ContractDetailId, value.DistributionId, true);
+                    });
+                });
+
+                $('#ddldetaillinenumber').html(Translineitems.join(' '));
+
+                $("#hdftransfercontractdetail_linecount").val(tempRowLineNo);
+                $("#hdftransferfrenchiseedetail_linecount").val(tempFRowLineNo);
+
+
+
+
+                $("#modal_CustomerTransferFranchiseeDistribution").modal({ backdrop: 'static' });
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function TransFranchiseeserviceAddDestribution() {
+
+        $.ajax({
+            url: '@Url.Action("GetFeeData", "Customer","Portal")',
+            success: function (res) {
+                console.log(res);
+                FeeDataForDistribution = res;
+                var tempRow = "";
+                $('#feeListAdd tbody').html('');
+                $.each(res, function (index, value) {
+                    tempRow = "";
+                    tempRow += '<tr>';
+                    tempRow += '    <td><input type="checkbox" rel="feeid_distribution" value="' + value.FeeId + '" /></td>';
+                    tempRow += '    <td>' + value.FeeName + '</td>';
+                    tempRow += '    <td>' + value.FeeRateTypeName + '</td>';
+                    tempRow += '    <td style="text-align: right;">' + (value.FeeRateTypeListId == 1 ? (value.Amount + '%') : ('$ ' + value.Amount)) + '</td>';
+                    tempRow += '</tr>';
+                    $('#feeListAdd tbody').append(tempRow);
+                });
+
+                $("#modal_AddDistribution").modal({ backdrop: 'static' });
+            },
+            error: function () { }
+        });
+    }
+    function btnAddDistributionFeeSaveOnClick() {
+
+        $('input[rel="feeid_distribution"]').each(function (item) {
+            if ($(this).is(":checked")) {
+                var _FeeId = $(this).val();
+                var new_arr = $.grep(FeeDataForDistribution, function (n, i) { return n.FeeId == _FeeId; })[0];
+
+                DistributionfeeList.push({
+                    DistributionFeesId: 0,
+                    DistributionId: $('#hdfDestributionFee_DestributionId').val(),
+                    CustomerId: $('#lblCustomerID').val(),
+                    ContractDetailId: $('#hdfDestributionFee_ContractDetailId').val(),
+                    FranchiseeId: $('#hdfDestributionFee_FranchiseeId').val(),
+                    DetailLineNumber: $('#hdfDestributionFee_Linenumber').val(),
+                    FeeId: _FeeId,
+                    FeeName: new_arr.FeeName,
+                    FeeRateTypeListId: new_arr.FeeRateTypeListId,
+                    FeeRateTypeName: new_arr.FeeRateTypeName,
+                    Amount: new_arr.Amount
+                });
+
+            }
+        });
+        DistributionfeeBindData(DistributionfeeList);
+
+        $("#modal_AddDistribution").modal('hide');
+
+    }
+    function btnTransDistributionFeeSaveOnClick() {
+        $.each(DistributionfeeList, function (index, value) {
+            var new_arr = $.grep(DistributionfeeListFinal, function (n, i) { return (n.ContractDetailId == value.ContractDetailId && n.FranchiseeId == value.FranchiseeId && n.FeeId == value.FeeId); });
+            if (new_arr.length > 0) {
+                var amt = parseFloat($('#DistributionFeeAmount_' + value.FranchiseeId + '_' + value.ContractDetailId + '_' + value.FeeId).val());
+                new_arr[0].Amount = amt;
+            }
+            else {
+                DistributionfeeListFinal.push(value);
+            }
+            for (var i = 1; i <= parseInt($("#hdftransferfrenchiseedetail_linecount").val()) ; i++) {
+                var new_arr1 = $.grep(DistributionfeeList, function (n, i) { return (n.ContractDetailId == parseInt($("#fdt_hdfcontractdetailid" + i).val()) && n.FranchiseeId == parseInt($("#fdt_hdfFrenchiseeId" + i).val())); });
+                if (new_arr1.length > 0)
+                    $("#fdt_lnkAppendDistributionFee" + i).text('View/Edit');
+
+            }
+
+        });
+        DistributionfeeList = [];
+        $("#modal_Distribution").modal('hide');
+    }
+
+    var lnFranchiseeDistribution = 0;
+    function AppendDistribution(ln, fid, fnumber, fname, amt, contractdetailid, distributionid, isTrans) {
+        
+        lnFranchiseeDistribution++;
+        var tempRow = '';
+        tempRow = tempRow + '<tr id=row_' + lnFranchiseeDistribution + '>'
+        tempRow = tempRow + '<td>'
+        tempRow = tempRow + '   <input type="hidden" relLine="' + lnFranchiseeDistribution + '" id="fdt_hdfdistributionid' + lnFranchiseeDistribution + '" name="fdt_hdfdistributionid' + lnFranchiseeDistribution + '" value="' + distributionid + '" />'
+        tempRow = tempRow + '   <input type="hidden" relLine="' + lnFranchiseeDistribution + '" id="fdt_hdfcontractdetailid' + lnFranchiseeDistribution + '" name="fdt_hdfcontractdetailid' + lnFranchiseeDistribution + '" value="' + contractdetailid + '" />'
+        tempRow = tempRow + '   <input type="hidden" relLine="' + lnFranchiseeDistribution + '" id="fdt_hdfFrenchiseeId' + lnFranchiseeDistribution + '" name="fdt_hdfFrenchiseeId' + lnFranchiseeDistribution + '" value="' + fid + '" />'
+        tempRow = tempRow + '   <input relLine="' + lnFranchiseeDistribution + '" type="hidden" id="hdfFrenchiseeId' + lnFranchiseeDistribution + '" name="hdfFrenchiseeId' + lnFranchiseeDistribution + '" value="' + fid + '" />'
+
+        if (distributionid > 0)
+            tempRow = tempRow + '   <input type="text"   relLine="' + lnFranchiseeDistribution + '" id="fdt_txtlinenumber' + lnFranchiseeDistribution + '" name="fdt_txtlinenumber' + lnFranchiseeDistribution + '" required readonly value="' + ln + '" class="form-control input-sm cnumeric" style="text-align:center;padding: 5px;border-radius: 0px;" />'
+        else
+            tempRow = tempRow + '   <select relLine="' + lnFranchiseeDistribution + '"  relddldetaillinenum="fdt_ddldetaillinenumber" class="form-control input-sm" style="border-radius: 0px;" id="fdt_ddldetaillinenumber' + lnFranchiseeDistribution + '" name="fdt_ddldetaillinenumber' + lnFranchiseeDistribution + '"></select>';
+
+        tempRow = tempRow + '</td>'
+        tempRow = tempRow + '<td>'
+        tempRow = tempRow + '   <input type="text" relLine="' + lnFranchiseeDistribution + '" id="fdt_txtfranchiseeno' + lnFranchiseeDistribution + '" name="fdt_txtfranchiseeno' + lnFranchiseeDistribution + '" required readonly   value="' + $.trim(fnumber) + '" class="form-control input-sm cnumeric" style="text-align:center;padding: 5px;border-radius: 0px;" />'
+        tempRow = tempRow + '</td>'
+        tempRow = tempRow + '<td>'
+        tempRow = tempRow + '   <input type="text" relLine="' + lnFranchiseeDistribution + '" id="fdt_txtfranchiseename' + lnFranchiseeDistribution + '" name="fdt_txtfranchiseename' + lnFranchiseeDistribution + '" required readonly  value="' + $.trim(fname) + '" class="form-control input-sm cnumeric" style="text-align:center;padding: 5px;border-radius: 0px;" />'
+        tempRow = tempRow + '</td>'
+        tempRow = tempRow + '<td>'
+        tempRow = tempRow + '   <input type="text" relfbamt="fb_amt' + lnFranchiseeDistribution + '" relLine="' + lnFranchiseeDistribution + '" id="fdt_txtfranchiseeamount' + lnFranchiseeDistribution + '" name="fdt_txtfranchiseeamount' + lnFranchiseeDistribution + '" required ' + (distributionid > 0 ? 'readonly' : '') + ' value="' + amt + '" class="form-control input-sm cnumeric" style="text-align:right;padding: 5px;border-radius: 0px;" />'
+        tempRow = tempRow + '</td>';
+        tempRow = tempRow + '<td style="padding: 9px!important;text-align:center;" id="trans_dfeeLink' + lnFranchiseeDistribution + '">'
+        if (distributionid > 0)
+            tempRow = tempRow + '   <a href="javascript:void(0);" id="fdt_lnkAppendDistributionFee' + lnFranchiseeDistribution + '" onclick="TransferDistributionfee(' + fid + ',' + $('#fdt_hdfcontractdetailid' + lnFranchiseeDistribution).val() + ',' + distributionid + ',' + lnFranchiseeDistribution + ')">View/Edit</a>'
+        else
+            tempRow = tempRow + '   <a href="javascript:void(0);" id="fdt_lnkAppendDistributionFee' + lnFranchiseeDistribution + '" onclick="TransferDistributionfee(' + fid + ',' + $('#fdt_hdfcontractdetailid' + lnFranchiseeDistribution).val() + ',' + distributionid + ',' + lnFranchiseeDistribution + ')">Add</a>'
+        tempRow = tempRow + '</td>';
+        tempRow = tempRow + '<td style="padding: 6px!important;text-align:center;" id="trans_dfeeLinkdelete' + lnFranchiseeDistribution + '">'
+        tempRow = tempRow + '   <a style="font-size: 16px;padding: 3px;color: mediumvioletred;" href="javascript:deleteFrenchisee(' + lnFranchiseeDistribution + ',' + fnumber + ');"><i class="fa fa-trash" aria-hidden="true"></i></a>'
+        tempRow = tempRow + '</td>';
+        tempRow = tempRow + '<td>'
+        if (isTrans == true)
+            tempRow = tempRow + '<button type="button" id="btnTransferAppendDistributionTrans' + lnFranchiseeDistribution + '" class="btn btn-primary" style="margin-left: 10px;" onclick="TransferAppendDistribution(' + ln + ',' + fid + ',' + fnumber + ',\'' + fname.replace('\'','''') + '\',' + amt + ')">Transfer</button>'
+
+        tempRow = tempRow + '</td></tr>';
+
+        $('#frTransdestributionTable tbody').append(tempRow);
+        $('#hdftransferfrenchiseedetail_linecount').val(lnFranchiseeDistribution);
+
+
+
+        if (ln > 0) {
+            if (distributionid > 0)
+                $('#trans_dfeeLink' + lnFranchiseeDistribution).html('<a href="javascript:void(0);" id="fdt_lnkAppendDistributionFee' + lnFranchiseeDistribution + '" onclick="TransferDistributionfee(' + fid + ',' + $('#fdt_hdfcontractdetailid' + lnFranchiseeDistribution).val() + ',' + distributionid + ',' + lnFranchiseeDistribution + ')">View/Edit</a>');
+            else
+                $('#trans_dfeeLink' + lnFranchiseeDistribution).html('<a href="javascript:void(0);" id="fdt_lnkAppendDistributionFee' + lnFranchiseeDistribution + '" onclick="TransferDistributionfee(' + fid + ',' + $('#fdt_hdfcontractdetailid' + lnFranchiseeDistribution).val() + ',' + distributionid + ',' + lnFranchiseeDistribution + ')">Add</a>');
+
+        } else {
+            $('#trans_dfeeLink' + lnFranchiseeDistribution).html('');
+        }
+
+        //var lineitems = []; lineitems.push("<option>Select</option>");
+        //for (var i = 1; i <= tempRowLineNo; i++) { lineitems.push("<option " + (ln == i ? "Selected" : "") + " value=" + i + ">" + i + "</option>"); }
+
+        $('#fdt_ddldetaillinenumber' + lnFranchiseeDistribution).html('');
+        $('#fdt_ddldetaillinenumber' + lnFranchiseeDistribution).html(Translineitems.join(' '));
+        $('#fdt_ddldetaillinenumber' + lnFranchiseeDistribution).val(contractdetailid);
+
+        $('#fdt_ddldetaillinenumber' + lnFranchiseeDistribution).change(function () {
+            if ($(this).val() != 'Select' && $(this).val() != '0') {
+                $('#fdt_hdfcontractdetailid' + lnFranchiseeDistribution).val($(this).val());
+                if (distributionid > 0)
+                    $('#trans_dfeeLink' + lnFranchiseeDistribution).html('<a href="javascript:void(0);" id="fdt_lnkAppendDistributionFee' + lnFranchiseeDistribution + '" onclick="TransferDistributionfee(' + fid + ',' + $('#fdt_hdfcontractdetailid' + lnFranchiseeDistribution).val() + ',' + distributionid + ',' + lnFranchiseeDistribution + ')">View/Edit</a>');
+                else
+                    $('#trans_dfeeLink' + lnFranchiseeDistribution).html('<a href="javascript:void(0);" id="fdt_lnkAppendDistributionFee' + lnFranchiseeDistribution + '" onclick="TransferDistributionfee(' + fid + ',' + $('#fdt_hdfcontractdetailid' + lnFranchiseeDistribution).val() + ',' + 0 + ',' + lnFranchiseeDistribution + ')">Add</a>');
+
+            }
+            else {
+                $('#trans_dfeeLink' + lnFranchiseeDistribution).html('');
+            }
+        });
+    }
+
+    function TransferValidateStepFirst() {
+
+        var retVal = true;
+        if ($('#trans_ddlTransferReason').val() == 'Select') {
+            $('#trans_ddlTransferReason').addClass("has-error");
+            retVal = false;
+        }
+        else {
+            $('#trans_ddlTransferReason').removeClass("has-error");
+        }
+
+
+        if ($('#trans_ddlTransferEffectiveDate').val().trim() == '') {
+            $('#trans_ddlTransferEffectiveDate').addClass("has-error");
+            retVal = false;
+        } else {
+            $('#trans_ddlTransferEffectiveDate').removeClass("has-error");
+        }
+
+
+        return retVal;
+    }
+
+    function TransferValidateStepSecond() {
+
+        var retVal = true;
+        $.each(lstDistributionFranchiseeList, function (index, value) {
+
+            if ($('#trans_ddlTransferDistributionFranchiseeStopDate' + index).val() == '') {
+                $('#trans_ddlTransferDistributionFranchiseeStopDate' + index).addClass("has-error");
+                retVal = false;
+            }
+            else {
+                $('#trans_ddlTransferDistributionFranchiseeStopDate' + index).removeClass("has-error");
+            }
+
+            if ($('#trans_ddlTransferDistributionFranchiseeNote' + index).val() == '') {
+                $('#trans_ddlTransferDistributionFranchiseeNote' + index).addClass("has-error");
+                retVal = false;
+            }
+            else {
+                $('#trans_ddlTransferDistributionFranchiseeNote' + index).removeClass("has-error");
+            }
+        });
+        return retVal;
+    }
+
+    function TransferValidateStepContinue() {
+   
+        var retVal = true;
+        var conAmount = parseFloat($('#contractAmountCT').html()); 
+        var conDAAmount = 0;
+        for (var i = 1; lnFranchiseeDistribution < i; i++) {            
+            var cdAmt = parseFloat($('#fdt_txtfranchiseeamount' + i).val());
+            conDAAmount = conDAAmount + cdAmt;
+
+        }
+        if (conDAAmount != conAmount) {
+            retVal = false;
+            swal("Please Transfer Amount must be same Contract Amount.")
+        }
+        
+        return retVal;
+    }
+
+    function TransferAppendDistribution(ln, fid, fnumber, fname, amt, isBlack) {
+        if (!TransferValidateStepFirst()) {
+            return;
+        }
+       
+        $("#modal_SearchFranchiseeforTransfer").modal({ backdrop: 'static' });
+
+
+        var _contDet = $("#fdt_hdfcontractdetailid" + ln).val();
+        lstDistributionFranchiseeList.push({ LineNo: ln, FranchiseeId: fid, FranchiseeNumber: fnumber, FranchiseeName: fname, Amount: amt, ContractDetailId: _contDet });
+
+        $("#fsearch-boxI").autocomplete({
+            source: typeaheadSourceF,
+            appendTo: $("#fsearch-box-div"),
+            select: function (event, ui) {
+                event.preventDefault();
+               
+                var vFid = ui.item.value;
+                var vFnumber = ui.item.label.split(' ')[0].trim();
+                var vFname = ui.item.label.replace(ui.item.label.split(' ')[0], "").trim();
+
+                if (isBlack != true) {
+                    $("#fdt_txtfranchiseeamount" + ln).val("$0.00");
+                    $("#fdt_txtfranchiseeamount" + ln).prop("readonly", true);
+                    $("#btnTransferAppendDistributionTrans" + ln).hide();
+                }
+
+               
+                AppendDistribution(ln, vFid, vFnumber, vFname, amt, _contDet, 0);
+
+               
+                //for (var i = 1; i <= parseInt($("#hdftransferfrenchiseedetail_linecount").val()); i++) {
+                //    var new_arr1 = $.grep(DistributionfeeList, function (n, i) { return (n.ContractDetailId == parseInt($("#fdt_hdfcontractdetailid" + i).val()) && n.FranchiseeId == parseInt($("#fdt_hdfFrenchiseeId" + i).val())); });
+                //    if (new_arr1.length > 0)
+                //        $("#fdt_lnkAppendDistributionFee" + i).text('View/Edit');
+
+                //}
+
+
+
+                //$("#trans_dfeeLink" + ln).html('');
+                $("#trans_dfeeLinkdelete" + ln).html('');
+
+                $("#fsearch-boxI").val('');
+                $("#btnTransferAppendDistributionTransNew").show();
+                $("#btnTransferDistributionContinue").show();
+                $("#modal_SearchFranchiseeforTransfer").modal('hide');
+            }
+        });
+    }
+
+
+    function showAddTransferAppendDistribution() {
+        $("#modal_SearchFranchiseeforTransfer").modal({ backdrop: 'static' });
+        $("#fsearch-boxI").autocomplete({
+            source: typeaheadSourceF,
+            appendTo: $("#fsearch-box-div"),
+            select: function (event, ui) {
+                event.preventDefault();
+
+                var vFid = ui.item.value;
+                var vFnumber = ui.item.label.split(' ')[0].trim();
+                var vFname = ui.item.label.replace(ui.item.label.split(' ')[0], "").trim();
+               
+                AppendDistribution(0, vFid, vFnumber, vFname, 00, 0, 0);
+                $("#fsearch-boxI").val('');
+                $("#modal_SearchFranchiseeforTransfer").modal('hide');
+            }
+        });
+    }
+
+
+    var lstDistributionFranchiseeList = [];
+    function showStopfindersfee() {
+       
+        if (!TransferValidateStepContinue()) {
+            return;
+        }
+
+
+        $("#tblstopfindersfee>tbody").html('');
+        $.each(lstDistributionFranchiseeList, function (index, value) {
+            trRow = "";
+            trRow += '<tr>';
+            trRow += '    <td class="text-center">' + value.FranchiseeNumber;
+            trRow += '      <input type="hidden" relTRFR="' + value.FranchiseeId + '" id="trans_txtTransferDistributionContractDetailId' + index + '" name="trans_txtTransferDistributionContractDetailId' + index + '" value="' + value.ContractDetailId + '" />'
+            trRow += '      <input type="hidden" relTRFR="' + value.FranchiseeId + '" id="trans_txtTransferDistributionFranchiseeId' + index + '" name="trans_txtTransferDistributionFranchiseeId' + index + '" value="' + value.FranchiseeId + '" />'
+            trRow += '    </td>';
+            trRow += '    <td class="text-center">' + value.FranchiseeName + '</td>';
+            trRow += '    <td class="text-center"><input type="text" relTRFR="' + value.FranchiseeId + '" id="trans_ddlTransferDistributionFranchiseeStopDate' + index + '" name="trans_ddlTransferDistributionFranchiseeStopDate' + index + '" class="form-control input-sm date-picker" /></td>';
+            trRow += '    <td class="text-center"><input type="text" relTRFR="' + value.FranchiseeId + '" id="trans_ddlTransferDistributionFranchiseeNote' + index + '" name="trans_ddlTransferDistributionFranchiseeNote' + index + '" class="form-control input-sm" /></td>';
+            trRow += '    <td class="text-center"><input type="radio" name="TroubleTransferFee" value="TroubleWithFee"></td>';
+            trRow += '    <td class="text-center"><input type="radio" name="TroubleTransferFee" value="TroubleWithoutFee"></td>';
+            trRow += '    <td class="text-center"><input type="radio" name="TroubleTransferFee" value="NotATroubleAccount"></td>';
+            trRow += '</tr>';
+            $("#tblstopfindersfee>tbody").append(trRow);
+
+            $("#trans_ddlTransferDistributionFranchiseeStopDate" + index).datepicker({ autoclose: true });
+        });
+
+
+
+
+
+        $("#modal_stopfindersfee").modal({ backdrop: 'static' });
+    }
+
+    function showContractDetailSchedule(mo, tu, we, th, fr, sa, su) {
+
+        $("#chkTRScheduleMonday").prop('checked', false);
+        $("#chkTRScheduleTuesday").prop('checked', false);
+        $("#chkTRScheduleWednesday").prop('checked', false);
+        $("#chkTRScheduleThursday").prop('checked', false);
+        $("#chkTRScheduleFriday").prop('checked', false);
+        $("#chkTRScheduleSaturday").prop('checked', false);
+        $("#chkTRScheduleSunday").prop('checked', false);
+
+
+        if (mo == 1)
+            $("#chkTRScheduleMonday").prop('checked', true);
+        if (tu == 1)
+            $("#chkTRScheduleTuesday").prop('checked', true);
+        if (we == 1)
+            $("#chkTRScheduleWednesday").prop('checked', true);
+        if (th == 1)
+            $("#chkTRScheduleThursday").prop('checked', true);
+        if (fr == 1)
+            $("#chkTRScheduleFriday").prop('checked', true);
+        if (sa == 1)
+            $("#chkTRScheduleSaturday").prop('checked', true);
+        if (su == 1)
+            $("#chkTRScheduleSunday").prop('checked', true);
+
+        $("#modal_customercontractdetailschedule").modal({ backdrop: 'static' });
+    }
+
+    var saveCustomerDetailTransferDistribution = function () {
+        
+        if (!TransferValidateStepSecond()) {
+            return;
+        }
+
+        $.each(lstDistributionFranchiseeList, function (index, value) {
+            var id = value.ContractDetailId;
+            CheckInvoiceForRevnueDistribution(id);
+        });
+    };
+
+    function CheckInvoiceForRevnueDistribution(ContractDetailId) {
+        var sURL = '@Url.Action("GetTransferRevenueDistributionInvoice", "Customer", new { area = "Portal" })?CustomerId=' + $('#hdfCustomerId').val() + '&ContractDetailId=' + ContractDetailId + '&EffectiveDate=' + $('#trans_ddlTransferEffectiveDate').val();
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+               
+                var tInvoiceId = 0;
+                $.each(data, function (index, value) {
+                    if (value.IsPartial == 1)
+                        tInvoiceId = value.InvoiceId;
+
+                });
+                
+                if (data.length>0 && tInvoiceId == 0)
+                {
+                    
+                    console.log(DistributionfeeListFinal);
+
+                    $("#tbfranchiseedistributionfeelisthidden>tbody").html("");
+                    $("#hdfFranchiseeDistFeeCount").val(DistributionfeeListFinal.length);
+                    $.each(DistributionfeeListFinal, function (index, value) {
+                        trRow = "";
+                        trRow += '<tr>';
+                        trRow += '    <td class="text-center">'
+                        trRow += '      <input type="hidden" id="hdfFranchiseeDistFee_CustomerId' + index + '" name="hdfFranchiseeDistFee_CustomerId' + index + '" value="' + value.CustomerId + '" />'
+                        trRow += '      <input type="hidden" id="hdfFranchiseeDistFee_ContractDetailId' + index + '" name="hdfFranchiseeDistFee_ContractDetailId' + index + '" value="' + value.ContractDetailId + '" />'
+                        trRow += '      <input type="hidden" id="hdfFranchiseeDistFee_FranchiseeId' + index + '" name="hdfFranchiseeDistFee_FranchiseeId' + index + '" value="' + value.FranchiseeId + '" />'
+                        trRow += '      <input type="hidden" id="hdfFranchiseeDistFee_FeeId' + index + '" name="hdfFranchiseeDistFee_FeeId' + index + '" value="' + value.FeeId + '" />'
+                        trRow += '      <input type="hidden" id="hdfFranchiseeDistFee_FeeAmount' + index + '" name="hdfFranchiseeDistFee_FeeAmount' + index + '" value="' + value.Amount + '" />'
+                        trRow += '      <input type="hidden" id="hdfFranchiseeDistFee_DetailLineNumber' + index + '" name="hdfFranchiseeDistFee_DetailLineNumber' + index + '" value="' + value.DetailLineNumber + '" />'
+                        trRow += '    </td>';
+                        trRow += '</tr>';
+                        $("#tbfranchiseedistributionfeelisthidden>tbody").append(trRow);
+                    });
+
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("CustomerDetailTransferDistribution", "Customer","Portal")',
+                        data: $("#submit_form_Transdistributioncustomer").serialize(),
+                        dataType: 'json',
+                        success: function (data) {
+                            document.location.href = data;
+                        }
+                    });
+
+                }
+
+                if (tInvoiceId > 0) {
+                    var sURL = '@Url.Action("TransferRevenueDistribution", "Customer", new { area = "Portal" })?Id=' + tInvoiceId;
+                    $.ajax({
+                        type: "GET",
+                        url: sURL,
+                        contentType: "application/json; charset=utf-8",
+                        datatype: "json",
+                        success: function (data) {
+                            $('#form_revenuedistribution').html(data);
+
+                            for (var i = 1; i <= parseInt($('#hdftransferfrenchiseedetail_linecount').val()) ; i++) {
+
+                                var exist = $.grep(lstDistributionFranchiseeList, function (obj) { return (obj.FranchiseeId === parseInt($('#fdt_hdfFrenchiseeId' + i).val()) && obj.LineNo === parseInt($('#fdt_txtlinenumber' + i).val())); });
+                                if (exist.length === 0) {
+                                    var lnFranchiseeDistribution = $('#fdt_txtfranchiseeamount' + i).attr('relLine');
+                                    var amtFA = parseFloat($('#fdt_txtfranchiseeamount' + i).val());
+                                    var amtFAFEE = 0.00;
+
+                                    
+                                    $.each(DistributionfeeListFinal, function (index1, value1) {
+                                        if (value1.FranchiseeId == parseInt($('#fdt_hdfFrenchiseeId' + i).val()) && value1.ContractDetailId == parseInt($('#fdt_hdfcontractdetailid' + i).val()))
+                                            amtFAFEE += (amtFA * value1.Amount / 100);
+                                    });
+
+                                    trRow = "";
+                                    trRow += '<tr>';
+                                    trRow += '   <td style="text-align:center">'
+                                    trRow += '   <input type="hidden" reltfline="' + lnFranchiseeDistribution + '" id="fdt_INV_hdfcontractdetailid' + lnFranchiseeDistribution + '" name="fdt_INV_hdfcontractdetailid' + lnFranchiseeDistribution + '" value="' + $('#fdt_hdfcontractdetailid' + i).val() + '" />'
+                                    trRow += '   <input type="hidden" reltfline="' + lnFranchiseeDistribution + '" id="fdt_INV_hdfFrenchiseeId' + lnFranchiseeDistribution + '" name="fdt_INV_hdfFrenchiseeId' + lnFranchiseeDistribution + '" value="' + $('#fdt_hdfFrenchiseeId' + i).val() + '" />'
+                                    trRow +=     $('#fdt_ddldetaillinenumber' + i + ' option[value="' + $('#fdt_ddldetaillinenumber' + i).val() + '"]').text() + '</td>';
+                                    trRow += '   <td style="text-align:center;">' + $('#fdt_txtfranchiseeno' + i).val() + '</td>';
+                                    trRow += '   <td style="white-space:pre-line;text-align:center;">' + $('#fdt_txtfranchiseename' + i).val() + '</td>';
+                                    trRow += '   <td style="text-align:right;"><input type="text" reltfline="' + lnFranchiseeDistribution + '" relseqnumber="' + i + '" relfdt_invamt="relfdt_invamt' + lnFranchiseeDistribution + '" relinvline="' + lnFranchiseeDistribution + '" id="fdt_inv_txtfranchiseeamount' + lnFranchiseeDistribution + '" name="fdt_inv_txtfranchiseeamount' + lnFranchiseeDistribution + '" required="" value="' + amtFA.toFixed(2) + '" class="form-control input-sm cnumeric" style="text-align:right;padding: 5px;border-radius: 0px;"></td>';
+                                    trRow += '   <td style="text-align:right"><input type="text" reltfline="' + lnFranchiseeDistribution + '" relseqnumber="' + i + '"relfdt_invamt="relfdt_invamtfee' + lnFranchiseeDistribution + '" relinvline="' + lnFranchiseeDistribution + '" id="fdt_inv_txtfranchiseeamountfee' + lnFranchiseeDistribution + '" name="fdt_inv_txtfranchiseeamountfee' + lnFranchiseeDistribution + '" required="" readonly value="' + amtFAFEE.toFixed(2) + '" class="form-control input-sm cnumeric" style="text-align:right;padding: 5px;border-radius: 0px;"></td>';
+                                    trRow += '   <td style="text-align:right;"><input type="text" reltfline="' + lnFranchiseeDistribution + '" relseqnumber="' + i + '" relfdt_invamt="relfdt_invamt' + lnFranchiseeDistribution + '" relinvline="' + lnFranchiseeDistribution + '" id="fdt_inv_txtfranchiseeamounttotal' + lnFranchiseeDistribution + '" name="fdt_inv_txtfranchiseeamounttotal' + lnFranchiseeDistribution + '" required="" readonly value="' + (parseFloat(amtFA) - parseFloat(amtFAFEE)).toFixed(2) + '" class="form-control input-sm cnumeric" style="text-align:right;padding: 5px;border-radius: 0px;"></td>';
+                                    trRow += '</tr>';
+
+                                    $("#tblRevenueDistributionInvoiceDetail>tbody").append(trRow);
+
+
+                                    $('#fdt_inv_txtfranchiseeamount' + lnFranchiseeDistribution).change(function () {
+                                        var _this = $(this);
+                                        if (_this.val() != '' && _this.val() != '0') {
+                                            var tempamtFAFEE = 0.00;
+                                            $.each(DistributionfeeListFinal, function (index1, value1) {
+                                                if (value1.FranchiseeId == parseInt($('#fdt_INV_hdfFrenchiseeId' + _this.attr('reltfline')).val()) && value1.ContractDetailId == parseInt($('#fdt_INV_hdfcontractdetailid' + _this.attr('reltfline')).val()))
+                                                    tempamtFAFEE += (parseFloat(_this.val()) * value1.Amount / 100);
+                                            });
+                                            $('#fdt_inv_txtfranchiseeamountfee' + lnFranchiseeDistribution).val((parseFloat(tempamtFAFEE)).toFixed(2))
+                                            $('#fdt_inv_txtfranchiseeamounttotal' + lnFranchiseeDistribution).val((parseFloat(_this.val()) - parseFloat(tempamtFAFEE)).toFixed(2))
+                                        }
+                                        else {
+                                            $('#trans_dfeeLink' + lnFranchiseeDistribution).html('');
+                                        }
+                                    });
+                                }
+                            }
+                            $("#modal_invoicedetail").modal({ backdrop: 'static' });
+
+                        },
+                        error: function (err) {
+                            console.log(err);
+                        }
+                    });
+
+                }
+
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+
+    }
+
+
+
+
+
+
+</script>
+

@@ -1,0 +1,233 @@
+﻿@using JKApi.Core.Common
+@{
+    ClaimView _ClaimView = ClaimView.Instance;
+    var Username = _ClaimView.GetCLAIM_PERSON_INFORMATION().FirstName;
+
+    List<JKViewModels.RoleAccessModel> menus = null;
+    int ParentMenuId = 0;
+    int CParentMenuId = 0;
+    var userViewModel = (JKViewModels.UserViewModel)_ClaimView.GetCLAIM_PERSON_INFORMATION();
+    if (userViewModel != null && userViewModel.RoleAccesss != null)
+    {
+        menus = userViewModel.RoleAccesss;
+        if (menus.Where(x => x.PageName == "ACCOUNTING" && x.IsViewAccess == true).Any())
+        {
+            ParentMenuId = menus.Where(x => x.PageName == "ACCOUNTING" && x.IsViewAccess == true).FirstOrDefault().MenuId;
+        }
+
+        if (menus.Where(x => x.PageName == "CRM" && x.IsViewAccess == true).Any())
+        {
+            CParentMenuId = menus.Where(x => x.PageName == "CRM" && x.IsViewAccess == true).FirstOrDefault().MenuId;
+        }
+    }
+}
+
+<!-- BEGIN SIDEBAR -->
+<div class="clearfix"></div>
+<div class="page-sidebar-wrapper">
+    <!-- END SIDEBAR -->
+    <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+    <!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+    <div class="page-sidebar navbar-collapse collapse">
+        <!-- BEGIN SIDEBAR MENU -->
+        <!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
+        <!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
+        <!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode -->
+        <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+        <!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
+        <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+        <ul class="page-sidebar-menu  page-header-fixed" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
+            <li class="nav-item start active">
+                <a href="@Url.Action("Index", "Dashboard", new { area = "Portal"})" class="nav-link nav-toggle">
+                    <img src="/Content/admin/assets/layouts/layout2/img/hnav/Accounting.fw.png" style="height: 32px;">
+                    <span class="title">Accounting</span>
+                    <span class="arrow open"></span>
+                </a>
+                <ul class="sub-menu" style="display: block;">
+                    @if (menus != null && menus.Where(x => x.PageName == "Dashboard" && x.IsViewAccess == true && x.ParentMenuId == ParentMenuId).Any())
+            {
+                        <li class="nav-item start  @(ViewBag.HMenu == "Dashboard" ? "active" : "")">
+                            <a href="@Url.Action("Index", "Dashboard", new { area = "Portal"})" class="nav-link">
+                                <i class="icon-home"></i>
+                                <span class="title">Dashboard</span>
+                                <span class="arrow"></span>
+                            </a>
+                        </li>
+                    }
+                    @if (menus != null && menus.Where(x => x.PageName == "AccountReceivable" && x.IsViewAccess == true && x.ParentMenuId == ParentMenuId).Any())
+            {
+                        <li class="nav-item start  @(ViewBag.HMenu == "AccountReceivable" ? "active" : "")">
+                            <a href="@Url.Action("Index", "AccountReceivable", new { area = "Portal"})" class="nav-link">
+                                <i class="icon-diamond"></i>
+                                <span class="title">Accounts Receivable</span>
+                                <span class="arrow"></span>
+                            </a>
+                        </li>
+                    }
+                    @if (menus != null && menus.Where(x => x.PageName == "AccountsPayable" && x.IsViewAccess == true && x.ParentMenuId == ParentMenuId).Any())
+                    {
+                        <li class="nav-item start @(ViewBag.HMenu == "AccountsPayable" ? "active" : "")">
+                            <a href="@Url.Action("Index", "AccountsPayable", new { area = "Portal"})" class="nav-link">
+                                <i class="icon-puzzle"></i>
+                                <span class="title">Franchise Payable</span>
+                                <span class="arrow"></span>
+                            </a>
+                        </li>
+                    }
+                    @if (menus != null && menus.Where(x => x.PageName == "Customer" && x.IsViewAccess == true && x.ParentMenuId == ParentMenuId).Any())
+            {
+                        <li class="nav-item start  @(ViewBag.HMenu == "Customer" ? "active" : "")">
+                            <a href="@Url.Action("Index", "Customer", new { area = "Portal"})" class="nav-link">
+                                <i class="glyphicon glyphicon-user"></i>
+                                <span class="title">Customers</span>
+                                <span class="arrow"></span>
+                            </a>
+                        </li>
+                    }
+                    @if (menus != null && menus.Where(x => x.PageName == "Customer" && x.IsViewAccess == true && x.ParentMenuId == ParentMenuId).Any())
+            {
+                        <li class="nav-item start  @(ViewBag.HMenu == "Company" ? "active" : "")">
+                            <a href="@Url.Action("Index", "Company", new { area = "Portal"})" class="nav-link">
+                                <i class="glyphicon glyphicon-briefcase"></i>
+                                <span class="title">Company</span>
+                                <span class="arrow"></span>
+                            </a>
+                        </li>
+                    }
+                    @if (menus != null && menus.Where(x => x.PageName == "Franchise" && x.IsViewAccess == true && x.ParentMenuId == ParentMenuId).Any())
+            {
+                        <li class="nav-item start @(ViewBag.HMenu == "Franchise" ? "active" : "")">
+                            <a href="@Url.Action("Index", "Franchise", new { area = "Portal"})" class="nav-link">
+                                <i class="icon-users"></i>
+                                <span class="title">Franchisees</span>
+                                <span class="arrow"></span>
+                            </a>
+                        </li>
+                    }
+                    @if (menus != null && menus.Where(x => x.PageName == "Administration" && x.IsViewAccess == true && x.ParentMenuId == ParentMenuId).Any())
+            {
+                        <li class="nav-item start @(ViewBag.HMenu == "Administration" ? "active" : "")">
+                            <a href="@Url.Action("Index", "Administration", new { area = "Portal"})" class="nav-link">
+                                <i class="icon-user-following"></i>
+                                <span class="title">Administration</span>
+                                <span class="arrow"></span>
+                            </a>
+                        </li>
+                    }
+
+                    @if (menus != null && menus.Where(x => x.PageName == "Management" && x.IsViewAccess == true && x.ParentMenuId == ParentMenuId).Any())
+            {
+                        <li class="nav-item start @(ViewBag.HMenu == "Management" ? "active" : "")">
+                            <a href="@Url.Action("Index", "Management", new { area = "Portal"})" class="nav-link">
+                                <i class="icon-settings"></i>
+                                <span class="title">Management</span>
+                                <span class="arrow"></span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+
+
+            </li>
+            <li class="nav-item start active">
+                <a href="javascript:void(0);" class="nav-link nav-toggle">
+                    <img src="/Content/admin/assets/layouts/layout2/img/hnav/CRM.fw.png" style="height: 32px;">
+                    <span class="title">CRM</span>
+                    <span class="arrow open"></span>
+                </a>
+                <ul class="sub-menu" style="display:block">
+                    @if (menus != null && menus.Where(x => x.PageName == "Dashboard" && x.IsViewAccess == true && x.ParentMenuId == CParentMenuId).Any())
+            {
+                        <li class="nav-item start @(ViewBag.HMenu == "CRM" ? "active" : "")">
+                            <a href="@Url.Action("Index", "CRMDashboard", new { area = "CRM"})" class="nav-link nav-toggle">
+                                <i class="icon-home"></i>
+                                <span class="title">Dashboard</span>
+                                <span class="arrow"></span>
+                            </a>
+                        </li>
+                    }
+                    @if (menus != null && menus.Where(x => x.PageName == "CustomerSales" && x.IsViewAccess == true && x.ParentMenuId == CParentMenuId).Any())
+            {
+                        <li class="nav-item @(ViewBag.HMenu == "CustomerSales" ? "active" : "")">
+                            <a href="@Url.Action("Index", "CustomerSales", new { area = "CRM"})" class="nav-link nav-toggle">
+                                <i class="icon-diamond"></i>
+                                <span class="title">Customer Sales</span>
+                                <span class="arrow"></span>
+                            </a>
+                        </li>
+                    }
+                    @if (menus != null && menus.Where(x => x.PageName == "CRMLeadFranchise" && x.IsViewAccess == true && x.ParentMenuId == CParentMenuId).Any())
+            {
+                        <li class="nav-item @(ViewBag.HMenu == "FranchiseSales" ? "active" : "")">
+                            <a href="@Url.Action("Index", "CRMLeadFranchise", new { area = "CRM"})" class="nav-link nav-toggle">
+                                <i class="icon-puzzle"></i>
+                                <span class="title">Franchise Sales</span>
+                                <span class="arrow"></span>
+                            </a>
+                        </li>
+                    }
+                    @if (menus != null && menus.Where(x => x.PageName == "CRMManagement" && x.IsViewAccess == true && x.ParentMenuId == CParentMenuId).Any())
+            {
+                        <li class="nav-item">
+                            <a href="" class="nav-link nav-toggle">
+                                <i class="icon-settings"></i>
+                                <span class="title">Management</span>
+                                <span class="arrow"></span>
+                            </a>
+                        </li>
+                    }
+                    @if (menus != null && menus.Where(x => x.PageName == "CRMSchedule" && x.IsViewAccess == true && x.ParentMenuId == CParentMenuId).Any())
+            {
+                        <li class="nav-item">
+                            <a href="" class="nav-link nav-toggle">
+                                <i class="icon-bulb"></i>
+                                <span class="title">Schedule / Tasks</span>
+                                <span class="arrow"></span>
+                            </a>
+                        </li>
+                    }
+                    @if (menus != null && menus.Where(x => x.PageName == "CRMContacts" && x.IsViewAccess == true && x.ParentMenuId == CParentMenuId).Any())
+            {
+                        <li class="nav-item">
+                            <a href="" class="nav-link nav-toggle">
+                                <i class="icon-bulb"></i>
+                                <span class="title">Contacts</span>
+                                <span class="arrow"></span>
+                            </a>
+                        </li>
+                    }
+                    @if (menus != null && menus.Where(x => x.PageName == "CRMAdministration" && x.IsViewAccess == true && x.ParentMenuId == CParentMenuId).Any())
+            {
+                        <li class="nav-item @(ViewBag.HMenu =="Administration"? "active":"")">
+                            <a href="@Url.Action("Index","CRMAdministration", new { area = "CRM" })" class="nav-link nav-toggle">
+                                <i class="icon-bulb"></i>
+                                <span class="title">Adminstration</span>
+                                <span class="arrow"></span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+
+            </li>
+            <li class="nav-item start">
+                <a href="javascript:void(0);" class="nav-link nav-toggle">
+                    <img src="/Content/admin/assets/layouts/layout2/img/hnav/BI.fw.png" style="height: 32px;">
+                    <span class="title">Business Inteligence</span>
+                    <span class="arrow open"></span>
+                </a>
+
+            </li>
+
+
+
+
+
+
+
+
+        </ul>
+        <!-- END SIDEBAR MENU -->
+    </div>
+    <!-- END SIDEBAR -->
+</div>
+<!-- END SIDEBAR -->

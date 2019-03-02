@@ -1,0 +1,264 @@
+﻿@using System.Data
+@model DataTable
+
+<style>
+    .tblAccountHistory thead th,
+    .tblAccountHistory thead td {
+        padding: 3px 5px !important;
+        font-size: 12px !important;
+        /*background-color: #95A5A6 !important;
+        color: #fff;*/
+    }
+
+    .tblAccountHistory tbody td {
+        padding: 3px 5px !important;
+        font-size: 12px !important;
+    }
+
+    .tblAccountHistory thead th {
+        vertical-align: middle;
+        font-weight: bold;
+    }
+</style>
+
+@{
+
+    DataView view = new DataView(Model);
+    DataTable distinctValues = view.ToTable(true, "RegionId");
+
+}
+
+@{int PageNo = 0;}
+
+@foreach (DataRow rowR in distinctValues.Rows)
+{
+    PageNo += 1;
+    <table cellspacing="0" class="tblAccountHistory">
+        <tr>
+            <th style="text-align:left;font-size: 12px !important;">
+                Page No.  @PageNo <br /> 
+                Jani-King of @Model.Select(string.Format("RegionId = {0}", rowR["RegionId"])).FirstOrDefault()[1], Inc<br />                
+                For the month of @ViewBag.PeriodTtitle
+             </th>
+        </tr>
+    </table><br />
+
+    <table cellspacing="0" style="width:100%;" class="tblAccountHistory">
+        <thead>
+            <tr>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:65px!important;"><b>Franchisee No</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:160px !important;"><b>Franchisee Name</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;"><b>Accounting Fee</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:110px!important;"><b>Additional Billing(R.O.) Commission</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;"><b>Advertising Fee</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;"><b>Bond Payment</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;"><b>Business Protection</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;"><b>CB Fees Credited</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;"><b>Chargeback</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;"><b>Customer Supply Tax</b></th>
+            </tr>
+        </thead>
+        @{
+            decimal AccountingFee = 0;
+            decimal AdditionalBillComm = 0;
+            decimal AdvertisingFee = 0;
+            decimal BondPayment = 0;
+            decimal BusinessProtection = 0;
+            decimal CBFeesCredited = 0;
+            decimal Chargeback = 0;
+            decimal CustomerSuppTax = 0;
+        }
+
+        <tbody>
+            @foreach (DataRow row in Model.Select(string.Format("RegionId = {0}", rowR["RegionId"])))
+            {
+            <tr>
+                <td style="text-align:center">@row["FranchiseeNo"]</td>
+                <td style="text-align:left">@row["FranchiseeName"]</td>
+                <td style="text-align:right">$ @string.Format("{0:n}", row["Accounting Fee"])</td>
+                <td style="text-align:right">$ @string.Format("{0:n}", row["Additional Billing (R.O.) Commission"])</td>
+                <td style="text-align:right">$ @string.Format("{0:n}", row["Advertising"])</td>
+                <td style="text-align:right">$ @string.Format("{0:n}", row["Bond Payment"])</td>
+                <td style="text-align:right">$ @string.Format("{0:n}", row["Business Protection"])</td>
+                <td style="text-align:right">$ @string.Format("{0:n}", row["CB Fees Credited"])</td>
+                <td style="text-align:right">$ @string.Format("{0:n}", row["Chargeback"])</td>
+                <td style="text-align:right">$ @string.Format("{0:n}", row["Customer Supply Tax"])</td>
+                @{
+                        AccountingFee += Convert.ToDecimal(row["Accounting Fee"]);
+                        AdditionalBillComm += Convert.ToDecimal(row["Additional Billing (R.O.) Commission"]);
+                        AdvertisingFee += Convert.ToDecimal(row["Advertising"]);
+                        BondPayment += Convert.ToDecimal(row["Bond Payment"]);
+                        BusinessProtection += Convert.ToDecimal(row["Business Protection"]);
+                        CBFeesCredited += Convert.ToDecimal(row["CB Fees Credited"]);
+                        Chargeback += Convert.ToDecimal(row["Chargeback"]);
+                        CustomerSuppTax += Convert.ToDecimal(row["Customer Supply Tax"]);
+                }
+            </tr>
+              }
+            <tr>
+                <td style="text-align:center;border-top:1px solid #000000 !important"></td>
+                <td style="text-align:right;border-top:1px solid #000000  !important;padding-top:8px;"><b>Totals</b></td>
+                <td style="text-align:right;border-top:1px solid #000000  !important;padding-top:8px;">$ @string.Format("{0:n}", AccountingFee)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @string.Format("{0:n}", AdditionalBillComm)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @string.Format("{0:n}", AdvertisingFee)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @string.Format("{0:n}", BondPayment)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @string.Format("{0:n}", BusinessProtection)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @string.Format("{0:n}", CBFeesCredited)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @string.Format("{0:n}", Chargeback)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @string.Format("{0:n}", CustomerSuppTax)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="page-break-before:always"></div>
+    <table cellspacing="0" class="tblAccountHistory">
+        <tr role="row">
+            <th style="text-align:left;font-size: 12px !important;">
+                Page No.  @PageNo <br /> 
+                Jani-King of @Model.Select(string.Format("RegionId = {0}", rowR["RegionId"])).FirstOrDefault()[1], Inc<br />        
+                For the month of @ViewBag.PeriodTtitle
+            </th>
+        </tr>
+    </table><br />
+    <table cellspacing="0" style="width:100%;" class="tblAccountHistory">
+        <thead>
+            <tr>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:65px!important;"><b>Franchisee No</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:160px !important;"><b>Franchisee Name</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;"><b>Finders Fee Payment</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;"><b>Franchisee Note</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;"><b>Franchisee Supplies Tax</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:90px!important;"><b>IB FF Projected Payment</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;"><b>Lease Payment</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;"><b>Miscellaneous - Special</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;"><b>Negative Dues</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;"><b>No CB Reserve</b></th>
+            </tr>
+        </thead>
+        @{
+            decimal FindersFeePayment = 0;
+            decimal FranchiseeNote = 0;
+            decimal FranchiseeSuppTax = 0;
+            decimal IBFFProjectedPayment = 0;
+            decimal LeasePayment = 0;
+            decimal MiscellaneousSpecial = 0;
+            decimal NegativeDues = 0;
+            decimal NoCBReserve = 0;
+        }
+
+        <tbody>
+            @foreach (DataRow row in Model.Select(string.Format("RegionId = {0}", rowR["RegionId"])))
+            {
+            <tr>
+                <td style="text-align:center">@row["FranchiseeNo"]</td>
+                <td style="text-align:left">@row["FranchiseeName"]</td>
+                <td style="text-align:right">$ @string.Format("{0:n}", row["Finders Fee Payment"])</td>
+                <td style="text-align:right">$ @string.Format("{0:n}", row["Franchisee Note"])</td>
+                <td style="text-align:right">$ @string.Format("{0:n}", row["Franchisee Supplies Tax"])</td>
+                <td style="text-align:right">$ @string.Format("{0:n}", row["IB FF Projected Payment"])</td>
+                <td style="text-align:right">$ @string.Format("{0:n}", row["Lease Payment"])</td>
+                <td style="text-align:right">$ @string.Format("{0:n}", row["Miscellaneous - Special"])</td>
+                <td style="text-align:right">$ @string.Format("{0:n}", row["Negative Dues"])</td>
+                <td style="text-align:right">$ @string.Format("{0:n}", row["No CB Reserve"])</td>
+                @{
+                        FindersFeePayment += Convert.ToDecimal(row["Finders Fee Payment"]);
+                        FranchiseeNote += Convert.ToDecimal(row["Franchisee Note"]);
+                        FranchiseeSuppTax += Convert.ToDecimal(row["Franchisee Supplies Tax"]);
+                        IBFFProjectedPayment += Convert.ToDecimal(row["IB FF Projected Payment"]);
+                        LeasePayment += Convert.ToDecimal(row["Lease Payment"]);
+                        MiscellaneousSpecial += Convert.ToDecimal(row["Miscellaneous - Special"]);
+                        NegativeDues += Convert.ToDecimal(row["Negative Dues"]);
+                        NoCBReserve += Convert.ToDecimal(row["No CB Reserve"]);
+                }
+
+            </tr>
+                        }
+            <tr>
+                <td style="text-align:center;border-top:1px solid #000000 !important"></td>
+                <td style="text-align:right;border-top:1px solid #000000  !important;padding-top:8px;"><b>Totals</b></td>
+                <td style="text-align:right;border-top:1px solid #000000  !important;padding-top:8px;">$ @string.Format("{0:n}", FindersFeePayment)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @string.Format("{0:n}", FranchiseeNote)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @string.Format("{0:n}", FranchiseeSuppTax)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @string.Format("{0:n}", IBFFProjectedPayment)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @string.Format("{0:n}", LeasePayment)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @string.Format("{0:n}", MiscellaneousSpecial)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @string.Format("{0:n}", NegativeDues)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @string.Format("{0:n}", NoCBReserve)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="page-break-before:always"></div>
+    <table cellspacing="0" class="tblAccountHistory">
+        <tr role="row">
+            <th style="text-align:left;font-size: 12px !important;">
+                Page No.  @PageNo <br /> 
+                Jani-King of @Model.Select(string.Format("RegionId = {0}", rowR["RegionId"])).FirstOrDefault()[1], Inc<br />        
+                For the month of @ViewBag.PeriodTtitle
+            </th>
+        </tr>
+    </table>
+    <br />
+
+    <table cellspacing="0" style="width:100%;" class="tblAccountHistory">
+        <thead>
+            <tr>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:65px !important;"><b>Franchisee No</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:160px !important;"><b>Franchisee Name</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:60px !important;"><b>Pager Fee</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:60px !important;"><b>Royalty</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:60px !important;"><b>Second Note Payment	</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:60px !important;"><b>Technology Fee</b></th>
+                <th style="text-align:center;width:60px !important;"><b> </b></th>
+                <th style="text-align:center;width:60px !important;"><b> </b></th>
+                <th style="text-align:center;width:60px !important;"><b> </b></th>
+                <th style="text-align:center;width:60px !important;"><b> </b></th>
+            </tr>
+        </thead>
+
+        @{
+            decimal PagerFee = 0;
+            decimal Royalty = 0;
+            decimal SecondNotePayment = 0;
+            decimal TechnologyFee = 0;
+        }
+        <tbody>
+            @foreach (DataRow row in Model.Select(string.Format("RegionId = {0}", rowR["RegionId"])))
+            {
+                    <tr>
+                    <td style="text-align:left">@row["FranchiseeNo"]</td>
+                    <td style="text-align:left">@row["FranchiseeName"]</td>
+                    <td style="text-align:right">$ @string.Format("{0:n}", row["Pager Fee"])</td>
+                    <td style="text-align:right">$ @string.Format("{0:n}", row["Royalty"])</td>
+                    <td style="text-align:right">$ @string.Format("{0:n}", row["Second Note Payment"])</td>
+                    <td style="text-align:right">$ @string.Format("{0:n}", row["Technology Fee"])</td>
+                    <td style="text-align:right"></td>
+                    <td style="text-align:right"></td>
+                    <td style="text-align:right"></td>
+                    <td style="text-align:right"></td>
+                    @{
+                        PagerFee += Convert.ToDecimal(row["Pager Fee"]);
+                        Royalty += Convert.ToDecimal(row["Royalty"]);
+                        SecondNotePayment += Convert.ToDecimal(row["Second Note Payment"]);
+                        TechnologyFee += Convert.ToDecimal(row["Technology Fee"]);
+                    }
+                </tr>
+            }
+            <tr>
+                <td style="text-align:center;border-top:1px solid #000000 !important"></td>
+                <td style="text-align:right;border-top:1px solid #000000  !important;padding-top:8px;"><b>Totals</b></td>
+                <td style="text-align:right;border-top:1px solid #000000  !important;padding-top:8px;">$ @string.Format("{0:n}", PagerFee)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @string.Format("{0:n}", Royalty)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @string.Format("{0:n}", SecondNotePayment)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @string.Format("{0:n}", TechnologyFee)</td>
+                <td style="text-align:right;"></td>
+                <td style="text-align:right;"></td>
+                <td style="text-align:right;"></td>
+                <td style="text-align:right;"></td>
+            </tr>
+        </tbody>
+    </table>
+    <div style="page-break-before:always"></div>
+}
+
+

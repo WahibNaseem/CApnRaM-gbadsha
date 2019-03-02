@@ -1,0 +1,430 @@
+﻿
+@{
+    ViewBag.Title = "InvoiceSearch";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<link href="~/Content/admin/assets/Card/dist/card.css" rel="stylesheet" />
+<link href="~/Content/admin/assets/global/plugins/bootstrap-sweetalert/sweetalert.css" rel="stylesheet" />
+<link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+<link href="~/Content/admin/assets/global/plugins/icheck/skins/minimal/_all.css" rel="stylesheet" />*@
+
+@section styles{
+    @*<link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />*@
+    <style type="text/css">
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+            font-weight: normal;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        #modal_RegionModel .modal-content {
+            width: 55% !important;
+            margin-left: 30% !important;
+        }
+
+        table.dataTable thead th {
+            padding: 4px !important;
+        }
+    </style>
+}
+
+
+ <div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    AP - Invoice Search
+                </div>
+                <div class="col-md-4">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="custom-listbox" style="margin-top:4px;margin-bottom:3px;">
+    <div class="headerbox">
+        <div class="row no-padding">
+            @*<div class="col-sm-1 page-size">
+                <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                    <option value="-1">All</option>
+                    <option value="100" selected>100</option>
+                    <option value="50">50</option>
+                    <option value="25">25</option>
+                </select>
+            </div>*@
+            @*<div class="col-md-3">
+                <div class="input-icon">
+                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                    <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search" value="" class="form-control input-sm typeahead" />
+                </div>
+            </div>*@
+            <div class="col-md-4" style="text-align: center;padding-top: 4px;">
+
+            </div>
+            <div class="col-md-4 pull-right no-padding">
+                <button type="button" onclick="SearchClick()" class="btn btn-primary btn-sm pull-right" style="margin-right: 5px;">Search Invoice</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="tabledata" class="tablebox">
+    <div class="row padding-tb1">
+        <div class="row no-padding">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover" id="tblTRVInvoiceSearch">
+                    <thead>
+                        <tr>
+                           
+                            <th class="tblPaidInvInvNo" style="text-align:center;">
+                                Invoice No
+                            </th>
+                            <th class="tblpaidInvInvoiceDate" style="text-align:center;">
+                                Invoice Date
+                            </th>
+                           <th class="tblPaidInvVendorName" style="text-align:center;">
+                                Name
+                            </th>
+                            <th class="tblPaidInvChecknum" style="text-align:center;">
+                                Check Number
+                            </th>
+                            <th class="tblPaidInvCheckDate" style="text-align:center;">
+                                Check Date
+                            </th>
+                            <th class="tblPaidInvCheckAmount" style="text-align:center;width:140px;">
+                                Check Amt
+                            </th>
+                           
+                        </tr>
+
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5" style="text-align:right;background: #b7cbef;font-size: 12px;">
+                                Total
+                            </td>
+                            <td style="text-align:right;background: #b7cbef;padding-right:5px;font-size: 12px;">&nbsp;</td>
+                           
+                            
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade in" id="modal_SearchModelInvSearch" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;padding-top:60px;">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title" style="margin-top: 0px;margin-bottom: 4px;padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Invoice Search
+                </h4>
+            </div>
+            <div class="modal-body" id="" style="padding: 15px 25px 5px 25px;">
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <label class="control-label pull-right" style="margin-bottom:5px;font-weight:bold;text-align:right;">Invoice:</label>
+                        </div>
+                       
+                        <div class="col-md-4">
+                            <input type="text" id="txtInvoiceNo" class="form-control input-sm" />
+                        </div>
+                    </div>
+                </div>
+              
+                @*<div class="row">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <label class="control-label pull-right" style="margin-bottom:5px;font-weight:bold;text-align:right;">Form Inv#:</label>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="text" id="txtFromInvoice" class="form-control input-sm" />
+                        </div>
+                        <div class="col-md-1">
+                            To
+                        </div>
+                        <div class="col-md-2">
+                            <input type="text" id="txtToInvoice" class="form-control input-sm" />
+                        </div>
+                    </div>
+                </div>*@
+                <div class="col-md-3" style="text-align:center;">
+                    <div class="col-md-6 pull-right no-padding">
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-12 pull-right">
+                    <input type="hidden" id="tempIdDelete" />
+                    <button type="button" id="btnSave" onclick="btnGetData_Click()" class="btn btn-primary">Submit</button>
+                    <button type="button" id="btnCancel" class="btn btn-primary closeA">Reset</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section pageplugins{
+    @if (Request.IsSecureConnection)
+    {
+        <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    }
+    else
+    {
+        <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    }
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    @*<script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+    <script src="~/Content/admin/assets/global/plugins/icheck/icheck.min.js"></script>*@
+}
+@section scripts{
+    <script>
+        var PaidInvoiceList;
+
+        jQuery(document).ready(function () {
+            $("#modal_SearchModelInvSearch").modal({ backdrop: 'static' });
+
+           
+
+            tblTRVInvoiceSearch = $('#tblTRVInvoiceSearch').DataTable({
+
+                "ordering": true,
+                "bAutoWidth": false,
+                "bDestroy": true,
+                "bServerSide": false,
+                "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                "aaSorting": [[0, "desc"]],
+                columnDefs: [
+
+                    
+                    {
+                        targets: "tblPaidInvInvNo",
+                        data: "InvoiceNum",
+                        className: "dt-left",
+                        render: function (data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                    {
+                        targets: "tblpaidInvInvoiceDate",
+                        data: "InvoiceDate",
+                        className: "dt-center",
+                        render: function (data, type, row, meta) {
+                            return formatJSONDateUtc(data);
+                        }
+                    },
+                    {
+                        targets: "tblPaidInvVendorName",
+                        data: "VendorName",
+                        className: "dt-center",
+                        render: function (data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                    {
+                        targets: "tblPaidInvChecknum",
+                        data: "CheckNum",
+                        className: "dt-center",
+                        render: function (data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                    {
+                        targets: "tblPaidInvCheckDate",
+                        data: "CheckDate",
+                        className: "dt-right",
+                        render: function (data, type, row, meta) {
+                            return formatJSONDateUtc(data);
+                        }
+                    },
+                    {
+                        targets: "tblPaidInvCheckAmount",
+                        data: "CheckAmount",
+                        className: "dt-right",
+                        render: function (data, type, row, meta) {
+                            return formatCurrency(parseFloat(data));
+                        }
+                    },
+                   
+
+                ],
+                "footerCallback": function (row, data, start, end, display) {
+                    var api = this.api(), data;
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function (i) {
+                        return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '') * 1 :
+                            typeof i === 'number' ?
+                            i : 0;
+                    };
+
+                  
+                    var totalNetPaid = api
+                        .column(5)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    $(api.column(5).footer()).html(formatCurrency(totalNetPaid));
+                  
+                }
+            });
+
+           
+
+        })
+
+        function SearchClick() {
+            tblTRVInvoiceSearch.clear().draw();
+            $("#modal_SearchModelInvSearch").modal({ backdrop: 'static' });
+        }
+
+        function btnGetData_Click() {
+           
+            var invoice = $('#txtInvoiceNo').val();
+            var invurl = '@Url.Action("GetInvoiceSearchData", "Company", new { area = "Portal" })?InvoiceNum=' + invoice 
+
+            $.ajax({
+                type: "POST",
+                url: invurl,
+                    
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $("#modal_SearchModelInvSearch").modal('hide');
+                    tblTRVInvoiceSearch.rows.add(data.aaData).draw();
+
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+
+            });
+
+        }
+
+        function formatCurrency(total) {
+            var neg = false;
+            if (total < 0) {
+                neg = true;
+                total = Math.abs(total);
+            }
+            return (neg ? "-$" : '$') + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        }
+
+        function formatJSONDateUtc(jsonDate) {
+            if (jsonDate != null) {
+                var dtstr = jsonDate.substr(6);
+                var dateString = dtstr.substring(0, dtstr.length - 2);
+                var currentTime = new Date(parseInt(dateString)).toUTCString();
+                var date = moment.utc(currentTime).format("MM/DD/YYYY");
+                return date;
+            }
+            return null;
+        }
+
+
+
+    </script>
+}

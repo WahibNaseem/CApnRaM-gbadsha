@@ -1,0 +1,78 @@
+﻿@model JKApi.Service.AccountPayable.FranchiseeReportDetailsViewModel
+
+@using System.Globalization;
+
+<DIV id="page_2" style="padding-left:15px;">
+
+    <table class="header" style="margin:0px !important; padding:0px;">
+        <tr>
+            <td width="25%">
+                &nbsp;
+            </td>
+
+            <td width="50%">
+                <p style="text-align: center;font-size:11px;margin:0px !important;">
+                    <br />
+                    @Model.Report.RegionName.ToUpper()<br />
+                    BUSINESS FOR THE MONTH OF @Model.MonthYearDisplay.ToUpper()
+                </p>
+            </td>
+
+            <td width="25%">
+                <p style="font-size:12px;padding-left:50px;margin:0px !important;">
+                    Date: @DateTime.Now.ToShortDateString()<br />
+                    Time: @DateTime.Now.ToString("HH:mm:ss")
+                </p>
+            </td>
+        </tr>
+    </table>
+
+    <table class="header" style="margin:0px !important;padding:0px;" >
+        <tr>
+            <td width="20%">   
+                <P style="font-size:11px;margin:0px !important;">
+                    Franchisee Code:<br />
+                    @Html.DisplayFor(o => o.Report.FranchiseeNo)
+                </P>             
+                            
+            </td>
+            <td width="80%">   
+                <P style="font-size:11px;margin:0px !important;">
+                    Name:<br />
+                    @Html.DisplayFor(o => o.Report.FranchiseeName)
+                </P>                                
+            </td>
+        </tr>
+    </table>
+
+    <table class="price-list" style="margin-top:0px;">
+        <tr class="title-row">
+            <td colspan="6">Customer Transactions</td>
+        </tr>
+        <tr class="header-row">
+            <td colspan="2">Customer</td>
+            <td class="col1">I/C</td>
+            <td class="col3">Transaction No</td>
+            <td class="col4">Description</td>
+            <td class="col5">Comm</td>
+            <td class="price1">Total Revenue Without Tax</td>
+        </tr>
+        @foreach (var line in Model.DetailsByTransaction)
+        {
+            <tr>
+                <td class="col1">@line.CustomerNo</td>
+                <td class="col2">@line.CustomerName</td>
+                <td class="col1">@line.InvoiceType</td>
+                <td class="col3">@line.InvoiceNo</td>
+                <td class="col4">@line.Description</td>
+                <td class="col5">@((line.IsCommission == 1) ? "Y" : "N")</td>
+                <td class="price1">@Model.NumberDisplay(line.Subtotal, line.AmountTypeListId)</td>
+            </tr>
+        }
+        <tr class="footer-row">
+            <td colspan="6">Total Revenues for this Franchisee </td>
+            <td class="price1">@Model.NumberDisplay(Model.DetailsByTransaction.Sum(o => o.Subtotal))</td>
+        </tr>
+    </table>
+
+</DIV>

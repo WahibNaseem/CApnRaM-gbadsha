@@ -1,0 +1,92 @@
+﻿
+<div class="modal fade" id="SearchCustomerCancellationRequest" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" style="width:455px;">
+        <div class="modal-content">
+            <div class="custom-form portlet light" id="" style="margin-top:0px;box-shadow: none;">
+                <div class="headerbox" style="font-weight: normal;border-radius: 0;">
+                    <div class="col-md-12 text-center" style="font-size:15px;">
+                        <b> Choose Customer </b>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 5px !important;margin-right: 12px !important;"></button>
+                    </div>
+                    <div class="clearfix"> </div>
+                </div>
+                <div class="row" style="padding-top:8px;padding-bottom:8px;margin-left: 0px;margin-right: 0px;min-height: 100px;">
+                    <div class="col-md-12">
+                        <div class="col-md-12">
+                            <input type="hidden" id="hdfsearch_Customerid" name="hdfsearch_Customerid" value="0" />
+                            <div class="input-icon" style="margin-top: 30px;">
+                                <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                                <input id="csearch-box-cust" type="text" required name="csearch-box-cust" autocomplete="off" placeholder="Search by Customer Name or Number" value="" class="form-control input-sm typeahead" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>             
+            <div class="modal-footer" >
+                <button id="cancel_addlead_button" type="button" class="btn btn-default" data-dismiss="modal" onclick="resetfrm();">Cancel</button>
+                <button id="addlead_button" type="button" class="btn btn-success" onclick="OpenCancellationRequestPopup();">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script  type="text/javascript">
+
+    $(document).ready(function () {
+        applyAutoSeacrhCustomer()
+    });
+    function applyAutoSeacrhCustomer() {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetAllCustomer", "Customer", new { area = "Portal" })',
+            data: {},
+            success: function (data) {
+                var typeaheadSource = [];
+                $.each(data, function (key, value) {
+                    typeaheadSource.push({ id: value.CustomerId, name: value.CustomerNo + ' ' + $.trim(value.Name) })
+                });
+                var box = $('#csearch-box-cust').data('typeahead');
+                if (box != null) {
+                    console.log('csearch source change');
+                    box.source = typeaheadSource;
+                }
+                else {
+                    console.log('csearch initiated');
+                    $('#csearch-box-cust').typeahead({
+                        source: typeaheadSource,
+                        updater: function (item) {
+                            $('#hdfsearch_Customerid').val(item.id);
+                            return item;
+                        },
+                        minLength: 1
+                    }).focus();
+                }
+            }
+        });
+    }
+    function resetfrm()
+    {
+        $('#csearch-box-cust').val("");
+    }
+
+    function OpenCancellationRequestPopup()
+    {
+        var Customerid = $('#hdfsearch_Customerid').val();
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("CustomerCancellationRequestPopup", "CustomerService", new { area = "Portal" })' + "?Customerid=" + Customerid,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#ValidationPopupModel').html("");
+                $('#ValidationPopupModel').html(data);
+                $("#RenderCustomerCancellationRequestPopup").modal({ backdrop: 'static' });
+
+                $(".date-picker").datepicker();
+                $(".timepicker").timepicker();
+            },
+            error: function () {
+                alert("Content load failed.");
+            }
+        });
+    }
+</script>

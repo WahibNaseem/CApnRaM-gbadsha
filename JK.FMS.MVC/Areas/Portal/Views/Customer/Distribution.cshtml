@@ -1,0 +1,696 @@
+﻿
+@{
+    ViewBag.Title = "Distribution";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+
+<style type="text/css">
+    tr > td {
+        font-size: 12px !important;
+        padding: 4px !important;
+    }
+
+    /*tr > th {
+        font-size: 11px !important;
+        text-transform: uppercase;
+    }*/
+
+    .row {
+        margin: 0;
+        padding: 3px 0;
+    }
+
+    .opendiv {
+        padding: 4px;
+        background-color: gold;
+        text-align: center;
+        font-weight: bold;
+        color: #ffffff;
+        display: table-cell;
+        min-width: 105px;
+    }
+
+    .closeddiv {
+        padding: 4px;
+        background-color: limegreen;
+        text-align: center;
+        font-weight: bold;
+        color: #ffffff;
+        display: table-cell;
+        min-width: 90px;
+    }
+
+    .overpaiddiv {
+        padding: 4px;
+        background-color: deepskyblue;
+        text-align: center;
+        font-weight: bold;
+        color: #ffffff;
+        display: table-cell;
+        min-width: 100px;
+    }
+
+    .overduediv {
+        padding: 4px;
+        background-color: orangered;
+        text-align: center;
+        font-weight: bold;
+        color: #ffffff;
+        display: table-cell;
+        min-width: 96px;
+    }
+
+    .btn {
+        padding: 3px 12px;
+        font-size: 12px;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+
+    .alignCenter {
+        text-align: center;
+    }
+
+    .close {
+        background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+        height: 12px !important;
+        width: 12px !important;
+        margin-top: 0px !important;
+    }
+
+    .page-size {
+        padding-left: 0;
+        padding-right: 0;
+        width: 62px;
+    }
+
+    .topheader {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFF !important;
+        text-transform: uppercase;
+        margin-top: 3px;
+    }
+
+    #distributionList th {
+        vertical-align: middle;
+    }
+
+    .no-padding {
+        padding: 0;
+    }
+
+    .no-margin {
+        margin: 0;
+    }
+
+    .padding-tb1 {
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+
+    .margin-tb1 {
+        margin-top: 1px;
+        margin-bottom: 1px;
+    }
+
+    .custom-listbox .headerbox {
+        padding: 3px 0px 3px 5px;
+    }
+
+    .custom-listbox {
+        margin-top: 4px;
+        margin-bottom: 0px;
+    }
+
+    #divfranchiseList .headerbox {
+        text-transform: none;
+        font-weight: normal;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .multiselect-container.dropdown-menu {
+        text-transform: none;
+        font-size: 14px;
+    }
+
+    #modal_RegionModel .modal-content {
+        width: 55% !important;
+        margin-left: 30% !important;
+    }
+</style>
+
+@*@section styles{
+        <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+    }*@
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    Distribution Report
+                </div>
+                <div class="col-md-2 pull-right" style="padding-right:5px;">
+                    <div style="display:table-cell;padding-right: 5px;">
+                        Region
+                    </div>
+                    <div style="display:table-cell;width:100%;">
+                        @if (ViewBag.regionlist != null)
+                        {
+                        <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                            @foreach (var item in (SelectList)ViewBag.regionlist)
+                                {
+                                <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                }
+                        </select>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="custom-listbox" style="margin-top:4px;margin-bottom:3px;">
+    <div class="headerbox">
+        <div class="row no-padding">
+            <div class="col-md-1 page-size">
+                <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                    <option value="-1">All</option>
+                    <option value="100" selected>100</option>
+                    <option value="50">50</option>
+                    <option value="25">25</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <div class="input-icon">
+                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                    <input id="csearch-box" type="text" required name="customernumber" autocomplete="off" placeholder="Search by customer and franchise" value="" class="form-control input-sm typeahead" />
+                </div>
+            </div>
+            <div class="col-md-2 text-center">
+
+                @*Distribution Report<br />Distribution for All Customers from 01/01/2017 through 03/01/2017*@
+            </div>
+            <div class="col-md-5 pull-right no-padding">
+                <div class="col-md-4">
+                    <div style="display:table-cell;">
+                        <input type="checkbox" value="Active" id="chkIsActive" checked />
+                    </div>
+                    <div style="display:table-cell;vertical-align:middle;padding-left:4px;">
+                        Active
+                    </div>
+                    <div style="display:table-cell;padding-left:30px;">
+                        <input type="checkbox" value="IsInactive" id="chkIsInactive" />
+                    </div>
+                    <div style="display:table-cell;vertical-align:middle;padding-left:4px;">
+                        Inactive
+                    </div>
+                </div>
+                <div class="col-md-12 pull-right no-padding" style="text-align:center;">
+                   
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="tablebox">
+    <div class="row">
+        <div class="col-md-1" style="padding-left: 0px;">
+            <input type="button" class="btn btn-primary" id="btnExportInExcel" value="Export To Excel" />
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover order-column" id="distributionList" style="display:none;margin-top:0 !important;">
+            <thead>
+                <tr>
+                    <th style="text-align:center;" class="dtable_CustomerNo">
+                        Customer No
+                    </th>
+                    <th style="text-align:center;" class="dtable_CustomerName">
+                        Customer Name
+                    </th>
+                    <th style="text-align:center;">
+                        Franchise No
+                    </th>
+                    <th style="text-align:center;">
+                        Franchise Name
+                    </th>
+                    <th style="text-align:center;">
+                        Description
+                    </th>
+                    <th style="text-align:center;">
+                        Note
+                    </th>
+                    <th style="text-align:center;">
+                        Amount
+                    </th>
+                    <th style="text-align:center;">
+                        Effective Date
+                    </th>
+                    <th style="text-align:center;">
+                        End Date
+                    </th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            @*<tfoot>
+                     <tr style="background: #95a5a6;">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td style="text-align:right;">$820.00</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tfoot>*@
+        </table>
+    </div>
+</div>
+
+<div class="modal fade in" id="modal_RegionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Select Region
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Select Region</label>
+                                @if (ViewBag.regionlist != null)
+                                {
+                                <select class="form-control input-sm" id="selectregionlist">
+                                    <option value="">Select Region</option>
+                                    @foreach (var item in (SelectList)ViewBag.regionlist)
+                                        {
+                                        <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                        }
+                                </select>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div class="col-md-12">
+                        <button type="button" name="SaveNew" id="btnRegion" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:0px;">Select Region</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    @*<script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>*@
+
+    <script type="text/javascript">
+        var dtable;
+        var _searchtextVal = "";
+        var status = -1;
+        function getUrl() {
+            if ($('#chkIsActive').is(":checked")) {
+                status = 1;
+            }
+            if ($('#chkIsInactive').is(":checked")) {
+                status = 0;
+            }
+            if ($('#chkIsActive').is(":checked") == true && $('#chkIsInactive').is(":checked") == true) {
+                status = -1;
+            }
+            var regionId = $('#regionlist').val() == null ? "" : $('#regionlist').val();
+            //if ($("#selectregionlist").val() != "")
+            //{
+            //    regionId = $("#selectregionlist").val();
+            //}
+            return '@Url.Action("DistributionReportData", "Customer", new { area = "Portal" })?regionId=' + regionId + '&searchtext=' + _searchtextVal + '&status=' + status;
+        }
+
+        function initTable() {
+
+            //var sURL = getUrl();
+            var ps = $('#pageSize').val();
+            var dtable = $('#distributionList').dataTable({
+                "ordering": false,
+                "bAutoWidth": false,
+                "iDisplayLength": ps == '-1' ? 25 : ps,
+                "bDestroy": true,
+                //"aLengthMenu": [[5, 7, 10, 25, 50, -1], [5, 7, 10, 25, 50, "All"]],
+                "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                "aaSorting": [[0, "desc"]],
+                "sAjaxSource": getUrl(),
+                "sAjaxDataProp": "aaData",
+                "rowCallback": function (nRow, data) {
+                },
+                "aoColumns": [
+                    {
+                        "sName": "CustomerNo",
+                        "bSortable": true,
+                        "sClass": "alignCenter",
+                        "mRender": function (data, type, full) {
+                            return full.CustomerNo;
+                        }
+                    },
+                    {
+                        "sName": "CustomerName",
+                        "bSortable": true,
+                        "mRender": function (data, type, full) {
+                            return full.CustomerName;
+                        }
+                    },
+                    {
+                        "sName": "FranchiseeNo",
+                        "bSortable": true,
+                        "sClass": "alignCenter",
+                        "mRender": function (data, type, full) {
+                            return full.FranchiseeNo;
+                        }
+                    },
+                    {
+                        "sName": "FranchiseeName",
+                        "bSortable": true,
+                        "mRender": function (data, type, full) {
+                            return full.FranchiseeName;
+                        }
+                    },
+                    {
+                        "sName": "ContractDescription",
+                        "bSortable": true,
+                        "mRender": function (data, type, full) {
+                            return full.ContractDescription;
+
+                        }
+                    },
+                    {
+                        "sName": "Notes",
+                        "bSortable": true,
+                        "mRender": function (data, type, full) {
+                            return full.Notes;
+                        }
+                    },
+                    {
+                        "sName": "Amount",
+                        "bSortable": true,
+                        "sClass": "alignRight",
+                        "mRender": function (data, type, full) {
+                            if (!full.Amount) {
+                                return '';
+                            }
+                            return "$" + parseFloat(full.Amount, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+                        }
+                    },
+                    {
+                        "sName": "StartDate",
+                        "bSortable": true,
+                        "sClass": "alignCenter",
+                        "mRender": function (data, type, full) {
+                            if (full.StartDate != null && full.StartDate != "") {
+                                return moment(new Date(parseInt(full.StartDate.substr(6)))).format("MM/DD/YYYY");
+                            }
+                            else { return ""; }
+                        }
+                    },
+                    {
+                        "sName": "EndDate",
+                        "bSortable": true,
+                        "sClass": "alignCenter",
+                        "mRender": function (data, type, full) {
+                            if (full.EndDate != null && full.EndDate != "") {
+                                return moment(new Date(parseInt(full.EndDate.substr(6)))).format("MM/DD/YYYY");
+                            }
+                            else { return ""; }
+
+                        }
+                    },
+                ]
+            });
+        }
+
+        $(window).load(function () {
+            if ('@ViewBag.selectedRegionId' == 0) {
+                $("#modal_RegionModel").modal({ backdrop: 'static' });
+            }
+            else {
+                initTable();
+            }
+        });
+
+        $(document).ready(function () {
+
+            
+            $("#btnRegion").click(function () {
+                if ($("#selectregionlist").val() != "") {
+                    $("#regionlist option[value='" + $("#selectregionlist").val() + "']").attr("selected", 1);
+                    $("#regionlist").multiselect("refresh");
+                    initTable();
+                    $(".close").click();
+                }
+            });
+
+            $("#regionlist").multiselect({
+                includeSelectAllOption: false,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2,
+                onChange: initTable,
+                onSelectAll: initTable,
+                onDeselectAll: initTable
+            });
+
+            if ('@ViewBag.selectedRegionId' > 0) {
+
+                $("#regionlist option[value='" + '@ViewBag.selectedRegionId' + "']").attr("selected", 1);
+                $("#regionlist").multiselect("refresh");
+            }
+
+            //applyDurationFilter(7);
+            //var _monthVal = "0";
+            //var _yearVal = "0";
+            //var _searchtextVal = getUrlParameter('searchtext');
+            var _searchtextVal = $('#csearch-box').val();
+
+
+            //$("#regionlist").change(function () {
+            //    initTable();
+            //});
+            $(document).on('init.dt', function (e, settings) {
+                var api = new $.fn.dataTable.Api(settings);
+                if ($(api.table().node()).attr('id') == 'distributionList') {
+                    setPaging();
+                }
+            });
+
+            $("#csearch-box").keyup(function () {
+                var table = $("#distributionList").DataTable();
+                table.search($(this).val()).draw();
+            });
+
+            $("#pageSize").change(function () {
+                setPaging();
+            });
+            //initTable();
+
+            $('#chkIsActive').change(function () {
+                status = -1;
+                if ($(this).is(":checked")) {
+                    status = 1;
+                }
+                if ($('#chkIsInactive').is(":checked")) {
+                    status = -1;
+                }
+                initTable();
+            });
+            $('#chkIsInactive').change(function () {
+                status = -1;;
+                if ($(this).is(":checked")) {
+                    status = 0;
+                }
+                if ($('#chkIsActive').is(":checked")) {
+                    status = -1;
+                }
+                initTable();
+            });
+            $('#distributionList').show();
+        });
+
+
+
+
+        function getCurrentUrl() {
+            var s = $("#ddlStatus").val();
+            var r = $('#regionlist').val();
+
+        }
+
+        $(function () {
+            $("#regionlist").multiselect({
+                includeSelectAllOption: true,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2
+            });
+
+            var ps = $('#pageSize').val();
+
+
+            $("#divrightckbox").append('<label class="mt-checkbox" style="margin: 4px 20px 0 0;padding-left: 25px;"><input type="checkbox" id="chkActive" checked><span></span> Active</label><label class="mt-checkbox" style="margin: 4px 20px 0 0;padding-left: 25px;"><input id="chkInActive" type="checkbox"><span></span> Inactive</label><label class="mt-checkbox" style="margin: 4px 20px 0 0;padding-left: 25px;"><input type="checkbox" id="chkPending"><span></span> Pending</label>');
+
+            $('.modal-dialog').draggable();
+
+            $("#input_Search").keyup(function () {
+                var table = $("#distributionList").DataTable();
+                table.search($(this).val()).draw();
+            });
+
+            $("#pageSize").change(function () {
+                setPaging();
+            });
+            //$('#divfranchiseList').show();
+        });
+
+        function setPaging() {
+            var z = $("#pageSize").val();
+            var table = $("#distributionList").DataTable();
+            if (z > 0) {
+                table.page.len(z).draw();
+            }
+            else if (z == -1) {
+                table.page.len(table.rows().count()).draw();
+            }
+            else {
+                table.page.page.len(25).draw();
+            }
+        }
+
+        function settimeduration_select(id) {
+            $('#select_timeduration').val(id)
+            $('#spnStartDate').html('');
+            $('#spnEndtDate').html('');
+            $('#divspandate').show();
+            $('#divSD').hide();
+            $('#divED').hide();
+            switch (parseInt(id)) {
+                case 1:
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = moment().endOf('isoWeek').toString();
+                    break;
+                case 2:
+                    //code block
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 3:
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                    break;
+                case 4:
+                    //code block
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 5:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = moment().endOf('quarter').toString();
+                    break;
+                case 6:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 7:
+                    //code block
+                    firstDay = moment().startOf('year').toString();;
+                    lastDay = moment().endOf('year').toString();
+                    break;
+                case 8:
+                    //code block
+                    firstDay = moment().startOf('year').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 9:
+                    //code block
+                    firstDay = moment().toString();
+                    lastDay = moment().toString();
+                    break;
+                case 10:
+                    //code block
+                    firstDay = moment().add(-1, 'days').toString();
+                    lastDay = moment().add(-1, 'days').toString();
+                    break;
+                case 11:
+                    //code block
+                    firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                    lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                    break;
+                case 12:
+                    //code block
+                    firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                    break;
+                case 13:
+                    //code block
+                    firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                    lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                    break;
+                case 14:
+                    //code block
+                    firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                    lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                    break;
+                case 15:
+                    //code block
+                    $('#divspandate').hide();
+                    $('#divSD').show();
+                    $('#divED').show();
+                    $('#txtStartDate').val('');
+                    $('#txtEndtDate').val('')
+                    break;
+                default:
+                    //code block
+            }
+            $('#spnStartDate').html(moment(firstDay).format('L'));
+            $('#spnEndtDate').html(moment(lastDay).format('L'));
+        }
+    </script>
+
+
+}

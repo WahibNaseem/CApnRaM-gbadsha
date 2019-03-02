@@ -1,0 +1,902 @@
+﻿
+@model IEnumerable<JKViewModels.Customer.CustomerServiceScheduleDataModel>
+@{
+    DateTime startDate = (DateTime)ViewBag.StartDate;
+    DateTime endDate = (DateTime)ViewBag.EndDate;
+    DateTime todayDate = DateTime.Now.Date;
+    var custAddress = ViewBag.CustAddress;
+    var callBackAction = ViewBag.CallBackAction;
+    var callBackController = ViewBag.CallBackController;
+    var passId = ViewBag.PassId;
+    var statusListId = (int)ViewBag.StatusListId;
+    var passIdValueOne = ViewBag.PassIdValueOne;
+    var passIdTwo = ViewBag.PassIdTwo;
+    var passIdValueTwo = ViewBag.PassIdValueTwo;
+
+    var regionName = ViewBag.RegionName;
+    var RegionList = ViewBag.RegionList as IEnumerable<JKApi.Data.DAL.Region>;
+
+    var scheduleType = ViewBag.ScheduleType as IEnumerable<JKViewModels.Customer.CRM_ScheduleTypeModel>;
+    var purposeType = ViewBag.PurposeType as IEnumerable<JKViewModels.Customer.CRM_PurposeTypeModel>;
+    var stageStatusType = ViewBag.StageStatusType as IEnumerable<JKApi.Data.DAL.CRM_StageStatus>;
+
+
+    var daysToAdd = (int)ViewBag.DaysToAdd;
+    var customerId = (int)ViewBag.CustomerId;
+
+    DateTime prevDate = startDate.AddMonths(-1);
+    DateTime nextDate = startDate.AddMonths(1);
+
+    var dateString = startDate.ToShortDateString();
+
+    var users = Model.Select(o => o.UserId).Distinct().ToList();
+    var userCount = users.Count();
+    var customer = Model.FirstOrDefault();
+    var customerName = customer != null ? customer.CustomerName : "";
+    ViewBag.Title = "AddCRMSchedule";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+@section styles{
+    <link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/admin/assets/Card/dist/card.css" rel="stylesheet" />
+    <link href="~/Content/admin/assets/global/plugins/bootstrap-sweetalert/sweetalert.css" rel="stylesheet" />
+    <link href="~/Content/admin/assets/global/plugins/wow-alert-master/css/wow-alert.css" rel="stylesheet" />
+
+
+    <style type="text/css">
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        #ui-datepicker-div {
+            z-index: 99999 !important;
+        }
+
+        .clsmodelbody {
+            padding: 0px 10px 15px 10px !important;
+        }
+    </style>
+    <style type="text/css">
+        .has-error {
+            border-color: red;
+        }
+
+        .custom-form .btn {
+            margin-bottom: 5px;
+        }
+
+        .sweet-alert {
+            z-index: 59999;
+        }
+
+        .pnd5 {
+            padding: 5px;
+        }
+
+        .control-label.text-left {
+            text-align: left;
+        }
+
+        .editvaluetext {
+            background-color: white;
+            showBillsetting border-style: inherit;
+        }
+
+        .editmode {
+            background-color: initial;
+            border-style: hidden;
+        }
+
+        .ui-autocomplete {
+            z-index: 9999 !important;
+        }
+
+        .btn-custom {
+            font-size: 11px;
+            padding: 10px 0px;
+        }
+
+        /*input:focus, textarea:focus,select:focus {
+                border-color: initial;
+            }
+
+            input.error, textarea.error,select:focus {
+                border: 1px solid red;
+            }*/
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        tr > td {
+            font-size: 11px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+                font-size: 10px !important;
+            }*/
+
+        /*.row {
+                margin: 0;
+                padding: 5px 0;
+            }*/
+        .modal-body .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignleft {
+            text-align: left;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .txtright {
+            text-align: right;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .modal-header:hover {
+            cursor: move;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .payment-field {
+            width: 80px !important;
+        }
+
+        .demo-container {
+            width: 100%;
+            max-width: 350px;
+            margin: 10px auto;
+        }
+
+        form {
+            margin: 30px;
+        }
+
+        .input-185 {
+            width: 146px;
+        }
+
+
+
+        /*input {
+                width: 200px;
+                margin: 10px auto;
+                display: block;
+            }*/
+        .Amttext {
+            text-align: right;
+        }
+
+        .clsAmounttd {
+            text-align: right !important;
+        }
+
+        .toppadding {
+            margin-top: 0px;
+        }
+
+        .text-bottom {
+            vertical-align: bottom !important;
+        }
+
+        input[type="radio"].bigger-radio {
+            -ms-transform: scale(1.5); /* IE 9 */
+            -webkit-transform: scale(1.5); /* Chrome, Safari, Opera */
+            transform: scale(1.5);
+            margin-bottom: 10px;
+        }
+    </style>
+
+
+}
+
+<div class="custom-form portlet light">
+    <div class="headerbox">
+        <div class="row">
+            <div class="col-md-12 text-center" style="font-size:13px;">
+                <div class="col-lg-1">
+                    <button class="btn btn-primary pull-left" id="btnBack"><i class="fa fa-backward"></i> Back</button>
+                </div>
+                <div class="col-lg-10">
+                    <b>@customerName</b>
+                </div>
+                <div class="col-lg-1">
+                </div>
+            </div>
+            <div class="col-md-12 text-center" style="font-size:10px;">
+                <div class="col-lg-1">
+
+                </div>
+                <div class="col-lg-10">
+                    <b>@startDate.ToString("MMMM dd, yyyy")</b>
+                </div>
+                <div class="col-lg-1">
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="portlet-body form">
+        <div class="form-body" style="padding-top:0px !important;margin-top: 0px !important;">
+            <div class="form-group" style="margin-top: 0px !important;">
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="hidden" id="daysToAdd" value="@daysToAdd" />
+                        <input type="hidden" id="customerId" value="@customerId" />
+                        <input type="hidden" id="startDate" value="@dateString" />
+                        <input type="hidden" id="custAddress" value="@custAddress" />
+                        <input type="hidden" id="callBackAction" value="@callBackAction" />
+                        <input type="hidden" id="callBackController" value="@callBackController" />
+                        <input type="hidden" id="statusListId" value="@statusListId" />
+                        <input type="hidden" id="passId" value="@passId" />
+                        <input type="hidden" id="passIdValueOne" value="@passIdValueOne" />
+                        <input type="hidden" id="passIdTwo" value="@passIdTwo" />
+                        <input type="hidden" id="passIdValueTwo" value="@passIdValueTwo" />
+                        
+
+                        <div class="portlet ligh">
+                            <div class="row">
+                                <div class="col-lg-2">
+                                    <table class="table table-responsive" style="border:0; align-content:center; margin-top:0 !important;font-size:12px !important;">
+                                        <tbody>
+
+                                            <tr>
+                                                <th colspan="2" style="text-align:center;">
+                                                    <br />
+                                                    <br />
+                                                    <b> Purpose </b>
+                                                </th>
+                                            </tr>
+
+                                            @foreach (var item in purposeType)
+                                            {
+                                                <tr>
+                                                    <td style="width:10px; background-color:@item.ColorCode;min-width:15px; min-height:15px;"></td>
+                                                    <td style="text-align:left;"> <b> &nbsp; &nbsp; @item.Name</b> </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+
+                                    </table>
+                                </div>
+
+                                <div class="col-lg-10">
+                                    <div class="table table-responsive">
+                                        <table id="tblSchedule" class="freez table table-responsive table-striped table-bordered order-column" style="margin-top:0 !important;font-size:12px !important;">
+                                            <thead>
+                                                <tr>
+                                                    <th class="headcol" style="font-size:12px;text-align:center;background-color:#95A5A6 !important;padding:5px !important;color:#FFF;width:60px;"></th>
+                                                    @for (int i = 0; i < userCount; i++)
+                                                {
+                                                    var userId = users[i];
+                                                    var userDetail = Model.Where(o => o.UserId == userId);
+                                                    var userDetailsFirstRow = userDetail.FirstOrDefault();
+
+                                                    <td style="font-size:12px;text-align:center;background-color:#95A5A6 !important;padding:5px !important;color:#FFF;width:10px;">
+                                                        @userDetailsFirstRow.UserName
+                                                    </td>
+                                                }
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{
+                                                DateTime StartDate = startDate.Date;
+                                                DateTime EndDate = endDate.Date;
+
+                                                var startTime = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, 8, 0, 0);
+                                                var endTime = startTime.AddHours(12);
+                                                var compareTime = new DateTime();
+
+                                                while (startTime <= endTime)
+                                                {
+                                                <tr>
+                                                    <th class="headcol" style="padding:5px; text-align:center; font-size:12px;height:25px;width:60px;">@startTime.ToShortTimeString()</th>
+
+                                                    @for (int j = 0; j < userCount; j++)
+                                                        {
+                                                            compareTime = new DateTime(startTime.Year, startTime.Month, startTime.Day, startTime.Hour, startTime.Minute, startTime.Second);
+
+                                                            var userIdForData = users[j];
+                                                            var details = Model.FirstOrDefault(o => o.UserId == userIdForData);
+                                                            var userDetailForData = Model.Where(o => o.UserId == userIdForData && (o.StartDate <= compareTime && o.EndDate >= compareTime));
+                                                            <td style="text-align:center;" class="tblCell1" scheduleId="0" purposeId="" description="" location="" custName="@details.CustomerName" custNo="@details.CustomerNo" authUserName="@details.UserName" authUserLoginId="@userIdForData" startTime="@startTime.ToShortTimeString()">
+                                                                <table style="width:100%;">
+
+                                                                    @if (userDetailForData.Any())
+                                                                    {
+                                                                        var color = String.Empty;
+                                                                        foreach (var item in userDetailForData)
+                                                                        {
+                                                                            color = purposeType.FirstOrDefault(o => o.CRM_PurposeTypeId == item.PurposeId).ColorCode;
+
+                                                                        <tr style="width:100%; height:25px;  background-color:@color">
+                                                                            @if (item.Description == null)
+                                                                                {
+                                                                                    <td class="tblCell" scheduleId="" purposeId="" description="" location="" custName="@details.CustomerName" custNo="@details.CustomerNo" authUserName="@details.UserName" authUserLoginId="@userIdForData" startTime="@startTime.ToShortTimeString()" style="min-width:100%; text-align:center; background-color:@color">No Details</td>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td class="tblCell" scheduleId="@item.CRM_ScheduleId" purposeId="@item.PurposeId" description="@item.Description" location="@item.Location" custName="@details.CustomerName" custNo="@details.CustomerNo" authUserName="@details.UserName" authUserLoginId="@userIdForData" startTime="@startTime.ToShortTimeString()" style="min-width:100%; text-align:center; background-color:@color">@item.Description</td>
+                                                                                }
+                                                                        </tr>
+                                                                        }
+
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <tr style="width:100%; height:100%;">
+                                                                            <td class="tblCell" scheduleId="" purposeId="" description="" location="" custName="@details.CustomerName" custNo="@details.CustomerNo" authUserName="@details.UserName" authUserLoginId="@userIdForData" startTime="@startTime.ToShortTimeString()" style="width:100%; height:100%; text-align:center; color:whitesmoke;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                                        </tr>
+                                                                    }
+                                                                </table>
+                                                            </td>
+
+                                                        }
+                                                </tr>
+                                                    startTime = startTime.AddHours(1);
+                                                }
+
+                                                }
+
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<form id="formScheduleAdd">
+
+    <div class="modal fade custom-model custom-form-design" id="modal_addCrmSchedule" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-sm" style="width: 650px;">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                        <b><label style="font-weight:bold" id="custNo"></label> - <label style="font-weight:bold" id="custName"></label> - <label style="font-weight:bold" id="regionName">@regionName</label>   </b>
+                        <br />
+                        <b>@startDate.ToString("MMMM dd, yyyy")</b>
+                    </h4>
+                </div>
+                <div class="modal-header" style="padding:0px!important;border-bottom: none;">
+                    <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                        <label style="font-weight:bold" id="userName"></label>
+                    </h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <input type="hidden" id="CRM_ScheduleId" name="CRM_ScheduleId" />
+                                <div class="control-label col-md-2">
+                                    Start Date<span class="required">*</span>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="input-group date" data-date-format="mm/dd/yyyy">
+                                        <input type="text" class="form-control input-sm date date-picker RemovePeriodvalidation" name="StartDateAdd" data-date-format="mm/dd/yyyy" id="StartDateAdd" />
+                                        <span class="input-group-btn">
+                                            <button class="btn default" type="button" style="margin-top: 3px;">
+                                                <i class="fa fa-calendar"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <select class="form-control input-sm" id="StartTime" name="StartTime" required="required">
+                                        @{
+                                        var sTime = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, 8, 0, 0);
+                                        var eTime = sTime.AddHours(12);
+                                        while (sTime <= eTime)
+                                        {
+                                        <option value="@sTime">@sTime.ToShortTimeString()</option>
+                                            sTime = sTime.AddHours(1);
+                                        }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="control-label col-md-3">
+                                    <label class="control-checkbox">
+                                        <input type="checkbox" id="IsAllDay" name="IsAllDay" /> All Day Event
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <div class="control-label col-md-2">
+                                    End Date<span class="required">*</span>
+                                </div>
+                                <div class="col-md-5">
+                                    <input type="hidden" id="AuthUserLoginId" name="AuthUserLoginId" />
+                                    <div class="input-group date" data-date-format="mm/dd/yyyy">
+                                        <input id="EndDateAdd" name="EndDateAdd" class="date date-picker input-sm form-control RemovePeriodvalidation" required="required" />
+                                        <span class="input-group-btn">
+                                            <button class="btn default" type="button" style="margin-top: 3px;">
+                                                <i class="fa fa-calendar"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <select class="form-control input-sm" id="EndTime" name="EndTime" required="required">
+                                        @{
+                                        var s1Time = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, 8, 0, 0);
+                                        var e1Time = s1Time.AddHours(12);
+                                        while (s1Time <= e1Time)
+                                        {
+                                        <option value="@s1Time">@s1Time.ToShortTimeString()</option>
+
+                                            s1Time = s1Time.AddHours(1);
+                                        }
+                                        }
+                                    </select>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 hidden">
+                            <div class="form-group">
+                                <div class="control-label col-md-2">
+                                    Schedule Type
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-control input-sm" id="CRM_ScheduleTypeId" name="CRM_ScheduleTypeId" required="required">
+                                        <option value="">--Select--</option>
+                                        @foreach (var item in scheduleType)
+                                    {
+                                        <option value="@item.CRM_ScheduleTypeId">@item.Name</option>
+                                    }
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <div class="control-label col-md-2">
+                                    Stage Status Type
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-control input-sm" id="CRM_StageStatusType" name="CRM_StageStatusType" required="required">
+                                        <option value="">--Select--</option>
+                                        @foreach (var item in stageStatusType)
+                                    {
+                                        <option value="@item.CRM_StageStatusId">@item.Name</option>
+                                    }
+                                    </select>
+                                </div>
+                                <div class="control-label col-md-2">
+                                    Title
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control input-sm" id="Title" name="Title" required="required" />
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <div class="control-label col-md-2">
+                                    Purpose Type <span class="required">*</span>
+                                </div>
+                                <div class="col-md-7">
+                                    <select class="form-control input-sm" id="PurposeId" name="PurposeId" required="required">
+                                        <option value="">--Select--</option>
+                                        @foreach (var item in purposeType)
+                                    {
+                                        <option value="@item.CRM_PurposeTypeId">@item.Name</option>
+                                    }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <div class="control-label col-md-2">
+                                    Location
+                                </div>
+                                <div class="col-md-7">
+                                    <input type="text" class="form-control input-sm" id="Location" name="Location" required="required" />
+
+                                </div>
+                                <div class="control-label col-md-3">
+                                    <label class="control-checkbox">
+                                        <input type="checkbox" id="IsSameAddress" name="IsSameAddress" /> Same Cus_Address
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <div class="control-label col-md-2">
+                                    Notes
+                                </div>
+                                <div class="col-md-7">
+                                    <textarea class="form-control" id="Description" name="Description"></textarea>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <button type="button" id="btnClose" class="btn btn-large btn-primary pull-right"><i class="fa fa-close"></i> Cancel</button>
+                        </div>
+                        <div class="col-lg-4">
+                            <button type="button" id="btnSaveSchedule" class="btn btn-large btn-primary pull-left"><i class="fa fa-save"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+@section pageplugins{
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    @*<script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>*@
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="~/Scripts/jquery-ui.js" type="text/javascript"></script>
+    <script src="~/Content/admin/assets/Card/dist/jquery.card.js"></script>
+    @if (Request.IsSecureConnection)
+    {
+        <script src="https://maps.google.com/maps/api/js?key=AIzaSyCrw533WZZijl0sItzXs-DjfyHMN5g4xD8" async defer></script>
+    }
+    else
+    {
+        <script src="http://maps.google.com/maps/api/js?key=AIzaSyCrw533WZZijl0sItzXs-DjfyHMN5g4xD8" async defer></script>
+    }
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/wow-alert-master/js/wow-alert.js")"></script>
+    <link rel="stylesheet" type="text/css" href="/Content/chosen.css" />
+    <script src="/Scripts/chosen.jquery.min.js" type="text/javascript"></script>
+    <script src="/Scripts/jquery.uniform.min.js"></script>
+
+}
+
+@section scripts{
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Areas/Portal/Scripts/ApplyCreditForm.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Areas/Portal/Scripts/ApplyCreditFormINV.js")" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#btnBack').click(function () {
+                var callBackAction = $('#callBackAction').val();
+                var callBackController = $('#callBackController').val();
+                var passId = $('#passId').val();
+                var passIdValueOne = $('#passIdValueOne').val();
+                var passIdTwo = $('#passIdTwo').val();
+                var passIdValueTwo = parseInt($('#passIdValueTwo').val());
+
+                if (callBackAction) {
+                    var CustomerId = $('#customerId').val();
+                    var callFromSchedule = 1;
+                    var sURL = '@Url.Action(callBackAction, callBackController, new { area = "Portal" })' + "?" + passId + "=" + CustomerId + "&callFromSchedule=" + callFromSchedule;
+                    if (passIdValueTwo > 0) {
+                        sURL = '@Url.Action(callBackAction, callBackController, new { area = "Portal" })' + "?" + passId + "=" + CustomerId + "&" + passIdTwo + "=" + passIdValueTwo + "&callFromSchedule=" + callFromSchedule;
+                    }
+                    window.location.replace(sURL);
+                }
+            });
+
+            $('.tblCell').click(function () {
+                var startDate = $('#startDate').val();
+                var customerId = $('#customerId').val();
+                var dateTime = $(this).attr("startTime");
+                var authUserLoginId = $(this).attr("authUserLoginId");
+                var authUserName = $(this).attr("authUserName");
+
+                var custName = $(this).attr("custName");
+                var custNo = $(this).attr("custNo");
+
+                var scheduleId = $(this).attr("scheduleId");
+                var purposeId = $(this).attr("purposeId");
+                var description = $(this).attr("description");
+                var location = $(this).attr("location");
+
+                $('#CRM_ScheduleId').val(scheduleId);
+                $('#PurposeId').val(purposeId);
+                $('#Location').val(location);
+                $('#Description').val(description);
+
+                $("#StartTime option:contains(" + dateTime + ")").attr('selected', true);
+                $("#EndTime option:contains(" + dateTime + ")").attr('selected', true);
+                $('#AuthUserLoginId').val(authUserLoginId);
+
+                $('#StartDateAdd').val(startDate);
+                $('#EndDateAdd').val(startDate);
+                $('#userName').text(authUserName);
+                $('#custName').text(custName);
+                $('#custNo').text(custNo);
+
+                $("#modal_addCrmSchedule").modal('show');
+
+            });
+
+            $('#IsAllDay').change(function () {
+                var val = $(this).is(':checked');
+                if (val) {
+                    $("#StartTime").prop('selected', false);
+                    $("#EndTime").prop('selected', false);
+                    $("#StartTime option:contains(8:00 AM)").prop('selected', 'selected');
+                    $("#EndTime option:contains(5:00 PM)").prop('selected', 'selected');
+                    
+                    $('#EndTime').prop('disabled', true);
+                    $('#StartTime').prop('disabled', true);
+                } else {
+                    $('#EndTime').prop('disabled', false);
+                    $('#StartTime').prop('disabled', false);
+                }
+            });
+
+            $('#IsSameAddress').change(function () {
+                var val = $(this).is(':checked');
+                var custAddress = $('#custAddress').val();
+                if (val) {
+                    $('#Location').val(custAddress);
+                    $('#Location').prop('disabled', true);
+                } else {
+                    $('#Location').val('');
+                    $('#Location').prop('disabled', false);
+                }
+            });
+
+            $('#btnClose').click(function () {
+                $('#CRM_ScheduleId').val(0);
+                $('#Location').val('');
+                $('#Description').val('');
+                $('#userName').val('');
+                $('#custName').val('');
+                $('#custNo').val('');
+                $('#PurposeId').val(0);
+                $("#modal_addCrmSchedule").modal('hide');
+            });
+
+            $('#btnSaveSchedule').click(function () {
+                var isvalid = true;
+                var CustomerId = $('#customerId').val();
+                var StartDate = $('#StartDateAdd').val();
+                var EndDate = $('#EndDateAdd').val();
+                var AuthUserLoginId = $("#AuthUserLoginId").val();
+                var StartTime = $('#StartTime').val();
+                var EndTime = $('#EndTime').val();
+                var IsAllDay = $('#IsAllDay').is(':checked');
+                var IsSameAddress = $('#IsSameAddress').is(':checked');
+
+                var CRM_ScheduleTypeId = $('#CRM_ScheduleTypeId').val();
+                var CRM_ScheduleId = $('#CRM_ScheduleId').val();
+                var PurposeId = $('#PurposeId').val();
+                var Purpose = $('#PurposeId option:selected').text();
+
+                var CRM_StageStatusType = $('#CRM_StageStatusType').val();
+                var Title = $('#Title').val();
+
+                var Location = $('#Location').val();
+                var Description = $('#Description').val();
+                var callBackAction = $('#callBackAction').val();
+                var callBackController = $('#callBackController').val();
+                var passId = $('#passId').val();
+                var statusListId = $('#statusListId').val();
+                var passIdValueOne = $('#passIdValueOne').val();
+                var passIdTwo = $('#passIdTwo').val();
+                var passIdValueTwo = $('#passIdValueTwo').val();
+
+
+                if (StartDate.trim() == '') { $('#StartDateAdd').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#StartDateAdd').css('border-color', ''); }
+                if (EndDate.trim() == '') { $('#EndDateAdd').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#EndDateAdd').css('border-color', ''); }
+                if (StartTime.trim() == '') { $('#StartTime').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#StartTime').css('border-color', ''); }
+                if (EndTime.trim() == '') { $('#EndTime').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#EndTime').css('border-color', ''); }
+
+                if (PurposeId.trim() == '') { $('#PurposeId').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#PurposeId').css('border-color', ''); }
+
+
+                if (Date.parse(StartDate) > Date.parse(EndDate)) {
+                    $('#EndDateAdd').css('border-color', 'red');
+                    if (isvalid == true) { isvalid = false; }
+                } else {
+                    $('#EndDateAdd').css('border-color', '');
+                }
+
+                if (Date.parse(StartDate) < Date.parse(EndDate)) {
+                } else {
+                    if (!IsAllDay) {
+                        if (Date.parse(StartTime) > Date.parse(EndTime)) {
+                            $('#EndTime').css('border-color', 'red');
+                            if (isvalid == true) { isvalid = false; }
+                        } else {
+                            $('#EndTime').css('border-color', '');
+                        }
+                    }
+                }
+                if (isvalid == true) {
+                    var model = {
+                        CRM_ScheduleId: CRM_ScheduleId,
+                        Title: Title,
+                        Description: Description,
+                        StartDate: StartDate,
+                        EndDate: EndDate,
+                        StartTime: StartTime,
+                        EndTime: EndTime,
+                        Location: Location,
+                        IsAllDay: IsAllDay,
+                        CRM_ScheduleTypeId: CRM_ScheduleTypeId,
+                        CRM_StageStatusType: CRM_StageStatusType,
+                        AuthUserLoginId: AuthUserLoginId,
+                        IsSameAddress: IsSameAddress,
+                        OutlookSyncDate: null,
+                        PurposeId: PurposeId,
+                        Purpose: Purpose,
+                        IsActive: true,
+                        ClassId: CustomerId
+                    };
+
+
+                    $.ajax({
+                        url: '@Url.Action("SaveCRMSchedule", "Customer")',
+                        dataType: "json",
+                        data: model,
+                        traditional: true,
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            var sURL = '@Url.Action("AddCRMSchedule", "Customer", new { area = "Portal" })' + "?customerId=" + CustomerId + "&dateTime=" + StartDate + "&callBackAction=" + callBackAction + "&callBackController=" + callBackController + "&passId=" + passId + "&statusListId=" + statusListId + '&passIdValueOne=' + passIdValueOne + '&passIdTwo=' + passIdTwo + '&passIdValueTwo=' + passIdValueTwo;
+                            window.location.replace(sURL);
+                        },
+                        error: function () { }
+                    });
+                }
+            });
+
+        });
+
+
+    </script>
+}

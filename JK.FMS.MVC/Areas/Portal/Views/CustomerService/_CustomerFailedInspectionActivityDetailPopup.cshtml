@@ -1,0 +1,896 @@
+﻿@model List<JKViewModels.Customer.CustomerCancellationActivityModel>
+@using JKViewModels.Customer;
+@{
+    var StageListCustomerWise = (List<JKApi.Data.DAL.CSstage>)ViewBag.StageListCustomerWise;
+}
+
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+    </style>
+
+}
+
+<div class="modal fade custom-model custom-form-design" id="modal_ActivityDetail" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:700px;padding-top: 12px;">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Activities
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row" style="overflow:scroll;height:850px;">
+                    <div class="col-md-12 portlet-align">
+                        <div class="mt-comments">
+                            @if (Model.Count() > 0)
+                            {
+                                <div class="mt-comment">
+                                    @if (Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIComplaintLogged).Count() > 0)  // Stage 1
+                                    {
+                                        CustomerCancellationActivityModel CSActivityItem1 = new CustomerCancellationActivityModel();
+                                        CustomerCancellationActivityModel CSActivityItem2 = new CustomerCancellationActivityModel();
+                                        CustomerCancellationActivityModel CSActivityItem3 = new CustomerCancellationActivityModel();
+                                        CustomerCancellationActivityModel CSActivityItem4 = new CustomerCancellationActivityModel();
+                                        CustomerCancellationActivityModel CSActivityItem5 = new CustomerCancellationActivityModel();
+
+                                        CSActivityItem1 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIComplaintLogged && w.StaticDesignItemNo == 1 && (w.IsStaticDesign == true)).FirstOrDefault();
+                                        CSActivityItem2 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIComplaintLogged && w.StaticDesignItemNo == 2 && (w.IsStaticDesign == true)).FirstOrDefault();
+                                        CSActivityItem3 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIComplaintLogged && w.StaticDesignItemNo == 3 && (w.IsStaticDesign == true)).FirstOrDefault();
+                                        CSActivityItem4 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIComplaintLogged && w.StaticDesignItemNo == 4 && (w.IsStaticDesign == true)).FirstOrDefault();
+                                        CSActivityItem5 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIComplaintLogged && w.StaticDesignItemNo == 5 && (w.IsStaticDesign == true)).FirstOrDefault();
+
+                                        <div class="form-group"><label><b style="font-size:14px;">Complaint Logged</b></label></div>
+                                        <div class="form-group" style="display:none;">
+                                            <div class="col-md-8">
+                                                Attempted Franchisee Contact within 24 hrs
+                                                @*Franchisee Personally Contacted within 24 hrs*@
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage1StaticItem1Yes" name="stage1StaticItem1" class="search-field" @(CSActivityItem1 != null ? (CSActivityItem1.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) value="1">
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage1StaticItem1No" name="stage1StaticItem1" class="search-field" @(CSActivityItem1 != null ? (CSActivityItem1.StaticDesignIsItemChecked == false) ? "checked=checked" : string.Empty : string.Empty ) value="0">
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" style="display:none;">
+
+                                            <div class="col-md-8">
+                                                Get Franchisee input
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage1StaticItem2Yes" name="stage1StaticItem2" class="search-field" @(CSActivityItem2 != null ? (CSActivityItem2.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) value="1">
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage1StaticItem2No" name="stage1StaticItem2" class="search-field" @(CSActivityItem2 != null ? (CSActivityItem2.StaticDesignIsItemChecked == false) ? "checked=checked" : string.Empty : string.Empty ) value="0">
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" style="display:none;">
+                                            <div class="col-md-8">
+                                                Check for undocumented communications?
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage1StaticItem3Yes" name="stage1StaticItem3" class="search-field " @(CSActivityItem3 != null ? (CSActivityItem3.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) value="1">
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage1StaticItem3No" name="stage1StaticItem3" class="search-field" @(CSActivityItem3 != null ? (CSActivityItem3.StaticDesignIsItemChecked == false) ? "checked=checked" : string.Empty : string.Empty ) value="0">
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" style="display:none;">
+                                            <div class="col-md-8">
+                                                Receive Confirmatoin of receipt by franchisee? Note/document
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage1StaticItem4Yes" name="stage1StaticItem4" class="search-field" @(CSActivityItem4 != null ? (CSActivityItem4.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) value="1">
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage1IStatictem4No" name="stage1StaticItem4" class="search-field" @(CSActivityItem4 != null ? (CSActivityItem4.StaticDesignIsItemChecked == false) ? "checked=checked" : string.Empty : string.Empty ) value="0">
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" style="display:none;">
+                                            @*<div class="col-md-1"></div>*@
+                                            <div class="col-md-8">
+                                                Contacted Franchisee
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage1StaticItem5Yes" name="stage1StaticItem5" class="search-field" @(CSActivityItem5 != null ? (CSActivityItem5.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) value="1">
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage1StaticItem5No" name="stage1StaticItem5" class="search-field" @(CSActivityItem5 != null ? (CSActivityItem5.StaticDesignIsItemChecked == false) ? "checked=checked" : string.Empty : string.Empty ) value="0">
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="mt-comment" style="margin-left:-24px;">
+                                            <div class="mt-comment-body" style="padding-left:0px !important;">
+                                                <div class="mt-comment-info" style="margin-bottom:5px;">
+                                                    <div class="col-md-7" style="text-align:center;">
+                                                        <span class="mt-title">Title</span>
+                                                    </div>
+                                                    <div class="col-md-2"><b>User Name</b></div>
+                                                    <div class="col-md-3">
+                                                        <span><b>Date/Time</b> </span>
+                                                    </div>
+
+                                                </div>
+                                                <div class="mt-Note-text" style="margin-top:4px;">
+                                                    @foreach (var itm in Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIComplaintLogged && (w.IsStaticDesign == null || w.IsStaticDesign == false)))
+                                                    {
+                                                        <div class="col-md-7">
+                                                            <label class="mt-checkbox" style="margin-bottom:4px;font-size:12px;">
+                                                                <input type="checkbox" class="search-field" @(itm.IsItemChecked == true ? "checked=checked" : string.Empty) disabled="disabled"> @itm.ItemOptionName
+                                                                <span></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            @itm.CreatedBy
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Convert.ToDateTime(itm.CreatedDate).ToString("MM-dd-yyyy hh:mm tt")
+                                                        </div>
+                                                    }
+                                                </div>
+                                                @if (StageListCustomerWise != null && StageListCustomerWise.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIComplaintLogged).Count() > 0)
+                                                {
+                                                    <div class="mt-Note-text" style="margin-top:4px;">
+                                                        <div class="col-md-12">
+                                                            <label class="control-label"><b>Note:&nbsp;&nbsp;</b>@StageListCustomerWise.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIComplaintLogged).FirstOrDefault().Note</label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <h5 style="border-bottom: 2px solid #e7ecf1;margin:0px;"></h5>
+                                    }
+
+                                    @if (Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIActionsFollowUp).Count() > 0) // Stage 2
+                                    {
+
+                                        CustomerCancellationActivityModel CSActivity1 = new CustomerCancellationActivityModel();
+                                        CustomerCancellationActivityModel CSActivity2 = new CustomerCancellationActivityModel();
+                                        CustomerCancellationActivityModel CSActivity3 = new CustomerCancellationActivityModel();
+                                        CustomerCancellationActivityModel CSActivity4 = new CustomerCancellationActivityModel();
+
+                                        CSActivity1 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIActionsFollowUp && w.StaticDesignItemNo == 1 && (w.IsStaticDesign == true)).FirstOrDefault();
+                                        CSActivity2 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIActionsFollowUp && w.StaticDesignItemNo == 2 && (w.IsStaticDesign == true)).FirstOrDefault();
+                                        CSActivity3 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIActionsFollowUp && w.StaticDesignItemNo == 3 && (w.IsStaticDesign == true)).FirstOrDefault();
+                                        CSActivity4 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIActionsFollowUp && w.StaticDesignItemNo == 4 && (w.IsStaticDesign == true)).FirstOrDefault();
+
+
+                                        <div class="form-group"><label><b style="font-size:14px;">Actions/FollowUp</b></label></div>
+                                        <div class="form-group" style="display:none;">
+
+                                            <div class="col-md-8">
+                                                Set Date to visit account within 24 hours of notification?
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage2StaticItem1Yes" name="stage2StaticItem1" class="search-field" @(CSActivity1 != null ? (CSActivity1.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) value="1">
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage2StaticItem1No" name="stage2StaticItem1" class="search-field" @(CSActivity1 != null ? (CSActivity1.StaticDesignIsItemChecked == false) ? "checked=checked" : string.Empty : string.Empty ) value="0">
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" style="display:none;">
+
+                                            <div class="col-md-8">
+                                                Appointment Accepted (Yes/No)?
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage2StaticItem2Yes" name="stage2StaticItem2" class="search-field" @(CSActivity2 != null ? (CSActivity2.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) value="1">
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage2StaticItem2Yes" name="stage2StaticItem2" class="search-field" @(CSActivity2 != null ? (CSActivity2.StaticDesignIsItemChecked == false) ? "checked=checked" : string.Empty : string.Empty ) value="0">
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" style="display:none;">
+
+                                            <label class="control-label col-md-6" style="text-align:left;">Appointment Date (Schedule) :</label>
+                                            <div class="col-md-2">
+                                                <!-- Date -->
+                                                <input type="text" id="chkStage2StaticItem3Date" class="form-control input-sm date date-picker" name="datepicker" @*data-date-format="mm/dd/yyyy"*@ value="@(CSActivity3 != null? (CSActivity3.StaticDesignScheduleDate!=null) ? Convert.ToDateTime(CSActivity3.StaticDesignScheduleDate).ToString("MM-dd-yyyy"): string.Empty : string.Empty)" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <!-- Time -->
+                                                <div class="input-icon">
+                                                    <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                                                    <input type="text" id="chkStage2StaticItem3Time" class="form-control input-group-sm input-sm  timepicker timepicker-default" value="@(CSActivity3 != null? (CSActivity3.StaticDesignScheduleTime!=null) ? Convert.ToDateTime(CSActivity3.StaticDesignScheduleTime).ToString("hh:mm tt") : string.Empty : string.Empty)" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <!-- End Time -->
+                                                <div class="input-icon">
+                                                    <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                                                    <input type="text" id="chkStage2StaticItem3EndTime" class="form-control  input-group-sm input-sm  timepicker timepicker-default" value="@(CSActivity3 != null? (CSActivity3.StaticDesignScheduleEndTime!=null) ? Convert.ToDateTime(CSActivity3.StaticDesignScheduleEndTime).ToString("hh:mm tt") : string.Empty : string.Empty)" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" style="display:none;">
+                                            <label class="control-label col-md-8" style="text-align:left;">Confirming Document if request for appointment declined. (Uploaded)?</label>
+                                            <div class="col-md-1">
+                                                <label class="mt-checkbox">
+                                                    Yes
+                                                    <input type="checkbox" id="chkstage2StaticItem4" name="stage2StaticItem4" onclick="ClickStage2Item4DocumentLink()" class="search-field" @(CSActivity4 != null ? (CSActivity4.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) value="1">
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1">
+                                                @*<div class="input-icon" id="" @(CSActivity4 != null ? (CSActivity4.StaticDesignIsItemChecked == true) ? string.Empty : "style=display:none;" : string.Empty )>
+                                                        <a  class="btn-custom btn btn-primary">Documents</a>
+                                                    </div>*@
+                                            </div>
+                                        </div>
+                                        <div class="mt-comment" style="margin-left:-24px;">
+                                            <div class="mt-comment-body" style="padding-left:0px !important;">
+                                                <div class="mt-comment-info" style="margin-bottom:5px;">
+                                                    <div class="col-md-7" style="text-align:center;">
+                                                        <span class="mt-title">Title</span>
+                                                    </div>
+                                                    <div class="col-md-2"><b>User Name</b></div>
+                                                    <div class="col-md-3">
+                                                        <span><b>Date/Time</b> </span>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-Note-text" style="margin-top:4px;">
+                                                    @foreach (var itm in Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIActionsFollowUp && (w.IsStaticDesign == null || w.IsStaticDesign == false)))
+                                                    {
+                                                        <div class="col-md-7">
+                                                            <label class="mt-checkbox" style="margin-bottom: 4px;font-size:12px;">
+                                                                <input type="checkbox" class="search-field" @(itm.IsItemChecked == true ? "checked=checked" : string.Empty) disabled="disabled"> @itm.ItemOptionName
+                                                                <span></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            @itm.CreatedBy
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Convert.ToDateTime(itm.CreatedDate).ToString("MM-dd-yyyy hh:mm tt")
+                                                        </div>
+                                                    }
+                                                </div>
+                                                @if (StageListCustomerWise != null && StageListCustomerWise.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIActionsFollowUp).Count() > 0)
+                                                {
+                                                    <div class="mt-Note-text" style="margin-top:4px;">
+                                                        <div class="col-md-12">
+                                                            <label class="control-label"><b>Note:&nbsp;&nbsp;</b>@StageListCustomerWise.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIActionsFollowUp).FirstOrDefault().Note</label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <h5 style="border-bottom: 2px solid #e7ecf1;margin:0px;"></h5>
+                                    }
+                                    @if (Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIFollowUp).Count() > 0) // Stage 3
+                                    {
+                                        CustomerCancellationActivityModel CSActivity1 = new CustomerCancellationActivityModel();
+                                        CustomerCancellationActivityModel CSActivity2 = new CustomerCancellationActivityModel();
+                                        CustomerCancellationActivityModel CSActivity3 = new CustomerCancellationActivityModel();
+
+                                        CSActivity1 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIFollowUp && w.StaticDesignItemNo == 1 && (w.IsStaticDesign == true)).FirstOrDefault();
+                                        CSActivity2 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIFollowUp && w.StaticDesignItemNo == 2 && (w.IsStaticDesign == true)).FirstOrDefault();
+                                        CSActivity3 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIFollowUp && w.StaticDesignItemNo == 3 && (w.IsStaticDesign == true)).FirstOrDefault();
+
+                                        <div class="form-group"><label><b style="font-size:14px;">FollowUp</b></label></div>
+
+                                        <div class="form-group" style="display:none;">
+                                            <label class="control-label col-md-8" style="text-align:left;"> Inspection completed within 48 hours of step 2 ?</label>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage3StaticItem1Yes" name="stage3StaticItem1" class="search-field" @(CSActivity1 != null ? (CSActivity1.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) value="1">
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage3StaticItem1No" name="stage3StaticItem1" class="search-field" @(CSActivity1 != null ? (CSActivity1.StaticDesignIsItemChecked == false) ? "checked=checked" : string.Empty : string.Empty ) value="0">
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" style="display:none;">
+                                            <div class="col-md-8">
+                                                <label class="control-label" style="text-align:left;"> If not Inspection within 48 hours of step 2?</label>
+                                                @*<input type="text" id="chkStage3StaticItem2txt" class="form-control input-sm" placeholder="Note"/>*@
+                                                <textarea class="form-control input-sm" row="2" rows="2" id="txtstage3StaticItem2">@(CSActivity2 != null ? (Convert.ToString(CSActivity2.StaticDesignNote) != "") ? Convert.ToString(CSActivity2.StaticDesignNote) : string.Empty : string.Empty ) </textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" style="display:none;">
+                                            <label class="control-label col-md-8" style="text-align:left;"> Upload completed and signed MOGO inspection?</label>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage3StaticItem3Yes" name="stage3StaticItem3" @(CSActivity3 != null ? (CSActivity3.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) class="search-field" value="1">
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage3StaticItem3No" name="stage3StaticItem3" @(CSActivity3 != null ? (CSActivity3.StaticDesignIsItemChecked == false) ? "checked=checked" : string.Empty : string.Empty ) class="search-field" value="0">
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-comment" style="margin-left:-24px;">
+                                            <div class="mt-comment-body" style="padding-left:0px !important;">
+                                                <div class="mt-comment-info" style="margin-bottom:5px;">
+                                                    <div class="col-md-7" style="text-align:center;">
+                                                        <span class="mt-title">Title</span>
+                                                    </div>
+                                                    <div class="col-md-2"><b>User Name</b></div>
+                                                    <div class="col-md-3">
+                                                        <span><b>Date/Time</b> </span>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-Note-text" style="margin-top:4px;">
+                                                    @foreach (var itm in Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIFollowUp && (w.IsStaticDesign == null || w.IsStaticDesign == false)))
+                                                    {
+                                                        <div class="col-md-7">
+                                                            <label class="mt-checkbox" style="margin-bottom: 4px;font-size:12px;">
+                                                                <input type="checkbox" class="search-field" @(itm.IsItemChecked == true ? "checked=checked" : string.Empty) disabled="disabled"> @itm.ItemOptionName
+                                                                <span></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            @itm.CreatedBy
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Convert.ToDateTime(itm.CreatedDate).ToString("MM-dd-yyyy hh:mm tt")
+                                                        </div>
+                                                    }
+                                                </div>
+                                                @if (StageListCustomerWise != null && StageListCustomerWise.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIFollowUp).Count() > 0)
+                                                {
+                                                    <div class="mt-Note-text" style="margin-top:4px;">
+                                                        <div class="col-md-12">
+                                                            <label class="control-label"><b>Note:&nbsp;&nbsp;</b>@StageListCustomerWise.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FIFollowUp).FirstOrDefault().Note</label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <h5 style="border-bottom: 2px solid #e7ecf1;margin:0px;"></h5>
+                                    }
+                                    @if (Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FICompletionClosed).Count() > 0) // Stage 4
+                                    {
+                                        CustomerCancellationActivityModel CSActivity1 = new CustomerCancellationActivityModel();
+                                        CustomerCancellationActivityModel CSActivity2 = new CustomerCancellationActivityModel();
+                                        CustomerCancellationActivityModel CSActivity3 = new CustomerCancellationActivityModel();
+
+                                        CSActivity1 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FICompletionClosed && w.StaticDesignItemNo == 1 && (w.IsStaticDesign == true)).FirstOrDefault();
+                                        CSActivity2 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FICompletionClosed && w.StaticDesignItemNo == 2 && (w.IsStaticDesign == true)).FirstOrDefault();
+                                        CSActivity3 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FICompletionClosed && w.StaticDesignItemNo == 3 && (w.IsStaticDesign == true)).FirstOrDefault();
+
+                                        <div class="form-group"><label><b style="font-size:14px;">Completion/Closed</b></label></div>
+                                        <div class="form-group" style="display:none;">
+                                            <label class="control-label col-md-8" style="text-align:left;">Franchisee Notified of inspection defects withing 24 hours of step 3?</label>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage4StaticItem1Yes" name="stage4StaticItem1" class="search-field" @(CSActivity1 != null ? (CSActivity1.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) value="1">
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage4StaticItem1No" name="stage4StaticItem1" class="search-field" @(CSActivity1 != null ? (CSActivity1.StaticDesignIsItemChecked == false) ? "checked=checked" : string.Empty : string.Empty ) value="0">
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" style="display:none;">
+                                            <label class="control-label col-md-8" style="text-align:left;">Set plan for franchisee to correct any defficiencies?</label>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage4StaticItem2Yes" name="stage4StaticItem2" class="search-field" @(CSActivity2 != null ? (CSActivity2.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) onclick="onClickStage4StaticItem2()" value="1">
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage4StaticItem2No" name="stage4StaticItem2" class="search-field" @(CSActivity2 != null ? (CSActivity2.StaticDesignIsItemChecked == false) ? "checked=checked" : string.Empty : string.Empty ) onclick="onClickStage4StaticItem2()" value="0">
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                            <div div class="col-md-6">
+                                                <textarea class="form-control input-sm" row="2" rows="2" id="stage4StaticItem2Note" @(CSActivity2 != null ? (CSActivity2.StaticDesignIsItemChecked == false) ? string.Empty : "style=display:none" : "style=display:none")> @(CSActivity2 != null ? (Convert.ToString(CSActivity2.StaticDesignNote) != "") ? Convert.ToString(CSActivity2.StaticDesignNote) : string.Empty : string.Empty )</textarea>
+                                            </div>
+
+                                        </div>
+                                        <div class="form-group" style="display:none;">
+
+                                            <label class="control-label col-md-8" style="text-align:left;"> Receive confirmation of receipt by franchisee?  Note/document</label>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage4StaticItem3Yes" name="stage4StaticItem3" class="search-field" @(CSActivity3 != null ? (CSActivity3.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) value="1">
+                                                    <span>Yes</span>
+                                                </label>
+
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage4StaticItem3No" name="stage4StaticItem3" class="search-field" @(CSActivity3 != null ? (CSActivity3.StaticDesignIsItemChecked == false) ? "checked=checked" : string.Empty : string.Empty ) value="0">
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-comment" style="margin-left:-24px;">
+                                            <div class="mt-comment-body" style="padding-left:0px !important;">
+                                                <div class="mt-comment-info" style="margin-bottom:5px;">
+                                                    <div class="col-md-7" style="text-align:center;">
+                                                        <span class="mt-title">Title</span>
+                                                    </div>
+                                                    <div class="col-md-2"><b>User Name</b></div>
+                                                    <div class="col-md-3">
+                                                        <span><b>Date/Time</b> </span>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-Note-text" style="margin-top:4px;">
+                                                    @foreach (var itm in Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FICompletionClosed && (w.IsStaticDesign == null || w.IsStaticDesign == false)))
+                                                    {
+                                                        <div class="col-md-7">
+                                                            <label class="mt-checkbox" style="margin-bottom: 4px;font-size:12px;">
+                                                                <input type="checkbox" class="search-field" @(itm.IsItemChecked == true ? "checked=checked" : string.Empty) disabled="disabled"> @itm.ItemOptionName
+                                                                <span></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            @itm.CreatedBy
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Convert.ToDateTime(itm.CreatedDate).ToString("MM-dd-yyyy hh:mm tt")
+                                                        </div>
+                                                    }
+                                                </div>
+                                                @if (StageListCustomerWise != null && StageListCustomerWise.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FICompletionClosed).Count() > 0)
+                                                {
+                                                    <div class="mt-Note-text" style="margin-top:4px;">
+                                                        <div class="col-md-12">
+                                                            <label class="control-label"><b>Note:&nbsp;&nbsp;</b>@StageListCustomerWise.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FICompletionClosed).FirstOrDefault().Note</label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <h5 style="border-bottom: 2px solid #e7ecf1;margin:0px;"></h5>
+                                    }
+                                    @if (Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.LetertotheCustomer).Count() > 0) // Stage 5
+                                    {
+                                        CustomerCancellationActivityModel CSActivity1 = new CustomerCancellationActivityModel();
+                                        CustomerCancellationActivityModel CSActivity2 = new CustomerCancellationActivityModel();
+                                        CustomerCancellationActivityModel CSActivity3 = new CustomerCancellationActivityModel();
+                                        CustomerCancellationActivityModel CSActivity4 = new CustomerCancellationActivityModel();
+
+
+                                        CSActivity1 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.LetertotheCustomer && w.StaticDesignItemNo == 1 && (w.IsStaticDesign == true)).FirstOrDefault();
+                                        CSActivity2 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.LetertotheCustomer && w.StaticDesignItemNo == 2 && (w.IsStaticDesign == true)).FirstOrDefault();
+                                        CSActivity3 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.LetertotheCustomer && w.StaticDesignItemNo == 3 && (w.IsStaticDesign == true)).FirstOrDefault();
+                                        CSActivity4 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.LetertotheCustomer && w.StaticDesignItemNo == 4 && (w.IsStaticDesign == true)).FirstOrDefault();
+
+
+                                        <div class="form-group"><label><b style="font-size:14px;">Leter to the Customerp</b></label></div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-md-8" style="text-align:left;">Follow-up with Intent to cure Letter to customer within 24 hours of step 4?</label>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage5StaticItem1Yes" name="stage5StaticItem1" class="search-field" @(CSActivity1 != null ? (CSActivity1.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) onclick="onClickStage5StaticItem1()" value="1">
+                                                    <span>Yes </span>
+                                                </label>
+
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage5StaticItem1No" name="stage5StaticItem1" class="search-field" @(CSActivity1 != null ? (CSActivity1.StaticDesignIsItemChecked == false) ? "checked=checked" : string.Empty : string.Empty ) onclick="onClickStage5StaticItem1()" value="0">
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1"></div>
+                                            <div div class="col-md-6">
+                                                @*<input type="text" id="" class="form-control input-sm" placeholder="No Reason Notes" />*@
+                                                <textarea class="form-control input-sm" row="2" rows="2" id="txtstage5StaticItem1note" @(CSActivity1 != null ? (CSActivity1.StaticDesignIsItemChecked == false) ? string.Empty : "style=display:none" : "style=display:none")>@(CSActivity1 != null ? (Convert.ToString(CSActivity1.StaticDesignNote) != "") ? Convert.ToString(CSActivity1.StaticDesignNote) : string.Empty : string.Empty )   </textarea>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-md-8" style="text-align:left;">Letter uploaded into documents?</label>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage5StaticItem2Yes" name="stage5StaticItem2" class="search-field" @(CSActivity2 != null ? (CSActivity2.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) value="1">
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage5StaticItem2No" name="stage5StaticItem2" class="search-field" @(CSActivity2 != null ? (CSActivity2.StaticDesignIsItemChecked == false) ? "checked=checked" : string.Empty : string.Empty ) value="0">
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-md-8" style="text-align:left;">Date set for re-inspection?</label>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage5StaticItem3Yes" name="stage5StaticItem3" class="search-field" @(CSActivity3 != null ? (CSActivity3.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) value="1">
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage5StaticItem3No" name="stage5StaticItem3" class="search-field" @(CSActivity3 != null ? (CSActivity3.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) value="0">
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-md-5" style="text-align:left;">Scheduled Date:</label>
+                                            <div class="col-md-2">
+                                                <!-- Date -->
+                                                <input type="text" id="" class="form-control input-group input-group-sm input-sm date date-picker" name="datepicker" @*data-date-format="mm/dd/yyyy"*@ value="@(CSActivity4 != null? (CSActivity4.StaticDesignScheduleDate !=null) ? Convert.ToDateTime(CSActivity4.StaticDesignScheduleDate).ToString("MM-dd-yyyy"): string.Empty : string.Empty )" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <!-- Time -->
+                                                <div class="input-icon">
+                                                    <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                                                    <input type="text" id="" class="form-control input-group input-group-sm input-sm  timepicker timepicker-default" value="@(CSActivity4 != null? (CSActivity4.StaticDesignScheduleTime !=null) ? Convert.ToDateTime(CSActivity4.StaticDesignScheduleTime).ToString("hh:mm tt"): string.Empty : string.Empty )" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <!-- End Time -->
+                                                <div class="input-icon">
+                                                    <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                                                    <input type="text" id="" class="form-control input-group-sm input-sm  timepicker timepicker-default" value="@(CSActivity4 != null? (CSActivity4.StaticDesignScheduleEndTime!=null) ? Convert.ToDateTime(CSActivity4.StaticDesignScheduleEndTime).ToString("hh:mm tt") : string.Empty : string.Empty)" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-comment" style="margin-left:-24px;">
+                                            <div class="mt-comment-body" style="padding-left:0px !important;">
+                                                <div class="mt-comment-info" style="margin-bottom:5px;">
+                                                    <div class="col-md-7">
+                                                        @*<span class="mt-title">Leter to the Customerp</span>*@
+                                                    </div>
+                                                    <div class="col-md-2"><b>User Name</b></div>
+                                                    <div class="col-md-3">
+                                                        <span><b>Date/Time</b> </span>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-Note-text" style="margin-top:4px;">
+                                                    @foreach (var itm in Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.LetertotheCustomer && (w.IsStaticDesign == null || w.IsStaticDesign == false)))
+                                                    {
+                                                        <div class="col-md-7">
+                                                            <label class="mt-checkbox" style="margin-bottom: 4px;font-size:12px;">
+                                                                <input type="checkbox" class="search-field" @(itm.IsItemChecked == true ? "checked=checked" : string.Empty) disabled="disabled"> @itm.ItemOptionName
+                                                                <span></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            @itm.CreatedBy
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Convert.ToDateTime(itm.CreatedDate).ToString("MM-dd-yyyy hh:mm tt")
+                                                        </div>
+                                                    }
+                                                </div>
+                                                @if (StageListCustomerWise != null && StageListCustomerWise.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.LetertotheCustomer).Count() > 0)
+                                                {
+                                                    <div class="mt-Note-text" style="margin-top:4px;">
+                                                        <div class="col-md-12">
+                                                            <label class="control-label"><b>Note:&nbsp;&nbsp;</b>@StageListCustomerWise.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.LetertotheCustomer).FirstOrDefault().Note</label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <h5 style="border-bottom: 2px solid #e7ecf1;margin:0px;"></h5>
+                                    }
+                                    @if (Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.ReInspecttherAccount).Count() > 0) // Stage 6
+                                    {
+                                        CustomerCancellationActivityModel CSActivity1 = new CustomerCancellationActivityModel();
+                                        CustomerCancellationActivityModel CSActivity2 = new CustomerCancellationActivityModel();
+                                        CustomerCancellationActivityModel CSActivity3 = new CustomerCancellationActivityModel();
+
+                                        CSActivity1 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.ReInspecttherAccount && w.StaticDesignItemNo == 1 && (w.IsStaticDesign == true)).FirstOrDefault();
+                                        CSActivity2 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.ReInspecttherAccount && w.StaticDesignItemNo == 2 && (w.IsStaticDesign == true)).FirstOrDefault();
+                                        CSActivity3 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.ReInspecttherAccount && w.StaticDesignItemNo == 3 && (w.IsStaticDesign == true)).FirstOrDefault();
+
+                                        <div class="form-group"><label><b style="font-size:14px;">Re-Inspect ther Account</b></label></div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-8" style="text-align:left;">Re-inspect account within 48 hours of step 5?</label>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage6StaticItem1Yes" name="stage6StaticItem1" class="search-field" @(CSActivity1 != null ? (CSActivity1.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) onclick="onClickStage6StaticItem1()" value="1">
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage6StaticItem1No" name="stage6StaticItem1" class="search-field" @(CSActivity1 != null ? (CSActivity1.StaticDesignIsItemChecked == false) ? "checked=checked" : string.Empty : string.Empty ) onclick="onClickStage6StaticItem1()" value="0">
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1"></div>
+                                            <div div class="col-md-8">
+                                                <textarea class="form-control input-sm" row="2" rows="2" id="txtstage6StaticItem1Note" @(CSActivity1 != null ? (CSActivity1.StaticDesignIsItemChecked == false) ? string.Empty : "style=display:none" : "style=display:none")> @(CSActivity1 != null ? (Convert.ToString(CSActivity1.StaticDesignNote) != "") ? Convert.ToString(CSActivity1.StaticDesignNote) : string.Empty : string.Empty )  </textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-md-8" style="text-align:left;">Upload completed and signed MOGO inspection?</label>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage6StaticItem2Yes" name="stage6StaticItem2" class="search-field" @(CSActivity2 != null ? (CSActivity2.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) value="1">
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage6StaticItem2No" name="stage6StaticItem2" class="search-field" @(CSActivity2 != null ? (CSActivity2.StaticDesignIsItemChecked == false) ? "checked=checked" : string.Empty : string.Empty ) value="0">
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-md-8" style="text-align:left;">Back on Track Satisfactory? </label>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage6StaticItem3Yes" name="stage6StaticItem3" class="search-field" @(CSActivity3 != null ? (CSActivity3.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) onclick="onClickStage6StaticItem3()" value="1">
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage6StaticItem3No" name="stage6StaticItem3" class="search-field" @(CSActivity3 != null ? (CSActivity3.StaticDesignIsItemChecked == false) ? "checked=checked" : string.Empty : string.Empty ) onclick="onClickStage6StaticItem3()" value="0">
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1"></div>
+                                            <div div class="col-md-8">
+                                                <textarea class="form-control input-sm" row="2" rows="2" id="txtstage6StaticItem3Note" @(CSActivity3 != null ? (CSActivity3.StaticDesignIsItemChecked == false) ? string.Empty : "style=display:none" : "style=display:none")>@(CSActivity3 != null ? (Convert.ToString(CSActivity3.StaticDesignNote) != "") ? Convert.ToString(CSActivity3.StaticDesignNote) : string.Empty : string.Empty )   </textarea>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="mt-comment" style="margin-left:-24px;">
+                                            <div class="mt-comment-body" style="padding-left:0px !important;">
+                                                <div class="mt-comment-info" style="margin-bottom:5px;">
+                                                    <div class="col-md-7">
+                                                        @*<span class="mt-title">Re-Inspect ther Account</span>*@
+                                                    </div>
+                                                    <div class="col-md-2"><b>User Name</b></div>
+                                                    <div class="col-md-3">
+                                                        <span><b>Date/Time</b> </span>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-Note-text" style="margin-top:4px;">
+                                                    @foreach (var itm in Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.ReInspecttherAccount && (w.IsStaticDesign == null || w.IsStaticDesign == false)))
+                                                    {
+                                                        <div class="col-md-7">
+                                                            <label class="mt-checkbox" style="margin-bottom: 4px;font-size:12px;">
+                                                                <input type="checkbox" class="search-field" @(itm.IsItemChecked == true ? "checked=checked" : string.Empty) disabled="disabled"> @itm.ItemOptionName
+                                                                <span></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            @itm.CreatedBy
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Convert.ToDateTime(itm.CreatedDate).ToString("MM-dd-yyyy hh:mm tt")
+                                                        </div>
+                                                    }
+                                                </div>
+                                                @if (StageListCustomerWise != null && StageListCustomerWise.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.ReInspecttherAccount).Count() > 0)
+                                                {
+                                                    <div class="mt-Note-text" style="margin-top:4px;">
+                                                        <div class="col-md-12">
+                                                            <label class="control-label"><b>Note:&nbsp;&nbsp;</b>@StageListCustomerWise.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.ReInspecttherAccount).FirstOrDefault().Note</label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <h5 style="border-bottom: 2px solid #e7ecf1;margin:0px;"></h5>
+                                    }
+                                    @if (Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FollowupBackontrack).Count() > 0) // Stage 7
+                                    {
+                                        CustomerCancellationActivityModel CSActivity1 = new CustomerCancellationActivityModel();
+                                        CustomerCancellationActivityModel CSActivity2 = new CustomerCancellationActivityModel();
+                                        CustomerCancellationActivityModel CSActivity3 = new CustomerCancellationActivityModel();
+
+
+                                        CSActivity1 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FollowupBackontrack && w.StaticDesignItemNo == 1 && (w.IsStaticDesign == true)).FirstOrDefault();
+                                        CSActivity2 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FollowupBackontrack && w.StaticDesignItemNo == 2 && (w.IsStaticDesign == true)).FirstOrDefault();
+                                        CSActivity3 = Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FollowupBackontrack && w.StaticDesignItemNo == 3 && (w.IsStaticDesign == true)).FirstOrDefault();
+
+                                        <div class="form-group"><label><b style="font-size:14px;">Follow-up (Back on track)</b></label></div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-8" style="text-align:left;">Back on Track/thankyou letter to contact within 24 hours of satifactorially completing step 6.</label>
+                                            <div class="col-md-1">
+                                                <label class="mt-checkbox">
+                                                    Yes
+                                                    <input type="checkbox" id="chkStage7StaticItem1Yes" name="stage7StaticItem1" class="search-field" @(CSActivity1 != null ? (CSActivity1.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) value="1">
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-8" style="text-align:left;">Upload Letter?</label>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage7StaticItem2Yes" name="stage7StaticItem2" class="search-field" @(CSActivity2 != null ? (CSActivity2.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) onclick="onClickStage7StaticItem2()" value="1">
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label class="check-inline">
+                                                    <input type="radio" id="chkStage7StaticItem2No" name="stage7StaticItem2" class="search-field" @(CSActivity2 != null ? (CSActivity2.StaticDesignIsItemChecked == false) ? "checked=checked" : string.Empty : string.Empty ) onclick="onClickStage7StaticItem2()" value="0">
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-1"></div>
+                                            <div div class="col-md-6"><textarea class="form-control input-sm" row="2" rows="2" id="txtstage7StaticItem2note" @(CSActivity2 != null ? (CSActivity2.StaticDesignIsItemChecked == false) ? string.Empty : "style=display:none" : "style=display:none")>@(CSActivity2 != null ? (Convert.ToString(CSActivity2.StaticDesignNote) != "") ? Convert.ToString(CSActivity2.StaticDesignNote) : string.Empty : string.Empty ) </textarea></div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-md-8" style="text-align:left;">Clear Account At Risk?</label>
+                                            <div class="col-md-1">
+                                                <label class="mt-checkbox">
+                                                    Yes
+                                                    <input type="checkbox" id="chkStage7StaticItem3Yes" name="stage7StaticItem3" class="search-field" @(CSActivity3 != null ? (CSActivity3.StaticDesignIsItemChecked == true) ? "checked=checked" : string.Empty : string.Empty ) value="1">
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-comment" style="margin-left:-24px;">
+                                            <div class="mt-comment-body" style="padding-left:0px !important;">
+                                                <div class="mt-comment-info" style="margin-bottom:5px;">
+                                                    <div class="col-md-7">
+                                                        @*<span class="mt-title">Follow-up (Back on track)</span>*@
+                                                    </div>
+                                                    <div class="col-md-2"><b>User Name</b></div>
+                                                    <div class="col-md-3">
+                                                        <span><b>Date/Time</b> </span>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-Note-text" style="margin-top:4px;">
+                                                    @foreach (var itm in Model.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FollowupBackontrack && (w.IsStaticDesign == null || w.IsStaticDesign == false)))
+                                                    {
+                                                        <div class="col-md-7">
+                                                            <label class="mt-checkbox" style="margin-bottom: 4px;font-size:12px;">
+                                                                <input type="checkbox" class="search-field" @(itm.IsItemChecked == true ? "checked=checked" : string.Empty) disabled="disabled"> @itm.ItemOptionName
+                                                                <span></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            @itm.CreatedBy
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Convert.ToDateTime(itm.CreatedDate).ToString("MM-dd-yyyy hh:mm tt")
+                                                        </div>
+                                                    }
+                                                </div>
+                                                @if (StageListCustomerWise != null && StageListCustomerWise.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FollowupBackontrack).Count() > 0)
+                                                {
+                                                    <div class="mt-Note-text" style="margin-top:4px;">
+                                                        <div class="col-md-12">
+                                                            <label class="control-label"><b>Note:&nbsp;&nbsp;</b>@StageListCustomerWise.Where(w => w.StatusListId == (int)JKApi.Business.Enumeration.CustomerStatusList.FollowupBackontrack).FirstOrDefault().Note</label>
+                                                        </div>
+                                                    </div>
+                                                }
+
+                                            </div>
+                                        </div>
+                                        <h5 style="border-bottom: 2px solid #e7ecf1;margin:0px;"></h5>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="mt-comment">Not any activities!</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

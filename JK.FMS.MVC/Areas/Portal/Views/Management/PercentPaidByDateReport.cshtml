@@ -1,0 +1,388 @@
+﻿@model List<JKViewModels.Customer.GetPercentPaidByDateReport>
+@{
+    ViewBag.Title = "PercentPaidByDateReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    
+    <link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+
+    <style type="text/css">
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        #modal_RegionModel .modal-content {
+            width: 55% !important;
+            margin-left: 30% !important;
+        }
+    </style>
+}
+<div class="custom-form portlet light form-horizontal">
+    <div class="headerbox">
+        <div class="row" style="background-color: #3598DC;color: #fff;">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    Percent Paid By Date Report
+                </div>
+                <div class="col-md-2 pull-right" style="padding-right:5px;">
+                     
+                </div>
+            </div>             
+        </div>        
+    </div>
+</div>
+<div class="custom-listbox" id="divfranchiseList" style="margin-top:4px;margin-bottom:3px;">
+    <div class="headerbox">
+        <div class="row no-padding">
+            <div class="col-sm-4 page-size">
+            </div>
+            <div class="col-md-1">
+                <select id="monthlist" class="form-control input-sm">
+                    <option value="0">Month</option>
+                    <option value="01">Jan</option>
+                    <option value="02">Feb</option>
+                    <option value="03">Mar</option>
+                    <option value="04">Apr</option>
+                    <option value="05">May</option>
+                    <option value="06">June</option>
+                    <option value="07">July</option>
+                    <option value="08">Aug</option>
+                    <option value="09">Sep</option>
+                    <option value="10">Oct</option>
+                    <option value="11">Nov</option>
+                    <option value="12">Dec</option>
+                </select>
+            </div>
+            <div class="col-md-1" style="padding-left:5px !important;padding-right:5px !important;">
+                <select class="form-control input-sm" id="yearlist">
+                    <option value="0">Year</option>                    
+                    <option value="2018">2018</option>
+                    <option value="2017">2017</option>
+                    <option value="2016">2016</option>
+                    <option value="2015">2015</option>
+                    <option value="2014">2014</option>
+                    <option value="2013">2013</option>
+                    <option value="2012">2012</option>
+                    <option value="2011">2011</option>
+                    <option value="2010">2010</option>
+                </select>
+            </div>
+            <div  class="col-md-1" style="padding-left:10px !important;padding-right:10px !important;">
+                <input type="button" id="btnSubmitData" class="btn btn-primary" value="Submit" />
+            </div>
+            <div class="col-md-3 no-padding" >
+                <div class="col-md-10 pull-right no-padding" style="text-align:center;">                     
+                </div>
+            </div>
+            <div class="col-md-2 pull-right" style="padding-right:5px;">
+                <div style="display:table-cell;padding-right: 5px;">
+                    Region
+                </div>
+                <div style="display:table-cell;width:100%;">
+                    @if (ViewBag.regionlistForddl != null)
+                    {
+                        <select class="form-control input-sm" multiple="multiple" id="regionlist">
+                            @foreach (var item in (SelectList)ViewBag.regionlistForddl)
+                            {
+                                <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@*<div class="custom-listbox" style="margin-top:4px;margin-bottom:3px;">*@
+@foreach (var d in Request.QueryString["RegionIds"].ToString().Split(','))
+{
+    <div class="custom-form portlet light form-horizontal" style="max-width:740px;margin: 0px auto;padding:0;min-height: 100px;">
+        @*<div class="headerbox">
+            <div class="row" style="background-color: #3598DC;color: #fff;">
+                <div class="col-md-12 no-padding">
+                    <div class="alignCenter">
+                        <div class="col-md-12 text-center">
+                            Percent Paid By Date Report
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+        <div class="portlet-body form">
+            <div class="form-body" id="printDiv">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-5">
+                            @foreach (var vwd in ViewBag.regionList)
+                            {
+                                if (vwd.RegionId == int.Parse(d))
+                                {
+                                    <div class="col-md-12" style="text-align:center;">
+                                        <h4>
+                                            <b>
+                                                @vwd.Displayname
+                                            </b>
+                                        </h4>
+
+                                    </div>
+                                }
+                            }
+
+
+                            <div class="col-md-12" style="text-align:center;">
+                                <b>Persent Paid By Day</b>
+                            </div>
+                            <div class="col-md-12" style="text-align:center;">
+                                @if (Model != null && Model.Count > 0)
+                                {
+                                    @*<b>For @( Model.Where(r => r.RegionID == int.Parse(d)).FirstOrDefault().TrxDate.ToString("MMMM")) @Model.Where(r => r.RegionID == int.Parse(d)).FirstOrDefault().TrxDate.Year  Invoice</b>*@
+                                }                                 
+                            </div>
+                        </div>
+                        <div class="col-md-3"><img src="~/Images/janiking_logo.png" height="75" width="75" id="imglogo" /></div>
+                    </div>
+                    <hr style="margin-bottom: 2px;margin-top: 2px;" />
+                    <div class="row">
+                        <table width="100%" cellspacing="0" cellpadding="0" style="border: none;">
+                            <tr>
+                                <td style="width: 50%;">Total Amount Invoiced: &nbsp;&nbsp;<span style="font-weight:bold">$@(String.Format("{0:n}", Model.Where(r => r.RegionID == int.Parse(d)).Sum(r => r.InvoiceAmount)))</span></td>
+                                <td style="width: 50%;">Total Number of Invoices: &nbsp;&nbsp;<span style="font-weight:bold">@Model.Where(r => r.RegionID == int.Parse(d)).Sum(r => r.InvoiceCount)</span></td>
+                            </tr>
+                            <tr>
+                                <td style="width: 50%;">Total Amount Collected: &nbsp;&nbsp;<span style="font-weight:bold">$@(String.Format("{0:n}", Model.Where(r => r.RegionID == int.Parse(d)).Sum(r => r.PaidAmount)))</span></td>
+                                <td style="width: 50%;">
+                                    Current Percent Collected: &nbsp;&nbsp;
+                                    @if (Model != null && Model.Count > 0)
+                                    {
+                                        var RowData = Model.Where(r => r.RegionID == int.Parse(d));
+                                        if (RowData != null && RowData.Count() > 0)
+                                        {
+                                            <span style="font-weight:bold">
+                                                @(String.Format("{0:n}", RowData.Sum(r => r.PaidAmount) * 100 / RowData.Sum(r => r.InvoiceAmount)))%
+                                            </span>
+                                        }
+
+
+
+                                    }
+</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <br />
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table width="100%" cellspacing="0" cellpadding="0" style="border: none;">
+                                <tr style="border: 1px solid black;">
+                                    <td style="text-align:center;  padding: 6px !important;border-right: 1px solid #a2a3a5;">Date Paid</td>
+                                    <td style="text-align:center;border-right: 1px solid #a2a3a5;">Total Amount Invoiced by Date</td>
+                                    <td style="text-align:center;border-right: 1px solid #a2a3a5;">Total Amount Paid by Date</td>
+                                    <td style="text-align:center;border-right: 1px solid #a2a3a5;">Daily%</td>
+                                    <td style="text-align:center;">Total to Date</td>
+                                </tr>
+                              @{
+                                  double InvoiceUptoDate = 0.0;
+                                  var prevInvoice = 0.00;
+
+                                  double PaymentUptoDate = 0.0;
+                                  var prevPayment = 0.00;
+
+                                  foreach (var data in Model.Where(r => r.RegionID == int.Parse(d)))
+                                  {
+                                      InvoiceUptoDate = Convert.ToDouble(data.InvoiceAmount)+Convert.ToDouble(prevInvoice);
+                                      prevInvoice = InvoiceUptoDate;
+
+                                      PaymentUptoDate = Convert.ToDouble(data.PaidAmount) + Convert.ToDouble(prevPayment);
+                                      prevPayment = PaymentUptoDate;
+                                    <tr style="border: 1px solid #e1e1e1;">
+                                        <td style="text-align:center; border-right: 1px solid #eee;">@(data.TrxDate.ToString("MM/dd/yyyy"))</td>
+                                        <td style="text-align:right; border-right: 1px solid #eee;">$@(String.Format("{0:n}", data.InvoiceAmount))</td>
+                                        <td style="text-align:right; border-right: 1px solid #eee;">$@(String.Format("{0:n}", data.PaidAmount))</td>
+                                        <td style="text-align:center; border-right: 1px solid #eee;">@(String.Format("{0:0.00}", data.DailyPercent))%</td>
+                                    
+                                        <td style="text-align:right;">$@(String.Format("{0:n}", PaymentUptoDate)) / @(String.Format("{0:n}", PaymentUptoDate * 100 / InvoiceUptoDate))%</td>
+                                    </tr>
+                                  }
+                            } 
+
+                                @*@foreach (var data in Model.Where(r => r.RegionID == int.Parse(d)))
+                                {
+                                  
+                                    <tr>
+                                        <td style="text-align:center;">@(data.TrxDate.ToString("MM/dd/yyyy"))</td>
+                                        <td style="text-align:right;">$@(String.Format("{0:n}", data.InvoiceAmount))</td>
+                                        <td style="text-align:right;">$@(String.Format("{0:n}", data.PaidAmount))</td>
+                                        <td style="text-align:center;">@(String.Format("{0:0.00}", data.DailyPercent))%</td>
+                                        <td style="text-align:center;">@(String.Format("{0:0.00}", (data.InvoiceAmount)))%</td>
+                                        <td style="text-align:right;">$@(String.Format("{0:n}", data.PaidUptoDate)) / @(String.Format("{0:n}", data.PercentUptoDate))%</td>
+                                    </tr>
+                                   
+                                }*@
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-1">
+                <button type="button" class="btn btn-primary button-next" onclick="printDiv()">Print <i class="fa fa-print"></i></button>
+            </div>
+            <div class="col-md-1 col-md-offset-9" style="padding-left: 30px;">
+                <button type="button" class="btn btn-primary button-next" onclick="location.href='@Url.Action("ManagementReports", "Management", new { area = "Portal" })'">Back <i class="fa fa-backward"></i></button>
+            </div>
+        </div>
+        <br />
+    </div>
+}
+@section scripts{
+    <script type="text/javascript">
+        function printDiv() {
+
+            $("#imglogo").css("margin-top", "-60px");
+
+            var divToPrint = document.getElementById('printDiv');
+
+            var newWin = window.open('', 'Print-Window');
+
+            newWin.document.open();
+
+            newWin.document.write('<html><body onload="window.print()">' + divToPrint.innerHTML + '</body></html>');
+
+            newWin.document.close();
+
+            setTimeout(function () { newWin.close(); }, 10);
+            $("#imglogo").css("margin-top", "0px");
+        }
+
+        jQuery(document).ready(function () {
+            var month = '@ViewBag.MonthYear';
+            if (month != "") {
+
+                var arrlist = month.split("/");
+                if (arrlist[0] != "")
+                {
+                    $("#monthlist").val(arrlist[0]);
+                }
+                if (arrlist[1] != "") {
+                    $("#yearlist").val(arrlist[1]);
+                }
+            }
+            
+
+            $("#regionlist").multiselect({
+                includeSelectAllOption: false,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2,
+            });
+
+            $("#regionlist").change(function () {
+                if ($("#regionlist").val() != null) {
+                    ReloadData();
+                }
+            });
+            $("#btnSubmitData").click(function () {
+                if ($("#monthlist").val() != "0" && $("#yearlist").val() != "0") {
+                    ReloadData();
+                }
+                else {
+                    alert("Please select month and year")
+                }
+            })
+        });
+
+        function ReloadData()
+        {
+            var sURL = '@Url.Action("PercentPaidByDateReport", "Management", new { area = "Portal" })?RegionIds=' + $("#regionlist").val() + '&MonthYear=' + $("#monthlist").val() + "/" + $("#yearlist").val(); 
+
+            window.location.href = sURL;
+        }
+    </script>
+}

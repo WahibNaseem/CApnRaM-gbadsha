@@ -1,0 +1,1426 @@
+﻿
+@model JKViewModels.Administration.Company.CompanyViewModel
+@using JKApi.Service.Helper
+@using JKApi.Service.Service
+@using JKViewModels.Administration.System
+@using JKViewModels.Administration.Company
+@using JKApi.Service.Service.Company
+@using JKApi.Service.Service.Administration.Company
+
+@{
+    ViewBag.Title = "Company Configuration";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .textalign {
+        text-align: center;
+    }
+
+    #edit {
+        padding: 0px 15px;
+        font-size: 18px;
+        background-color: #67809F;
+        color: white;
+    }
+
+    #btnview {
+        padding: 0px 15px;
+        font-size: 18px;
+        background-color: #67809F;
+        color: white;
+    }
+
+    .portlet.blue-hoki, .portlet.box.blue-hoki > .portlet-title, .portlet > .portlet-body.blue-hoki {
+        background-color: #95A5A6 !important;
+    }
+
+    .portlet.box.blue-hoki {
+        border: #95A5A6 !important;
+    }
+</style>
+
+@using (Html.BeginForm())
+{
+
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal panel">
+        <div class="custom-listbox custom-form">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-body" style="padding: 5px;">
+                        <div class="form-group">
+                            <div style="border-bottom:1px solid #96999c !important;font-size:14px;">
+                                <b>General Information</b>
+                                @*<span style="padding-left:850px">
+                                        <button type="button" id="edit">Edit</button>
+                                        <button type="button" id="btnview">View</button>
+                                    </span>*@
+
+                                <button type="button" class="btn btn-primary button-next  pull-right CancelBtn" id="btnTab1Cancel" onclick="CancelTab1()" style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type="button" class="btn btn-primary  pull-right SaveBtn" id="btnTab1Save" onclick="SaveTab1()" style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Save</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type="button" class="btn btn-primary  pull-right EditBtn" id="btnTab1Edit" onclick="EditTab1()" style="margin-left: 10px;padding-top:0px;margin-top:-5px;">Edit</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label pnd5 text-left">Display Name</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control  edittab1" id="txtdisplayname" name="txtdisplayname" value="@Model.DisplayName" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label pnd5 text-left">Report Name</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control edittab1" id="txtreportname" name="txtreportname" value="@Model.ReportName" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label pnd5 text-left">Address</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control  edittab1" id="txtaddress" name="txtaddress" value="@Model.Address" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @{
+                                List<SelectListItem> usStateList = (List<SelectListItem>)ViewBag.usStateList;
+                            }
+
+                            <label class="col-md-2 control-label pnd5 text-left">City</label>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control edittab1" id="txtcity" name="txtcity" value="@Model.City" />
+                            </div>
+                            <label class="col-md-1 control-label pnd5 text-left">State</label>
+                            <div class="col-md-2">
+                                @Html.DropDownList("lststate", usStateList, "-Select One-", new { @class = "form-control edittab1" })
+                            </div>
+                            <label class="col-md-1 control-label pnd5 text-left">Zip</label>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control edittab1" id="txtzip" name="txtzip" value="@Model.Zip" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label pnd5 text-left">Phone</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control edittab1" id="txtphone" name="txtphone" value="@Model.Phone" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-body" style="padding: 5px;">
+                        <div class="form-group">
+                            <div style="border-bottom:1px solid #96999c !important;font-size:14px;"><b>Remit Address</b></div>
+                        </div>
+                        <div class="form-group">
+
+                            <input type="checkbox" id="chkremitsameas" name="chkremitsameas" value="@Model.RemitSameAsMain" checked="@(Model.RemitSameAsMain == 1 ? true : false)" class="edittab1" style="height:19px;width:19px;" />
+                            Same as Main Address
+                            @*<div class="md-checkbox">
+                                                    <input type="checkbox" id="chkSameMainAddress" name="" value="-1000" class="md-check">
+                                <label for="chkSameMainAddress">
+                                    <span></span>
+                                    <span class="check"></span>
+                                    <span class="box"></span> Same as Main Address
+                                </label>
+                                                        </div>*@
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label pnd5 text-left">Address</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control edittab1" id="txtremitaddress" name="txtremitaddress" value="@Model.RemitToLocation.Address" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label pnd5 text-left">City</label>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control edittab1" id="txtremitcity" name="txtremitcity" value="@Model.RemitToLocation.City" />
+                            </div>
+                            <label class="col-md-1 control-label pnd5 text-left">State</label>
+                            <div class="col-md-2">
+                                @Html.DropDownList("lstremitstate", usStateList, "-Select One-", new { @class = "form-control edittab1" })
+                            </div>
+                            <label class="col-md-1 control-label pnd5 text-left">Zip</label>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control edittab1" id="txtremitzip" name="txtremitzip" value="@Model.RemitToLocation.Zip" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="portlet-body" style="padding:10px">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="portlet box blue-hoki">
+                                    <div class="portlet-title compact">
+                                        <div class="caption">
+                                            Global Messages
+                                        </div>
+                                        <button type="button" class="btn btn-primary button-next  pull-right CancelBtn" id="btnTab2Cancel" onclick="CancelTab2()"  style="margin-left: 10px;padding-top:3px;margin-top:2px;">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-primary  pull-right SaveBtn" id="btnTab2Save" onclick="SaveTab2()" style="margin-left: 10px;padding-top:3px;margin-top:2px;">Save</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-primary  pull-right EditBtn" id="btnTab2Edit" onclick="EditTab2()" style="margin-left: 10px;padding-top:3px;margin-top:2px;">Edit</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    </div>
+                                    <div class="portlet-body form">
+                                        <div class="form-body" style="padding: 5px;">
+                                            @{ List<ConfigSettingViewModel> osettings = ViewBag.configSettingList;}
+                                            <table class="table table-striped table-bordered table-hover  dataTable no-footer">
+                                                <thead>
+                                                    <tr role="row">
+                                                        <th class="textalign">
+                                                            Name
+                                                        </th>
+                                                        <th class="textalign">
+                                                            Message
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @for (int x = 0; x < osettings.Count; x++)
+                                                    {
+                                                        if (osettings[x].ValueType == Constants.ConfigurationValueTypeMessage)
+                                                        {
+                                                            <tr class="gradeX odd" role="row">
+                                                                <td nowrap>@osettings[x].Name</td>
+                                                                <td>
+                                                                    <input type="hidden" id="hdnConfigurationValueTypeId" value="@(osettings[x].Id)" />
+                                                                    <input type="text" class="form-control edittab2" id="txtconfig" name="txtconfig" value="@osettings[x].Value" />
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    @*<tr class="gradeX odd" role="row">
+                                                            <td class="textalign" style="width:200px;">
+                                                                <label>Invoice Message</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                        </tr>*@
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="portlet box blue-hoki">
+                                    <div class="portlet-title compact">
+                                        <div class="caption">
+                                            Franchise Fees
+                                        </div>
+                                        <button type="button" class="btn btn-primary button-next  pull-right CancelBtn" id="btnTab3Cancel" onclick="CancelTab3()"  style="margin-left: 10px;padding-top:3px;margin-top:2px;">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-primary  pull-right SaveBtn" id="btnTab3Save" onclick="SaveTab3()" style="margin-left: 10px;padding-top:3px;margin-top:2px;">Save</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-primary  pull-right EditBtn" id="btnTab3Edit" onclick="EditTab3()" style="margin-left: 10px;padding-top:3px;margin-top:2px;">Edit</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    </div>
+                                    <div class="portlet-body form">
+                                        <div class="form-body" style="padding: 5px;">
+                                            @{ List<FeeViewModel> sysfees = ViewBag.sysfees; }
+                                            <table class="table table-striped table-bordered table-hover  dataTable no-footer">
+                                                <thead>
+                                                    <tr role="row">
+                                                        <th class="textalign">
+                                                            Name
+                                                        </th>
+                                                        <th class="textalign">
+                                                            Amount
+                                                        </th>
+                                                        <th>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @for (int x = 0; x < sysfees.Count; x++)
+                                                    {
+                                                        //sysfees[x].ReadOnly = access ? Constants.NotReadonly : Constants.ReadOnly;
+                                                        //sysfees[x].Disabled = access ? Constants.NotDisabled : Constants.Disabled;
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td style="text-align:left;">@sysfees[x].TypeName</td>
+                                                            <td style="text-align:right;">
+                                                                @if (sysfees[x].RateType == Constants.RateFlat)
+                                                                {
+                                                                    <input type="text" class="form-control edittab3 clsfeesitm" id="txtfee@(sysfees[x].Id)" name="txtfee@(sysfees[x].Id)" rel="@(sysfees[x].Id)" value="@UtilityService.Currency(sysfees[x].Rate)" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="text" class="form-control edittab3 clsfeesitm" id="txtfee@(sysfees[x].Id)" name="txtfee@(sysfees[x].Id)" rel="@(sysfees[x].Id)" value="@UtilityService.Decimal(sysfees[x].Rate)" />
+                                                                }
+                                                            </td>
+                                                            <td align="center" style="padding-left:2px;padding-right:2px;">
+                                                                @(sysfees[x].RateType == Constants.RateFlat ? "$" : "%")
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                    @{
+                                                        int inputtype = Constants.InputTypePercent;
+                                                        sysfees = FeeService.GetOtherList();
+                                                    }
+                                                    @for (int x = 0; x < sysfees.Count; x++)
+                                                    {
+                                                        //sysfees[x].ReadOnly = access ? Constants.Yes : Constants.No;
+                                                        //sysfees[x].Disabled = access ? Constants.NotDisabled : Constants.Disabled;
+
+                                                        if (sysfees[x].RateType == Constants.ConfigurationValueTypeNumeric)
+                                                        {
+                                                            inputtype = Constants.InputTypePercent;
+                                                        }
+                                                        else if (sysfees[x].RateType == Constants.ConfigurationValueTypeCurrency)
+                                                        {
+                                                            inputtype = Constants.InputTypeCurrency;
+                                                        }
+                                                        @*<tr class="gradeX odd" role="row" style="display:none;">
+                                                                <td>@sysfees[x].TypeName;</td>
+                                                                <td>
+                                                                    @if (sysfees[x].RateType == Constants.RateFlat)
+                                                                    {
+                                                                        <input type="text" class="form-control" id="txtfee" name="txtfee" value="@UtilityService.Currency(sysfees[x].Rate)" />
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input type="text" class="form-control" id="txtfee" name="txtfee" value="@UtilityService.Decimal(sysfees[x].Rate)" />
+                                                                    }
+                                                                </td>
+                                                                <td align="center" style="padding-left:2px;padding-right:2px;">
+                                                                    @(sysfees[x].RateType == Constants.RateFlat ? "$" : "%")
+                                                                </td>
+                                                            </tr>*@
+
+                                                    }
+
+                                                    @*<tr class="gradeX odd" role="row">
+                                                            <td class="textalign">
+                                                                <label>Accounting Fee</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td><label style="padding-top:7px;">%</label></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td class="textalign">
+                                                                <label>Advertising Fee</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td><label style="padding-top:7px;">%</label></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td class="textalign">
+                                                                <label>Business Protection</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td><label style="padding-top:7px;">%</label></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td class="textalign">
+                                                                <label>Royalty</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td><label style="padding-top:7px;">%</label></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td class="textalign">
+                                                                <label>Technology Fee</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td><label style="padding-top:7px;">%</label></td>
+                                                        </tr>*@
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                @{ List<BPPAdminFeeSettingViewModel> osettings2 = CompanyService.GetBPPAdminFeeSettings(); }
+                                <div class="portlet box blue-hoki">
+                                    <div class="portlet-title compact">
+                                        <div class="caption">
+                                            BPP Administration Fee
+                                        </div>
+                                        <button type="button" class="btn btn-primary button-next  pull-right CancelBtn" id="btnTab4Cancel" onclick="CancelTab4()"  style="margin-left: 10px;padding-top:3px;margin-top:2px;">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-primary  pull-right SaveBtn" id="btnTab4Save" onclick="SaveTab4()" style="margin-left: 10px;padding-top:3px;margin-top:2px;">Save</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-primary  pull-right EditBtn" id="btnTab4Edit" onclick="EditTab4()" style="margin-left: 10px;padding-top:3px;margin-top:2px;">Edit</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    </div>
+                                    <div class="portlet-body form">
+                                        <div class="form-body" style="padding: 5px;">
+                                            <table class="table table-striped table-bordered table-hover  dataTable no-footer">
+                                                <thead>
+                                                    <tr role="row">
+                                                        <th class="textalign">
+                                                            Start Amount
+                                                        </th>
+                                                        <th class="textalign">
+                                                        </th>
+                                                        <th class="textalign">
+                                                            End Amount
+                                                        </th>
+                                                        <th class="textalign">
+                                                            Amount
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @for (int x = 0; x < osettings2.Count; x++)
+                                                    {
+                                                    <tr class="gradeX odd clsBPPAdminFee" role="row">
+                                                        <td>
+                                                            <input type="text" class="form-control edittab4 clsBPPStartAmount" rel="@(osettings2[x].Id)" id="txtbbpastartamount@(osettings2[x].Id)" name="txtbbpastartamount@(osettings2[x].Id)" value="@UtilityService.Currency(osettings2[x].StartAmount)" />
+                                                        </td>
+                                                        <td>to</td>
+                                                        <td style="padding-left:0px;">
+                                                            <input type="text" class="form-control edittab4 clsBPPEndAmount" id="txtbbpaendamount@(osettings2[x].Id)" name="txtbbpaendamount@(osettings2[x].Id)" value="@UtilityService.Currency(osettings2[x].EndAmount)" />
+                                                        </td>
+                                                        <td>
+
+                                                            <input type="text" class="form-control edittab4 clsBPPAmount" id="txtbbpaamount@(osettings2[x].Id)" name="txtbbpaamount@(osettings2[x].Id)" value="@UtilityService.Currency(osettings2[x].Amount)" />
+                                                        </td>
+                                                    </tr>
+                                                    }
+                                                    @*<tr class="gradeX odd" role="row">
+                                                            <td class="textalign">
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td style="text-align:center;">
+                                                                <label style="padding-top:7px;">To</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td class="textalign">
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td style="text-align:center;">
+                                                                <label style="padding-top:7px;">To</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                        </tr>*@
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="portlet box blue-hoki">
+                                    <div class="portlet-title compact">
+                                        <div class="caption">
+                                            Email Settings
+                                        </div>
+                                        <button type="button" class="btn btn-primary button-next  pull-right CancelBtn" id="btnTab5Cancel" onclick="CancelTab5()"  style="margin-left: 10px;padding-top:3px;margin-top:2px;">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-primary  pull-right SaveBtn" id="btnTab5Save" onclick="SaveTab5()" style="margin-left: 10px;padding-top:3px;margin-top:2px;">Save</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-primary  pull-right EditBtn" id="btnTab5Edit" onclick="EditTab5()" style="margin-left: 10px;padding-top:3px;margin-top:2px;">Edit</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    </div>
+                                    <div class="portlet-body form">
+                                        <div class="form-body" style="padding: 5px;">
+                                            <table class="table table-striped table-bordered table-hover  dataTable no-footer">
+                                                <thead>
+                                                    <tr role="row">
+                                                        <th class="textalign">
+                                                            Type
+                                                        </th>
+                                                        <th class="textalign">
+                                                            Email
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @for (int x = 0; x < osettings.Count; x++)
+                                                    {
+
+                                                        if (osettings[x].Id == 30 || osettings[x].Id == 31)
+                                                        {
+                                                            <tr class="gradeX odd" role="row">
+                                                                <td>@(osettings[x].Name)</td>
+                                                                <td>
+                                                                    <input type="text" class="form-control edittab5 clsemailsettings"  rel="@(osettings[x].Id)" id="txtconfig@(osettings[x].Id)" name="txtconfig@(osettings[x].Id)" value="@(osettings[x].Value)" />
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+
+                                                    @*<tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>CC</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>From</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                        </tr>*@
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                @{ List<JKApi.Data.DAL.TransactionNumberConfig> identifierlist = ViewBag.trxIdentifierList; }
+                                <div class="portlet box blue-hoki">
+                                    <div class="portlet-title compact">
+                                        <div class="caption">
+                                            Transaction Number
+                                        </div>
+                                        <button type="button" class="btn btn-primary button-next  pull-right CancelBtn" id="btnTab6Cancel" onclick="CancelTab6()"  style="margin-left: 10px;padding-top:3px;margin-top:2px;">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-primary  pull-right SaveBtn" id="btnTab6Save" onclick="SaveTab6()" style="margin-left: 10px;padding-top:3px;margin-top:2px;">Save</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-primary  pull-right EditBtn" id="btnTab6Edit" onclick="EditTab6()" style="margin-left: 10px;padding-top:3px;margin-top:2px;">Edit</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    </div>
+                                    <div class="portlet-body form">
+                                        <div class="form-body" style="padding: 5px;">
+                                            <table class="table table-striped table-bordered table-hover  dataTable no-footer">
+                                                <thead>
+                                                    <tr role="row">
+                                                        <th class="textalign">
+                                                            Name
+                                                        </th>
+                                                        <th class="textalign">
+                                                            Prefix
+                                                        </th>
+                                                        <th class="textalign">
+                                                            Last Number
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @for (int x = 1; x < identifierlist.Count; x++)
+                                                    {
+
+
+                                                        @*<tr class="gradeX odd" role="row">
+
+                                                                <td>
+                                                                    <input type="text" class="form-control" id="txtconfig@(osettings[x].Id)" name="txtconfig@(osettings[x].Id)" value="@(identifierlist[x].Name)" />
+                                                                </td>
+
+                                                                <td>
+                                                                    <input type="text" class="form-control" id="txtconfig@(osettings[x].Id)" name="txtconfig@(osettings[x].Id)" value="@(identifierlist[x].Prefix)" />
+                                                                </td>
+
+                                                                <td>
+                                                                    <input type="text" class="form-control" id="txtconfig@(osettings[x].Id)" name="txtconfig@(osettings[x].Id)" value="@(identifierlist[x].LastNumber)" />
+                                                                </td>
+
+                                                            </tr>*@
+
+                                                        <tr class="gradeX odd trClsTranConfig" role="row">
+                                                            <td>
+                                                                <input type="text" class="form-control edittab6 ClsTranConfigName" rel="@(identifierlist[x].TransactionNumberConfigId)" value="@(identifierlist[x].Name)" readonly="readonly" />
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" class="form-control edittab6 ClsTranConfigPrefix" value="@(identifierlist[x].Prefix)" />
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" class="form-control edittab6 ClsTranConfigLastNumber" value="@(identifierlist[x].LastNumber)" />
+                                                            </td>
+                                                        </tr>
+                                                    }
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="portlet box blue-hoki">
+                                    <div class="portlet-title compact">
+                                        <div class="caption">
+                                            Settings
+                                        </div>
+                                        <button type="button" class="btn btn-primary button-next  pull-right CancelBtn" id="btnTab7Cancel" onclick="CancelTab7()"  style="margin-left: 10px;padding-top:3px;margin-top:2px;">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-primary  pull-right SaveBtn" id="btnTab7Save" onclick="SaveTab7()"  style="margin-left: 10px;padding-top:3px;margin-top:2px;">Save</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-primary  pull-right EditBtn" id="btnTab7Edit" onclick="EditTab7()" style="margin-left: 10px;padding-top:3px;margin-top:2px;">Edit</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    </div>
+                                    <div class="portlet-body form">
+                                        <div class="form-body" style="padding: 5px;">
+                                            <table class="table table-striped table-bordered table-hover  dataTable no-footer">
+                                                <thead>
+                                                    <tr role="row">
+                                                        <th class="textalign">
+                                                            Name
+                                                        </th>
+                                                        <th class="textalign">
+                                                            Amount
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                    @for (int x = 0; x < osettings.Count; x++)
+                                                    {
+                                                        //osettings[x].ReadOnly = access ? Constants.NotReadonly : Constants.ReadOnly;
+                                                        //osettings[x].Disabled = access ? Constants.NotDisabled : Constants.Disabled;
+                                                        if (osettings[x].Id != 30 && osettings[x].Id != 31)
+                                                        {
+                                                            if (osettings[x].ValueType != Constants.ConfigurationValueTypeMessage)
+                                                            {
+
+                                                                if (osettings[x].Id == CompanyViewModel.coCustomerIndex || osettings[x].Id == CompanyViewModel.coFranchiseeIndex || osettings[x].Id == CompanyViewModel.coInvoiceNumber || osettings[x].Id == CompanyViewModel.coControlNumber
+                                                                || osettings[x].Id == CompanyViewModel.coFederalIDNumber || osettings[x].Id == CompanyViewModel.coOfficeCode || osettings[x].Id == CompanyViewModel.coRegionCode || osettings[x].Id == CompanyViewModel.coRegionId)
+
+                                                                {
+                                                                    //osettings[x].Disabled = Constants.Yes;
+                                                                }
+
+                                                    <tr class="gradeX odd trclssettings" role="row">
+                                                        <td style="text-align:left;">
+                                                            @osettings[x].Name
+                                                        </td>
+                                                        <td align="center">
+                                                                        <input type="text" style="display:none" class="tdSettingValueType" value="@(osettings[x].ValueType)" rel="@(osettings[x].Id)"/>
+
+                                                                        @if (osettings[x].ValueType == Constants.ConfigurationValueTypeYesNo)
+                                                                        {
+                                                                            <label><input type="checkbox" class="edittab7 tdclssettings"  id="chkconfig@(osettings[x].Id)" name="chkconfig@(osettings[x].Id)" value="@osettings[x].Value" checked="@(osettings[x].Value == "1" ? true : false)" /></label>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            if (osettings[x].ValueType == Constants.ConfigurationValueTypeCurrency)
+                                                                            {
+                                                                                 <input type="text" class="form-control edittab7 tdclssettings" id="txtconfig@(osettings[x].Id)" name="txtconfig@(osettings[x].Id)" value="@UtilityService.Currency(osettings[x].Value)" />
+                                                                            }
+                                                                            else if (osettings[x].ValueType == Constants.ConfigurationValueTypePercentage)
+                                                                            {
+                                                                                <input type="text" class="form-control edittab7 tdclssettings" id="txtconfig@(osettings[x].Id)" name="txtconfig@(osettings[x].Id)" value="@osettings[x].Value " />
+                                                                            }
+                                                                            else if (osettings[x].ValueType == Constants.ConfigurationValueTypeNumeric)
+                                                                            {
+                                                                                <input type="text" class="form-control edittab7 tdclssettings" id="txtconfig@(osettings[x].Id)" name="txtconfig@(osettings[x].Id)" value="@osettings[x].Value " />
+                                                                            }
+                                                                            else if (osettings[x].ValueType == Constants.ConfigurationValueTypeString)
+                                                                            {
+                                                                                <input type="text" class="form-control edittab7 tdclssettings" id="txtconfig@(osettings[x].Id)" name="txtconfig@(osettings[x].Id)" value="@osettings[x].Value " />
+                                                                            }
+                                                                        }
+                                                        </td>
+                                                    </tr>
+                                                            }
+                                                        }
+                                                    }
+
+
+                                                    @*<tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Additional Billing(office)</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td><label style="padding-top:7px;">%</label></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>BCC</label>
+                                                            </td>
+                                                            <td></td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Cancel FF Fee</label>
+                                                            </td>
+                                                            <td><input type="text" name="" id="" value="" class="form-control" /></td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Chargeback Invoices</label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="md-checkbox">
+                                                                    <input type="checkbox" id="chkChargebackInvoices" name="" value="-1000" class="md-check">
+                                                                    <label for="chkChargebackInvoices">
+                                                                        <span></span>
+                                                                        <span class="check"></span>
+                                                                        <span class="box"></span>
+                                                                    </label>
+                                                                </div>
+                                                            </td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Checkbook Start Balance</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Control Number</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>CPI Increase</label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="md-checkbox">
+                                                                    <input type="checkbox" id="chkCPIIncrease" name="" value="-1000" class="md-check">
+                                                                    <label for="chkCPIIncrease">
+                                                                        <span></span>
+                                                                        <span class="check"></span>
+                                                                        <span class="box"></span>
+                                                                    </label>
+                                                                </div>
+                                                            </td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Customer Contract Default Term</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td> </td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Customer Index</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td> </td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Customer Supplies Mark-Up</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td><label style="padding-top:7px;">%</label></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Federal ID Number</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Finder Fee Factor</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td> </td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Franchisee Index</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td> </td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Leases - Tax 100% Upfront</label>
+                                                            </td>
+                                                            <td>
+                                                                <div class="md-checkbox">
+                                                                    <input type="checkbox" id="chkLeasesTax" name="" value="-1000" class="md-check">
+                                                                    <label for="chkLeasesTax">
+                                                                        <span></span>
+                                                                        <span class="check"></span>
+                                                                        <span class="box"></span>
+                                                                    </label>
+                                                                </div>
+                                                            </td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Minimum Sales Amount</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Office Code</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Region Code</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Region Id</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Region Number</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Royalty on Client Supplies</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Starting Invoice Number</label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                                <label>Trouble Transfer Fee </label>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="" id="" value="" class="form-control" />
+                                                            </td>
+                                                            <td></td>
+                                                        </tr>*@
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group" style="text-align:center;">
+                                    @*<input type="submit" value="Save" name="Save" id="btnSave" class="btn btn-default" style="height:40px;width:80px;" />
+                                    <input type="button" value="Cancel" name="Cancel" id="btnCancel" class="btn btn-default" style="height:40px;width:80px;" />*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+                                    }
+@section scripts{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $(".EditBtn").show();
+            $(".SaveBtn").hide();
+            $(".CancelBtn").hide();
+
+            $(".edittab1").attr("disabled", "disabled");
+            $(".edittab2").attr("disabled", "disabled");
+            $(".edittab3").attr("disabled", "disabled");
+            $(".edittab4").attr("disabled", "disabled");
+            $(".edittab5").attr("disabled", "disabled");
+            $(".edittab6").attr("disabled", "disabled");
+            $(".edittab7").attr("disabled", "disabled");
+        });
+        $('#chkremitsameas').click(function () {
+            var checked = $('#chkremitsameas').is(':checked');
+            var ary = new Array("txtremitaddress", "txtremitcity", "lstremitstate", "txtremitzip");
+            setsameas(ary, checked);
+        });
+        function setsameas(ary, chkvalue) {
+
+            for (i = 0; i < ary.length; i++) {
+                var n = ary[i].replace("remit", "");
+                if (chkvalue) {
+                    $('#' + ary[i]).val($('#' + ary[i].replace("remit", "")).val());
+                    $('#' + ary[i]).attr('disabled', 'disabled');
+                } else {
+                    $('#' + ary[i]).removeAttr('disabled');
+                }
+            }
+        }
+    </script>
+}
+<script type="text/javascript">
+
+
+
+    jQuery(function ($) {
+
+
+
+        ViewPageEvent();
+
+        $('input[type="text"]').keyup(function () {
+            formchanged = true;
+            var s, n;
+            if ($('#chkremitsameas').is(':checked')) {
+                s = "txtname,txtaddress,txtaddress2,txtcity,lststate,txtzip";
+                n = this.name;
+                if (s.indexOf(n) > -1) {
+                    var bn = n.substring(0, 3) + "remit" + n.substring(3, n.length);
+                    $('#' + bn).removeAttr('disabled');
+                    $('#' + bn).val(this.value);
+                    $('#' + bn).attr('disabled', 'disabled');
+                }
+            }
+
+        });
+
+        $('#txtdisplayname').focus();
+
+        $('#chkremitsameas').click(function () {
+            var checked = $('#chkremitsameas').is(':checked');
+            var ary = new Array("txtremitaddress", "txtremitcity", "lstremitstate", "txtremitzip");
+            setsameas(ary, checked);
+        });
+
+        $('#edit').click(function () {
+
+            $(".form-control").removeAttr("disabled");
+            $('select').removeAttr("disabled");
+            $('checkbox').removeAttr("disabled");
+            $('input').removeAttr("disabled");
+            $("#btnSave").show();
+            $("#btnCancel").show();
+            $('#edit').hide();
+            $('#btnview').show();
+
+        });
+        $('#btnview').click(function () {
+            ViewPageEvent();
+        });
+        $("#btnCancel").click(function () {
+            ViewPageEvent();
+        })
+
+    });
+    function setsameas(ary, chkvalue) {
+
+        for (i = 0; i < ary.length; i++) {
+            var n = ary[i].replace("remit", "");
+            if (chkvalue) {
+                $('#' + ary[i]).val($('#' + ary[i].replace("remit", "")).val());
+                $('#' + ary[i]).attr('disabled', 'disabled');
+            } else {
+                $('#' + ary[i]).removeAttr('disabled');
+            }
+        }
+    }
+
+    function ViewPageEvent() {
+        $("#btnSave").hide();
+        $("#btnCancel").hide();
+        $('#edit').show();
+        $('#btnview').hide();
+        $(".form-control").attr('disabled', 'disabled');
+        $('select').attr('disabled', 'disabled');
+        $('checkbox').attr('disabled', 'disabled');
+        $('input').attr('disabled', 'disabled');
+    }
+
+    function EditTab1()
+    {
+        $(".edittab1").removeAttr("disabled");
+        $(".edittab2").attr("disabled", "disabled");
+        $(".edittab3").attr("disabled", "disabled");
+        $(".edittab4").attr("disabled", "disabled");
+        $(".edittab5").attr("disabled", "disabled");
+        $(".edittab6").attr("disabled", "disabled");
+        $(".edittab7").attr("disabled", "disabled");
+        
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+         
+        $("#btnTab1Edit").hide();
+        $("#btnTab1Save").show();
+        $("#btnTab1Cancel").show();
+    }
+    function SaveTab1() {
+        var isvalid = true;
+
+        if ($('#txtdisplayname').val().trim() == '') { $('#txtdisplayname').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtdisplayname').css('border-color', ''); }
+        //if ($('#txtreportname').val().trim() == '') { $('#txtreportname').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtreportname').css('border-color', ''); }
+        if ($('#txtaddress').val().trim() == '') { $('#txtaddress').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtaddress').css('border-color', ''); }
+        if ($('#txtremitaddress').val().trim() == '') { $('#txtremitaddress').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtremitaddress').css('border-color', ''); }
+        
+        if (isvalid == true) {
+
+            var EditTab1Data = { DisplayName: $("#txtdisplayname").val(), ReportName: $("#txtreportname").val(), Address: $("#txtaddress").val(), City: $("#txtcity").val(), State: $("#lststate").val(), Zip: $("#txtzip").val(), Phone: $("#txtphone").val(), RemitAddress: $("#txtremitaddress").val(), RemitCity: $("#txtremitcity").val(), RemitState: $("#lstremitstate").val(), RemitZip: $("#txtremitzip").val() };
+
+            $.ajax({
+                /**/
+                url: '@Url.Action("SaveTab1Data", "Administration")',
+                /**/
+                dataType: "json",
+                data: EditTab1Data,
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {                     
+                    $(".SaveBtn").hide();
+                    $(".CancelBtn").hide();
+                    $("#btnTab1Edit").show();
+                    $(".edittab1").attr("disabled", "disabled");                    
+                },
+                error: function () { }
+            });             
+        }
+    }
+    function CancelTab1()
+    {
+        $(".edittab1").attr("disabled", "disabled");
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+    }
+
+
+    function EditTab2() {
+        $(".edittab2").removeAttr("disabled");
+        $(".edittab1").attr("disabled", "disabled");
+        $(".edittab3").attr("disabled", "disabled");
+        $(".edittab4").attr("disabled", "disabled");
+        $(".edittab5").attr("disabled", "disabled");
+        $(".edittab6").attr("disabled", "disabled");
+        $(".edittab7").attr("disabled", "disabled");
+
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+
+        $("#btnTab2Edit").hide();
+        $("#btnTab2Save").show();
+        $("#btnTab2Cancel").show();
+    }
+    function SaveTab2() {
+        var isvalid = true;
+
+        if ($('#txtconfig').val().trim() == '') { $('#txtconfig').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtconfig').css('border-color', ''); }         
+
+        if (isvalid == true) {
+
+            var EditTab2Data = { Id: $("#hdnConfigurationValueTypeId").val(), ConfigValue: $("#txtconfig").val() };
+
+            $.ajax({
+                /**/
+                url: '@Url.Action("SaveTab2Data", "Administration")',
+                /**/
+                dataType: "json",
+                data: EditTab2Data,
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $(".SaveBtn").hide();
+                    $(".CancelBtn").hide();
+                    $("#btnTab2Edit").show();
+                    $(".edittab2").attr("disabled", "disabled");                    
+                },
+                error: function () { }
+            });
+        }
+    }
+    function CancelTab2() {
+        $(".edittab2").attr("disabled", "disabled");
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+    }
+
+
+    function EditTab3() {
+        $(".edittab3").removeAttr("disabled");
+        $(".edittab1").attr("disabled", "disabled");
+        $(".edittab2").attr("disabled", "disabled");
+        $(".edittab4").attr("disabled", "disabled");
+        $(".edittab5").attr("disabled", "disabled");
+        $(".edittab6").attr("disabled", "disabled");
+        $(".edittab7").attr("disabled", "disabled");
+
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+
+        $("#btnTab3Edit").hide();
+        $("#btnTab3Save").show();
+        $("#btnTab3Cancel").show();
+    }
+    function SaveTab3() {
+
+        var isvalid = true;
+        if (isvalid == true) {
+
+            var ObjFCFees = []
+
+            $(".clsfeesitm").each(function () {
+                var FeesItem = {};
+                FeesItem["Id"] = $(this).attr("rel");
+                FeesItem["Value"] = $(this).val();
+                ObjFCFees.push(FeesItem);
+            })            
+            console.log(ObjFCFees);
+
+            var EditTab3Data = { Data: JSON.stringify(ObjFCFees)};
+
+            $.ajax({
+                /**/
+                url: '@Url.Action("SaveTab3Data", "Administration")',
+                /**/
+                dataType: "json",
+                data: EditTab3Data,
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $(".SaveBtn").hide();
+                    $(".CancelBtn").hide();
+                    $("#btnTab3Edit").show();
+                    $(".edittab3").attr("disabled", "disabled");                    
+                },
+                error: function () { }
+            });
+        }
+    }
+    function CancelTab3() {
+        $(".edittab3").attr("disabled", "disabled");
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+    }
+
+
+    function EditTab4() {
+        $(".edittab4").removeAttr("disabled");
+        $(".edittab1").attr("disabled", "disabled");
+        $(".edittab2").attr("disabled", "disabled");
+        $(".edittab3").attr("disabled", "disabled");
+        $(".edittab5").attr("disabled", "disabled");
+        $(".edittab6").attr("disabled", "disabled");
+        $(".edittab7").attr("disabled", "disabled");
+
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+
+        $("#btnTab4Edit").hide();
+        $("#btnTab4Save").show();
+        $("#btnTab4Cancel").show();
+    }
+    function SaveTab4() {
+        var isvalid = true;
+        if (isvalid == true) {
+
+            var ObjBPPAdminFee = []
+
+            $(".clsBPPAdminFee").each(function () {
+                var BPPAdminFeeItem = {};                 
+                BPPAdminFeeItem["Id"] = $(this).find(".clsBPPStartAmount").attr("rel");
+                BPPAdminFeeItem["StartAmount"] = $(this).find(".clsBPPStartAmount").val().replace('$', '').replace('₹', '').replace(',', '');
+                BPPAdminFeeItem["EndAmount"] = $(this).find(".clsBPPEndAmount").val().replace('$', '').replace('₹', '').replace(',', '');
+                BPPAdminFeeItem["Amount"] = $(this).find(".clsBPPAmount").val().replace('$', '').replace('₹', '').replace(',', '');
+                ObjBPPAdminFee.push(BPPAdminFeeItem);
+            })
+            console.log(ObjBPPAdminFee);
+
+            var EditTab4Data = { Data: JSON.stringify(ObjBPPAdminFee) };
+            $.ajax({
+                /**/
+                url: '@Url.Action("SaveTab4Data", "Administration")',
+                /**/
+                dataType: "json",
+                data: EditTab4Data,
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $(".SaveBtn").hide();
+                    $(".CancelBtn").hide();
+                    $("#btnTab4Edit").show();
+                    $(".edittab4").attr("disabled", "disabled");
+                },
+                error: function () { }
+            });
+        }
+    }
+    function CancelTab4() {
+        $(".edittab4").attr("disabled", "disabled");
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+    }
+
+
+    function EditTab5() {
+        $(".edittab5").removeAttr("disabled");
+        $(".edittab1").attr("disabled", "disabled");
+        $(".edittab2").attr("disabled", "disabled");
+        $(".edittab3").attr("disabled", "disabled");
+        $(".edittab4").attr("disabled", "disabled");
+        $(".edittab6").attr("disabled", "disabled");
+        $(".edittab7").attr("disabled", "disabled");
+
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+
+        $("#btnTab5Edit").hide();
+        $("#btnTab5Save").show();
+        $("#btnTab5Cancel").show();
+    }
+    function SaveTab5() {
+        var isvalid = true;
+        if (isvalid == true) {
+
+            var ObjEmailSettings = []
+
+            $(".clsemailsettings").each(function () {
+                var EmailSettingsItem = {};
+                EmailSettingsItem["Id"] = $(this).attr("rel");
+                EmailSettingsItem["Value"] = $(this).val();
+                ObjEmailSettings.push(EmailSettingsItem);
+            })
+            console.log(ObjEmailSettings);
+
+            var EditTab5Data = { Data: JSON.stringify(ObjEmailSettings) };
+
+            $.ajax({
+                /**/
+                url: '@Url.Action("SaveTab5Data", "Administration")',
+                /**/
+                dataType: "json",
+                data: EditTab5Data,
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $(".SaveBtn").hide();
+                    $(".CancelBtn").hide();
+                    $("#btnTab5Edit").show();
+                    $(".edittab5").attr("disabled", "disabled");
+                },
+                error: function () { }
+            });
+        }
+    }
+    function CancelTab5() {
+        $(".edittab5").attr("disabled", "disabled");
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+    }
+
+    function EditTab6() {
+        $(".edittab6").removeAttr("disabled");
+        $(".edittab1").attr("disabled", "disabled");
+        $(".edittab2").attr("disabled", "disabled");
+        $(".edittab3").attr("disabled", "disabled");
+        $(".edittab4").attr("disabled", "disabled");
+        $(".edittab5").attr("disabled", "disabled");
+        $(".edittab7").attr("disabled", "disabled");
+
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+
+        $("#btnTab6Edit").hide();
+        $("#btnTab6Save").show();
+        $("#btnTab6Cancel").show();
+    }
+    function SaveTab6() {
+        var isvalid = true;
+        if (isvalid == true) {
+
+            var ObjTransactionNumberConfig = []
+
+            $(".trClsTranConfig").each(function () {
+                var TransactionNumberConfigItem = {};
+                TransactionNumberConfigItem["Id"] = $(this).find(".ClsTranConfigName").attr("rel");
+                TransactionNumberConfigItem["NamePre"] = $(this).find(".ClsTranConfigPrefix").val().trim();
+                TransactionNumberConfigItem["Number"] = $(this).find(".ClsTranConfigLastNumber").val().trim();                 
+                ObjTransactionNumberConfig.push(TransactionNumberConfigItem);
+            })
+            console.log(ObjTransactionNumberConfig);
+
+            var EditTab6Data = { Data: JSON.stringify(ObjTransactionNumberConfig) };
+            $.ajax({
+                /**/
+                url: '@Url.Action("SaveTab6Data", "Administration")',
+                /**/
+                dataType: "json",
+                data: EditTab6Data,
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $(".SaveBtn").hide();
+                    $(".CancelBtn").hide();
+                    $("#btnTab6Edit").show();
+                    $(".edittab6").attr("disabled", "disabled");
+                },
+                error: function () { }
+            });
+        }
+    }
+    function CancelTab6() {
+        $(".edittab6").attr("disabled", "disabled");
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+    }
+
+    function EditTab7() {
+        $(".edittab7").removeAttr("disabled");
+        $(".edittab1").attr("disabled", "disabled");
+        $(".edittab2").attr("disabled", "disabled");
+        $(".edittab3").attr("disabled", "disabled");
+        $(".edittab4").attr("disabled", "disabled");
+        $(".edittab5").attr("disabled", "disabled");
+        $(".edittab6").attr("disabled", "disabled");
+
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+
+        $("#btnTab7Edit").hide();
+        $("#btnTab7Save").show();
+        $("#btnTab7Cancel").show();
+    }
+    function SaveTab7() {
+        var isvalid = true;
+        if (isvalid == true) {
+
+            var ObjSettings = []
+              
+            $(".trclssettings").each(function () {
+
+                var SettingsItem = {};
+
+                SettingsItem["Id"] = $(this).find(".tdSettingValueType").attr("rel");
+
+                if ($(this).find(".tdSettingValueType").val() == "2")
+                {
+                    if ($(this).find(".tdclssettings").is(":checked"))
+                    {
+                        SettingsItem["Value"] = 1;
+                    }
+                    else
+                    {
+                        SettingsItem["Value"] = 0;
+                    }
+                }
+                else
+                {
+                    SettingsItem["Value"] = $(this).find(".tdclssettings").val();
+                }                
+                ObjSettings.push(SettingsItem);
+                
+                //var TransactionNumberConfigItem = {};
+                //TransactionNumberConfigItem["Id"] = $(this).find(".ClsTranConfigName").attr("rel");
+                //TransactionNumberConfigItem["NamePre"] = $(this).find(".ClsTranConfigPrefix").val().trim();
+                //TransactionNumberConfigItem["Number"] = $(this).find(".ClsTranConfigLastNumber").val().trim();
+                //ObjTransactionNumberConfig.push(TransactionNumberConfigItem);
+            })
+            console.log(ObjSettings);
+
+
+
+            //$(".clssettings").each(function () {
+            //    var SettingsItem = {};
+            //    SettingsItem["Id"] = $(this).attr("rel");
+            //    SettingsItem["Value"] = $(this).val();
+            //    ObjSettings.push(SettingsItem);
+            //})
+            //console.log(ObjSettings);
+
+            var EditTab7Data = { Data: JSON.stringify(ObjSettings) };
+
+            $.ajax({
+                /**/
+                url: '@Url.Action("SaveTab7Data", "Administration")',
+                /**/
+                dataType: "json",
+                data: EditTab7Data,
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $(".SaveBtn").hide();
+                    $(".CancelBtn").hide();
+                    $("#btnTab7Edit").show();
+                    $(".edittab7").attr("disabled", "disabled");
+                },
+                error: function () { }
+            });
+        }
+    }
+    function CancelTab7() {
+        $(".edittab7").attr("disabled", "disabled");
+        $(".EditBtn").show();
+        $(".SaveBtn").hide();
+        $(".CancelBtn").hide();
+    }
+
+
+
+</script>
+
+
+
+
+

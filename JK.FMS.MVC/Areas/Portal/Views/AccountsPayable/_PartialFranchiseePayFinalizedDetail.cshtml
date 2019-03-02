@@ -1,0 +1,220 @@
+﻿@model JKApi.Service.AccountPayable.FranchiseeReportFinalizedDetailsViewModel
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+    </style>
+}
+
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="row" style="height: 50px;border:2px solid #d4c7c7;margin-top: 22px;margin-left: 7px;margin-right: 7px;">
+                <div class="col-md-2"></div>
+                <div class="col-md-10">
+                    <div class="input-group">
+                        <div class="icheck-inline" style="margin-top: 0px;">
+                            <label class="check-inline" style="margin-top: 12px;">
+                                <input type="radio" name="membership" value="1" class="i-checks" id="rdoRevenueByTransaction" checked="checked" />
+                                <span><b style="font-size: 14px;">Total Revenue By Transaction Detail</b></span>
+                            </label>
+                            <label class="check-inline" style="margin-top: 12px;">
+                                <input type="radio" name="membership" value="0" class="i-checks" id="rdoRevenueByCustomer" />
+                                <span><b style="font-size: 14px;">Total Revenue By Customer and Service Type</b></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-header headerbox list" style="margin-left: 7px;margin-right: 7px;padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    TOTAL REVENUE
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px 30px 15px 30px;">
+                <div class="row">
+                    <div class="col-md-4" style="padding-top: 4px;margin-top: 10px;">Franchisee Name: <b>@Html.DisplayFor(o => o.Report.FranchiseeName)</b></div>
+                    <div class="col-md-8" style="text-align: right">
+                        <h4>BUSINESS FOR THE MONTH OF: @Html.DisplayFor(o => o.MonthYearDisplay) </h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4" style="margin-bottom: 5px;">Franchisee No.: <b>@Html.DisplayFor(o => o.Report.FranchiseeNo)</b></div>
+                    <div class="col-md-8">
+
+                    </div>
+                </div>
+                <div class="form-group" id="divRevenueByTransaction">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table dataTable table-striped table-bordered table-hover order-column" id="TableFranchiseeReportDetails_ByTransaction">
+                                    <thead>
+                                        <tr>
+                                            <th class="tblFRDT_customerNo" style="width:12%;text-align:center;font-size: 12px;background: #b5daff;">
+                                                Customer No.
+                                            </th>
+                                            <th class="tblFRDT_customerName" style="width:160px;text-align:center;font-size: 12px;background: #b5daff;">
+                                                Customer Name
+                                            </th>
+                                            <th class="tblFRDT_invoiceNo" style="width:10%;text-align:center;font-size: 12px;background: #b5daff;">
+                                                Invoice No.
+                                            </th>
+                                            <th class="tblFRDT_invoiceDesc" style="text-align:center;width:100px;font-size: 12px;background: #b5daff;">
+                                                Description
+                                            </th>
+                                            <th class="tblFRDT_serviceType" style="text-align:center;width:100px;font-size: 12px;background: #b5daff;">
+                                                Service Detail
+                                            </th>
+                                            <th class="tblFRDT_isCommission" style="text-align:center;width:1%;font-size: 12px;background: #b5daff;">
+                                                Comm
+                                            </th>
+                                            <th class="tblFRDT_revenue" style="text-align:center;width:111px;font-size: 12px;background: #b5daff;">
+                                                Franchisee Revenue
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var res in Model.DetailsByTransaction)
+                                        {
+                                            <tr>
+                                                <td>@(res.CustomerNo)</td>
+                                                <td>@(res.CustomerName)</td>
+                                                <td>@(res.InvoiceNo)</td>
+                                                <td>@(res.Description)</td>
+                                                <td>@(res.ServiceType)</td>
+                                                <td>@((res.IsCommission == 1) ? "Y" : "N")</td>
+                                                <td style="text-align:right">@Model.NumberDisplay(res.Total, res.AmountTypeListId, true)</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td style="width:50px;text-align:center;background: #b5daff;font-size: 12px;"></td>
+                                            <td style="text-align:center;width:50px;background: #b5daff;font-size: 12px;"></td>
+                                            <td style="text-align:center;width:50px;background: #b5daff;font-size: 12px;"></td>
+                                            <td style="text-align:center;width:50px;background: #b5daff;font-size: 12px;"></td>
+
+                                            <td colspan="2" style="text-align:center;width:80px;background: #b5daff;font-size: 12px;">
+                                                Total
+                                            </td>
+                                            <td style="text-align:right;width:80px;background: #b5daff;font-size: 12px;">@Model.NumberDisplay(Model.DetailsByTransaction.Sum(o => o.Total), null, true)</td>
+
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" id="divRevenueByCustomer" style="display: none">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table dataTable table-striped table-bordered table-hover order-column" id="TableFranchiseeReportDetails_ByCustomer">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:100px;text-align:center;font-size: 13px;background: #b5daff;">
+                                                Customer Transaction
+                                            </th>
+                                            <th style="text-align:center;font-size: 13px;background: #b5daff;">
+                                                Customer No.
+                                            </th>
+                                            <th style="width:180px;text-align:center;font-size: 13px;background: #b5daff;">
+                                                Customer Name
+                                            </th>
+                                            <th style="text-align:center;width:100px;font-size: 13px;background: #b5daff;">
+                                                Franchisee Revenue
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var serv in Model.DetailsByService)
+                                        {
+                                            <tr>
+                                                <td colspan="4">@serv.ServiceType</td>
+                                            </tr>
+                                            foreach (var res in serv.Details)
+                                            {
+                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td style="width: 70px">@(res.CustomerNo)</td>
+                                                    <td>@(res.CustomerName)</td>
+                                                    <td style="text-align:right">@Model.NumberDisplay(res.Total, null, true)</td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="3" class="text-center" style="background: #b5daff;font-size: 12px;">Total Franchisee Actual Account</td>
+                                            <td style="background: #b5daff;text-align:right;padding-right: 7px;font-size: 12px;">@Model.NumberDisplay(Model.DetailsByTransaction.Sum(o => o.Total), null, true)</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+@section scripts{
+  
+}
+

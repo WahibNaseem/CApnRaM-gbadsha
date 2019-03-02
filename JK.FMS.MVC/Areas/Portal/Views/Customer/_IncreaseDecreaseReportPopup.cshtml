@@ -1,0 +1,585 @@
+﻿
+<link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+ 
+<div class="modal-content" style="border-radius: 8px;">
+    <div class="custom-form portlet light" id="" style="margin-top:0px;">
+        <div class="headerbox" style="font-weight: normal;">
+            <div class="col-md-12 text-center" style="font-size:15px;">
+                <b> INCREASE/DECREASE REPORT</b>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 5px !important;margin-right: 12px !important;"></button>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-body" >
+            <input type="hidden" id="hdnCustId" value="@ViewBag.CustomerId" />
+            <div class="custom-listbox" id="divfranchiseList" style="margin-top:4px;margin-bottom:3px;">
+                <div class="headerbox">
+                    <div class="row no-padding">
+                        <div class="col-sm-1 page-size">
+                            <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                                <option value="-1">All</option>
+                                <option value="100" selected>100</option>
+                                <option value="50">50</option>
+                                <option value="25">25</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-icon">
+                                <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                                <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search" value="" class="form-control input-sm typeahead" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-7 pull-right no-padding">
+
+                            <div class="col-md-12 pull-right no-padding" style="text-align:center;">
+                                <div class="col-md-6 no-padding" style="margin-left:30px;">
+                                    <select id="select_timeduration1" class="form-control input-sm">
+                                        <option value="1">This Week</option>
+                                        <option value="2">This Week-to-date</option>
+                                        <option value="3">This Month</option>
+                                        <option value="4">This Month-to-date</option>
+                                        <option value="5">This Quarter</option>
+                                        <option value="6">This Quarter-to-date</option>
+                                        <option value="7" selected="selected">This Fiscal Year</option>
+                                        <option value="8">This Fiscal Year-to-date</option>
+                                        <option value="9">Today</option>
+                                        <option value="10">Yesterday</option>
+                                        <option value="11">Last Week</option>
+                                        <option value="12">Last Month</option>
+                                        <option value="13">Last Quarter</option>
+                                        <option value="14">Last Year</option>
+                                        <option value="15">Custom Date</option>
+                                        <option value="16">Period</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-5 divspandate1 no-padding" style="margin-top: 3px; margin-left: 0px; display: block; float: right;" id="divspandate1">
+                                    <span id="spnStartDate1"></span> - <span id="spnEndtDate1"></span>
+                                </div>
+                                <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divSD1">
+                                    <input type="text" name="txtStartDate1" id="txtStartDate1" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                                </div>
+                                <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divED1">
+                                    <input type="text" name="txtEndtDate1" id="txtEndtDate1" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                                </div>
+                                <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divmonth1">
+                                    <select id="monthlist1" class="form-control input-sm">
+                                        <option value=""></option>
+                                        <option value="1">Jan</option>
+                                        <option value="2">Feb</option>
+                                        <option value="3">Mar</option>
+                                        <option value="4">Apr</option>
+                                        <option value="5">May</option>
+                                        <option value="6">June</option>
+                                        <option value="7">July</option>
+                                        <option value="8">Aug</option>
+                                        <option value="9">Sep</option>
+                                        <option value="10">Oct</option>
+                                        <option value="11">Nov</option>
+                                        <option value="12">Dec</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divyear1">
+                                    <select class="form-control input-sm" id="yearlist1" style="padding-left: 2px;">
+                                        <option value=""></option>
+                                        <option value="2018">2018</option>
+                                        <option value="2017">2017</option>
+                                        <option value="2016">2016</option>
+                                        <option value="2015">2015</option>
+                                        <option value="2014">2014</option>
+                                        <option value="2013">2013</option>
+                                        <option value="2012">2012</option>
+                                        <option value="2011">2011</option>
+                                        <option value="2010">2010</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding-top:0px;">
+                <div class="col-md-12">                     
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover" id="IncreaseDecreaseHistoryList" style="display:none">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align:center;width:75px;font-size: 10px !important;font-weight: normal;">
+                                            Customer No.
+                                        </th>
+                                        <th style="width:240px;text-align:center;font-size: 10px !important;font-weight: normal;">
+                                            Customer Name
+                                        </th>
+                                        <th style="text-align:center;width:40px;font-size: 10px !important;font-weight: normal;">
+                                            Type
+                                        </th>
+                                        <th style="width:240px;text-align:center;font-size: 10px !important;font-weight: normal;">
+                                            Description
+                                        </th>
+                                        <th style="text-align:center;width:70px;font-size: 10px !important;font-weight: normal;">
+                                            Date
+                                        </th>
+                                        @*<th style="text-align:center;width:105px;font-size: 10px !important;font-weight: normal;">
+                                                Detail Prev Amt
+                                            </th>
+                                            <th style="text-align:center;width:80px;font-size: 10px !important;font-weight: normal;">
+                                                Detail Var
+                                            </th>
+                                            <th style="text-align:center;width:105px;font-size: 10px !important;font-weight: normal;">
+                                                Detail New Amt
+                                            </th>*@
+                                        <th style="text-align:center;width:105px;font-size: 10px !important;font-weight: normal;">
+                                            Old Amount
+                                        </th>
+                                        <th style="text-align:center;width:80px;font-size: 10px !important;font-weight: normal;">
+                                            New Amount
+                                        </th>
+                                        <th style="text-align:center;width:105px;font-size: 10px !important;font-weight: normal;">
+                                            Incr/Decr Amount
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                                <tfoot>                                     
+                                </tfoot>
+                            </table>
+                        </div>                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<script type="text/javascript">
+
+    var paymentList;
+    var dtable;
+    function getTableURL() {
+
+        var _regionId = "2";
+        var _fromDateVal = $('#spnStartDate1').text();
+        var _toDateVal = $('#spnEndtDate1').text();
+        var _monthVal = $('#monthlist1').val();
+        var _yearVal = $('#yearlist1').val();
+
+        var _customerId = $('#hdnCustId').val();
+
+        if (_monthVal > 0 && _yearVal > 0) {
+            var date = new Date(_monthVal + '/01/' + _yearVal);
+            var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+            var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+            $('#spnStartDate1').html(moment(firstDay).format('L'));
+            $('#spnEndtDate1').html(moment(lastDay).format('L'));
+
+            _fromDateVal = $('#spnStartDate1').text();
+            _toDateVal = $('#spnEndtDate1').text();
+        }
+
+        var sURL = '@Url.Action("IncreaseDecreaseHistoryListDataTable", "Customer", new { area = "Portal" })?regionIds=' + _regionId + '&from=' + _fromDateVal + '&to=' + _toDateVal + '&month=' + _monthVal + '&year=' + _yearVal + '&customerId=' + _customerId;
+
+        return sURL;
+    }
+
+
+    function refreshTable() {        
+        var url01 = getTableURL();
+        dtable.api().ajax.url(encodeURI(url01)).load();         
+    }
+     
+    function GetParameterValues(param) {
+        var url = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for (var i = 0; i < url.length; i++) {
+            var urlparam = url[i].split('=');
+            if (urlparam[0] == param) {
+                return urlparam[1];
+            }
+        }
+    } 
+    jQuery(document).ready(function () {
+
+        $("#pageSize").change(function () {
+            setPaging();
+        });
+
+        $('#divspandate1').show();
+        $('#divSD1').hide();
+        $('#divED1').hide();
+
+        //$('#select_timeduration').val(9);
+        //firstDay = moment().toString();
+        //lastDay = moment().toString();
+
+        $('#select_timeduration1').val(7);
+        firstDay = moment().startOf('year').toString();;
+        lastDay = moment().endOf('year').toString();
+
+        //var durationId = GetParameterValues('duration');
+        //if (durationId != undefined) {
+        //    if (durationId == 9)
+        //    {
+        //        $('#select_timeduration').val(durationId);
+        //        firstDay = moment().toString();
+        //        lastDay = moment().toString();
+        //    }
+
+        //} else {
+        //    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+        //    lastDay = moment().subtract(0, 'month').endOf('month').toString();
+        //}
+
+        $('#spnStartDate1').html(moment(firstDay).format('L'));
+        $('#spnEndtDate1').html(moment(lastDay).format('L'));
+        //$('#txtStartDate').inputmask("mm/dd/yyyy", {});
+        //$('#txtEndtDate').inputmask("mm/dd/yyyy", {});
+
+        //setSearchTime(3);
+        var sURL1 = getTableURL();
+        var ps = $('#pageSize').val();
+        dtable = $('#IncreaseDecreaseHistoryList').dataTable({
+            "bAutoWidth": false,
+            cache: false,
+            "ordering": true,
+            "iDisplayLength": ps == '-1' ? 25 : ps,
+            "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+            "aaSorting": [[0, "desc"]],
+            "sAjaxSource": sURL1,
+            "sAjaxDataProp": "aadata",  // Internationalisation. For more info refer to http://datatables.net/manual/i18n
+            "rowCallback": function (nRow, data) {
+            },
+
+            "aoColumns": [
+                 {
+                     "sName": "CustomerNo",
+                     "bSortable": true,
+                     "sClass": "alignCenter",
+                     "mRender": function (data, type, full) {
+                         return full.CustomerNo;
+                     }
+                 },
+                {
+                    "sName": "CustomerName",
+                    "bSortable": true,
+                    "sClass": "alignLeft",
+                    "mRender": function (data, type, full) {
+                        return full.CustomerName;
+                    }
+                },
+                 {
+                     "sName": "RegionName",
+                     "bSortable": true,
+                     "sClass": "alignCenter",
+                     "mRender": function (data, type, full) {
+                         return full.IncreaseDecreaseTypeListName;
+                     }
+                 },
+                  {
+                      "sName": "Description",
+                      "bSortable": true,
+                      "mRender": function (data, type, full) {
+                          return full.Description;
+                      }
+                  },
+                {
+                    "sName": "TransactionDate",
+                    "bSortable": true,
+                    "sClass": "alignCenter",
+                    "mRender": function (data, type, full) {
+                        var date = formatJSONDateUtc(full.TransactionDate);
+                        return date;
+                    }
+                },
+                //{
+                //    "sName": "DetailPrevAmt",
+                //    "bSortable": true,
+                //    "sClass": "alignRight",
+                //    "mRender": function (data, type, full) {
+                //        return full.DetailPrevAmt;
+                //    }
+                //},
+                //{
+                //    "sName": "DetailVarAmt",
+                //    "bSortable": true,
+                //    "sClass": "alignRight",
+                //    "mRender": function (data, type, full) {
+                //        return full.DetailVarAmt;
+                //    }
+                //},
+                //{
+                //    "sName": "DetailNewAmt",
+                //    "bSortable": true,
+                //    "sClass": "alignRight",
+                //    "mRender": function (data, type, full) {
+                //        return full.DetailNewAmt;
+                //    }
+                //},
+                {
+                    "sName": "ContractPrevAmt",
+                    "bSortable": true,
+                    "sClass": "alignRight",
+                    "mRender": function (data, type, full) {
+                        return full.ContractPrevAmt;
+                    }
+                },
+                {
+                    "sName": "ContractNewAmt",
+                    "bSortable": true,
+                    "sClass": "alignRight",
+                    "mRender": function (data, type, full) {
+                        return full.ContractNewAmt;
+                    }
+                },
+                {
+                    "sName": "ContractVarAmt",
+                    "bSortable": true,
+                    "sClass": "alignRight",
+                    "mRender": function (data, type, full) {
+                        return full.ContractVarAmt;
+                    }
+                }
+
+            ],
+            //    "footerCallback": function (row, data, start, end, display) {
+            //        var api = this.api(), data;
+
+            //        // Remove the formatting to get integer data for summation
+            //        var intVal = function (i) {
+            //            return typeof i === 'string' ?
+            //                i.replace(/[\$,]/g, '') * 1 :
+            //                typeof i === 'number' ?
+            //                    i : 0;
+            //        };
+
+            //        // Total over all pages
+            //        var total = api
+            //            .column(7)
+            //            .data()
+            //            .reduce(function (a, b) {
+            //                return intVal(a) + intVal(b);
+            //            }, 0);
+
+            //        // Total over this page
+            //        pageTotal = api
+            //            .column(7, { page: 'current' })
+            //            .data()
+            //            .reduce(function (a, b) {
+            //                return intVal(a) + intVal(b);
+            //            }, 0);
+
+            //        // Update footer
+            //        $(api.column(7).footer()).html(
+            //            '$' + pageTotal
+            //        );
+            //    }
+        });
+
+        $("#input_Search").keyup(function () {
+            var table = $("#IncreaseDecreaseHistoryList").DataTable();
+            table.search($(this).val()).draw();
+
+            //calculateTotals();
+        });
+
+        $('#IncreaseDecreaseHistoryList').on('draw.dt', function () {
+            //calculateTotals();
+        })
+        $('#IncreaseDecreaseHistoryList').show();
+
+    })
+      
+    function setPaging() {
+        var z = $("#pageSize").val();
+        var table = $("#IncreaseDecreaseHistoryList").DataTable();
+        if (z > 0) {
+            table.page.len(z).draw();
+        }
+        else if (z == -1) {
+            table.page.len(table.rows().count()).draw();
+        }
+        else {
+            table.page.page.len(25).draw();
+        }
+    }
+
+    $(document).ready(function () {
+
+        var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+        var firstDay;
+        var lastDay;
+        Date.prototype.getWeek = function (start) {
+            //Calcing the starting point
+            start = start || 0;
+            var today = new Date(this.setHours(0, 0, 0, 0));
+            var day = today.getDay() - start;
+            var date = today.getDate() - day;
+
+            // Grabbing Start/End Dates
+            var StartDate = new Date(today.setDate(date));
+            var EndDate = new Date(today.setDate(date + 6));
+            return [StartDate, EndDate];
+        }
+
+        $('#txtStartDate1').change(function () {
+            $('#spnStartDate1').html($(this).val());
+            if ($('#txtStartDate1').val() != '' && $('#txtEndtDate1').val() != '')
+                refreshTable();
+        });
+        $('#txtEndtDate1').change(function () {
+            $('#spnEndtDate1').html($(this).val());
+            if ($('#txtStartDate1').val() != '' && $('#txtEndtDate1').val() != '')
+                refreshTable();
+        });
+
+        $('#monthlist1').change(function () {
+            $('#spnStartDate1').html('');
+            if ($('#monthlist1').val() != '' && $('#yearlist1').val() != '')
+                refreshTable();
+        });
+
+        $('#yearlist1').change(function () {
+            $('#spnEndtDate1').html('');
+            if ($('#monthlist1').val() != '' && $('#yearlist1').val() != '')
+                refreshTable();
+        });
+
+        $('#select_timeduration1').change(function () {
+            
+            $('#spnStartDate1').html('');
+            $('#spnEndtDate1').html('');
+            $('#divspandate1').show();
+            $('#divSD1').hide();
+            $('#divED1').hide();
+            $('#divmonth1').hide();
+            $('#divyear1').hide();
+            $('#monthlist1').val('');
+            $('#yearlist1').val('');
+            switch (parseInt($(this).val())) {
+                case 1:
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = moment().endOf('isoWeek').toString();
+                    break;
+                case 2:
+                    //code block
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 3:
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                    break;
+                case 4:
+                    //code block
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 5:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = moment().endOf('quarter').toString();
+                    break;
+                case 6:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 7:
+                    //code block
+                    firstDay = moment().startOf('year').toString();;
+                    lastDay = moment().endOf('year').toString();
+                    break;
+                case 8:
+                    //code block
+                    firstDay = moment().startOf('year').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 9:
+                    //code block
+                    firstDay = moment().toString();
+                    lastDay = moment().toString();
+                    break;
+                case 10:
+                    //code block
+                    firstDay = moment().add(-1, 'days').toString();
+                    lastDay = moment().add(-1, 'days').toString();
+                    break;
+                case 11:
+                    //code block
+                    firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                    lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                    break;
+                case 12:
+                    //code block
+                    firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                    break;
+                case 13:
+                    //code block
+                    firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                    lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                    break;
+                case 14:
+                    //code block
+                    firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                    lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                    break;
+                case 15:
+                    //code block
+                    $('#divspandate1').hide();
+                    $('#divSD1').show();
+                    $('#divED1').show();
+                    $('#txtStartDate1').val('');
+                    $('#txtEndtDate1').val('')
+                    break;
+                case 16:
+                    //code block
+                    $('#divspandate1').hide();
+                    $('#divSD1').hide();
+                    $('#divED1').hide();
+                    $('#divmonth1').show();
+                    $('#divyear1').show();
+                    break;
+                default:
+                    //code block
+            }
+            $('#spnStartDate1').html(moment(firstDay).format('L'));
+            $('#spnEndtDate1').html(moment(lastDay).format('L'));
+
+            refreshTable();
+
+        });
+    });
+    function formatJSONDate(jsonDate) {
+        if (jsonDate != null) {
+            var dateString = jsonDate.substr(6);
+            var currentTime = new Date(parseInt(dateString));
+            var month = currentTime.getMonth() + 1;
+            var day = currentTime.getDate();
+            var year = currentTime.getFullYear();
+            var date = month + "/" + day + "/" + year;
+            return date;
+        }
+        return null;
+    }
+
+    function formatCurrency(total, dollar) {
+        dollar = (dollar == true ? true : false);
+        var neg = false;
+        if (total < 0) {
+            neg = true;
+            total = Math.abs(total);
+        }
+        return (neg ? "-" : '') + (dollar ? "$" : "") + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+    };
+
+    function formatJSONDateUtc(jsonDate) {
+        if (jsonDate != null) {
+            var dtstr = jsonDate.substr(6);
+            var dateString = dtstr.substring(0, dtstr.length - 2);
+            var currentTime = new Date(parseInt(dateString));
+            var date = moment.utc(currentTime).format("MM/DD/YYYY");
+            return date;
+        }
+        return null;
+    }
+
+</script>
+

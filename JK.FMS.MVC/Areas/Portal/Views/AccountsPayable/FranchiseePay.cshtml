@@ -1,0 +1,983 @@
+﻿@using JKViewModels.Common
+@{
+    ViewBag.Title = "FranchiseePay";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    var IsApprove = false;
+    var IsReject = false;
+    JKApi.Core.Common.ClaimView _claim = JKApi.Core.Common.ClaimView.Instance;
+    var getPermission = _claim.GETCLAIM_AR_PERMISSION();
+    if (getPermission != null)
+    {
+        string enumName = ARPermission.Finalize_Franchisee_Monthly_Reports.ToString();
+        var validIsApprove = getPermission.Where(x => x.EnumName == enumName && x.IsApprove).FirstOrDefault();
+        if (validIsApprove != null && validIsApprove.IsApprove)
+        {
+            IsApprove = true;
+        }
+        var validIsReject = getPermission.Where(x => x.EnumName == enumName && x.IsReject).FirstOrDefault();
+        if (validIsReject != null && validIsReject.IsReject)
+        {
+            IsReject = true;
+        }
+    }
+
+}
+
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+
+}
+<style>
+    .topheader {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFF !important;
+        text-transform: uppercase;
+        margin-top: 3px;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+
+    .alignCenter {
+        text-align: center;
+    }
+
+    .no-padding {
+        padding: 0 !important;
+    }
+
+    .no-margin {
+        margin: 0 !important;
+    }
+
+    .padding-tb1 {
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+
+    .margin-tb1 {
+        margin-top: 1px;
+        margin-bottom: 1px;
+    }
+
+    .custom-listbox .headerbox {
+        padding: 3px 0px 3px 5px;
+        font-weight: normal;
+    }
+
+    .custom-listbox {
+        margin-top: 4px;
+        margin-bottom: 0px;
+    }
+
+    .row {
+        margin: 0;
+        padding: 3px 0;
+    }
+
+    #btnGenerateReport {
+        padding: 4.1px 12px;
+        font-size: 11px;
+        padding-bottom: 4.4px;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .multiselect-container.dropdown-menu {
+        text-transform: none;
+        font-size: 14px;
+    }
+
+    #modal_RegionModel .modal-content {
+        width: 55% !important;
+        margin-left: 30% !important;
+    }
+</style>
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+
+                </div>
+                <div class="col-md-4 topheader">
+                    FRANCHISEE REPORT
+                </div>
+                <div class="col-md-4" style="padding-right:5px;">
+                    <div class="col-md-7 pull-right no-padding">
+                        <div style="display:table-cell;padding-right: 5px;">
+                            Region
+                        </div>
+                        <div style="display:table-cell;width:100%;">
+                            @if (ViewBag.regionlist != null)
+                            {
+                                <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                                    @foreach (var item in (SelectList)ViewBag.regionlist)
+                                    {
+                                        <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="custom-listbox" id="divfranchiseList" style="margin-top:4px;">
+    <div class="headerbox">
+        <div class="row no-padding">
+            <div class="col-md-12">
+                <div class="col-sm-1 page-size">
+                    <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                        <option value="-1">All</option>
+                        <option value="100" selected>100</option>
+                        <option value="50">50</option>
+                        <option value="25">25</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <div class="input-icon">
+                        <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                        <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search" value="" class="form-control input-sm typeahead" />
+                    </div>
+                </div>
+                <div class="col-md-3" style="text-align:center;">
+                    <div class="col-md-6 pull-right no-padding">
+                        @Html.DropDownList("BillMonthYearList", (SelectList)ViewBag.BillMonthYears, new { @class = "form-control input-sm", @id = "select_BillMonthYearList", style = "width: 160px;float: left;margin-right:10px" })
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-primary button-next" id="btnGenerateReport" style="margin-left: 5px;">Generate Franchisee Report</button>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-1" style="text-align: right">
+                    <button type="button" class="btn btn-primary button-next" style="padding: 4.1px 12px;font-size: 11px;padding-bottom: 4.4px;" onclick="FranchiseepayPrintOnClick()">Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form class="form-horizontal" role="form" id="form_franchiseepay" action="@Url.Action("FinalizeFranchiseeReports","AccountsPayable","Portal")" method="post">
+    @Html.Hidden("finalizeIds")
+    @Html.Hidden("regionIds")
+    @Html.Hidden("periodId")
+    @Html.Hidden("billMonthSelected")
+    @Html.Hidden("billYearSelected")
+
+
+    <div class="tablebox">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover order-column" id="TableFranchiseePayList" style="margin-top:0 !important;">
+                <thead>
+                    <tr>
+                        <th class="tblFR_chk" style="text-align:center;width: 50px;padding: 0px!important;vertical-align:middle;">
+                            <input type="checkbox" id="chkAll" name="chkAll" />
+                        </th>
+                        <th class="tblFR_region" style="width:20px;text-align:center;vertical-align:middle;">
+                            Region
+                        </th>
+                        <th class="tblFR_franchiseeNo" style="width:82px;text-align:center;vertical-align:middle;">
+                            Franchisee No
+                        </th>
+                        <th class="tblFR_franchiseeName" style="text-align:center;vertical-align:middle;">
+                            Franchisee Name
+                        </th>
+                        <th class="tblFR_billMonthYear" style="width:40px;text-align:center;vertical-align:middle;">
+                            Period
+                        </th>
+                        <th class="tblFR_revenueAmount" style="text-align:center;width:90px;vertical-align:middle;">
+                            Total Revenue Amount
+                        </th>
+                        <th class="tblFR_deductionAmount" style="text-align:center;width:90px;vertical-align:middle;">
+                            Total Deductions Amount
+                        </th>
+                        <th class="tblFR_paymentAmount" style="text-align:center;width:90px;vertical-align:middle;">
+                            Total Payment Amount
+                        </th>
+                        <th class="tblFR_viewReportBtn" style="text-align:center;width:30px;vertical-align:middle;">
+                            View Report
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5" style="text-align:right;background: #b7cbef;font-size: 12px;">
+                            Total
+                        </td>
+                        <td style="text-align:right;background: #b7cbef;padding-right:5px;font-size: 12px;">&nbsp;</td>
+                        <td style="text-align:right;background: #b7cbef;padding-right:5px;font-size: 12px;">&nbsp;</td>
+                        <td style="text-align:right;background: #b7cbef;padding-right:5px;font-size: 12px;">&nbsp;</td>
+                        @*<td style="text-align:right;background: #b7cbef;padding-right:5px;font-size: 12px;">&nbsp;</td>*@
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="row">
+            <div class="col-md-6"></div>
+            <div class="col-md-6" style="text-align: right">
+                <button type="button" class="btn btn-primary" onclick="btnClear()">
+                    Clear Reports
+                </button>
+                @if (IsApprove)
+                {
+                    <button type="button" class="btn btn-primary button-next" id="btnPrintModel" onclick="btnFinalize()">
+                        Finalize Franchisee Monthly Reports
+                    </button>
+                }
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade bs-modal-lg in" id="modal_franchiseeDetailPay" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border-radius: 8px;">
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    </div>
+    <div class="modal fade custom-model custom-form-design" id="ModalFranchiseePayReportPopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" style="width:740px">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="custom-form portlet light" id="" style="margin-top:0px;">
+                    <div class="headerbox" style="font-weight: normal;">
+                        <div class="col-md-12 text-center" style="font-size:15px;">
+                            <b> Franchisee Report</b>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 5px !important;margin-right: 12px !important;"></button>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                    <div class="form-actions">
+                        <div class="col-md-8">
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button" class="btn btn-primary button-next" style="margin-left:10px;" onclick="ExportPDFFranchiseePayReport()">Export <i class="fa fa-download"></i></button>
+                            <button type="button" class="btn btn-primary button-next" style="margin-left:10px;" onclick="PrintFranchiseePayReport()">Print <i class="fa fa-print"></i></button>
+                        </div>
+                    </div>
+                    <div class="portlet-body" style="padding:14px;" id="RenderFranchiseePayReportDetails">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade custom-model custom-form-design" id="ModalFranchiseePayReportPopup_NewAccount" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" style="width:740px">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="custom-form portlet light" id="" style="margin-top:0px;">
+                    <div class="headerbox" style="font-weight: normal;">
+                        <div class="col-md-12 text-center" style="font-size:15px;">
+                            <b> Franchisee Report</b>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 5px !important;margin-right: 12px !important;"></button>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                    <div class="form-actions">
+                        <div class="col-md-8">
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button" class="btn btn-primary button-next" style="margin-left:10px;" onclick="ExportPDFFranchiseePayReport()">Export <i class="fa fa-download"></i></button>
+                            <button type="button" class="btn btn-primary button-next" style="margin-left:10px;" onclick="PrintFranchiseePayReport()">Print <i class="fa fa-print"></i></button>
+                        </div>
+                    </div>
+                    <div class="portlet-body" style="padding:14px;" id="RenderFranchiseePayReportDetails_NewAccount">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="container_deductions"></div>
+
+</form>
+
+<div class="modal fade in" id="modal_RegionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Select Region
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Select Region</label>
+                                @if (ViewBag.regionlist != null)
+                                {
+                                    <select class="form-control input-sm" id="selectregionlist">
+                                        <option value="">Select Region</option>
+                                        @foreach (var item in (SelectList)ViewBag.regionlist)
+                                        {
+                                            <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div class="col-md-12">
+                        <button type="button" name="SaveNew" id="btnRegion" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:0px;">Select Region</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        var franchiseePayList;
+        var franchiseeReportDetailsByTransactionTable;
+        var franchiseeReportDetailsByCustomerTable;
+        var FRNDFinalized = false;
+
+        var generatedMonths = [];
+
+        function getTableURL() {
+
+            var _regionIds = $('#regionlist').val() || "";
+            var _periodId = $('#select_BillMonthYearList :selected').val();
+            var sURL = '@Url.Action("GetFranchiseeReportList", "AccountsPayable", new { area = "Portal" })?doGenerate=false' + '&periodId=' + _periodId + '&rgId=' + _regionIds;
+            return sURL;
+        }
+
+        function getGenerateURL() {
+            var _periodclosedid = $('#select_BillMonthYearList :selected').val();
+            var _regionIds = $('#regionlist').val() || "";
+            var _doGenerate = generatedMonths.indexOf(_periodclosedid) == -1;
+            var sURL = '@Url.Action("GeneratedFranchiseeReportList", "AccountsPayable", new { area = "Portal" })?doGenerate=' + _doGenerate + '&periodId=' + _periodclosedid + '&rgId=' + _regionIds;
+
+            return sURL;
+        }
+
+        function generateMonth() {
+
+            var _periodclosedid = $('#select_BillMonthYearList :selected').val();
+
+            if (generatedMonths.indexOf(_periodclosedid) == -1) {
+                var sURL = getGenerateURL();
+                ResetTable();
+                refreshTable(sURL);
+            }        
+        }
+
+        function refreshTable(sURL) {
+
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+
+                    for (var i = 0; i < data.aaData.length; i++) {
+                        var d = data.aaData[i];
+                        var selectedBillMonthYear = d.BillMonth + "/" + d.BillYear;
+
+                        if (generatedMonths.indexOf(selectedBillMonthYear) == -1)
+                            generatedMonths.push(selectedBillMonthYear);
+                    }
+
+                    franchiseePayList.rows.add(data.aaData).draw();
+
+                   
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+
+
+            });
+        }
+
+        $(window).load(function () {
+            if ('@ViewBag.selectedRegionId' == 0) {
+                $("#modal_RegionModel").modal({ backdrop: 'static' });
+            }
+            else {
+                $.blockUI();//$.blockUI({message: $('#throbberBlock'),theme: true,baseZ: 12000});
+                ResetTable();
+                refreshTable(getTableURL());
+            }
+        });
+
+        function setPaging() {
+            var z = $("#pageSize").val();
+            var table = $("#TableFranchiseePayList").DataTable();
+            if (z > 0) {
+                table.page.len(z).draw();
+            }
+            else if (z == -1) {
+                table.page.len(table.rows().count()).draw();
+            }
+            else {
+                table.page.page.len(25).draw();
+            }
+        }
+
+
+        jQuery(document).ready(function () {
+            $("#regionlist").multiselect({
+                includeSelectAllOption: true,
+                //selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2
+
+            });
+
+            $("#pageSize").change(function () {
+                setPaging();
+            });
+
+
+            $("#btnRegion").click(function () {
+                if ($("#selectregionlist").val() != "") {
+                    $("#regionlist option[value='" + $("#selectregionlist").val() + "']").attr("selected", 1);
+                    $("#regionlist").multiselect("refresh");
+                    refreshTable(getTableURL());
+                    $(".close").click();
+                }
+            });
+
+            $("#divRevenueByCustomer").hide();
+
+            $(document).on("change", "#rdoRevenueByTransaction", function () {
+                if (this.value == 1) {
+                    $("#rdoRevenueByTransaction").prop("checked", true);
+                    $("#rdoRevenueByCustomer").prop("checked", false);
+                    $("#divRevenueByCustomer").hide();
+                    $("#divRevenueByTransaction").show();
+                }
+            });
+
+            $(document).on("change", "#rdoRevenueByCustomer", function () {
+                if (this.value == 0) {
+                    $("#rdoRevenueByTransaction").prop("checked", false);
+                    $("#rdoRevenueByCustomer").prop("checked", true);
+                    $("#divRevenueByCustomer").show();
+                    $("#divRevenueByTransaction").hide();
+                }
+            });
+
+            $("#regionlist").change(function () {
+                //initTable();
+                franchiseePayList.clear().draw();
+                generatedMonths = [];
+                refreshTable(getTableURL());
+            })
+
+            function initTable() {
+                var ps = $('#pageSize').val();
+                franchiseePayList = $('#TableFranchiseePayList').DataTable({
+                    ////"bProcessing": true,
+                    //"bDestroy": true,
+                    
+                    ////"aLengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                    //"aLengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                    //"pageLength": 25, // default records per page
+                    //"dom": '<"top">rt<"bottom"lp><"clear">'
+                    "ordering": true,
+                    "bAutoWidth": false,
+                    "iDisplayLength": ps == '-1' ? 25 : ps,
+                    "bDestroy": true,
+                    "bServerSide": false,
+                    //"aLengthMenu": [[5, 7, 10, 25, 50, -1], [5, 7, 10, 25, 50, "All"]],
+                    "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                    "aaSorting": [[0, "desc"]],
+                    columnDefs: [
+                        {
+                            targets: "tblFR_chk",
+                            data: "",
+                            orderable: false,
+                            className: "dt-center",
+                            visible: true,
+                            render: function (data, type, row, meta) {
+                                return '<input rel="mgglchk" type="checkbox" id="fp' + row.FranchiseeReportId + '_chk" name="fp' + row.FranchiseeReportId + '_chk" relId="' + row.FranchiseeReportId + '" class="payment-checkbox" />';
+                            }
+                        },
+                        {
+                            targets: "tblFR_region",
+                            data: "RegionAcronym",
+                            className: "dt-center",
+                            render: function (data, type, row, meta) {
+                                return data;
+                            }
+                        },
+                        {
+                            targets: "tblFR_franchiseeNo",
+                            data: "FranchiseeNo",
+                            className: "dt-center",
+                            render: function (data, type, row, meta) {
+                                return '<label id="fp' + row.FranchiseeReportId + '_franchiseeNo">' + data + '</label>';
+                            }
+                        },
+                        {
+                            targets: "tblFR_franchiseeName",
+                            data: "FranchiseeName",
+                            render: function (data, type, row, meta) {
+                                return '<label id="fp' + row.FranchiseeReportId + '_franchiseeName">' + data + '</label>';
+                            }
+                        },
+                        {
+                            targets: "tblFR_billMonthYear",
+                            data: "",
+                            className: "dt-center",
+                            render: function (data, type, row, meta) {
+                                //$('#select_BillMonthYearList').val(row.BillMonth + '/' + row.BillYear);
+                                $('#select_BillMonthYearList').find('option[text="' + row.BillMonth + '/' + row.BillYear + '"]').val();
+                                return row.BillMonth + '/' + row.BillYear;
+                            }
+                        },
+                        {
+                            targets: "tblFR_revenueAmount",
+                            data: "TotalRevenue",
+                            className: "dt-right",
+                            render: function (data, type, row, meta) {
+                                return '<a onclick="btnOpenDetail(' + row.FranchiseeReportId + ')">' + formatCurrency(parseFloat(data)) + '</a>';
+                            }
+                        },
+                        {
+                            targets: "tblFR_deductionAmount",
+                            data: "TotalDeductions",
+                            className: "dt-right",
+                            render: function (data, type, row, meta) {
+                                return '<a onclick="btnOpenDEDUCTIONS(' + row.FranchiseeReportId + ')">' + formatCurrency(parseFloat(data)) + '</a>';
+                            }
+                        },
+                        {
+                            targets: "tblFR_paymentAmount",
+                            data: "TotalPayment",
+                            className: "dt-right",
+                            render: function (data, type, row, meta) {
+                                return formatCurrency(parseFloat(data));
+                            }
+                        },
+                        {
+                            targets: "tblFR_viewReportBtn",
+                            data: "FranchiseeReportId",
+                            className: "dt-center",
+                            render: function (data, type, row, meta) {
+                                //return '<a onclick="btnOpenReportView(' + data + ')">Page</a> | <a  onclick="btnOpenPayReportPopup(' + data + ')">Popup</a>';
+                                return '<a  onclick="btnOpenPayReportPopup(' + data + ')">Popup</a>';
+                            }
+                        },
+
+                    ],
+                    "footerCallback": function (row, data, start, end, display) {
+                        var api = this.api(), data;
+                        // Remove the formatting to get integer data for summation
+                        var intVal = function (i) {
+                            return typeof i === 'string' ?
+                                i.replace(/[\$,]/g, '') * 1 :
+                                typeof i === 'number' ?
+                                i : 0;
+                        };
+
+                        var totalRevenue = api
+                            .column(5)
+                            .data()
+                            .reduce(function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0);
+                        var totalDeductions = api
+                            .column(6)
+                            .data()
+                            .reduce(function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0);
+                        var totalPayment = api
+                            .column(7)
+                            .data()
+                            .reduce(function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0);
+
+                        $(api.column(5).footer()).html(formatCurrency(totalRevenue));
+                        $(api.column(6).footer()).html(formatCurrency(totalDeductions));
+                        $(api.column(7).footer()).html(formatCurrency(totalPayment));
+                    }
+                });
+            }
+
+            initTable();
+
+            $("#input_Search").keyup(function () {
+                var table = $("#TableFranchiseePayList").DataTable();
+                table.search($(this).val()).draw();
+            });
+
+            franchiseeReportDetailsByTransactionTable = $('#TableFranchiseeReportDetails_ByTransaction').DataTable({
+                //"bProcessing": true,
+                "bServerSide": false,
+                "bDestroy": true,
+                "aLengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                "pageLength": 25, // default records per page
+                "dom": '<"top">rt<"bottom"lp><"clear">'
+                //"dom": "<'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'<'table-group-actions pull-right'>>r><'table-responsive't><'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'>>", // datatable layout
+                ,
+                columnDefs: [
+                    { targets: "tblFRDT_customerNo", data: "CustomerNo" },
+                    { targets: "tblFRDT_customerName", data: "CustomerName" },
+                    { targets: "tblFRDT_invoiceNo", data: "InvoiceNo" },
+                    { targets: "tblFRDT_invoiceDesc", data: "Description" },
+                    { targets: "tblFRDT_serviceType", data: "ServiceType" },
+                    {
+                        targets: "tblFRDT_isCommission",
+                        data: "IsCommission",
+                        orderable: false,
+                        render: function (data, type, row, meta) {
+                            return (data == true) ? 'Y' : 'N';
+                        }
+                    },
+                    {
+                        targets: "tblFRDT_revenue",
+                        data: "Total",
+                        render: function (data, type, row, meta) {
+                            return formatCurrency(parseFloat(data));
+                        }
+                    },
+                ]
+            });
+
+            $('#chkAll').change(function () {
+                if ($(this).is(":checked")) {
+                    $('input[rel="mgglchk"]').prop('checked', true);
+                }
+                else {
+                    $('input[rel="mgglchk"]').prop('checked', false);
+                }
+            });
+
+            $('#btnGenerateReport').click(function (e) {
+                ResetTable();
+                generateMonth();
+            });
+
+            $('.modal-dialog').draggable();
+            $('#select_BillMonthYearList').find('option:eq(0)').prop('selected', true);
+
+        });
+
+        function FranchiseepayPrintOnClick() {
+            var Ids = getSelectedIds();
+           
+            if (Ids != '') {
+                var sURL = '@Url.Action("PrintFranchiseePayReport", "AccountsPayable", new { area = "Portal" })?ids=' + Ids
+
+                $.ajax({
+                    type: "GET",
+                    url: sURL,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (data) {
+                        var tUrl = data;
+                        printJS({ printable: document.location.origin + tUrl, type: 'pdf', showModal: false });
+                    },
+                    error: function () {
+                        alert("Clear failed.");
+                    }
+                });
+            }
+        }
+
+        function btnOpenReportView(id) {
+            window.open('@Url.Action("FranchiseeReport", "AccountsPayable", new { area = "Portal" })?ids=' + id, '_blank');
+        }
+
+        function btnOpenDetail(id) {
+
+            var sURL = '@Url.Action("FranchiseePayDetail", "AccountsPayable", new { area = "Portal" })?Id=' + id
+
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#modal_franchiseeDetailPay').html(data);
+                    $("#modal_franchiseeDetailPay").modal('show');
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+        }
+
+        function btnOpenDEDUCTIONS(id) {
+
+            var sURL = '@Url.Action("FranchiseePayDeductions", "AccountsPayable", new { area = "Portal" })?Id=' + id
+
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#container_deductions').html(data);
+                    $("#modal_DEDUCTIONS").modal('show');
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+        function btnOpenChargeBack(id) {
+            $("#modal_ChargeBack").modal('show');
+        }
+        function btnOpenFinder(id) {
+            $("#modal_FinderFee").modal('show');
+        }
+
+        function btnClear() {
+
+            var Ids = getIds();
+            var _regionIds = $('#regionlist').val() || "";
+            var _periodId = $('#select_BillMonthYearList :selected').val();
+            var sURL = '@Url.Action("ClearGeneratedFranchiseeReport", "AccountsPayable", new { area = "Portal" })?RegionIds=' + _regionIds + '&PeriodId=' + _periodId
+
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    location.reload(true);
+                    ResetTable();
+                    
+                },
+                error: function () {
+                    alert("Clear failed.");
+                }
+            });
+        
+        }
+
+        function negativeDueValidation() {
+            var selPeriodId = $('#ddlPeriodId').val();
+            var ndUrl = '@Url.Action("GetNegativeDue", "AccountsPayable", new { area = "Portal" })?selectedPeriodId=' + selPeriodId.toString();
+
+            $.ajax({
+                type: "POST",
+                url: ndUrl,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+
+                    FRNDFinalized = data.aaData.NegativeDueFinalized;
+                    if (FRNDFinalized) {
+
+                        swal({
+                            title: "Are you sure you want to finalize franchisee reports?",
+                            text: "You will not be able to undo this action!",
+                            type: "warning",
+                            showCancelButton: true,
+                            confirmButtonClass: "btn-confirmr",
+                            confirmButtonText: "Yes",
+                            cancelButtonText: "No",
+                            closeOnConfirm: false,
+                            closeOnCancel: false
+                        },
+                            function (isConfirm) {
+                                if (isConfirm) {
+                                    var _billMonthYearSel = $('#select_BillMonthYearList :selected').val();
+                                    var billMonthSelected = _billMonthYearSel.split('/')[0];
+                                    var billYearSelected = _billMonthYearSel.split('/')[1];
+                                    $("#billMonthSelected").val(billMonthSelected);
+                                    $("#billYearSelected").val(billYearSelected);
+
+                                    var regionIdsSelected = $('#regionlist :selected').val();
+                                    $("#regionIds").val(regionIdsSelected);
+
+                                    var selperiodid = $('#select_BillMonthYearList :selected').val();
+                                    $("#periodId").val(selperiodid);
+
+
+                                    $("#form_franchiseepay").submit();
+
+                                    /*
+                                    var Ids = getIds();
+                                    if (Ids != "") {
+                                        $("#finalizeIds").val(Ids);
+            
+                                        //$.blockUI({
+                                        //    message: $('#throbberBlock'),
+                                        //    theme: true,
+                                        //    baseZ: 12000
+                                        //});
+                          
+                                        $("#form_franchiseepay").submit();
+                                    }
+                                   */
+                                } else {
+                                    swal("Cancelled", "Finalize Franchisee reports has been canceled", "error");
+                                }
+                            });
+                    } else {
+                        //swal("Negative due for this period has not been finalized. Please finalize negative due.");
+                        swal({
+                            title: "",
+                            text: "Negative due for this period has not been finalized. Please finalize negative due.",
+                            type: "warning",
+                            confirmButtonClass: "btn-confirmr",
+                            confirmButtonText: "Ok"
+
+
+                        },
+                           function (isConfirm) {
+
+                               window.location.href = '@Url.Action("NegativeDue", "AccountsPayable")';
+                           }
+                      );
+
+                    }
+
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+
+        }
+
+        function btnFinalize() {
+            //var Ids = getSelectedIds();
+            negativeDueValidation();
+        }
+
+        function getIds() {
+
+            var Ids = "";
+            $('#TableFranchiseePayList input[rel="mgglchk"]').each(function (item) {
+                var mId = $(this).attr('relid');
+                if (Ids != "")
+                    Ids = Ids + "," + mId;
+                else
+                    Ids = mId;
+            });
+
+            //$('#TableFranchiseePayList').find('tbody > tr').each(function (rowindex, r) {
+            //    var name = $(this)[0].children['1'].firstChild.id
+            //    if (name != "") {
+            //        if (name.indexOf("fp") >= 0) {
+            //            var nameItems = name.split('_')
+            //            var franchiseeReporttId = nameItems[0].replace('fp', '')
+
+            //            if (Ids != "")
+            //                Ids = Ids + "," + franchiseeReporttId;
+            //            else
+            //                Ids = franchiseeReporttId;
+            //        }
+            //    }
+
+            //});
+
+            return Ids;
+        }
+
+
+        function getSelectedIds() {
+            var Ids = "";
+            $('#TableFranchiseePayList input[rel="mgglchk"]').each(function (item) {
+
+
+                if ($(this).is(":checked")) {
+                    var mId = $(this).attr('relid');
+                    if (Ids != "")
+                        Ids = Ids + "," + mId;
+                    else
+                        Ids = mId;
+                }
+            });
+            return Ids;
+        }
+
+        function clearSelectedIds() {
+
+            $('#TableFranchiseePayList input[rel="mgglchk"]').each(function (item) {
+                if ($(this).is(":checked")) {
+                    $('input[rel="mgglchk"]').prop('checked', false);
+                }
+            });
+
+        }
+
+        function getDataIdChunk(elem) {
+            return $(elem).attr("id").split('_')[0];
+        }
+        function getDataFilter(chunk) {
+            return "[id^=" + getDataPrefix(chunk) + "]";
+        }
+        function getDataPrefix(chunk) {
+            return chunk + "_";
+        }
+
+        function btnOpenPayReportPopup(Id) {
+            debugger;
+            var sURL = '@Url.Action("FranchiseePayReportPopupDetail", "AccountsPayable", new { area = "Portal" })?ids=' + Id
+
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#RenderFranchiseePayReportDetails').html(data);
+                    $("#ModalFranchiseePayReportPopup").modal({ backdrop: 'static' });
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+        }
+
+
+        function ResetTable() {
+            franchiseePayList.clear().draw();
+            franchiseeReportDetailsByTransactionTable.clear().draw();
+        }
+
+        function formatCurrency(total) {
+            var neg = false;
+            if (total < 0) {
+                neg = true;
+                total = Math.abs(total);
+            }
+            return (neg ? "-$" : '$') + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        }
+    </script>
+}

@@ -1,0 +1,1409 @@
+﻿@model JKViewModels.Administration.Company.FullLedgerAccountViewModel
+@{
+    ViewBag.Title = "General";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/inputpicker-master/jquery.inputpicker.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" type="text/css" />
+    <style>
+        <style type="text/css" > .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+            font-weight: normal;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        #modal_RegionModel .modal-content {
+            width: 55% !important;
+            margin-left: 30% !important;
+        }
+
+        table.dataTable thead th {
+            padding: 4px !important;
+        }
+    </style>
+
+    </style>
+    <style type="text/css">
+        .custom-listbox > .tablebox > div > .bottom {
+            padding: 0 30px 0 30px;
+        }
+
+        .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+            padding: 5px 8px;
+            font-size: 12px;
+        }
+
+        .error {
+            border-color: red;
+        }
+
+        label.error {
+            display: none !important;
+        }
+
+        .custom-form .btn {
+            margin-bottom: 5px;
+        }
+
+        .pnd5 {
+            padding: 5px;
+        }
+
+        .control-label.text-left {
+            text-align: left;
+        }
+
+        .editvaluetext {
+            background-color: white;
+            border-style: inherit;
+        }
+
+        .editmode {
+            background-color: initial;
+            border-style: hidden;
+        }
+
+        .ui-autocomplete {
+            z-index: 9999 !important;
+        }
+
+        .btn-custom {
+            font-size: 11px;
+            padding: 10px 0px;
+        }
+
+        /*input:focus, textarea:focus,select:focus {
+            border-color: initial;
+        }
+
+        input.error, textarea.error,select:focus {
+            border: 1px solid red;
+        }*/
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+    </style>
+    <style>
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .page-size {
+            padding-left: 0;
+            padding-right: 0;
+            width: 62px;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        #CustomerList th {
+            vertical-align: middle;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .no-margin {
+            margin: 0;
+        }
+
+        .padding-tb1 {
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        .margin-tb1 {
+            margin-top: 1px;
+            margin-bottom: 1px;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .contract {
+            text-align: right;
+        }
+
+        .tablebox .table-responsive {
+            min-height: 600px;
+        }
+
+        .CMList {
+            margin-top: -12px;
+        }
+    </style>
+
+    <style>
+        #modal_RegionModel .modal-content {
+            width: 55% !important;
+            margin-left: 30% !important;
+        }
+    </style>
+}
+
+<div class="headerbox">
+    <input type="hidden" value="0" id="hdnledgerid" />
+    <input type="hidden" value="0" id="hdnissubaccount" />
+    <input type="hidden" value="0" id="hdnnu" />
+    <input type="hidden" value="0" id="hdnname" />
+
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    CHART OF ACCOUNTS
+                </div>
+                <div class="col-md-4" style="padding-right:5px;">
+                    <div class="col-md-7 pull-right no-padding">
+                        <div style="display:table-cell;padding-right: 5px;">
+                            Region
+                        </div>
+                        <div style="display:table-cell;width:100%;">
+                            @if (ViewBag.regionlist != null)
+                            {
+                                <select class="form-control input-sm" id="regionlist" multiple="multiple" style="display:none;">
+                                    @foreach (var item in (SelectList)ViewBag.regionlist)
+                                    {
+                                        <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="custom-listbox" style="margin-top:4px;margin-bottom:3px;">
+    <div class="headerbox">
+        <div class="row no-padding">
+            <div class="col-md-1 pnd5 collapse" style="text-align:left;padding-top:8px;">
+                Show
+            </div>
+            <div class="col-md-4 pnd5" style="text-align:left;margin-bottom: -12px;margin-top: -5px;">
+                <input type="button" class="btn btn-primary btn-sm" id="btnExportInExcel" value="Export" />
+            </div>
+            <div class="col-md-3 pnd5">
+                <div id="filterDC">
+                    <div style="display:table-cell;">
+                        <input type="checkbox" value="Debit" id="chkDebit" checked />
+                    </div>
+                    <div style="display:table-cell;vertical-align:middle;padding-left:4px;">
+                        Debit
+                    </div>
+                    <div style="display:table-cell;padding-left:30px;">
+                        <input type="checkbox" value="Credit" id="chkCredit" checked />
+                    </div>
+                    <div style="display:table-cell;vertical-align:middle;padding-left:4px;">
+                        Credit
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 pull-right no-padding">
+                <div class="col-md-12 pull-right no-padding" style="text-align:center;">
+                    <div class="col-md-5 no-padding" style="margin-left:30px;">
+                        <select id="select_timeduration" class="form-control input-sm">
+                            <option value="1">This Week</option>
+                            <option value="2">This Week-to-date</option>
+                            <option value="3" selected="selected">This Month</option>
+                            <option value="4">This Month-to-date</option>
+                            <option value="5">This Quarter</option>
+                            <option value="6">This Quarter-to-date</option>
+                            <option value="7">This Fiscal Year</option>
+                            <option value="8">This Fiscal Year-to-date</option>
+                            <option value="9">Today</option>
+                            <option value="10">Yesterday</option>
+                            <option value="11">Last Week</option>
+                            <option value="12">Last Month</option>
+                            <option value="13">Last Quarter</option>
+                            <option value="14">Last Year</option>
+                            <option value="15">Custom Date</option>
+                            <option value="16">Period</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 divspandate no-padding" style="margin-top: 3px; margin-left: 0px; display: block; float: right;text-align:left" id="divspandate">
+                        <span id="spnStartDate">08/01/2017</span> - <span id="spnEndtDate">08/31/2017</span>
+                    </div>
+                    <div class="collapse">
+                        <input type="hidden" id="CustomerID" name="CustomerID" value="@ViewBag.CustomerID" />
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 80px; display: none;" id="divSD">
+                        <input type="text" name="txtStartDate" id="txtStartDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 80px; display: none;" id="divED">
+                        <input type="text" name="txtEndtDate" id="txtEndtDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 80px; display: none;" id="divmonth">
+                        <select id="monthlist" class="form-control input-sm">
+                            <option value=""></option>
+                            <option value="1">Jan</option>
+                            <option value="2">Feb</option>
+                            <option value="3">Mar</option>
+                            <option value="4">Apr</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">Aug</option>
+                            <option value="9">Sep</option>
+                            <option value="10">Oct</option>
+                            <option value="11">Nov</option>
+                            <option value="12">Dec</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 80px; display: none;" id="divyear">
+                        <select class="form-control input-sm" id="yearlist" style="padding-left: 2px;">
+                            <option value=""></option>
+                            <option value="2018">2018</option>
+                            <option value="2017">2017</option>
+                            <option value="2016">2016</option>
+                            <option value="2015">2015</option>
+                            <option value="2014">2014</option>
+                            <option value="2013">2013</option>
+                            <option value="2012">2012</option>
+                            <option value="2011">2011</option>
+                            <option value="2010">2010</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="custom-form portlet light custom-form-design custom-listbox" id="divfranchiseList" style="display:none">
+    <h4 class="blocktop">&nbsp;</h4>
+    <button type="button" class="btn red dropdown-toggle pull-right subsectionBtn" id="btnaddnewLedgerAcct"><i class="fa fa-plus"></i>&nbsp;<span class="hidden-sm hidden-xs">New&nbsp;</span></button>
+    <div class="tablebox table-responsive">
+        <table class="table table-striped table-bordered table-hover order-column" id="generalledgerList">
+            <thead>
+                <tr>
+                    <th style="text-align:center;width:30px;"></th>
+                    <th style="text-align:center;width:85px;">
+                        Account No#
+                    </th>
+                    <th style="text-align:center;">
+                        Name
+                    </th>
+                    <th style="text-align:center;">
+                        Type
+                    </th>
+                    <th style="text-align:center;width:140px;">
+                        Debit
+                    </th>
+                    <th style="text-align:center;width:140px;">
+                        Credit
+                    </th>
+                    <th style="text-align:center;width:140px;">
+                        Balance Debit
+                    </th>
+                    <th style="text-align:center;width:140px;">
+                        Balance Credit
+                    </th>
+                    <th style="text-align:center;width:50px;">
+                        Attach
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @*@foreach (var item in ((List<JKViewModels.Company.LadgerAccountViewModel>)ViewBag.LedgerAccounts).OrderBy(o => o.AccountNumber))
+                    {
+                        <tr class="odd gradeX">
+                            <td style="vertical-align: middle;">
+                                <a href="javascript:void(0)" onclick='@(item.LadgerSubAccounts.Count > 0 ? "showSubLadgerAccount(" + item.AccountId + ")" : "")' style="@(item.LadgerSubAccounts.Count>0?"":"display:none")" id="@("lnkGL" + item.AccountId)"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+                            </td>
+                            <td style="text-align:center"><a onclick="btnopenforeditledger('@item.AccountId','false');">@item.AccountNumber</a></td>
+                            <td>@(item.AccountNumber + " : " + item.AccountName)</td>
+                            <td>@item.TypeName</td>
+                            <td style="text-align:right"><a href="javascript:void(0)" onclick="_bindTrasaction('@item.AccountId',false,'@item.AccountNumber','@item.AccountName');">@String.Format("{0:c}", item.Debit)</a></td>
+                            <td style="text-align:right"><a href="javascript:void(0)" onclick="_bindTrasaction('@item.AccountId',false,'@item.AccountNumber','@item.AccountName');">@String.Format("{0:c}", item.Credit)</a></td>
+                            <td style="text-align:right"></td>
+                        </tr>
+
+                        foreach (var sAcc in item.LadgerSubAccounts.OrderBy(o => o.SubAccountNumber))
+                        {
+                            <tr relchild="@("P"+sAcc.AccountId)" class="odd gradeX" style="display:none">
+                                <td style="vertical-align: middle;"></td>
+                                <td style="text-align:center"><a onclick="btnopenforeditledger('@sAcc.SubAccountId','true');">@sAcc.SubAccountNumber</a></td>
+                                <td style="padding-left:25px">@(sAcc.SubAccountNumber + " : " + sAcc.SubAccountName)</td>
+                                <td>@item.TypeName</td>
+                                <td style="text-align:right"><a href="javascript:void(0)" onclick="_bindTrasaction('@sAcc.SubAccountId',true,'@sAcc.SubAccountNumber','@sAcc.SubAccountName');">@String.Format("{0:c}", sAcc.Debit)</a></td>
+                                <td style="text-align:right"><a href="javascript:void(0)" onclick="_bindTrasaction('@sAcc.SubAccountId',true,'@sAcc.SubAccountNumber','@sAcc.SubAccountName');">@String.Format("{0:c}", sAcc.Credit)</a></td>
+                                <td style="text-align:right"></td>
+                            </tr>
+
+                        }
+                    }*@
+
+
+            </tbody>
+            <tfoot>
+                @*<tr style="background-color: #e7ecf1;">
+                        <td colspan="4" style="text-align:right">Total</td>
+                        <td style="text-align:right">@(String.Format("{0:c}", ((List<JKViewModels.Company.LadgerAccountViewModel>)ViewBag.LedgerAccounts).Sum(o => o.Debit)))</td>
+                        <td style="text-align:right">@(String.Format("{0:c}", ((List<JKViewModels.Company.LadgerAccountViewModel>)ViewBag.LedgerAccounts).Sum(o => o.Credit)))</td>
+                        <td style="text-align:right"></td>
+                    </tr>*@
+            </tfoot>
+        </table>
+
+    </div>
+</div>
+
+<div class="custom-form portlet light custom-form-design custom-listbox" id="divtrasactionList" style="display:none">
+    <h4 class="blocktop">Trasactions</h4>
+    <button type="button" class="btn red dropdown-toggle pull-right subsectionBtn" onclick="_bindTrasactionBack()"><span class="hidden-sm hidden-xs">Back</span></button>
+
+    <div class="col-md-12" style="padding:15px">
+        <div class="col-md-5"><b><span id="spnladgeraccountnumber"></span>&nbsp;<span id="spnladgeraccountname"></span></b></div>
+    </div>
+    <div style="clear:both"></div>
+    <div class="tablebox table-responsive">
+        <table class="table table-striped table-bordered table-hover order-column" id="accounttrasactionList">
+            <thead>
+                <tr>
+
+                    <th rowspan="2" style="width:50px;text-align: center;font-size: 12px;vertical-align: middle;"> Date </th>
+                    <th rowspan="2" style="width: 184px;text-align: center;font-size: 12px;vertical-align: middle;">Transaction Type</th>
+                    <th rowspan="2" style="width: 100px;text-align: center;font-size: 12px;vertical-align: middle;"> Number </th>
+                    <th rowspan="2" style="width: 150px;text-align: center;font-size: 12px;vertical-align: middle;"> Vender/Customer No </th>
+
+                    <th rowspan="2" style="text-align: left;font-size: 12px;vertical-align: middle;"> Payee/Payer </th>
+                    <th rowspan="2" style="text-align:left;font-size: 12px;vertical-align: middle;">Description</th>
+                    <th colspan="2" style="width: 160px;text-align: center;font-size: 12px;"> Amount </th>
+                    <th rowspan="2" style="width: 130px;text-align: center;font-size: 12px;vertical-align: middle;">Balance </th>
+                </tr>
+                <tr>
+
+                    <th style="width: 100px;text-align: center;font-size: 12px;"> Debit  </th>
+                    <th style="width: 100px;text-align: center;font-size: 12px;"> Credit </th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot></tfoot>
+        </table>
+
+    </div>
+</div>
+<form class="form-horizontal" action="" id="submit_form_generalledger" method="POST">
+    @Html.HiddenFor(o => o.CLadgerAccount.AccountId)
+    <div class="modal fade custom-model custom-form-design" id="popup_glmanage" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" style="width:700px">
+            <div class="modal-content" style="border-radius: 8px;">
+
+                <div class="modal-header headerbox list" style="padding:0px!important;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">Add New Account</h4>
+                </div>
+                <div class="modal-body" style="padding: 15px 15px 15px 35px;">
+
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                            Account Type
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor(model => model.CLadgerAccount.TypeId, (SelectList)ViewBag.GLAccountTypeList, "Select", new { @class = "form-control input-sm" })
+                            @*@Html.DropDownList("GLAccountTypeList", null, "Select", new { @class = "form-control input-sm", required = "required", id = "LedgerAcct_GLAccountTypeListId", name = "LedgerAcct_GLAccountTypeListId" })*@
+                        </div>
+                        <label class="control-label col-md-2 col-md-offset-1">
+                            Number
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-2">
+                            @Html.TextBoxFor(o => o.CLadgerAccount.AccountNo, new { @class = "form-control input-sm", required = "required" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                            Account Name
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-9">
+                            @Html.TextBoxFor(o => o.CLadgerAccount.Name, new { @class = "form-control input-sm", required = "required" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3 col-md-offset-2" style="margin-top: 8px;">
+                            <label class="mt-checkbox">
+                                @Html.CheckBoxFor(o => o.CLadgerAccount.IsSubAccount, new { id = "CLadgerAccount_IsSubAccount" })Sub Account of
+                                <span></span>
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            @Html.DropDownListFor(model => model.CLadgerAccount.PerentAccountId, (SelectList)ViewBag.GLLedgerAccounts, "Select", new { @class = "form-control input-sm" })
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">
+                            Description
+                        </label>
+                        <div class="col-md-9">
+                            @Html.TextAreaFor(o => o.CLadgerAccount.Description, new { @class = "form-control input-sm", row = 2 })
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer" style="padding-right: 48px;">
+                    <button type="button" id="btnaddnewLedgerAcctSaveClose" class="btn btn-primary">Save & Close</button>
+                    <button type="button" id="btnaddnewLedgerAcctSaveNew" class="btn btn-primary">Save & New</button>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</form>
+<form class="form-horizontal" action="" id="submit_form_generalledgerType" method="POST">
+    <div class="modal fade custom-model custom-form-design" id="popup_glmanagetype" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" style="width:475px">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">Add New Type</h4>
+                </div>
+                <div class="modal-body" style="padding: 15px 15px 15px 35px;">
+
+                    <div class="form-group">
+                        <label class="control-label col-md-4">
+                            Account Type Name
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(o => o.GLAccountTypeList.Name, new { @class = "form-control input-sm", required = "required" })
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding-right: 48px;">
+                    <button type="button" id="btnaddnewLedgerAcctTypeSave" class="btn btn-primary">Save</button>
+                </div>
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</form>
+<div class="form-horizontal" id="form_invoicedetail"></div>
+<!--Region Modal-->
+<div class="modal fade in" id="modal_RegionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Select Region
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Select Region</label>
+                                @if (ViewBag.regionlist != null)
+                                {
+                                    <select class="form-control input-sm" id="selectregionlist">
+                                        <option value="">Select Region</option>
+                                        @foreach (var item in (SelectList)ViewBag.regionlist)
+                                        {
+                                            <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div class="col-md-12">
+                        <button type="button" name="SaveNew" id="btnRegion" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:0px;">Select Region</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section pageplugins{
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/inputpicker-master/jquery.inputpicker.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js")" type="text/javascript"></script>
+}
+
+@section scripts{
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+    <script>
+
+        function showSubLadgerAccount(AccountId) {
+            $('#lnkGL' + AccountId + '>i').toggleClass("fa-minus-circle", 1);
+            $('[relchild=P' + AccountId + ']').toggle();
+        }
+        $(document).ready(function () {
+            $("#filterDC").hide();
+            $('#divSD').hide();
+            $('#divED').hide();
+            $("#regionlist").multiselect({
+                includeSelectAllOption: false,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2,
+                //onChange: initTable,
+                //onSelectAll: initTable,
+                //onDeselectAll: initTable
+            });
+
+            if ('@ViewBag.selectedRegionId' > 0) {
+
+                $("#regionlist option[value='" + '@ViewBag.selectedRegionId' + "']").attr("selected", 1);
+                $("#regionlist").multiselect("refresh");
+            }
+            $('#select_timeduration').val(3);
+            $('#select_timeduration').trigger('change');
+
+            $('#divfranchiseList').hide();
+            //$('#generalledgerList tbody').html = '';
+            //model.forEach(function (item) {
+            //    if (item.PerentAccountId == 0) {
+
+            //        var rowText = "";
+            //        rowText += '<tr class="odd gradeX"><td style="vertical-align: middle;"><a href="javascript:void(0)" style="display:none" id="lnkGL' + item.AccountId + '"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></td>'
+            //        rowText += '<td  style="text-align:center"><a onclick="btnopenforeditledger(' + item.AccountId + ',' + item.IsSubAccount + ');">' + item.AccountNo + '</a></td>'
+            //        rowText += '<td>' + item.AccountNo + ': ' + item.Name + '</td>'
+            //        rowText += '<td>' + item.Type + '</td>'
+            //        rowText += '<td style="text-align:right"><a href="javascript:void(0)" onclick="_bindTrasaction(' + item.AccountId + ',false,\'' + item.AccountNo + '\',\'' + item.Name + '\');">$ ' + parseFloat(item.Balance, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</a></td>'
+            //        rowText += '<td style="text-align:right">$ ' + parseFloat(item.BalanceTotal, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</td>'
+            //        rowText += '<td style="text-align:right"></td></tr>'
+
+
+            //        $('#generalledgerList tbody').append(rowText);
+            //        var hasChild=false;
+            //        model.forEach(function (item1) {
+            //            if(item1.PerentAccountId==item.AccountId){
+            //                hasChild=true;
+
+            //                //(ledgerid,issubaccount)
+            //                $('#generalledgerList tbody').append('<tr relchild="P'+item1.PerentAccountId+'" class="odd gradeX" style="display:none"><td></td><td style="padding-left: 30px;">' + item1.AccountNo + ': '+ item1.Name +'</td><td  style="text-align:center"><a  onclick="btnopenforeditledger('+item1.AccountId+','+item1.IsSubAccount+')">'+item1.AccountNo+'</a></td><td>'+item1.Type+'</td><td style="text-align:right"><a href="javascript:void(0)" onclick="_bindTrasaction('+item.AccountId+',true,\''+ item1.AccountNo +'\',\''+ item1.Name +'\');">$ '+ parseFloat( item1.Balance, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString()+'</a></td><td style="text-align:right">$ '+parseFloat( item1.BalanceTotal, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString()+'</td><td style="text-align:right"></td></tr>');
+            //            }
+            //        });
+
+            //        if(hasChild)
+            //        {
+            //            $('#lnkGL'+item.AccountId).show();
+            //            $('#lnkGL'+item.AccountId).click(function () {
+
+            //                $('#lnkGL'+item.AccountId+'>i').toggleClass( "fa-minus-circle", 1 );
+            //                $('[relchild="P'+item.AccountId+'"]').toggle();
+            //            });
+            //        }
+
+            //    }
+            //});
+
+
+
+
+            $('#divfranchiseList').show();
+
+            $('#CLadgerAccount_TypeId').change(function () {
+                var selAcctypeListId = $('#CLadgerAccount_TypeId').val();
+                if (selAcctypeListId == -1) {
+                    $("#popup_glmanagetype").modal({
+                        backdrop: 'static'
+                    });
+                }
+
+            });
+
+            $('#CLadgerAccount_PerentAccountId').attr("disabled", "disabled");
+
+            $('#CLadgerAccount_IsSubAccount').change(function () {
+                var selectsubaccount = $('#CLadgerAccount_PerentAccountId');
+
+                if ($(this).prop('checked')) { //3rd radiobutton
+                    selectsubaccount.removeAttr("disabled");
+                    selectsubaccount.attr("required", "required");
+                }
+                else {
+                    selectsubaccount.attr("disabled", "disabled");
+                    selectsubaccount.removeAttr("required");
+                    selectsubaccount.val('');
+                }
+            });
+
+
+
+            $('#btnaddnewLedgerAcct').click(function () {
+                $("#popup_glmanage").modal({
+                    backdrop: 'static'
+                });
+            });
+
+            //$('#btnaddnewLedgerAcct').click(function () {
+            //    $("#popup_glmanage").modal({
+            //        backdrop: 'static'
+            //    });
+            //});
+
+
+
+
+            $("#submit_form_generalledger").validate({
+                rules: {
+                    CLadgerAccount_Name: "required"
+                },
+                messages: {
+                    CLadgerAccount_Name: "Please specify your name"
+
+                }
+            });
+
+
+            $("#btnaddnewLedgerAcctSaveClose").click(function () {
+                if (!$("#submit_form_generalledger").valid())
+                    return;
+
+                var sURL = '@Url.Action("AddGeneralLedgerAccount", "company", new { area = "Portal" })'
+                $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    url: sURL, // Controller/View
+                    data: $('#submit_form_generalledger').serialize(),
+                    success: function (res) {
+                        $('#popup_glmanage').modal('hide');
+                        window.location.href = '@Url.Action("General", "Company", new { area = "Portal" })'
+                    },
+                    error: function (err) {
+                        alert('failure');
+                    },
+
+                });
+
+            });
+
+            $("#btnaddnewLedgerAcctSaveNew").click(function () {
+
+                if (!$("#submit_form_generalledger").valid())
+                    return;
+
+                var sURL = '@Url.Action("AddGeneralLedgerAccount", "Company", new { area = "Portal" })'
+                $.ajax(
+                {
+                    type: "POST",
+                    url: sURL,
+                    data: $('#submit_form_generalledger').serialize(),
+                    success: function (res) {
+                        $('#CLadgerAccount_AccountId').val(0);
+                        $('#CLadgerAccount_TypeId').val('');
+                        $('#CLadgerAccount_AccountNo').val('');
+                        $('#CLadgerAccount_Name').val('');
+                        $('#CLadgerAccount_PerentAccountId').val('');
+                        $('#CLadgerAccount_Description').val('');
+
+                        var result = '';
+                        result += '<option value="">Select</option>';
+                        for (var i = 0, iL = res.length; i < iL; i++) {
+                            if (res[i].Selected == true)
+                                result += '<option Selected  value="' + res[i].Value + '">' + res[i].Text + '</option>';
+                            else
+                                result += '<option  value="' + res[i].Value + '">' + res[i].Text + '</option>';
+                        }
+                        $("#CLadgerAccount_PerentAccountId").html(result);
+                    },
+                    error: function (err) {
+                        console.log('failure');
+                    },
+
+                });
+
+            });
+            $("#btnaddnewLedgerAcctTypeSave").click(function () {
+
+                if (!$("#submit_form_generalledgerType").valid())
+                    return;
+
+
+                var sURL = '@Url.Action("AddGeneralLedgerAccountType", "company", new { area = "Portal" })'
+                $.ajax(
+                {
+                    type: "POST",
+                    url: sURL,
+                    data: $('#submit_form_generalledgerType').serialize(),
+                    success: function (res) {
+
+                        var result = '';
+                        result += '<option value="">Select</option>';
+                        for (var i = 0, iL = res.length; i < iL; i++) {
+                            if (res[i].Selected == true)
+                                result += '<option Selected  value="' + res[i].Value + '">' + res[i].Text + '</option>';
+                            else
+                                result += '<option  value="' + res[i].Value + '">' + res[i].Text + '</option>';
+                        }
+                        $("#CLadgerAccount_TypeId").html(result);
+                        $('#popup_glmanagetype').modal('hide');
+                    },
+                    error: function (err) {
+                        console.log('failure');
+                    },
+
+                });
+
+            });
+
+
+            _bindTransactionsForCustomerTransaction();
+            $('#btnExportInExcel').click(function (e) {
+
+                var spnStartDate = $("#spnStartDate").text();
+                var spnEndDate = $("#spnEndtDate").text();
+                var _monthVal = $('#monthlist').val();
+                var _yearVal = $('#yearlist').val();
+
+                var _debitAmount = 0.0;
+                var _creditAmount = 0.0;
+
+                var strurl = '@Url.Action("ExportExcelGeneralLedgerDatailnew", "Company", new { area = "Portal" })?selectedRegion=' + $("#regionlist").val() + '&StartDate=' + spnStartDate + '&EndDate=' + spnEndDate + '&month=' + _monthVal + '&year=' + _yearVal;
+
+                window.location.href = strurl;
+
+            });
+
+            $('#btnExportInExcelOld').click(function (e) {
+
+                $.blockUI()
+                var spnStartDate = $("#spnStartDate").text();
+                var spnEndDate = $("#spnEndtDate").text();
+                var _monthVal = $('#monthlist').val();
+                var _yearVal = $('#yearlist').val();
+
+                var _debitAmount = 0.0;
+                var _creditAmount = 0.0;
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("ExportExcelGeneralLedgerDatail", "Company", new { area = "Portal" })?selectedRegion=' + $("#regionlist").val() + '&StartDate=' + spnStartDate + '&EndDate=' + spnEndDate + '&month=' + _monthVal + '&year=' + _yearVal,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (res) {
+                        var strHTML = res;
+                        var ua = window.navigator.userAgent;
+                        var msie = ua.indexOf("MSIE ");
+
+                        var dt = new Date();
+                        var day = dt.getDate();
+                        var month = dt.getMonth() + 1;
+                        var year = dt.getFullYear();
+                        var hour = dt.getHours();
+                        var mins = dt.getMinutes();
+                        var postfix = month + "." + day + "." + year;
+                        //creating a temporary HTML link element (they support setting file names)
+                        var a = document.createElement('a');
+                        //getting data from our div that contains the HTML table
+                        var data_type = 'data:application/vnd.ms-excel';
+                        //var table_div = document.getElementById('dvData');
+                        //var table_html = table_div.outerHTML.replace(/ /g, '%20');
+                        a.href = data_type + ', ' + encodeURIComponent(strHTML);
+                        //setting the file name
+                        a.download = 'GeneralAccountDetails_' + postfix + '.xls';
+                        //triggering the function
+                        a.click();
+                        //just in case, prevent default behaviour
+                        e.preventDefault();
+                    }
+                });
+            });
+
+            $('#chkDebit').change(function () {
+                _bindTrasaction($("#hdnledgerid").val(), $("#hdnissubaccount").val(), $("#hdnnu").val(), $("#hdnname").val());
+            });
+            $('#chkCredit').change(function () {
+                _bindTrasaction($("#hdnledgerid").val(), $("#hdnissubaccount").val(), $("#hdnnu").val(), $("#hdnname").val());
+            });
+
+        });
+        function btnopenforeditledger(id, issub) {
+
+            var sURL = '@Url.Action("GetGeneralLedgerAccountForEdit", "company", new { area = "Portal" })'
+            $.ajax(
+            {
+                type: "GET", //HTTP POST Method
+                url: sURL, // Controller/View
+                data: { 'accid': id, 'issubacct': issub },
+                success: function (res) {
+                    $('#CLadgerAccount_AccountId').val(res.AccountId);
+
+                    $('#CLadgerAccount_AccountNo').val(res.AccountNo);
+                    $('#CLadgerAccount_Name').val(res.Name);
+
+                    if (res.IsSubAccount) {
+                        $('#CLadgerAccount_IsSubAccount').attr("checked", "checked");
+                        $('#CLadgerAccount_PerentAccountId').val(res.PerentAccountId);
+                        $('#CLadgerAccount_PerentAccountId').removeAttr("disabled");
+                    }
+                    else {
+                        $('#CLadgerAccount_PerentAccountId').val('');
+                        $('#CLadgerAccount_IsSubAccount').removeAttr("checked");
+                        $('#CLadgerAccount_PerentAccountId').attr("disabled", "disabled");
+                    }
+
+                    $('#CLadgerAccount_TypeId').val(res.TypeId);
+                    $('#CLadgerAccount_Description').val(res.Description);
+                    $("#popup_glmanage").modal({ backdrop: 'static' });
+                },
+                error: function (err) {
+                    alert('failure');
+                },
+            });
+
+        };
+
+
+        function _bindTrasaction(ledgerid, issubaccount, nu, name) {
+            $.blockUI();
+            $("#hdnledgerid").val(ledgerid);
+            $("#hdnissubaccount").val(issubaccount);
+            $("#hdnnu").val(nu);
+            $("#hdnname").val(name);
+            $("#filterDC").show();
+            $('#spnladgeraccountnumber').html(nu);
+            $('#spnladgeraccountname').html(name);
+
+            $('#divfranchiseList').hide();
+            $('#divtrasactionList').show();
+
+            var spnStartDate = $("#spnStartDate").text();
+            var spnEndDate = $("#spnEndtDate").text();
+            var _monthVal = $('#monthlist').val();
+            var _yearVal = $('#yearlist').val();
+            var _typeD = true;
+            var _typeC = true;
+            if ($('#chkDebit').is(":checked") == true) {
+                _typeD = true;
+            }
+            else {
+                _typeD = false;
+            }
+            if ($('#chkCredit').is(":checked") == true) {
+                _typeC = true;
+            }
+            else {
+                _typeC = false;
+            }
+
+            $.ajax({
+                url: '@Url.Action("LadgerAccountTransactions", "company",new { area = "Portal" })?ledgerid=' + ledgerid + '&issubaccount=' + issubaccount + '&selectedRegion=' + $("#regionlist").val() + '&StartDate=' + spnStartDate + '&EndDate=' + spnEndDate + '&debit=' + _typeD + '&credit=' + _typeC + '&month=' + _monthVal + '&year=' + _yearVal,
+                success: function (res) {
+
+                    var tempRow = "";
+                    $('#accounttrasactionList tbody').html('');
+                    var vBalamt = 0;
+                    var vdebitBalamt = 0;
+                    var vcreditBalamt = 0;
+                    $.each(res, function (index, value) {
+                        tempRow = "";
+
+                        var amtBal = parseFloat(value.Amount);
+                        vBalamt = vBalamt + (value.AmountTypeListId == 2 ? parseFloat(value.Amount) : (-parseFloat(value.Amount)));
+
+                        if (value.AmountTypeListId == 2) {
+                            vdebitBalamt += parseFloat(value.Amount);
+                        } else {
+                            vcreditBalamt += parseFloat(value.Amount);
+                        }
+
+
+
+                        tempRow += '<tr><td style="text-align: center;font-size: 11px;">' + moment(new Date(parseInt(value.TransactionDate.substr(6)))).format("MM/DD/YYYY") + '</td>'
+                        tempRow += '<td style="text-align: center;font-size: 11px;">' + value.TransactionTypeName + '</td>';
+                        tempRow += '<td style="text-align: center;font-size: 11px;">' + ((value.TransactionTypeId == 1 || value.TransactionTypeId == 5) ? ('<a href="javascript:void(0)" onclick="showInvoiceDetail(' + value.RefId + ')">' + value.TransactionNumber + '</a>') : value.TransactionNumber) + '</td>';
+                        tempRow += '<td style="text-align: center;font-size: 11px;">' + value.Number + '</td>';
+                        tempRow += '<td style="text-align: left;font-size: 11px;">' + value.Payee_Payer + '</td>';
+                        tempRow += '<td style="text-align: left;font-size: 11px;">' + (value.TransactionDescription != null ? value.TransactionDescription : '') + '</td>';
+                        tempRow += '<td style="text-align: right;font-size: 11px;">$ ' + (value.AmountTypeListId == 2 ? value.Amount : 0.00).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</td>';
+                        tempRow += '<td style="text-align: right;font-size: 11px;">$ ' + (value.AmountTypeListId == 1 ? value.Amount : 0.00).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</td>';
+                        tempRow += '<td style="text-align: right;font-size: 11px;' + (vBalamt < 0 ? 'color:red' : '') + '">$ ' + vBalamt.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</td></tr>';
+                        $('#accounttrasactionList tbody').append(tempRow);
+                    });
+                    $('#accounttrasactionList tfoot').html('');
+                    tempRow = "";
+                    tempRow += '<tr><td style="text-align: center;font-size: 11px;"></td>'
+                    tempRow += '<td style="text-align: center;font-size: 11px;"></td>';
+                    tempRow += '<td style="text-align: center;font-size: 11px;"></td>';
+                    tempRow += '<td style="text-align: center;font-size: 11px;"></td>';
+                    tempRow += '<td style="text-align: left;font-size: 11px;"></td>';
+                    tempRow += '<td style="text-align: left;font-size: 11px;">Total</td>';
+                    tempRow += '<td style="text-align: right;font-size: 11px;">$ ' + parseFloat(vdebitBalamt, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</td>';
+                    tempRow += '<td style="text-align: right;font-size: 11px;">$ ' + parseFloat(vcreditBalamt, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</td>';
+                    tempRow += '<td style="text-align: right;font-size: 11px;"></td></tr>';
+                    $('#accounttrasactionList tfoot').append(tempRow);
+
+
+
+                    $.unblockUI();
+                },
+                error: function () {
+                    $.unblockUI();
+                }
+            });
+
+
+        }
+        function _bindTrasactionBack() {
+            $("#filterDC").hide();
+            $('#spnladgeraccountnumber').html('');
+            $('#spnladgeraccountname').html('');
+            $('#divfranchiseList').show();
+            $('#divtrasactionList').hide();
+            $('#accounttrasactionList tbody').html('');
+            $("#chkDebit").prop('checked', true);
+            $("#chkCredit").prop('checked', true);
+        }
+        function showInvoiceDetail(id) {
+            var sURL = '@Url.Action("InvoiceDetail", "AccountReceivable", new { area = "Portal" })?Id=' + id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_invoicedetail').html(data);
+                    $("#modal_invoicedetail").modal({ backdrop: 'static' });
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+        function _bindTransactionsForCustomerTransaction() {
+            $.blockUI()
+            var spnStartDate = $("#spnStartDate").text();
+            var spnEndDate = $("#spnEndtDate").text();
+            var _monthVal = $('#monthlist').val();
+            var _yearVal = $('#yearlist').val();
+            debugger;
+            $('#generalledgerList tbody').html('');
+            var _debitAmount = 0.0;
+            var _creditAmount = 0.0;
+            $.ajax({
+                url: '@Url.Action("GeneralLedgerList", "Company", new { area = "Portal" })?selectedRegion=' + $("#regionlist").val() + '&StartDate=' + spnStartDate + '&EndDate=' + spnEndDate + '&month=' + _monthVal + '&year=' + _yearVal,
+                success: function (res) {
+
+                    $('#generalledgerList tbody').html('');
+                    res.forEach(function (item) {
+                        var rowText = "";
+                        rowText += '<tr class="odd gradeX"><td style="vertical-align: middle;"><a href="javascript:void(0)" style="display:none" id="lnkGL' + item.AccountId + '"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></td>'
+                        rowText += '<td  style="text-align:center"><a onclick="btnopenforeditledger(' + item.AccountId + ',false);">' + item.AccountNumber + '</a></td>'
+                        rowText += '<td>' + item.AccountNumber + ': ' + item.AccountName + '</td>'
+                        rowText += '<td>' + item.TypeName + '</td>'
+                        rowText += '<td style="text-align:right"><a href="javascript:void(0)" onclick="_bindTrasaction(' + item.AccountId + ',false,\'' + item.AccountNumber + '\',\'' + item.AccountName + '\'); ">$ ' + parseFloat(item.Debit, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</a></td>'
+                        rowText += '<td style="text-align:right"><a href="javascript:void(0)" onclick="_bindTrasaction(' + item.AccountId + ',false,\'' + item.AccountNumber + '\',\'' + item.AccountName + '\');">$ ' + parseFloat(item.Credit, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</a></td>'
+
+                        if (parseFloat(item.Debit.toString(), 10) < parseFloat(item.Credit.toString(), 10)) {
+                            rowText += '<td style="text-align:right">$ 0.00</td>'
+                            rowText += '<td style="text-align:right">$ ' + (parseFloat(item.Credit.toString(), 10) - parseFloat(item.Debit.toString(), 10)).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</td>'
+                        } else {
+                            rowText += '<td style="text-align:right">$ ' + (parseFloat(item.Debit.toString(), 10) - parseFloat(item.Credit.toString(), 10)).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</td>'
+                            rowText += '<td style="text-align:right">$ 0.00</td>'
+                        }
+
+                        rowText += '<td style="text-align:right"></td></tr>'
+
+                        _debitAmount += parseFloat(item.Debit, 10)
+                        _creditAmount += parseFloat(item.Credit, 10)
+                        $('#generalledgerList tbody').append(rowText);
+
+                        item.LadgerSubAccounts.forEach(function (item1) {
+                            var rowTextS = "";
+                            rowTextS += '<tr relchild="P' + item.AccountId + '" class="odd gradeX" style="display:none"><td></td>'
+                            rowTextS += '<td  style="text-align:center"><a  onclick="btnopenforeditledger(' + item1.SubAccountId + ',true)">' + item1.SubAccountNumber + '</a></td>'
+                            rowTextS += '<td style="padding-left: 30px;">' + item1.SubAccountNumber + ': ' + item1.SubAccountName + '</td>'
+                            rowTextS += '<td>' + item.TypeName + '</td>'
+                            rowTextS += '<td style="text-align:right"><a href="javascript:void(0)" onclick="_bindTrasaction(' + item1.SubAccountId + ',true,\'' + item1.SubAccountNumber + '\',\'' + item1.SubAccountName + '\'); ">$ ' + parseFloat(item1.Debit, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</a></td>'
+                            rowTextS += '<td style="text-align:right"><a href="javascript:void(0)" onclick="_bindTrasaction(' + item1.SubAccountId + ',true,\'' + item1.SubAccountNumber + '\',\'' + item1.SubAccountName + '\');">$ ' + parseFloat(item1.Credit, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</a></td>'
+
+                            if (parseFloat(item1.Debit.toString(), 10) < parseFloat(item1.Credit.toString(), 10)) {
+                                rowTextS += '<td style="text-align:right">$ 0.00</td>'
+                                rowTextS += '<td style="text-align:right">$ ' + (parseFloat(item1.Credit.toString(), 10) - parseFloat(item1.Debit.toString(), 10)).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</td>'
+                            } else {
+                                rowTextS += '<td style="text-align:right">$ ' + (parseFloat(item1.Debit.toString(), 10) - parseFloat(item1.Credit.toString(), 10)).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</td>'
+                                rowTextS += '<td style="text-align:right">$ 0.00</td>'
+                            }
+
+
+                            rowTextS += '<td style="text-align:right"></td></tr>'
+                            $('#generalledgerList tbody').append(rowTextS);
+                        });
+
+                        if (item.LadgerSubAccounts.length > 0) {
+                            $('#lnkGL' + item.AccountId).show();
+                            $('#lnkGL' + item.AccountId).click(function () {
+
+                                $('#lnkGL' + item.AccountId + '>i').toggleClass("fa-minus-circle", 1);
+                                $('[relchild="P' + item.AccountId + '"]').toggle();
+                            });
+                        }
+                    });
+                    $('#generalledgerList tfoot').html('');
+                    var rowTextSF = "";
+                    rowTextSF += '<tr style="background-color: #e7ecf1;">'
+                    rowTextSF += '<td colspan="4" style="text-align:right">Total</td>'
+                    rowTextSF += '<td style="text-align:right">$ ' + parseFloat(_debitAmount.toString(), 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</td>'
+                    rowTextSF += '<td style="text-align:right">$ ' + parseFloat(_creditAmount.toString(), 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</td>'
+
+                    if (parseFloat(_debitAmount.toString(), 10) < parseFloat(_creditAmount.toString(), 10)) {
+                        rowTextSF += '<td style="text-align:right">$ 0.00</td>'
+                        rowTextSF += '<td style="text-align:right">$ ' + (parseFloat(_creditAmount.toString(), 10) - parseFloat(_debitAmount.toString(), 10)).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</td>'
+                    } else {
+                        rowTextSF += '<td style="text-align:right">$ ' + (parseFloat(_debitAmount.toString(), 10) - parseFloat(_creditAmount.toString(), 10)).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</td>'
+                        rowTextSF += '<td style="text-align:right">$ 0.00</td>'
+                    }
+
+
+
+                    rowTextSF += '<td style="text-align:right"></td>'
+                    rowTextSF += '</tr>'
+                    $('#generalledgerList tfoot').append(rowTextSF);
+                    $.unblockUI()
+
+                },
+                error: function () { }
+            });
+
+        }
+
+
+        $('#select_timeduration').change(function () {
+            $('#spnStartDate').html('');
+            $('#spnEndtDate').html('');
+            $('#divspandate').show();
+            $('#divSD').hide();
+            $('#divED').hide();
+            $('#divmonth').hide();
+            $('#divyear').hide();
+            $('#monthlist').val('');
+            $('#yearlist').val('');
+            switch (parseInt($(this).val())) {
+                case 1:
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = moment().endOf('isoWeek').toString();
+                    break;
+                case 2:
+                    //code block
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 3:
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                    break;
+                case 4:
+                    //code block
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 5:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = moment().endOf('quarter').toString();
+                    break;
+                case 6:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 7:
+                    //code block
+                    firstDay = moment().startOf('year').toString();;
+                    lastDay = moment().endOf('year').toString();
+                    break;
+                case 8:
+                    //code block
+                    firstDay = moment().startOf('year').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 9:
+                    //code block
+                    firstDay = moment().toString();
+                    lastDay = moment().toString();
+                    break;
+                case 10:
+                    //code block
+                    firstDay = moment().add(-1, 'days').toString();
+                    lastDay = moment().add(-1, 'days').toString();
+                    break;
+                case 11:
+                    //code block
+                    firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                    lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                    break;
+                case 12:
+                    //code block
+                    firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                    break;
+                case 13:
+                    //code block
+                    firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                    lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                    break;
+                case 14:
+                    //code block
+                    firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                    lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                    break;
+                case 15:
+                    //code block
+                    $('#divspandate').hide();
+                    $('#divSD').show();
+                    $('#divED').show();
+                    $('#txtStartDate').val('');
+                    $('#txtEndtDate').val('')
+                    break;
+                case 16:
+                    //code block
+                    $('#divspandate').hide();
+                    $('#divSD').hide();
+                    $('#divED').hide();
+                    $('#divmonth').show();
+                    $('#divyear').show();
+                    break;
+                default:
+                    //code block
+            }
+            $('#spnStartDate').html(moment(firstDay).format('L'));
+            $('#spnEndtDate').html(moment(lastDay).format('L'));
+
+            debugger;
+            if (parseInt($(this).val()) != 15 && parseInt($(this).val()) != 16) {
+                _bindTransactionsForCustomerTransaction();
+
+                if ($('#divtrasactionList').css("display") == "block") {
+                    if ($("#hdnledgerid").val() != "0") {
+                        _bindTrasaction($("#hdnledgerid").val(), $("#hdnissubaccount").val(), $("#hdnnu").val(), $("#hdnname").val());
+                    }
+                }
+
+            }
+        });
+
+        $('#txtStartDate').change(function () {
+            $('#spnStartDate').html($(this).val());
+            if ($('#txtStartDate').val() != '' && $('#txtEndtDate').val() != '') {
+                _bindTransactionsForCustomerTransaction();
+
+                if ($('#divtrasactionList').css("display") == "block") {
+                    if ($("#hdnledgerid").val() != "0") {
+                        _bindTrasaction($("#hdnledgerid").val(), $("#hdnissubaccount").val(), $("#hdnnu").val(), $("#hdnname").val());
+                    }
+                }
+            }
+        });
+        $('#txtEndtDate').change(function () {
+            $('#spnEndtDate').html($(this).val());
+            if ($('#txtStartDate').val() != '' && $('#txtEndtDate').val() != '') {
+                _bindTransactionsForCustomerTransaction($('#spnStartDate').text(), $('#spnEndtDate').text());
+
+                if ($('#divtrasactionList').css("display") == "block") {
+                    if ($("#hdnledgerid").val() != "0") {
+                        _bindTrasaction($("#hdnledgerid").val(), $("#hdnissubaccount").val(), $("#hdnnu").val(), $("#hdnname").val());
+                    }
+                }
+            }
+        });
+
+        $('#monthlist').change(function () {
+            $('#spnStartDate').html('');
+            if ($('#monthlist').val() != '' && $('#yearlist').val() != '')
+                _bindTransactionsForCustomerTransaction();
+
+            if ($('#divtrasactionList').css("display") == "block") {
+                if ($("#hdnledgerid").val() != "0") {
+                    _bindTrasaction($("#hdnledgerid").val(), $("#hdnissubaccount").val(), $("#hdnnu").val(), $("#hdnname").val());
+                }
+            }
+        });
+        $('#yearlist').change(function () {
+            $('#spnEndtDate').html('');
+            if ($('#monthlist').val() != '' && $('#yearlist').val() != '')
+                _bindTransactionsForCustomerTransaction();
+
+            if ($('#divtrasactionList').css("display") == "block") {
+                if ($("#hdnledgerid").val() != "0") {
+                    _bindTrasaction($("#hdnledgerid").val(), $("#hdnissubaccount").val(), $("#hdnnu").val(), $("#hdnname").val());
+                }
+            }
+        });
+
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+

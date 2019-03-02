@@ -1,0 +1,335 @@
+﻿@model List<JKViewModels.Franchise.FranCallModel>
+@using JKViewModels.Franchisee;
+@{ 
+    FranchiseeDetailViewModel FranchiseeModel = new FranchiseeDetailViewModel();
+    if (ViewBag.FranchiseeInfo != null)
+    {
+        FranchiseeModel = (FranchiseeDetailViewModel)ViewBag.FranchiseeInfo;
+    }
+
+    JKViewModels.Customer.FullCustomerViewModel CustModel = new JKViewModels.Customer.FullCustomerViewModel();
+    if (ViewBag.CustomerID != 0)
+    {
+        CustModel = (JKViewModels.Customer.FullCustomerViewModel)ViewBag.CustomerInfo;
+    }
+}
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+    </style>
+}
+
+<div class="modal fade custom-model custom-form-design" id="modal_FranchiseeCall" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:869px">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close"  aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;" onclick="closeFranchiseeCallPopup()"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Franchisee Call
+                </h4>
+            </div>
+            <div class="modal-body clsmodelbody" style="padding: 0px 30px 15px 30px;">
+                <div class="form-group">
+                    <div class="row" style="padding-top: 5px;">
+                        <div class="col-md-12">
+                            <input type="hidden" id="hdnFranchiseeIdFC" name="hdnFranchiseeIdFC" value="@ViewBag.FranchiseeId" />
+                            @if (Convert.ToInt32(ViewBag.callfrom) == 0)
+                            {
+                                <input type="button" class="btn btn-custom btn btn-primary" onclick="ShowLogCallPopup(@ViewBag.FranchiseeId,@ViewBag.CustomerId);" value="Log Call" style="margin-right:20px;" />
+                            }                            
+                            <input type="button" class="btn btn-custom btn btn-primary" value="Franchisee Info" style="margin-right:20px;" onclick="OpenEditFranchisePopup(@ViewBag.FranchiseeId)" />
+                            @*<input type="button" class="btn btn-custom btn btn-primary" value="Close Window" onclick="btncloseFranchiseecall();" id="btncloseFranchiseecall" style="margin-right:20px;" />*@
+                        </div>
+                    </div>
+                </div>
+                <hr style="margin-bottom: 1px;margin-top:1px;" />
+                <div class="form-group">
+                    <div class="row">
+                        <input type="hidden" name="hdnFranCustId" id="hdnFranCustId" value="@ViewBag.CustomerId" />
+                        <div class="col-md-12">
+                            <div class="col-md-5 control-label" style="padding-top: 0px;text-align:left;"><b>Franchisee No:</b>&nbsp;@FranchiseeModel.FranchiseeNo</div>                                                     
+                            <div class="col-md-3 control-label" style="padding-top: 0px;text-align:left;"><b>Phone:</b>&nbsp;@((FranchiseeModel.Phone != null && FranchiseeModel.Phone != null && FranchiseeModel.Phone != "") ? string.Format("{0:(###) ###-####}", Convert.ToDecimal(FranchiseeModel.Phone.Trim().Replace(" ", "").Replace("-", "").Replace(")", "").Replace("(", ""))) : string.Empty) </div>
+                            <div class="col-md-4 control-label" style="padding-top: 0px;text-align:left;"><b>Cell:</b>&nbsp;@((FranchiseeModel.Cell != null && FranchiseeModel.Cell != null && FranchiseeModel.Cell != "") ? string.Format("{0:(###) ###-####}", Convert.ToDecimal(FranchiseeModel.Cell.Trim().Replace(" ", "").Replace("-", "").Replace(")", "").Replace("(", ""))) : string.Empty)</div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-5 control-label" style="padding-top: 0px;text-align:left;"><b>Franchisee Name:</b> @FranchiseeModel.Name</div>
+                            <div class="col-md-7 control-label" style="padding-top: 0px;text-align:left;"><b>Email:</b>&nbsp;<a href="mailto:@FranchiseeModel.CEmailAddress">@FranchiseeModel.CEmailAddress</a> </div>                            
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-5 control-label" style="padding-top: 0px;text-align:left;"><b>Date Sign:</b>&nbsp;@(FranchiseeModel.DateSign != null ? Convert.ToDateTime(FranchiseeModel.DateSign).ToString("dd-MM-yyyy") : string.Empty)</div>
+                            <div class="col-md-7 control-label" style="padding-top: 0px;text-align:left;"><b>Plan Type:</b>&nbsp;@FranchiseeModel.PlanType</div>                            
+                        </div>                         
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-5 control-label" style="padding-top: 0px;text-align:left;"><b>Customer No:</b>&nbsp;@(CustModel.CustomerViewModel != null ? CustModel.CustomerViewModel.CustomerNo : string.Empty) </div>
+                            <div class="col-md-7 control-label" style="padding-top: 0px;text-align:left;"><b>Phone:</b>&nbsp;@((CustModel.MainPhone != null && CustModel.MainPhone.Phone1 != null && CustModel.MainPhone.Phone1 != "") ? string.Format("{0:(###) ###-####}", Convert.ToDecimal(CustModel.MainPhone.Phone1.Trim().Replace(" ", "").Replace("-", "").Replace(")", "").Replace("(", ""))) : string.Empty)</div>                            
+                        </div>                        
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-7 control-label" style="padding-top: 0px;text-align:left;"><b>Customer Name:</b>&nbsp;@(CustModel.CustomerViewModel != null ? CustModel.CustomerViewModel.Name : string.Empty)</div>
+                            <div class="col-md-5 control-label" style="padding-top: 0px;text-align:left;"><b></b>&nbsp;</div>                            
+                        </div>
+                    </div>
+                    <div class="row" style="padding:0px;">
+                        <div class="col-md-4">
+                            <table style="width:100%;">
+                                <tbody>
+                                    <tr>
+                                        <td style="width:10%;">
+                                            <label class="control-label"><b>Notes:</b></label>&nbsp;&nbsp;
+                                        </td>
+                                        <td>
+                                            <input type="hidden" id="hdnNoteIdFC" value="@(ViewBag.notesDetailId != null ?ViewBag.notesDetailId:0)" />
+                                            <textarea class="input-sm form-control" id="txtnotesFC" name="txtnotesFC" rows="1" style="min-width:400px;" disabled="disabled">@ViewBag.custNotes</textarea>
+                                        </td>
+                                        <td style="width:10%;">
+                                            <a class="btn btn-custom btn btn-primary" style="margin-left:16px;" id="_editFC" onclick="onClickEditFC()">Edit</a>
+                                        </td>
+                                        <td style="width:10%;">
+                                            <a class="btn btn-custom btn btn-primary" style="margin-left:16px;display:none;" id="_saveFC" onclick="onClickSaveFC()">Save</a>
+                                        </td>
+                                        <td style="width:10%;">
+                                            <a class="btn btn-custom btn btn-primary" style="margin-left:16px;display:none;" id="_cancelFC" onclick="onClickCancelFC()">Cancel</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>                                                 
+                <hr style="margin-bottom: 1px;margin-top:1px;" />
+                <div class="form-group">
+                    <div class="row">
+                        <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                            <thead>
+                                <tr>
+                                    <th style="width:70px;text-align:center">Date/Time</th>
+                                    <th style="text-align:center;width:65px;">Status</th>
+                                    <th style="width:100px;text-align:center">Spoke With</th>
+                                    <th style="width:50px;text-align:center">Action</th>
+                                    <th style="width:80px;text-align:center">Call Back</th>
+                                    <th style="width:130px;text-align:center">Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td style="text-align:left;">
+                                        @(item.call_date != null ? Convert.ToDateTime(item.call_date).ToString("MM/dd/yyyy"):string.Empty) 
+                                        @*@(item.call_time != null ? item.call_time.ToString() :string.Empty)*@
+                                            @if (item.call_time != null)
+                                            {
+                                                var TMspan = DateTime.Parse(item.call_time.ToString());
+                                                <text>&nbsp;&nbsp;@(TMspan != null ? TMspan.ToString("hh:mm tt") : string.Empty)</text>
+                                            }
+                                         </td>
+                                        <td style="white-space:pre-line;text-align:center;">@item.StatusResultListName</td>
+                                        <td style="text-align:center">@item.spoke_with</td>
+                                        <td style="text-align:center">@item.action</td>
+                                        <td style="text-align:center">@item.call_back  &nbsp;&nbsp;@item.call_btime</td>
+                                        <td>@item.comments</td>
+                                    </tr>
+                                }
+                                @*<tr>
+                                    <td style="text-align:center">4/30/2018 1:57:30 PM</td>
+                                    <td style="white-space:pre-line">Snt Letter</td>
+                                    <td style="text-align:right"></td>
+                                    <td style="text-align:left">Emailed Poss CB Letter</td>
+                                    <td style="text-align:center">Call Back</td>
+                                    <td>System Emailed Possible CB Letter 3/2018 invoices to adjeck0108@gmail.com</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:center">4/30/2018 1:57:30 PM</td>
+                                    <td style="white-space:pre-line">Snt Letter</td>
+                                    <td style="text-align:right"></td>
+                                    <td style="text-align:left">Emailed Poss CB Letter</td>
+                                    <td style="text-align:center">Call Back</td>
+                                    <td>System Emailed Possible CB Letter 3/2018 invoices to adjeck0108@gmail.com</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:center">4/30/2018 1:57:30 PM</td>
+                                    <td style="white-space:pre-line">Snt Letter</td>
+                                    <td style="text-align:right"></td>
+                                    <td style="text-align:left">Emailed Poss CB Letter</td>
+                                    <td style="text-align:center">Call Back</td>
+                                    <td>System Emailed Possible CB Letter 3/2018 invoices to adjeck0108@gmail.com</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:center">4/30/2018 1:57:30 PM</td>
+                                    <td style="white-space:pre-line">Snt Letter</td>
+                                    <td style="text-align:right"></td>
+                                    <td style="text-align:left">Emailed Poss CB Letter</td>
+                                    <td style="text-align:center">Call Back</td>
+                                    <td>System Emailed Possible CB Letter 3/2018 invoices to adjeck0108@gmail.com</td>
+                                </tr>*@
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade custom-model custom-form-design" id="ModalEditFranchisePopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:645px">
+        <div class="modal-content" style="border-radius: 8px;" id="RenderEditFranchiseDetails">
+        </div>
+    </div>
+</div>
+
+<div class="form-horizontal" action="" id="FranchiseLogCallPopup"></div>
+
+
+<script type="text/javascript">
+    function OpenEditFranchisePopup(Id) {
+        $.blockUI()
+        var sURL = '@Url.Action("RenderEditFranchiseDetailsPopup", "Franchise", new { area = "Portal" })?id=' + Id;
+
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#RenderEditFranchiseDetails').html(data);
+                $("#ModalEditFranchisePopup").modal({ backdrop: 'static' });
+                $.unblockUI();
+            },
+            error: function () {
+                alert("Content load failed.");
+                $.unblockUI();
+            }
+        });
+
+        //$("#modal_CustomerContractPopup").modal({ backdrop: 'static' });
+    }
+    function ShowLogCallPopup(FranchiseeId, CustomerId)
+    {
+
+        var sURL = '@Url.Action("GetLogCall", "Customer", new { area = "Portal" })' + "?FranchiseeId=" + FranchiseeId + "&CustomerId=" + CustomerId;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {                
+                $('#FranchiseLogCallPopup').html(data);
+                $("#modal_LogCall").modal({ backdrop: 'static' });
+                $(".date-picker").datepicker();
+                $(".timepicker").timepicker();
+                
+            },
+            error: function () {
+                alert("Error occured!!")
+            }
+        });
+    }
+    function closeFranchiseeCallPopup() {
+        $("#modal_FranchiseeCall").modal("hide");
+        //$('.modal-backdrop').remove();
+    }
+    function onClickEditFC() {
+        $("#txtnotesFC").prop("disabled", false);
+        $("#_editFC").hide();
+        $("#_saveFC").show();
+        $("#_cancelFC").show();
+    }
+    function onClickSaveFC() {
+        $("#_editFC").show();
+        $("#_saveFC").hide();
+        $("#_cancelFC").hide();
+        $("#txtnotesFC").prop("disabled", true);
+
+        var _id = $("#hdnNoteIdFC").val();
+        var _notes = $("#txtnotesFC").val();
+        var _classId = $("#hdnFranchiseeIdFC").val();
+
+        var o = { Id: _id, ClassId: _classId, Notes: _notes, _type: 2 };
+
+        var sURL = '@Url.Action("SaveCustomerNotesDetails", "Customer", new { area = "Portal" })';
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            data: o,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                if (data != null) {
+                    $("#hdnNoteIdFC").val(data);
+                }
+            },
+            error: function () {
+                alert("Content load failed.");
+            }
+        });
+    }
+    function onClickCancelFC() {
+        $("#_editFC").show();
+        $("#_saveFC").hide();
+        $("#_cancelFC").hide();
+        $("#txtnotesFC").prop("disabled", true);
+        $("#txtnotesFC").val('');
+        $("#txtnotesFC").val('@ViewBag.custNotes');
+    }
+</script>

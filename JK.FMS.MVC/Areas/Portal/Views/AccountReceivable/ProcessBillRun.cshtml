@@ -1,0 +1,116 @@
+﻿@model JKViewModels.AccountReceivable.BillRunViewModel
+
+@{
+    ViewBag.Title = "Process Bill Run";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <style type="text/css">
+        .jkcustom-page-title {
+            font-size: 18px;
+            padding: 3px;
+            color: #fff !important;
+            background: #3598dc !important;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .jkcustom-form-table {
+            width: 100%;
+        }
+
+            .jkcustom-form-table tr {
+            }
+
+                .jkcustom-form-table tr > td {
+                    padding-bottom: 3px;
+                    padding-top: 3px;
+                }
+
+        .form-group.form-md-line-input {
+            position: relative;
+            margin: 0 0 15px;
+            padding-top: 20px;
+        }
+    </style>
+}
+
+@using (Html.BeginForm("ProcessBillRun", "AccountReceivable", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    List<SelectListItem> billMonthsList = (List<SelectListItem>)ViewBag.billMonthsList;
+    List<SelectListItem> billYearList = (List<SelectListItem>)ViewBag.billYearList;
+    <div class="col-md-12">
+        <div class="jkcustom-page-title">
+            Bill Run
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <div class="form-horizontal panel panel-default  center-body text-center">
+            <div class="panel-body">
+
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <strong>
+                            @Html.LabelFor(model => model.billMonth,  new { @class = "control-label" })
+                            <span class="required">*</span>
+                        </strong>
+                    </div>
+                    <div class="col-md-3">
+                        @Html.DropDownList("billMonths", billMonthsList, "-Select One-", new { @class = "form-control" } )
+                        @Html.ValidationMessageFor(model => model.billMonth, "", new { @class = "text-danger" })
+
+
+                    </div>
+                    <div class="col-md-3">
+                        @Html.DropDownList("billYears", billYearList, "-Select One-", new {  @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.billYear, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.CheckBoxFor(model => model.applyCPIIncrease)Apply CPI Increase
+                </div>
+                <input type="submit" value="Generate" class="btn btn-default btn-info" />
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+}
+
+<div class="panel display-none" id="divSummary">
+    <button data-toggle="collapse" data-target="#summary" id="btnShowHideSummary" class="display-none">Click Details</button>
+
+    <div id="summary" class="collapse">
+
+    </div>
+
+</div>
+
+
+<script>
+
+    $("#billYears").change(function () {
+
+        var billYear = this.value;
+        var billMonth = $('#billMonths').val();
+
+        if (billMonth.length > 0) {
+            var end = this.value;
+            var firstDropVal = $('#pick').val();
+        }
+    });
+
+
+</script>
+
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+

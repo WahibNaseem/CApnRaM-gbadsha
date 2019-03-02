@@ -1,0 +1,256 @@
+﻿@model JKViewModels.CRM.CRMBiddingViewModel
+@using JKViewModels.CRM
+@{
+    var bidContact = new CRMContactViewModel();
+    var bidSch = new CRMScheduleViewModel();
+    var CRMDocument = new List<CRMDocumentViewModel>();
+
+    var request = HttpContext.Current.Request;
+    var address = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Authority);
+
+    if (ViewBag.bidContact != null)
+    {
+        bidContact = (CRMContactViewModel)ViewBag.bidContact;
+    }
+    if (ViewBag.bidSch != null)
+    {
+        bidSch = (CRMScheduleViewModel)ViewBag.bidSch;
+    }
+
+    if (ViewBag.AccountDocument != null)
+    {
+        CRMDocument = (List<CRMDocumentViewModel>)ViewBag.AccountDocument;
+        CRMDocument = CRMDocument.Where(w => w.FileTypeListId == 1 || w.FileTypeListId == 2 || w.FileTypeListId == 4).ToList();
+    }
+}
+
+<div class="modal-header modal-custom-header" id="biddingdetail_modalview_header">
+    <button type="button" class="close modal-close-button" data-dismiss="modal" aria-hidden="true"></button>
+    <h4 class="modal-title">Bidding</h4>
+</div>
+<div class="modal-body" id="bidding detail_modalview_body">
+    <div class="row">
+        <div class="form-horizontal">
+            <div class="form-body">
+                @Html.Hidden("AccountDetailId", "", new { @id = "accountdetailid" })
+
+                <div class="form-group">
+                    <input type="checkbox" name="service" class="i - checks control-label col-md-1 aawork checkboxcontactinfo_accountworkbook" id="checkboxcontactinfo_accountworkbookpp" @(Model.AnalysisWorkBook == true ? "checked=checked" : string.Empty) disabled />
+                    <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                        <label for="select_accountanalysisbook" class="">Account Analysis</label>
+                    </div>
+                    <input type="checkbox" name="service" class="i - checks control-label col-md-1 aawork checkboxcontactinfo_BidSheetbook" id="checkboxcontactinfo_BidSheetbookpp" @(Model.IsBidSheet == true ? "checked=checked" : string.Empty) disabled />
+                    <div class="col-md-3" style="padding-left: 0px;padding-right: 0px;">
+                        <label for="select_BidSheetbook" class="">Bid Sheet</label>
+                    </div>
+                    <input type="checkbox" name="service" class="i - checks control-label col-md-1 aawork checkboxcontactinfo_Cleaningbook" id="checkboxcontactinfo_Cleaningbookpp" @(Model.IsCancellation == true ? "checked=checked" : string.Empty) disabled />
+                    <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                        <label for="select_Cleaningbook" class="">Cleaning Schedule</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    @foreach (var item in CRMDocument)
+                    {
+                        if (item.File_Name.Substring(item.File_Name.LastIndexOf('.') + 1) == "pdf")
+                        {
+                            <div class="col-md-1"></div>
+                            <div class="col-md-3">
+                                <a target="_blank" href="/CRM/CustomerSales/DownloadDocument?id=@item.CRM_DocumentId">
+                                    <img src="/Images/if_pdf.png">
+                                </a>
+                            </div>
+                        }
+                        else if (item.File_Name.Substring(item.File_Name.LastIndexOf('.') + 1) == "doc" || item.File_Name.Substring(item.File_Name.LastIndexOf('.') + 1) == "docx")
+                        {
+                            <div class="col-md-1"></div>
+                            <div class="col-md-3">
+                                <a target="_blank" href="/CRM/CustomerSales/DownloadDocument?id=@item.CRM_DocumentId">
+                                    <img src="/Images/if_Doc.png">
+                                </a>
+                            </div>
+                        }
+                        else if (item.File_Name.Substring(item.File_Name.LastIndexOf('.') + 1) == "xls" || item.File_Name.Substring(item.File_Name.LastIndexOf('.') + 1) == "xlsx" || item.File_Name.Substring(item.File_Name.LastIndexOf('.') + 1) == "xlsm")
+                        {
+                            <div class="col-md-1"></div>
+                            <div class="col-md-3">
+                                <a target="_blank" href="/CRM/CustomerSales/DownloadDocument?id=@item.CRM_DocumentId">
+                                    <img src="/Images/if_xls.png">
+                                </a>
+                            </div>
+                        }
+                        else if (item.File_Name.Substring(item.File_Name.LastIndexOf('.') + 1) == "txt")
+                        {
+                            <div class="col-md-1"></div>
+                            <div class="col-md-3">
+                                <a target="_blank" href="/CRM/CustomerSales/DownloadDocument?id=@item.CRM_DocumentId">
+                                    <img src="/Images/if_Text.png">
+                                </a>
+                            </div>
+                        }
+                        else if (item.File_Name.Substring(item.File_Name.LastIndexOf('.') + 1) == "jpg" || item.File_Name.Substring(item.File_Name.LastIndexOf('.') + 1) == "png" || item.File_Name.Substring(item.File_Name.LastIndexOf('.') + 1) == "jpeg")
+                        {
+                            <div class="col-md-1"></div>
+                            <div class="col-md-3">
+                                <a target="_blank" href="/CRM/CustomerSales/DownloadDocument?id=@item.CRM_DocumentId">
+                                    <img src="/Images/if_image.png">
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-md-1"></div>
+                            <div class="col-md-3">
+                                <a target="_blank" href="/CRM/CustomerSales/DownloadDocument?id=@item.CRM_DocumentId">
+                                    <img src="/Images/if_defult.png">
+                                </a>
+                            </div>
+                        }
+                    }
+
+
+                </div>
+
+                <div class="form-group" style="margin-bottom: -10px !IMPORTANT;">
+                    <div class="col-md-4">
+                        <h5 class="sbold uppercase"><b>PD Appointment:</b></h5>
+                    </div>
+                    <div class="col-md-8" style="text-align:right">
+                        <button type="button" class="btn btn-primary" onclick="FileView(@Model.CRM_AccountCustomerDetailId)">
+                            View Files
+                        </button>
+                    </div>
+                </div>
+                <h5 style="border-bottom: 1px solid #e7ecf1;"></h5>
+
+                <!--Meeting Person-->
+                <div class="form-group">
+                    <label for="input_pdmeetwith" class="control-label col-md-4">Meeting Person<span class="required">*</span>:</label>
+                    <div class="col-md-4">
+                        <input id="input_bidding_modal_meetwith" name="name" type="text" data-required="1" class="form-control input-sm clsbiddingconper" value="@(bidContact!=null ? Convert.ToString(bidContact.ContactName) :string.Empty )" disabled="disabled" />
+                    </div>
+                    <div class="col-md-2" style="padding-left:0px;width:130px;display:none;">
+                        <input type="checkbox" id="chkbiddingmeetingper8" class="clssamebiddingmeetingper" /> Same as Contact
+                    </div>
+                </div>
+
+                <!--Contact Phone-->
+                <div class="form-group">
+                    <label for="input_contactphone" class="control-label col-md-4">Contact Phone<span class="required">*</span>:</label>
+                    <div class="col-md-4">
+                        <input id="input_bidding_modal_contactphone" name="name" type="text" data-required="1" class="form-control input-sm clsbiddingconphone" value="@(bidContact!= null ? string.Format("{0:(###) ###-####}", Convert.ToDecimal(bidContact.ContactPhone)) :string.Empty )" disabled="disabled" />
+                    </div>
+                </div>
+
+                <!--Contact Email-->
+                <div class="form-group">
+                    <label for="input_contactemail" class="control-label col-md-4">Contact Email<span class="required">*</span>:</label>
+                    <div class="col-md-4">
+                        <input id="input_bidding_modal_contactemail" name="email" type="text" data-required="1" class="form-control input-sm clsbiddingconemail" value="@(bidContact!=null ? Convert.ToString(bidContact.ContactEmail) :string.Empty )" disabled="disabled" />
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="schedule_start" class="control-label col-md-4">Start Date/Time<span class="required">*</span>:</label>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control input-mysize input-group input-group-sm input-sm date date-picker RemovePeriodvalidation" name="datepicker" data-date-format="mm/dd/yyyy"
+                               id="input_schedulestartdate" value="@((bidSch!=null && bidSch.StartDate != null) ? Convert.ToDateTime(bidSch.StartDate).ToString("MM-dd-yyyy") :string.Empty)" disabled="disabled" />
+                        <!--Start Time-->
+                    </div>
+                    <div class="col-md-3" style="padding-left:0px; padding-right:0px;">
+                        <div class="input-icon">
+                            <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                            <input type="text" class="form-control input-group input-group-sm input-sm  timepicker timepicker-default" id="input_schedulestarttime" value="@((bidSch!=null && bidSch.StartDate != null) ? Convert.ToDateTime(bidSch.StartDate).ToString("hh:mm tt") :string.Empty)" disabled="disabled">
+                        </div>
+                    </div>
+                </div>
+
+                <!--End Date/Time-->
+                <div class="form-group">
+                    <label for="schedule_start" class="control-label col-md-4">End Date/Time<span class="required">*</span>:</label>
+
+                    <div class="col-md-3">
+                        <input type="text" class="form-control input-mysize input-group input-group-sm input-sm date date-picker RemovePeriodvalidation" name="datepicker" data-date-format="mm/dd/yyyy" id="input_scheduleenddate" value="@((bidSch!=null && bidSch.EndDate != null) ? Convert.ToDateTime(bidSch.EndDate).ToString("MM-dd-yyyy") :string.Empty)" disabled="disabled" />
+                    </div>
+                    <!--End Time-->
+                    <div class="col-md-3" style="padding-left:0px; padding-right:0px;">
+                        <div class="input-icon">
+                            <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                            <input type="text" class="form-control input-group input-group-sm input-sm  timepicker timepicker-default" id="input_scheduleendtime" value="@((bidSch!=null && bidSch.EndDate != null) ? Convert.ToDateTime(bidSch.EndDate).ToString("hh:mm tt") :string.Empty)" disabled="disabled" />
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="callback_purpose" class="control-label col-md-4">Purpose:</label>
+                    <div class="col-md-4">
+                        <select id="select_Biddingcontactinfo_Biddingpurpose" class="form-control input-sm select_bid_purpose" disabled="disabled">
+                            <option value="">Select</option>
+                            @*<option value="1" @(Model.PurposeId == 1 ? "selected=selected":string.Empty)>Call Back</option>
+                                <option value="2" @(Model.PurposeId == 2 ? "selected=selected":string.Empty)>Proposal Delivery</option>
+                                <option value="3" @(Model.PurposeId == 3 ? "selected=selected":string.Empty)>Proposal Follow-Up</option>
+                                <option value="4" @(Model.PurposeId == 4 ? "selected=selected":string.Empty)>Contract Sign</option>*@
+                            <option value="5" @(Model.PurposeId == 5 ? "selected=selected" : string.Empty)>Call Back</option>
+                            <option value="2" @(Model.PurposeId == 2 ? "selected=selected" : string.Empty)>Proposal Delivery</option>
+                            <option value="3" @(Model.PurposeId == 3 ? "selected=selected" : string.Empty)>Proposal Follow-Up</option>
+
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Monthly Price -->
+                <div class="form-group">
+                    <label for="input_monthlyprice" class="control-label col-md-4">Monthly Price<span class="required">*</span>:</label>
+                    <div class="col-md-4">
+                        <input id="input_monthlypricemodal" name="number" type="text" data-required="1" class="form-control input-sm" value="@string.Format("{0:c}", Model.MonthlyPrice)" disabled="disabled" />
+                    </div>
+                </div>
+
+                @*<div class="form-group" style="margin-top:5px;display:none;">
+                        <label for="select_providertype" class="control-label col-md-4">Bid Price over 10K ?<span class="required">*</span>:</label>
+                        <div class="col-md-8">
+                            <label class="check-inline" style="margin-top: 6px;">
+                                <input type="radio" name="membership" value="1" class="i-checks" id="yes_bidovermodal"  disabled="disabled" />
+                                <span>Yes</span>
+                            </label>
+
+                            <label class="check-inline" style="margin-top: 6px; margin-left:40px;">
+                                <input type="radio" name="membership" value="0" class="i-checks" id="no_bidovermodal" disabled="disabled" />
+                                <span>No</span>
+                            </label>
+                        </div>
+                    </div>*@
+                <!-- Price Approved -->
+                <div class="form-group">
+                    <label for="select_priceapproved" class="control-label col-md-4">Price Approved<span class="required">*</span>:</label>
+                    <div class="col-md-4">
+                        <select id="select_priceapprovedmodal" class="form-control input-sm" name="options2" disabled="disabled">
+                            <option value="1" @(Model.PriceApproved == 1 ? "selected=selected" : string.Empty)>Sales Manager</option>
+                            <option value="2" @(Model.PriceApproved == 2 ? "selected=selected" : string.Empty)>Region Director</option>
+                            <option value="3" @(Model.PriceApproved == 3 ? "selected=selected" : string.Empty)>Corporation VP</option>
+                            <option value="4" @(Model.PriceApproved == 4 ? "selected=selected" : string.Empty)>President</option>
+                            <option value="5" @(Model.PriceApproved == 5 ? "selected=selected" : string.Empty)>Corporation VP</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="input_icprice" class="control-label col-md-4">Include IC/EW Price<span class="required">*</span>:</label>
+                    <div class="col-md-4">
+                        <input id="input_icewpricemodal" name="number" type="text" data-required="1" class="form-control input-sm" value="@string.Format("{0:c}", Model.IncludePrice)" disabled="disabled" />
+                    </div>
+                </div>
+
+                <!-- Note -->
+                <div class="form-group">
+                    <label for="select_stagestatus" class="control-label col-md-4">Note<span class="required"></span>:</label>
+                    <div class="col-md-6">
+                        <textarea name="note" class="form-control autosizeme" rows="6" style="font-size: 11px" id="text_biddingmodal" disabled="disabled"> @Model.Note</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

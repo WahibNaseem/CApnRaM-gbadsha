@@ -1,0 +1,121 @@
+﻿@using System.Data
+@model DataTable
+
+
+<style type="text/css">
+    .DTFC_ScrollWrapper > .DTFC_LeftWrapper > .DTFC_LeftBodyWrapper {
+        top: -5px !important;
+        box-shadow: 2px 0px #dddddd52;
+    }
+
+    DTFC_ScrollWrapper > .DTFC_LeftWrapper {
+        height: 0px !important;
+    }
+
+    .DTFC_ScrollWrapper > .DTFC_LeftWrapper > .DTFC_LeftBodyWrapper table.dataTable {
+        margin-bottom: 0px !important;
+    }
+</style>
+
+
+@{
+
+    DataView view = new DataView(Model);
+    DataTable distinctValues = view.ToTable(true, "RegionId");
+
+}
+@foreach (DataRow rowR in distinctValues.Rows)
+{
+
+    <table class="striped table-bordered table-hover order-column" cellspacing="0" id="@("tblFranchiseeDeductions"+ rowR["RegionId"])" style="margin-top:0 !important;">
+        <thead>
+            <tr role="row" style="background: #8d8f92;color: white;font-weight: bold;">
+                @foreach (DataColumn col in Model.Columns)
+                {
+                    if (col.ColumnName != "RegionId" && col.ColumnName != "FranchiseeId")
+                    {
+                        <th style="text-align:center;"> @col.ColumnName </th>
+                    }
+                }
+
+                @if (Model.Columns != null)
+                {
+                    <th style="text-align:center;"> Total </th>
+                }
+            </tr>
+        </thead>
+
+
+        <tbody>
+            @foreach (DataRow row in Model.Select(string.Format("RegionId = {0}", rowR["RegionId"])))
+            {
+                <tr>
+                    @{
+                        decimal sumAmt = 0;
+                    }
+                    
+                    @foreach (DataColumn col in Model.Columns)
+                    {
+                        
+                        if (col.ColumnName == "RegionId" || col.ColumnName == "FranchiseeId")
+                        {
+                            @*<td style="text-align:center">@row[col.ColumnName]</td>*@
+                        }
+                        else if (col.ColumnName == "Region" || col.ColumnName == "FranchiseeNo" || col.ColumnName == "FranchiseeName")
+                        {
+                            <td style="text-align:center">@row[col.ColumnName]</td>
+                        }
+                        else
+                        {
+                            sumAmt += Convert.ToDecimal(row[col.ColumnName]);
+                            <td style="text-align:right">$ @string.Format("{0:n}", row[col.ColumnName])</td>
+                        }
+                    }
+
+
+                    <td style="text-align:right">$ @string.Format("{0:n}", sumAmt)</td>
+
+
+                </tr>
+
+
+
+            }
+
+            <tr>
+
+                @foreach (DataRow row in Model.Select(string.Format("RegionId = {0}", rowR["RegionId"])))
+                {
+
+                    foreach (DataColumn col in Model.Columns)
+                    {
+                        if (col.ColumnName == "RegionId" || col.ColumnName == "FranchiseeId")
+                        {
+
+                        }
+                        else if (col.ColumnName == "Region" || col.ColumnName == "FranchiseeNo")
+                        {
+                            <td style="text-align:right"></td>
+                        }
+                        else if (col.ColumnName == "FranchiseeName")
+                        {
+                            <td style="text-align:right">Total :</td>
+                        }
+                        else
+                        {
+                            <td style="text-align:right">$ @string.Format("{0:n}", row.Table.AsEnumerable().Sum(a => a.Field<decimal>(col.ColumnName)))</td>
+                        }
+
+                    }
+                    <td style="text-align:right"></td>
+                    break;
+                }
+            </tr>
+
+
+
+        </tbody>
+
+    </table>
+
+}

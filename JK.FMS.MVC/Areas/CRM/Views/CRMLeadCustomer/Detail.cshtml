@@ -1,0 +1,2126 @@
+﻿@using JK.Resources
+@model JKViewModels.CRM.CRMAccountCustomerDetailViewModel
+@{
+    var purpose = ViewBag.PurposeTypeList as IEnumerable<JKApi.Data.DAL.CRM_PurposeType>;
+    var scheduleType = ViewBag.ScheduleType as IEnumerable<JKViewModels.Customer.CRM_ScheduleTypeModel>;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section styles {
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")' rel="stylesheet" type="text/css" />
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")' rel="stylesheet" type="text/css" />
+    <link href="~/Content/admin/assets/global/css/components.min.css" rel="stylesheet" />
+
+    <style type="text/css">
+        .form-actions {
+            padding-top: 10px;
+            margin-top: 20px;
+            border-top: 1px solid #e7ecf1;
+        }
+
+        .form-section {
+            margin-top: 10px;
+            padding: 5px;
+            border-bottom: 1px solid #e7ecf1;
+        }
+
+        .mt-activitytitle {
+            margin: 0 8px 10px;
+            font-weight: bold;
+        }
+
+        .mt-Note-text {
+            color: #4e4b4b;
+        }
+
+        .mt-activitywith {
+            color: #337ab7;
+            font-weight: bold;
+        }
+
+        .mt-date-text {
+            color: #337ab7;
+            font-weight: bold;
+            margin-top: 0px;
+        }
+
+        .mt-title {
+            font-weight: bold;
+        }
+
+        .mt-scheduletime {
+            color: #337ab7;
+        }
+
+        .mt-schedule-monthSpace {
+            margin-top: -10px;
+        }
+
+        .mt-picker-top {
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+
+        .reference-label {
+            padding-left: 6px;
+        }
+
+        .badge-status {
+            color: #337ab7;
+        }
+
+        .space-note {
+            padding-bottom: 10px;
+        }
+
+        .div-height {
+            height: 860px;
+        }
+
+        .popupClass {
+            margin-bottom: 5px !important;
+        }
+
+        /*.right-content-margin {
+            margin-left: -22px;
+        }*/
+
+        @@media only screen and (max-width:793px) {
+            .right-content-margin {
+                margin-left: 0px;
+            }
+        }
+    </style>
+
+    <style>
+
+        .tablebox .table-responsive {
+            min-height: 80px;
+        }
+
+        .form-actions {
+            padding-top: 10px;
+            margin-top: 20px;
+            border-top: 1px solid #e7ecf1;
+        }
+
+        .form-section {
+            margin-top: 10px;
+            padding: 5px;
+            border-bottom: 1px solid #e7ecf1;
+        }
+
+        .forminput {
+            text-align: left;
+            margin-left: -20px;
+            border: none;
+            background: transparent;
+        }
+
+        .portlet-bottom {
+            margin-bottom: 10px;
+        }
+
+        .portlet-align {
+            padding-left: 6px;
+            padding-right: 6px;
+        }
+
+        .modal-custom-content {
+            padding: 0px;
+            border-radius: 20px;
+        }
+
+        .modal-custom-header {
+            background: #3598DC;
+            padding: 8px;
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
+        }
+
+        .modal-close-button {
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .capitaltext {
+            text-transform: uppercase;
+        }
+
+        .tabpointer {
+            cursor: pointer;
+        }
+    </style>
+
+    <style>
+
+        .forminput {
+            text-align: left;
+            margin-left: -20px;
+            border: none;
+            background: transparent;
+        }
+
+        .portlet-bottom {
+            margin-bottom: 10px;
+        }
+
+        .portlet-align {
+            padding-left: 6px;
+            padding-right: 6px;
+        }
+
+        .modal-custom-content {
+            padding: 0px;
+            border-radius: 20px;
+        }
+
+        .modal-custom-header {
+            background: #3598DC;
+            padding: 8px;
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
+        }
+
+        .modal-close-button {
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .capitaltext {
+            text-transform: uppercase;
+        }
+
+        .tabpointer {
+            cursor: pointer;
+        }
+    </style>
+
+    <style>
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .page-size {
+            padding-left: 0;
+            padding-right: 0;
+            width: 62px;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        #CallLogLists th {
+            vertical-align: middle;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .no-margin {
+            margin: 0;
+        }
+
+        .padding-tb1 {
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        .margin-tb1 {
+            margin-top: 1px;
+            margin-bottom: 1px;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 6px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .contract {
+            text-align: right;
+        }
+
+        .tablebox .table-responsive {
+            min-height: 328px;
+        }
+
+        .input-mysize {
+            min-width: 150px;
+        }
+
+        .input-mysize2 {
+            min-width: 90px;
+        }
+
+        .input-mysize3 { /*min-width: 250px*/
+        }
+    </style>
+
+    <style>
+        @@media (min-width: 768px) {
+            .seven-cols .col-md-1,
+            .seven-cols .col-sm-1,
+            .seven-cols .col-lg-1 {
+                width: 100%;
+                *width: 100%;
+            }
+        }
+
+        @@media (min-width: 992px) {
+            .seven-cols .col-md-1,
+            .seven-cols .col-sm-1,
+            .seven-cols .col-lg-1 {
+                width: 14.285714285714285714285714285714%;
+                *width: 14.285714285714285714285714285714%;
+            }
+        }
+
+        @@media (min-width: 1200px) {
+            .seven-cols .col-md-1,
+            .seven-cols .col-sm-1,
+            .seven-cols .col-lg-1 {
+                width: 14.285714285714285714285714285714%;
+                *width: 14.285714285714285714285714285714%;
+            }
+        }
+    </style>
+}
+
+@section scripts {
+
+    <script type="text/javascript">
+
+        function SetJSONDate(jsonDate) {
+            if (jsonDate != null) {
+                var dtstr = jsonDate.substr(6);
+                var dateString = dtstr.substring(0, dtstr.length - 2);
+                var currentTime = new Date(parseInt(dateString));
+                var date = moment.utc(currentTime).format("MM/DD/YYYY");
+                return date;
+            }
+            return null;
+        }
+
+        /*Get the Time from Json Time*/
+        function SetJSONtime(jsonTime) {
+
+            if (jsonTime != null) {
+                var dtstr = jsonTime.substr(6);
+                var dateString = dtstr.substring(0, dtstr.length - 2);
+                var currentTime = new Date(parseInt(dateString));
+
+                var Time = moment(currentTime).format("hh:mm A");
+                return Time;
+            }
+            return null;
+        }
+
+        $('#IsAllDay').change(function () {
+            var val = $(this).is(':checked');
+            if (val) {
+                $('#input_schedulestarttime_detail').val("8:00:00 AM");
+                $('#input_scheduleendtime_detail').val("5:00:00 PM");
+                $('#input_schedulestarttime_detail').prop('disabled', true);
+                $('#input_scheduleendtime_detail').prop('disabled', true);
+            } else {
+                $('#input_schedulestarttime_detail').prop('disabled', false);
+                $('#input_scheduleendtime_detail').prop('disabled', false);
+            }
+        });
+
+        $('#IsSameAddressDetail').change(function () {
+            var val = $(this).is(':checked');
+            var custAddress = $("#input_addressline1").val();
+            if (val) {
+                $('#input_schedulelocation_detail').val(custAddress);
+                $('#input_schedulelocation_detail').prop('disabled', true);
+            } else {
+                $('#input_schedulelocation_detail').val('');
+                $('#input_schedulelocation_detail').prop('disabled', false);
+            }
+        });
+
+        $('#btnScheduleSaveFromModal').click(function(e){
+            e.preventDefault();
+            var isvalid = true;
+
+            var CustomerId = $('#CRM_AccountCustomerDetailId').val();
+            var CRM_AccountId=$("#CRM_AccountId").val();
+            var CompanyPhoneNumber=$("#input_contactphonenumber").val();
+            var Contactperson=$("#input_contactperson").val();
+            var ContactName=$("#input_contactname").val();
+            var StartDate = $('#input_schedulestartdate_detail').val();
+            var EndDate = $('#input_scheduleenddate_detail').val();
+            var AuthUserLoginId = $("#select_asignee").val();
+            var StartTime = $('#input_schedulestarttime_detail').val();
+            var EndTime = $('#input_scheduleendtime_detail').val();
+            var IsAllDay =  $('#IsAllDay').is(':checked');
+            var CRM_ScheduleTypeId = $('#input_scheduletype_detail').val();
+            var CRM_ScheduleId = parseInt($('#input_scheduleId_detail').val());
+            var PurposeId = $('#input_purposetype_detail').val();
+            var Purpose = $('#input_purposetype_detail option:selected').text();
+            var Title = $('#input_scheduletitle_detail').val();
+            var Location = $('#input_schedulelocation_detail').val();
+            var Description = $('#input_scheduledescription_detail').val();
+
+
+            if (StartDate.trim() == '') { $('#input_schedulestartdate_detail').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_schedulestartdate_detail').css('border-color', ''); }
+            if (EndDate.trim() == '') { $('#input_scheduleenddate_detail').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_scheduleenddate_detail').css('border-color', ''); }
+            if (StartTime.trim() == '') { $('#input_schedulestarttime_detail').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_schedulestarttime_detail').css('border-color', ''); }
+            if (EndTime.trim() == '') { $('#input_scheduleendtime_detail').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_scheduleendtime_detail').css('border-color', ''); }
+            if (CRM_ScheduleTypeId.trim() == '') { $('#input_scheduletype_detail').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_scheduletype_detail').css('border-color', ''); }
+            if (PurposeId.trim() == '') { $('#input_purposetype_detail').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_purposetype_detail').css('border-color', ''); }
+
+
+            var sTime = moment(StartTime, "HH:mm a");
+            var eTime = moment(EndTime, "HH:mm a");
+
+            if (Date.parse(StartDate) == Date.parse(EndDate)) {
+                if(sTime>eTime){
+                    $('#input_scheduleendtime_detail').css('border-color', 'red');
+                    if (isvalid == true) { isvalid = false;
+                    }else{
+                        $('#input_scheduleendtime_detail').css('border-color', '');
+                    }
+                }
+            }
+
+            if (Date.parse(StartDate) > Date.parse(EndDate)) {
+                $('#input_scheduleenddate_detail').css('border-color', 'red');
+                if (isvalid == true) { isvalid = false; }
+            } else {
+                $('#input_scheduleenddate_detail').css('border-color', '');
+            }
+
+            if (isvalid == true) {
+                var model = {
+                    CRM_ScheduleId: CRM_ScheduleId,
+                    Title: Title,
+                    Description: Description,
+                    StartDate: StartDate,
+                    EndDate: EndDate,
+                    StartTimeString: StartTime,
+                    EndTimeString: EndTime,
+                    StartDateString:StartDate,
+                    EndDateString:EndDate,
+                    Location: Location,
+                    IsAllDay: IsAllDay,
+                    CRM_ScheduleTypeId: CRM_ScheduleTypeId,
+                    AuthUserLoginId: AuthUserLoginId,
+                    OutlookSyncDate: null,
+                    PurposeId: PurposeId,
+                    Purpose: Purpose,
+                    IsActive: true,
+                    ClassId: CustomerId,
+                    CRM_AccountId:CRM_AccountId,
+                    CompanyPhoneNumber:CompanyPhoneNumber,
+                    Contactperson:Contactperson,
+                    ContactName:ContactName
+                };
+
+                $.blockUI();
+                $.ajax({
+                    url: '@Url.Action("SaveCRMSchedule", "CRMLeadCustomer")',
+                    type: "POST",
+                    data: model,
+                    dataType: "json",
+                    cache: false,
+                    success: function (response){
+                        $.unblockUI();
+
+                        $('#input_schedulestartdate').datepicker("setDate", StartDate);
+                        $('#input_schedulestarttime').val(StartTime);
+                        $('#input_scheduleenddate').datepicker("setDate", EndDate);
+                        $('#input_scheduleendtime').val(EndTime);
+                        $('#select_schedulepurpose').val(PurposeId);
+                        //$('#text_leadgeneralnote').val(Description);
+
+                        $("#detailschedule_modalview").modal('hide');
+                        $("#calendar_modalview").modal('hide');
+                        //reloadCalendar();
+                    },
+                    error: function (error) {
+                        $.unblockUI();
+                    }
+                });
+            }
+        });
+
+        function reloadCalendar(){
+            var AuthUserLoginId = $("#select_asignee").val();
+
+            $.ajax({
+                url: "/CRM/CustomerSales/GetSchedulesForLeadAssignee?userId=" + AuthUserLoginId,
+                type: "GET",
+                dataType: "json",
+                cache: false,
+                success: function (response) {
+                    refreshCalendar(response.result);
+                    $("#calendar_modalview").modal(open).show();
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+
+        $("#input_schedulestartdate_detail").change(function () {
+            $("#input_scheduleenddate_detail").val($(this).val());
+        });
+
+
+        $("#input_schedulestarttime_detail").change(function () {
+            $('#input_scheduleendtime_detail').timepicker('setTime', incrementTimeByOne($(this).val()));
+        });
+
+        $("#calllog").click(function () {
+            $('#divcallloglist').toggle();
+        });
+
+
+        $(function () {
+            $("#select_Type").change(function () {
+                if ($(this).val() == "1") {
+                    $("#divOutcome").show();
+                } else {
+                    $("#divOutcome").hide();
+                }
+            });
+
+            if (@Model.CRM_AccountCustomerDetailId > 0)
+            {
+                if ('@Model.CompanyState' != "")
+                {
+                    $("#select_state").val('@Model.CompanyState');
+                }
+            }
+        });
+
+        var getPreviousRecord = function(id){
+            $.blockUI();
+            if(!isNaN(id)){
+
+                var purl = '@Url.Action("GetNextOrPrevious","CRMLeadCustomer")?Id=' + id + "&name=1";
+                $.ajax({
+                    url:purl,
+                    type:'GET',
+                    dataType:'json',
+                    cache:false,
+                    success:function(response){
+                        if(response.Id == 0){
+                            $.unblockUI();
+                            swal({
+                                title:"Oops",
+                                text:"There is not any record",
+                                allowOutsideClick:false,
+                                html:true
+                            },function(){
+                                window.location.href='@Url.Action("Index","CRMLeadCustomer")';
+                            });
+                        }
+                        else {
+                            var id = response.Id;
+                            var url = "/CRM/CRMLeadCustomer/GetLeadDetail?accountId=" + response.Id;
+                            $.get(url,function(response){
+
+                                $("#lead_accountreferenceinfo").html(response.customerAccountReferenceInfo) ;
+                                $("#lead_accountsummary").html(response.customerAccountSummary);
+                                setupForm();
+                                disabledFields();
+                                if($("#select_stagestatus").val() == "20"){
+                                    $("#initial_communication").css('display', 'block');
+                                    $("#lead_detail").addClass("div-height");
+                                    /*Hide Call Log List  */
+                                    $("#calllogdiv").css('display', 'none');
+                                }
+                                else{
+                                    $("#initial_communication").css('display','none');
+                                    $("#lead_detail").removeClass("div-height");
+                                    /* Show Call Log List */
+                                    $("#calllogdiv").css('display', 'block');
+                                    refreshCallLog(id);
+                                }
+
+                                $.unblockUI();
+                            });
+                        }
+                    },
+                    error:function(error){
+                        console.log(error)
+                    }
+                });
+            }
+        }
+
+        var getNextRecord = function (id) {
+
+
+            $.blockUI();
+
+            if(!isNaN(id)){
+                var surl = '@Url.Action("GetNextOrPrevious","CRMLeadCustomer")?Id=' + id + "&name=0";
+                $.ajax({
+                    url:surl,
+                    type:'GET',
+                    dataType:'json',
+                    cache:false,
+                    success:function(response){
+                        if(response.Id == 0){
+                            $.unblockUI();
+                            swal({
+                                title:"Oops",
+                                text:"There is not any record",
+                                allowOutsideClick:false,
+                                html:true
+                            },function(){
+                                window.location.href='@Url.Action("Index","CRMLeadCustomer")';
+                            });
+                        }
+                        else {
+
+                            var id = response.Id;
+                            var url = "/CRM/CRMLeadCustomer/GetLeadDetail?accountId=" + response.Id;
+                            $.get(url,function(response){
+
+                                $("#lead_accountreferenceinfo").html(response.customerAccountReferenceInfo) ;
+                                $("#lead_accountsummary").html(response.customerAccountSummary);
+                                setupForm();
+                                disabledFields();
+                                if($("#select_stagestatus").val() == "20"){
+                                    $("#initial_communication").css('display','block');
+                                    $("#lead_detail").addClass("div-height");
+                                    /*Hide Call Log List  */
+                                    $("#calllogdiv").css('display', 'none');
+                                }
+                                else{
+                                    $("#initial_communication").css('display','none');
+                                    $("#lead_detail").removeClass("div-height");
+                                    /*Show Call Log List*/
+                                    $("#calllogdiv").css('display', 'block');
+                                    refreshCallLog(id);
+                                }
+                                $.unblockUI();
+                            });
+                        }
+                    },
+                    error:function(error){
+                        console.log(error);
+                    }
+                });
+            }
+        }
+
+        function incrementTimeByOne(timeStr) {
+            var splitedTimeStr = timeStr.split(':');
+            var hours = parseInt(splitedTimeStr[0]);
+            var meridiem = splitedTimeStr[2].split(" ")[1];
+            var minutes = splitedTimeStr[1].split(" ")[0];
+            var nextHours = (hours + 1);
+            var nextMeridiem;
+            if (hours >= 11) {
+                if (meridiem.toLowerCase() == "am") {
+                    nextMeridiem = "PM";
+                } else if (meridiem.toLowerCase() == "pm") {
+                    nextMeridiem = "AM";
+                }
+
+                if (nextHours > 12) {
+                    nextHours = nextHours - 12;
+                }
+
+            } else {
+                nextMeridiem = meridiem;
+            }
+            return nextHours + ":" + minutes + " " + nextMeridiem;
+        }
+
+
+        $(document).on("click", "#calendar_schedules", function (e) {
+
+            $.ajax({
+                url: "/CRM/CustomerSales/GetSchedulesForLeadAssignee?userId=" + $("#select_asignee").val(),
+                //url: "/CRM/CRMLeadCustomer/GetSchedulesForRegion",
+                type: "GET",
+                dataType: "json",
+                cache: false,
+                success: function (response) {
+                    var assigneeName= $("#select_asignee option:selected").text();
+                    var input_companyname=$("#input_companyname").val();
+                    $("#lblCustNamePopup").text(input_companyname);
+                    if(assigneeName){
+                        $("#input_assigneename_detail").text(assigneeName+" 's Schedule")
+                    }else{
+                        $("#input_assigneename_detail").text("Calendar")
+
+                    }
+
+                    refreshCalendar(response.result);
+                    $("#calendar_modalview").modal(open).show();
+                },
+                error: function (error) {
+                    $("#input_assigneename_detail").text("");
+                }
+            });
+        })
+
+        // Showing Modal
+        $("#calendar_modalview").on('shown.bs.modal', function () {
+            $("#calendar").fullCalendar('render');
+        });
+
+        var setupForm = function() {
+
+            JK.CRM.CRMFormValidation.init('#contact_form');
+            JK.CRM.CRMFormValidation.init('#form_referenceinfo');
+            JK.CRM.CRMFormValidation.init('#form_summary');
+            JK.CRM.CRMFormInputMask.handleNumericInputMask("#input_numberoflocations");
+            JK.CRM.CRMFormInputMask.handlePhoneInputMask("#input_contactphonenumber");
+            JK.CRM.CRMFormInputMask.handlePhoneInputMask("#input_companyphonenumber");
+            JK.CRM.CRMFormInputMask.handlePhoneInputMask("#input_companyfaxnumber");
+            JK.CRM.CRMFormInputMask.handleNumericInputMask("#input_zipcode");
+            JK.CRM.CRMFormInputMask.handleCurrencyInputMask("#input_budgetamount");
+            JK.CRM.CRMFormInputMask.handleDateInputMask("#input_callback");
+
+            $('.date-picker').datepicker();
+            $('.timepicker').timepicker();
+
+            $("#input_schedulestartdate").change(function () {
+                $("#input_scheduleenddate").val($(this).val());
+            });
+
+
+            $("#input_schedulestarttime").change(function () {
+                $('#input_scheduleendtime').timepicker('setTime', incrementTimeByOne($(this).val()));
+            });
+
+            /* Same as contact click event*/
+            $(".clschksameascontactdetail").click(function () {
+                if ($(this).is(":checked")) {
+                    $(".clscontactperson").val($("#input_contactname").val());
+                    $(".clscontactperson").attr("readonly", "readonly");
+                }
+                else {
+                    $(".clscontactperson").val("");
+                    $(".clscontactperson").removeAttr("readonly", "readonly");
+                }
+            });
+
+
+
+            $("#select_stagestatus").change(function (){
+                if($(this).val() == "20"){
+                    $("#initial_communication").css('display','block');
+                    $("#lead_detail").addClass("div-height");
+                    $("#btns_call").css('display','none');
+                    $("#btn_noanswer").css('display','none');
+                    $("#btn_hangup").css('display', 'none');
+                    /*Hide Call Log List*/
+                    $("#calllogdiv").css('display', 'none');
+                }
+                else{
+                    $("#initial_communication").css('display','none');
+                    $("#lead_detail").removeClass("div-height");
+                    $("#btns_call").css('display','block');
+                    $("#btn_noanswer").css('display','block');
+                    $("#btn_hangup").css('display', 'block');
+                    /*Show Call Log List*/
+                    $("#calllogdiv").css('display', 'block');
+                }
+            });
+
+
+
+            /*On Wrong Number Button Click*/
+            $(".btn-callresulttype").unbind('click').click(function(e){
+                if($(this).attr('name') == "busy")
+                    $("#callresult_Type").val("3");
+                if($(this).attr('name') == "wrongnumber")
+                    $("#callresult_Type").val("12");
+                if($(this).attr('name') == "hangup")
+                    $("#callresult_Type").val("14");
+                if($(this).attr('name') == "noanswer")
+                    $("#callresult_Type").val("7");
+            });
+
+            /*Call Button Click Event*/
+            $(".btn-call").unbind('click').click(function(e){
+                if($(this).text() == "Call"){
+                    callLead(true);
+                    $(this).addClass('btn red');
+                    $(this).text("Hang up");
+                }
+                else{
+                    $(this).removeClass('btn red');
+                    $(this).addClass('btn blue');
+                    callLead(false);
+                    $(this).text("Call");
+                }
+            });
+
+
+
+            $("#contactinfo_edit_btn").unbind("click").click(function(e){
+                e.preventDefault();
+                if ($("#contactinfo_edit_btn").text() != "Edit") {
+                    validateinfo();
+                }
+                if($("#contactinfo_edit_btn").text() == "Edit"){
+                    $("#contactinfo_edit_btn").text("Save");
+                    enabledFields();
+                    $("#contactinfo_cancel_btn").show();
+                }
+            });
+
+
+            $("#contactinfo_cancel_btn").unbind("click").click( function(e){
+                e.preventDefault();
+
+                $("#contactinfo_cancel_btn").hide();
+                disabledFields();
+                $("#contactinfo_edit_btn").text("Edit");
+            });
+
+
+        }     //End SetupForm  Function
+
+        var validateinfo = function()
+        {
+            var isValid = true;
+            if ($("#input_contactname").val().trim() == "")
+            {
+                $("#input_contactname").css('border-color', 'red'); $(window).scrollTop(0);
+                if(isValid)
+                {
+                    isValid =false;
+                }
+            }
+            else
+            {
+                $("#input_contactname").css('border-color', '');
+            }
+            //if($("#input_contactlastname").val().trim() ==""){ $("#input_contactlastname").css('border-color', 'red'); $(window).scrollTop(0); if(isValid== true){ isValid =false; }} else{$("#input_contactlastname").css('border-color', '');}
+            if($("#input_contactphonenumber").val() =="")
+            {
+                $("#input_contactphonenumber").css('border-color', 'red'); $(window).scrollTop(0);
+                if(isValid)
+                {
+                    isValid =false;
+                }
+            }
+            else
+            {
+                $("#input_contactphonenumber").css('border-color', '');
+            }
+
+            //if($("#input_contactemail").val().trim() ==""){ $("#input_contactemail").css('border-color', 'red'); $(window).scrollTop(0); if(isValid== true){ isValid =false; }} else{ $("#input_contactemail").css('border-color', '');}
+
+            if($("#input_companyname").val().trim() =="")
+            {
+                $("#input_companyname").css('border-color', 'red'); $(window).scrollTop(0);
+                if(isValid)
+                {
+                    isValid =false;
+                }
+            }
+            else
+            {
+                $("#input_companyname").css('border-color', '');
+            }
+
+            if($("#input_companyphonenumber").val().trim() ==""){ $("#input_companyphonenumber").css('border-color', 'red'); $(window).scrollTop(0); if(isValid== true){ isValid =false; }}  else{$("#input_companyphonenumber").css('border-color', '');}
+
+            if($("#input_addressline1").val().trim() =="")
+            { $("#input_addressline1").css('border-color', 'red'); $(window).scrollTop(0);
+                if(isValid)
+                { isValid =false;
+                }
+            }
+            else
+            {$("#input_addressline1").css('border-color', '');
+            }
+            if($("#input_city").val().trim() ==""){ $("#input_city").css('border-color', 'red'); $(window).scrollTop(0);
+                if(isValid)
+                {
+                    isValid =false;
+                }
+            } else
+            {$("#input_city").css('border-color', '');
+            }
+            if($("#input_zipcode").val().trim() =="")
+            {
+                $("#input_zipcode").css('border-color', 'red'); $(window).scrollTop(0);
+                if(isValid)
+                {
+                    isValid =false;
+                }
+            }
+            else
+            {
+                $("#input_zipcode").css('border-color', '');
+            }
+            if($("#select_state").val() =="")
+            {
+                $("#select_state").css('border-color', 'red'); $(window).scrollTop(0);
+                if(isValid)
+                {
+                    isValid =false;
+                }
+            } else
+            {
+                $("#select_state").css('border-color', '');
+            }
+
+            if(isValid)
+            {
+                $.blockUI();
+                saveContactInfo();
+            }
+
+        }
+
+        // copied from crm_potentialcustomer.js -- consolidate better later -Troy
+        var refreshCalendar = function (data, calendarSelector) {
+
+            if(calendarSelector ==null){
+                calendarSelector = "#calendar";
+            }
+
+            if (data != null) {
+                /**
+           * Schedules
+           */
+                var scheduleCalendar = $(calendarSelector);
+
+                scheduleCalendar.fullCalendar('destroy');
+                scheduleCalendar.fullCalendar({
+                    header: {
+                        left: 'title',
+                        center: '',
+                        right: 'prev,next,today,month,agendaWeek,agendaDay'
+                    },
+                    eventClick: function (calEvent, jsEvent, view) {
+                        if (moment().format('YYYY-MM-DD') <= calEvent.start.format('YYYY-MM-DD')) {
+                            $("#input_scheduleId_detail").val(calEvent.CRM_ScheduleId);
+                            $("#input_scheduletitle_detail").val(calEvent.title);
+                            $("#input_schedulelocation_detail").val(calEvent.Location);
+                            $("#input_scheduledescription_detail").val(calEvent.Description);
+
+                            $("#input_schedulestartdate_detail").val(calEvent.StartDate);
+                            $("#input_scheduletype_detail").val(calEvent.CRM_ScheduleTypeId);
+                            $("#input_scheduleenddate_detail").val(calEvent.EndDate);
+                            $("#input_schedulestarttime_detail").val(calEvent.StartTime);
+                            $("#input_scheduleendtime_detail").val(calEvent.EndTime);
+                            $("#input_purposetype_detail").val(calEvent.PurposeId);
+
+
+                            $("#custName").text($("#input_companyname").val());
+
+                            var assigneeName= $("#select_asignee option:selected").text();
+                            if(assigneeName){
+                                $("#input_assigneename_popup").text(assigneeName);
+                                $("#userName").text(assigneeName);
+                            }else{
+                                $("#input_assigneename_popup").text("");
+                                $("#userName").text("");
+                            }
+                            $('#IsSameAddressDetail').prop("checked",false)
+                            $('#IsAllDay').prop("checked",false)
+                            $('#input_schedulelocation_detail').prop('disabled', false);
+                            $('#input_schedulestarttime_detail').prop('disabled', false);
+                            $('#input_scheduleendtime_detail').prop('disabled', false);
+
+                            $("#detailschedule_modalview").modal('show');
+                        }
+                    },
+                    dayClick: function(calEvent, jsEvent, view) {
+                        if (moment().format('YYYY-MM-DD') === calEvent.format('YYYY-MM-DD') || calEvent.isAfter(moment())) {
+                            $("#input_scheduleId_detail").val(0);
+                            $("#input_scheduletitle_detail").val('');
+
+                            $("#input_scheduledescription_detail").val('');
+
+                            $("#input_schedulestartdate_detail").val(calEvent.format("MM/DD/YYYY"));
+                            $("#input_scheduletype_detail").val(2);
+                            $("#input_scheduleenddate_detail").val(calEvent.format("MM/DD/YYYY"));
+                            $("#input_schedulestarttime_detail").val("8:00:00 AM");
+                            $("#input_scheduleendtime_detail").val("9:00:00 AM");
+                            $("#custName").text($("#input_companyname").val());
+
+                            $("#input_purposetype_detail").val(calEvent.PurposeId);
+
+                            $('#IsSameAddressDetail').prop("checked",false)
+                            $('#IsAllDay').prop("checked",false)
+                            $('#input_schedulelocation_detail').prop('disabled', false);
+                            $('#input_schedulestarttime_detail').prop('disabled', false);
+                            $('#input_scheduleendtime_detail').prop('disabled', false);
+
+                            var assigneeName= $("#select_asignee option:selected").text();
+                            if(assigneeName){
+                                $("#input_assigneename_popup").text(assigneeName);
+                                $("#userName").text(assigneeName);
+                            }else{
+                                $("#input_assigneename_popup").text("");
+                                $("#userName").text("");
+                            }
+
+                            $("#detailschedule_modalview").modal('show');
+                        }
+                    },
+                    defaultView: 'month',
+
+                    events: data
+                });
+            }
+        }
+
+            var callLead = function(isCall){
+                $.blockUI();
+                $.ajax({
+                    url: '/CRM/CRMLeadCustomer/DialCallToLead?isCall='+ isCall + '&pnum='+ $("#input_companyphonenumber").val(),
+                    type: "GET",
+                    dataType: "json",
+                    cache: false,
+                    success: function (response){
+                        $.unblockUI();
+
+                    },
+                    error: function (error) {
+                        $.unblockUI();
+                        console.log(error);
+                        $('.btn-call').removeClass('btn red');
+                        $('.btn-call').addClass('btn blue');
+                    }
+                });
+            }
+
+
+            var disabledFields=function(){
+                $("#input_contactname").prop("disabled",true);
+                //$("#input_contactlastname").prop("disabled",true);
+                $("#input_contactphonenumber").prop("disabled",true);
+                $("#input_contactemail").prop("disabled",true);
+
+                //$("#input_sqft").prop("disabled", true);
+                $("#input_lineofbusiness").prop("disabled", true);
+                $("#input_salesvolume").prop("disabled", true);
+                $("#input_title").prop("disabled", true);
+
+
+                $("#input_companyname").prop("disabled",true);
+                //$("#select_industrytype").prop("disabled",true);
+                // $("#input_numberoflocations").prop("disabled",true);
+                $("#input_companyphonenumber").prop("disabled",true);
+
+                //$("#input_companyfaxnumber").prop("disabled",true);
+                $("#input_companyemail").prop("disabled",true);
+                $("#input_companywebsite").prop("disabled",true);
+                $("#input_addressline1").prop("disabled", true);
+
+                $("#input_addressline2").prop("disabled", true);
+                $("#input_city").prop("disabled", true);
+                $("#input_county").prop("disabled", true);
+                $("#select_state").prop("disabled", true);
+                $("#input_zipcode").prop("disabled", true);
+
+
+                $("#input_contactname").css('border-color', '');
+                //$("#input_contactlastname").css('border-color', '');
+                $("#input_contactphonenumber").css('border-color', '');
+                $("#input_contactemail").css('border-color', '');
+                $("#input_companyname").css('border-color', '');
+                $("#select_industrytype").css('border-color', '');
+                $("#input_addressline1").css('border-color', '');
+                $("#input_city").css('border-color', '');
+                $("#input_zipcode").css('border-color', '')
+                $("#input_companyphonenumber").css('border-color', '');
+
+        }
+
+            var enabledFields = function () {
+
+                $("#input_contactname").prop("disabled", false);
+                //$("#input_contactlastname").prop("disabled", false);
+                $("#input_contactphonenumber").prop("disabled", false);
+                $("#input_contactemail").prop("disabled", false);
+
+
+
+                // $("#input_sqft").prop("disabled", false);
+                $("#input_lineofbusiness").prop("disabled", false);
+                $("#input_salesvolume").prop("disabled", false);
+                $("#input_title").prop("disabled", false);
+
+                $("#input_companyname").prop("disabled", false);
+                // $("#select_industrytype").prop("disabled", false);
+                //  $("#input_numberoflocations").prop("disabled", false);
+                $("#input_companyphonenumber").prop("disabled", false);
+
+                //  $("#input_companyfaxnumber").prop("disabled", false);
+                $("#input_companyemail").prop("disabled", false);
+                $("#input_companywebsite").prop("disabled", false);
+                $("#input_addressline1").prop("disabled", false);
+
+                $("#input_addressline2").prop("disabled", false);
+                $("#input_city").prop("disabled", false);
+                $("#input_county").prop("disabled", false);
+                $("#select_state").prop("disabled", false);
+                $("#input_zipcode").prop("disabled", false);
+            }
+
+            var saveContactInfo = function () {
+                var contactInfoForm = $("#form_referenceinfo");
+
+                if (!contactInfoForm.valid()) {
+                    return;
+                } else {
+                    var postData = {
+                        "CRM_AccountCustomerDetailId": $("#CRM_AccountCustomerDetailId").val(),
+                        "CRM_AccountId": $("#CRM_AccountId").val(),
+                        "ContactName": $("#input_contactname").val(),
+                        //"LastName": $("#input_contactlastname").val(),
+                        "Title": $("#input_title").val(),
+                        "PhoneNumber": $("#input_contactphonenumber").val(),
+                        "EmailAddress": $("#input_contactemail").val(),
+
+                        "CompanyName": $("#input_companyname").val(),
+                        //"LineOfBusiness": $("#input_lineofbusiness").val(),
+                        //"SalesVolume": $("#input_salesvolume").val(),
+                        "CompanyPhoneNumber": $("#input_companyphonenumber").val(),
+
+                        //  "CompanyFaxNumber": $("#input_companyfaxnumber").val(),
+                        // "CompanyEmailAddress": $("#input_companyemail").val(),
+                        //"CompnayWebSite": $("#input_companywebsite").val(),
+                        "CompanyAddressLine1": $("#input_addressline1").val(),
+                        "CompanyAddressLine2": $("#input_addressline2").val(),
+                        "CompanyCity": $("#input_city").val(),
+                        "CompanyCounty": $("#input_county").val(),
+
+                        "CompanyState": $("#select_state option:selected").val(),
+                        "CompanyZipCode": $("#input_zipcode").val()
+                    }
+                    console.log(postData);
+
+                    $.ajax({
+                        url: "/CRM/CRMLeadCustomer/SaveCustomerContactInfo",
+                        type: "POST",
+                        data: postData,
+                        dataType: "json",
+                        cache: false,
+                        success: function (response) {
+                            $("#btnEdit").prop("disabled", false);
+                            // JK.CRM.CRMApp.hideActivity("#contactinfo_action");
+                            $("#lead_accountreferenceinfo").html(response.customerAccountReferenceInfo);
+                            setupForm();
+                            disabledFields();
+                            $.unblockUI();
+                            //location.reload();
+                        },
+                        error: function (error) {
+                            //  JK.CRM.CRMApp.hideActivity("#contactinfo_action");
+                            console.log(error.message);
+                        }
+                    });
+                }
+
+            }
+
+            var updatevalidateContactInfo = function() {
+                var valid = true;
+                if ($("#select_stagestatus").val() == "20" || $("#select_stagestatus").val() == "26") {
+                    $("#savesummary_button").click();
+                    return;
+                }
+                if ($("#select_industrytype").val().trim() == "") {
+                    $("#select_industrytype").css('border-color', 'red');
+                    if (valid) {
+                        valid = false;
+                    }
+                } else {
+                    $("#select_industrytype").css('border-color', '');
+                }
+                var message ="";
+                if (valid) {
+                    UpdateSummaryData();
+                }
+            }
+            var UpdateSummaryData = function() {
+
+                var postData = {
+                    "CRM_AccountId": $("#CRM_AccountId").val(),
+                    "CRM_AccountCustomerDetailId": $("#CRM_AccountCustomerDetailId").val(),
+                    "StageStatus": $("#select_stagestatus").val(),
+                    "IndustryType": $("#select_industrytype option:selected").val(),
+                    "NumberOfLocations": $("#input_numberoflocations").val(),
+                    "SqFt": $("#input_sqft").val(),
+                    "ContractExpire": $("#input_contractexpire").val(),
+                    "SalesPossibility": $("#select_salespossibility").val(),
+                    "ProviderType": $("#select_providertype").val(),
+                    "ProviderSource": $("#select_providersource").val(),
+                    "BudgetAmount": $("#input_budgetamount").val(),
+                };
+
+                //JK.CRM.CRMApp.showActivity("#summary_action");
+                $("#updatesummary_button").prop("disabled", true);
+                $.ajax({
+                    url: "/CRM/CRMLeadCustomer/UpdateCustomerAccountSummary",
+                    type: "POST",
+                    data: postData,
+                    dataType: "json",
+                    cache: false,
+                    success: function (response) {
+                        //JK.CRM.CRMApp.hideActivity("#summary_action");
+                        $("#updatesummary_button").prop("disabled", false);
+                        if (response.result == "") {
+                            window.location.href = '@Url.Action("Index","CRMLeadCustomer")';
+                        }
+                        else {
+                        //getNextRecord(response.result.CRM_AccountId);
+                            window.location.href = '@Url.Action("Detail", "CRMLeadCustomer")?accountId=' + response.result.CRM_AccountId;
+                        }
+                    },
+                    error: function(error) {
+                        //JK.CRM.CRMApp.hideActivity("#summary_action");
+                        $("#updatesummary_button").prop("disabled", false);
+                        console.log(error.message);
+                    }
+                });
+            }
+
+            var validateContactInfo = function()
+            {
+
+                if($("#select_stagestatus").val() == "20")
+                {
+
+                    var valid = true;
+                    if ($("#input_contactname").val().trim() == "")
+                    {
+                        $("#input_contactname").css('border-color', 'red');
+                        if(valid){
+                            valid=false;
+                        }
+                    }
+                    else
+                    {
+                        $("#input_contactname").css('border-color', '');
+                    }
+                    //if($("#input_contactlastname").val().trim() ==""){ $("#input_contactlastname").css('border-color', 'red'); } else{$("#input_contactlastname").css('border-color', '');}
+
+                    if($("#input_contactphonenumber").val() =="")
+                    {
+                        $("#input_contactphonenumber").css('border-color', 'red');
+                        if(valid){
+                            valid=false;
+                        }
+                    }
+                    else
+                    {
+                        $("#input_contactphonenumber").css('border-color', '');
+                    }
+
+                    //if($("#input_contactemail").val().trim() ==""){ $("#input_contactemail").css('border-color', 'red'); } else{ $("#input_contactemail").css('border-color', '');}
+
+
+                    if($("#input_companyname").val().trim() =="")
+                    {
+                        $("#input_companyname").css('border-color', 'red');
+                        if(valid){
+                            valid=false;
+                        }
+                    }
+                    else
+                    {
+                        $("#input_companyname").css('border-color', '');
+                    }
+
+                    if($("#input_companyphonenumber").val().trim() =="")
+                    {
+                        $("#input_companyphonenumber").css('border-color', 'red');
+                        if(valid){
+                            valid=false;
+                        }
+                    }
+                    else
+                    {
+                        $("#input_companyphonenumber").css('border-color', '');
+                    }
+
+                    if($("#select_industrytype").val().trim() =="")
+                    {
+                        $("#select_industrytype").css('border-color', 'red');
+                        if(valid){
+                            valid=false;
+                        }
+                    }
+                    else
+                    {
+                        $("#select_industrytype").css('border-color', '');
+                    }
+
+                    var message ="";
+                    if($("#input_companyname").val().trim() == "")
+                    {
+                        if(message != "")  {
+                            message += ", Company Name";
+                        }
+                        else{
+                            message ="Please Add Company name";
+                        }
+                    }
+
+                    if($("#input_companyphonenumber").val().trim() == "")
+                    {
+                        if(message != "")  {
+                            message += ", Phone Number";
+                        }
+                        else{
+                            message ="Please Add Phone Number";
+                        }
+                    }
+
+                    if($("#select_industrytype option:selected").val() =="")
+                    {
+                        if(message != "")  {
+                            message += ", Account Type";
+                        }
+                        else{
+                            message ="Please Select Account Type";
+                        }
+                    }
+
+                    if($("#select_state option:selected").val() =="")
+                    {
+                        if(message != "")  {
+                            message += ", State";
+                        }
+                        else{
+                            message ="Please Select State";
+                        }
+                    }
+
+
+                    if($("#input_addressline1").val().trim() == "")
+                    {
+                        if(message != "")  {
+                            message += ", Address 1";
+                        }
+                        else{
+                            message ="Please Add Address 1";
+                        }
+                    }
+
+                    if($("#input_contactname").val().trim() =="")
+                    {
+                        if(message != "")  {
+                            message += ", Contact Name";
+                        }
+                        else{
+                            message ="Please Add Contact Name";
+                        }
+                    }
+
+                    if($("#input_city").val().trim() == "")
+                    {
+                        if(message != "")  {
+                            message += ", City";
+                        }
+                        else{
+                            message ="Please Add City";
+                        }
+                    }
+
+                    if($("#input_zipcode").val().trim() =="")
+                    {
+                        if(message != "")  {
+                            message += ", ZipCode";
+                        }
+                        else{
+                            message ="Please Add ZipCode";
+                        }
+                    }
+
+                    if(valid){
+                        validateSummaryData();
+                    }else{
+
+                        swal({
+                            title:"Oops",
+                            text:message,
+                            allowOutsideClick:false,
+                            html:true
+                        },function(){
+                            return ;
+                        });
+                    }
+
+                }//End Potential (20)
+
+
+                if($("#select_stagestatus").val().trim() != "20")
+                {
+                    var callValid = true;
+                    if($("#select_industrytype").val().trim() =="")
+                    {
+                        $("#select_industrytype").css('border-color', 'red');
+                        if(callValid){ callValid = false;}
+                        $(window).scrollTop(0);
+                    }
+                    else
+                    {
+                        $("#select_industrytype").css('border-color', '');
+                    }
+
+                    if(callValid){
+                        saveSummaryData();
+                    }
+                }
+
+            }
+
+            var validateSummaryData = function() {
+
+                //var summaryForm = $("#form_summary");
+                //if (!summaryForm.valid()) {
+                //    return;
+                //} else {
+
+                var isval = true;
+
+                if ($("#input_contactperson").val().trim() == "") {
+                    $("#input_contactperson").css('border-color', 'red');
+                    if (isval == true) { isval = false; }
+                    $(window).scrollTop(0);
+                }
+                else { $("#input_contactperson").css('border-color', ''); }
+
+                if ($("#select_interestedinproposal").val().trim() == "") {
+                    $("#select_interestedinproposal").css('border-color', 'red');
+                    if (isval == true) { isval = false; }
+                    $(window).scrollTop(0);
+                }
+                else { $("#select_interestedinproposal").css('border-color', ''); }
+                if ($("#select_asignee").val().trim() == "")
+                {
+                    $("#select_asignee").css('border-color', 'red');
+                    if (isval == true)
+                    { isval = false; }
+                    $(window).scrollTop(0);
+                }
+                else{$("#select_asignee").css('border-color', '');}
+
+                if ($("#select_schedulepurpose").val() == null || $("#select_schedulepurpose").val() == "")
+                {
+                    $("#select_schedulepurpose").css('border-color', 'red');
+                    if (isval == true)
+                    { isval = false; }
+                    $(window).scrollTop(0);
+                }
+                else {
+                    $("#select_schedulepurpose").css('border-color', '');
+                }
+
+                if(isval){
+                    validateScheduleAvailability(
+                        "#input_schedulestartdate",
+                        "#input_schedulestarttime",
+                        "#input_scheduleenddate",
+                        "#input_scheduleendtime",
+                        saveSummaryData);
+                }
+                else{
+                    return false;
+                }
+                //}
+            }
+
+            var validateScheduleAvailability = function (startDateElem, startTimeElem, endDateElem, endTimeElem, saveFunc) {
+
+                var startTime = moment($(startDateElem).val() + " " + $(startTimeElem).val());
+                var endTime = moment($(endDateElem).val() + " " + $(endTimeElem).val());
+                var userId = $("#select_asignee").val();
+
+                $("#scheduleConflictMsg").hide();
+                $(startDateElem).css('border-color', '');
+                $(startTimeElem).css('border-color', '');
+                $(endDateElem).css('border-color', '');
+                $(endTimeElem).css('border-color', '');
+
+                if (!startTime.isValid()) {
+                    $(startDateElem).css('border-color', 'red');
+                    $(startTimeElem).css('border-color', 'red');
+                }
+                if (!endTime.isValid()) {
+                    $(endDateElem).css('border-color', 'red');
+                    $(endTimeElem).css('border-color', 'red');
+                }
+
+                if (!startTime.isValid() || !endTime.isValid())
+                    return;
+
+                $.ajax({
+                    url: "/CRM/CustomerSales/ValidateScheduleAvailability?userId=" + userId + '&startDate=' + startTime.format("YYYY-MM-DD HH:mm:ss") + '&endDate=' + endTime.format("YYYY-MM-DD HH:mm:ss"),
+                    type: "GET",
+                    dataType: "json",
+                    cache: false,
+                    success: function (response) {
+
+                        if (response.result == true) {
+                            if (saveFunc != null)
+                                saveFunc();
+                        }
+                        else {
+                            $(startDateElem).css('border-color', 'red');
+                            $(startTimeElem).css('border-color', 'red');
+                            $(endDateElem).css('border-color', 'red');
+                            $(endTimeElem).css('border-color', 'red');
+
+                            $("#scheduleConflictMsg").show();
+                        }
+
+                    },
+                    error: function (error) {
+                        console.log(error.message);
+                    }
+                });
+            }
+
+        var saveSummaryData = function () {
+            $.blockUI();
+
+                    var postData = {
+                        "CRM_AccountId": $("#CRM_AccountId").val(),
+                        "CRM_AccountCustomerDetailId": $("#CRM_AccountCustomerDetailId").val(),
+                        "StageStatus": $("#select_stagestatus").val(),
+                        "IndustryType": $("#select_industrytype option:selected").val(),
+                        "NumberOfLocations": $("#input_numberoflocations").val(),
+                        "SqFt": $("#input_sqft").val(),
+                        "ContractExpire":$("#input_contractexpire").val(),
+                        "SalesPossibility":$("#select_salespossibility").val(),
+                        "ProviderType": $("#select_providertype").val(),
+                        "ProviderSource": $("#select_providersource").val(),
+                        "BudgetAmount": $("#input_budgetamount").val(),
+                        "CallResult": $("#callresult_Type1 option:selected").val(),
+                        "SpokeWith":$("#input_speakwith").val(),
+                        "CallLogDate":$("#calllog_date").val(),
+                        "CallLogTime":$("#calllog_time").val(),
+                        "NoteType": $("#select_notetype1 option:selected").val(),
+                        "CallLogNote":$("#txt_calllognote").val(),
+                        "ContactPerson": $("#input_contactperson").val(),
+                        "InterestedInProposal" : $("#select_interestedinproposal").val(),
+                        "ScheduleStartDate":$("#input_schedulestartdate").val(),
+                        "ScheduleStartTime": $("#input_schedulestarttime").val(),
+                        "ScheduleEndDate" :$("#input_scheduleenddate").val(),
+                        "ScheduleEndTime" : $("#input_scheduleendtime").val(),
+                        "PurposeId":$("#select_schedulepurpose").val(),
+                        "Purpose":$("#select_schedulepurpose option:selected").text(),
+                        "Asignee":$("#select_asignee").val(),
+                        "Note": $("#text_leadgeneralnote").val()
+                    };
+
+
+
+            $("#savesummary_button").prop("disabled", true);
+
+                    $.ajax({
+                        url: "/CRM/CRMLeadCustomer/SaveCustomerAccountSummary",
+                        type: "POST",
+                        data: postData,
+                        dataType: "json",
+                        cache: false,
+                        success: function (response) {
+                            //JK.CRM.CRMApp.hideActivity("#summary_action");
+                            //$("#savesummary_button").prop("disabled", false); 21  Fv-Presentation
+                            if (response.result == "" || response.result.StageStatus == 21) {
+                                $.unblockUI();
+                                debugger;
+                                var url = '@Url.Action("Index","CRMLeadCustomer")';
+                                window.location.href = "/CRM/CRMLeadCustomer";
+                            }
+                            else {
+                                debugger;
+                                window.location.href = '@Url.Action("Detail", "CRMLeadCustomer")?accountId=' + response.result.CRM_AccountId;                             
+                            }
+                            //getNextRecord(response.result.CRM_AccountId);
+                        },
+                        error: function(error) {
+                            //JK.CRM.CRMApp.hideActivity("#summary_action");
+                            $("#savesummary_button").prop("disabled", false);
+                            console.log(error.message);
+                        }
+                    });
+                }
+
+
+                function getCurrentUrl() { return '@Url.Action("CallLogListData", "CRMLeadCustomer", new { @accountId = Model.CRM_AccountId , area = "CRM"  })'; }
+                /*1st Method to Refresh the table with new URl*/
+                function refreshCallLog(id) {
+                    var sUrl = "/CRM/CRMLeadCustomer/CallLogListData?accountId="+id;
+                    dtable.api().ajax.url(sUrl).load();
+                }
+                $(document).ready(function() {
+
+                    setupForm();
+                    disabledFields();
+                    //$("#calllog_time").val('');
+
+                    @*$("#callresult_Type").val(@ViewBag.CallTypeResult);
+                    $("#select_salespossibility").val(@ViewBag.SalePossibility);*@
+                    //$(".date-picker").datepicker();
+
+
+                   @*if(@Model.CompanyPhoneNumber == null){
+                        $("#call_btn").attr('disabled',false);
+                    }*@
+                    @* else{ $("#call_btn").attr('disabled',true);}
+                    $("#contactinfo_cancel_btn").hide();*@
+
+                    $("#select_schedulepurpose").val(@Model.Purpose.ToString());
+                    $("#select_interestedinproposal").val("");
+
+                    if($("#select_asignee").val()==null || $("#select_asignee").val()=="")
+                    {
+                        $("#calendar_schedules").hide();
+                    }
+                    else
+                    {
+                        $("#calendar_schedules").show();
+                    }
+
+                    $("#select_asignee").change(function(){
+
+                        if($("#select_asignee").val()==null || $("#select_asignee").val()=="")
+                        {
+                            $("#calendar_schedules").hide();
+                        }
+                        else
+                        {
+                            $("#calendar_schedules").show();
+                        }
+                    });
+
+                    /*Call Init function*/
+                    /*Call table initialize function*/
+                    initTable();
+
+                });
+
+                /*Init Function*/
+                function initTable() {
+
+                    var ps = $('#pageSize').val();
+                    dtable  = $('#CallLogList').dataTable({
+                        "bAutoWidth": false,
+                        cache: true,
+                        "iDisplayLength": ps == '-1' ? 10 : ps,
+                        "bDestroy": true,
+                        "aLengthMenu": [[7, 10, 25, 50, -1], [7, 10, 25, 50, "All"]],
+                        //"dom": "<'headerbox list'<'row'<'col-md-1'l><'col-md-4'f><'#divrightckbox.col-md-5 pull-right text-center'>>><'table-responsive't><'bottom'ip><'clear'>",
+                        "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                        "aaSorting": [[0, "asc"]],
+                        "sAjaxSource": getCurrentUrl(),
+                        "sAjaxDataProp": "aadata",  // Internationalisation. For more info refer to http://datatables.net/manual/i18n
+                        "rowCallback": function (nRow, data) {
+                        },
+                        "aoColumns": [
+                            {
+                                "sName": "DateTime",
+                                "bSortable": true,
+                                "mRender": function (data, type, full) {
+                                    return '<span>' + SetJSONDate(full.CallLogDate) + '<br>' + SetJSONtime(full.CallLogDate) + '</span>';
+                                }
+                            },
+                            {
+                                "sName": "CallResult",
+                                "bSortable": true,
+                                "mRender": function (data, type, full) {
+                                    return '<span>' + full.CallResult
+                                }
+                            },
+                            {
+                                "sName": "SpokeWith",
+                                "bSortable": true,
+                                "mRender": function (data, type, full) {
+                                    return "<span>" + full.SpokeWith + "</span>";
+                                }
+                            },
+                            {
+                                "sName": "Callback",
+                                "bSortable": true,
+                                "mRender": function (data, type, full) {
+                                    if (full.CallBackTime != null) {
+                                        return "<span>" + SetJSONDate(full.Callback) + '<br>' + SetJSONtime(full.CallBackTime) + "</span>";
+                                    }
+                                    else {
+                                        return "<span>" + SetJSONDate(full.Callback) + "</span>"
+                                    }
+                                }
+                            },
+                            {
+                                "sName": "NoteType",
+                                "bSortable": true,
+                                "mRender": function (data, type, full) {
+                                    return "<span>" + full.NoteType + "</span>";
+                                }
+                            },
+
+                            {
+                                "sName": "Note",
+                                "bSortable": true,
+                                "mRender": function (data, type, full) {
+                                    return "<span>" + full.Note + "</span>";
+                                }
+                            },
+                            {
+                                "sName": "StageStatusName",
+                                "bSortable": true,
+                                "sClass": "alignCenter capitaltext",
+                                "mRender": function (data, type, full) {
+                                    if (full.StageStatusName == "newlead")
+                                        return '<span id="spnStageStatus_' + full.CRM_AccountId + '" class="label label-sm label-warning" style="background-color:#567ca5;">' + full.StageStatusName + '</span>'
+                                    if (full.StageStatusName == "unqualifiedlead")
+                                        return '<span id="spnStageStatus_' + full.CRM_AccountId + '" class="label label-sm label-warning" style="background-color:#b3b36f;">' + full.StageStatusName + '</span>'
+                                    if (full.StageStatusName == "potential")
+                                        return '<span id="spnStageStatus_' + full.CRM_AccountId + '" class="label label-sm label-warning" style="background-color:#8a7447;">' + full.StageStatusName + '</span>'
+                                    if (full.StageStatusName == "qualifiedlead")
+                                        return '<span id="spnStageStatus_' + full.CRM_AccountId + '" class="label label-sm label-warning">' + full.StageStatusName + '</span>'
+                                    if (full.StageStatusName == "callback")
+                                        return '<span id="spnStageStatus_' + full.CRM_AccountId + '" class="label label-sm label-warning" style="background-color:#e67070;">' + full.StageStatusName + '</span>'
+                                }
+                            }
+                        ]
+                    });
+                }
+
+
+    </script>
+}
+
+<!-- Main View -->
+<div class="row" id="main_view" style="margin-top:0px">
+    <!-- Left Content: Reference Information -->
+    <div class="col-md-3" id="left-content" style="padding-left:0;">
+        <div class="portlet light bordered div-height">
+            <div class="portlet-body" id="lead_accountreferenceinfo">
+                @Html.Partial("_CRMCustomerAccountReferenceInformation")
+            </div>
+        </div>
+    </div>
+    <!-- Right Content: Active Information-->
+    <div class="col-md-9 right-content-margin" id="right-content" style="padding-left:0; padding-right:0;">
+        <div class="portlet light bordered" id="lead_detail" style="margin-bottom:10px;">
+            <div class="portlet-body" id="lead_accountsummary">
+                @Html.Partial("_CRMCustomerAccountSummary")
+            </div>
+        </div>
+        <div class="portlet box" style="margin-bottom:5px; margin-top:0px;" id="calllogdiv">
+            <div class="portlet-title text-center" style="background: #3da8c6;">
+                <div class="caption">
+                    <b>CALL LOG</b>
+                </div>
+                <div class="tools">
+                    <a id="calllog" href="javascript:void(0);"><i class="fa fa-angle-down" style="font-size: 20px;font-weight: bold;color: #fff;"></i> </a>
+                </div>
+            </div>
+            <div class="portlet-body" style="padding-left: 0px;padding-right: 0px;" id="divcallloglist">
+                <!--Potential Header Title-->
+                @*Potential Header*@
+                @*<div class="custom-listbox" style="margin-top: -10px;">
+                        <div class="headerbox">
+                            <div class="row no-padding">
+                                <div class="col-md-1 page-size">
+                                    <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                                        <option value="-1">All</option>
+                                        <option value="10" selected>10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="input-icon">
+                                        <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                                        <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search..." value="" class="form-control input-sm typeahead" />
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                                <div class="col-md-4"></div>
+
+                            </div>
+                        </div>
+                    </div>*@
+                @*Potential Table*@
+                <div class="tablebox" style="margin-top:-15px;">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover order-column" id="CallLogList" style="margin-top:0 !important;">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:center; width:25px;">
+                                        Date/Time
+                                    </th>
+                                    <th style="text-align:center;">
+                                        Call Result
+                                    </th>
+                                    <th style="text-align:center;">
+                                        Spoke With
+                                    </th>
+                                    <th style="text-align:center;">
+                                        Call Back
+                                    </th>
+                                    <th style="text-align:center; width: 275px;">
+                                        Note
+                                    </th>
+                                    <th style="text-align:center; width: 250px;">
+                                        General Note
+                                    </th>
+                                    <th style="text-align:center;">
+                                        Stage
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Calendar Modal View -->
+<div class="modal fade bs-modal-lg  custom-model custom-form-design" id="calendar_modalview" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content modal-custom-content">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    <b> &nbsp; <label id="lblCustNamePopup"></label></b>
+                </h4>
+            </div>
+            <div class="modal-body" id="calendar_modalview_body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-12">
+                            <div class="portlet light calendar">
+                                <div class="portlet-title">
+                                    <div class="caption">
+                                        <i class="icon-layers font-green"></i>
+                                        <span class="caption-subject font-green sbold uppercase" id="input_assigneename_detail"> &nbsp;</span>
+                                    </div>
+                                </div>
+                                <div id="calendar" class="has-toolbar"> </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    </div>
+</div>
+
+<form id="form_detailschedule">
+    @Html.Hidden("AccountDetailId", "", new { @id = "scheduleaccountdetailid" })
+    <div class="modal fade custom-model custom-form-design" id="detailschedule_modalview" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content modal-custom-content">
+                <div class="modal-header modal-custom-header" id="newschedule_modalview_header">
+                    <button type="button" class="close modal-close-button" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title text-center" style="margin-top: 0px;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                        <b><label style="font-weight:bold" id="custName"></label></b>
+                    </h4>
+                </div>
+                <div class="modal-header" style="padding:0px!important;border-bottom: none;">
+                    <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                        <label style="font-weight:bold" id="userName"></label>
+                    </h4>
+                </div>
+                <div class="modal-body" id="newschedule_modalview_body">
+                    <div class="row">
+                        <div class="col-lg-12 popupClass">
+                            <div class="form-group">
+                                <div class="control-label col-md-3">
+                                    Start Date/Time<span class="required">*</span>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="text" class="form-control input-sm date date-picker RemovePeriodvalidation" name="input_schedulestartdate_detail" data-date-format="mm/dd/yyyy" id="input_schedulestartdate_detail" />
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="input-icon">
+                                        <i class="fa fa-clock-o"></i>
+                                        <input type="text" class="form-control input-sm  timepicker timepicker-default" name="input_schedulestarttime_detail" id="input_schedulestarttime_detail">
+                                    </div>
+                                </div>
+                                <div class="control-label col-md-4">
+                                    <label class="control-checkbox">
+                                        <input type="checkbox" id="IsAllDay" name="IsAllDay" /> All Day Event
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 popupClass">
+                            <div class="form-group">
+                                <div class="control-label col-md-3">
+                                    End Date/Time<span class="required">*</span>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="text" class="form-control input-sm date date-picker RemovePeriodvalidation" name="input_scheduleenddate_detail" data-date-format="mm/dd/yyyy" id="input_scheduleenddate_detail" />
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="input-icon">
+                                        <i class="fa fa-clock-o"></i>
+                                        <input type="text" class="form-control input-sm  timepicker timepicker-default" name="input_scheduleendtime_detail" id="input_scheduleendtime_detail">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 popupClass">
+                            <div class="form-group">
+                                <div class="control-label col-md-3">
+                                    Purpose<span class="required">*</span>
+                                </div>
+                                <div class="col-md-5">
+                                    <select id="input_purposetype_detail" name="input_purposetype_detail" class="form-control input-sm">
+                                        <option value="">--Select--</option>
+                                        @foreach (var item in purpose)
+                                        {
+                                            <option value="@item.CRM_PurposeTypeId">@item.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 popupClass">
+                            <div class="form-group">
+                                <div class="control-label col-md-3">
+                                    Schedule Type <span class="required">*</span>
+                                </div>
+                                <div class="col-md-5">
+                                    <select id="input_scheduletype_detail" name="input_scheduletype_detail" class="form-control input-sm" disabled>
+                                        <option value="">--Select--</option>
+                                        @foreach (var item in scheduleType)
+                                        {
+                                            <option value="@item.CRM_ScheduleTypeId">@item.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 popupClass">
+                            <div class="form-group">
+                                <div class="control-label col-md-3">
+                                    <input type="hidden" id="input_scheduleId_detail" name="input_scheduleId_detail" />
+                                    Subject
+                                </div>
+                                <div class="col-md-5">
+                                    <input id="input_scheduletitle_detail" name="input_scheduletitle_detail" type="text" class="form-control input-sm" placeholder="" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 popupClass">
+                            <div class="form-group">
+                                <div class="control-label col-md-3">
+                                    Location
+                                </div>
+                                <div class="col-md-5">
+                                    <input id="input_schedulelocation_detail" name="input_schedulelocation" type="text" class="form-control input-sm" placeholder="" />
+                                </div>
+                                <div class="control-label col-md-4">
+                                    <label class="control-checkbox">
+                                        <input type="checkbox" id="IsSameAddressDetail" name="IsSameAddressDetail" /> Same Cus_Address
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 popupClass">
+                            <div class="form-group">
+                                <div class="control-label col-md-3">
+                                    Notes
+                                </div>
+                                <div class="col-md-9">
+                                    <textarea class="form-control" id="input_scheduledescription_detail" name="input_scheduledescription_detail" rows="4"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <button type="button" data-dismiss="modal" class="btn btn-large btn-primary pull-right"><i class="fa fa-close"></i> Cancel</button>
+                        </div>
+                        <div class="col-lg-4">
+                            <button type="button" id="btnScheduleSaveFromModal" class="btn btn-large btn-primary pull-left"><i class="fa fa-save"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</form>
+
+<!-- Call Log Model View -->
+<div class="modal fade custom-model custom-form-design" id="callLog_modalview" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content modal-custom-content">
+            <div class="modal-header modal-custom-header" id="callLog_modalview_header">
+                <button type="button" class="close modal-close-button" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title">Call Log</h4>
+            </div>
+            <div class="modal-body" id="callLog_modalview_body">
+                <div class="row">
+                    <form action="#" id="callLog_form">
+                        <div class="form-body">
+                            <div class="col-md-12">
+                                <!--Call Result-->
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="form_title" class="control-label col-md-3 input-sm text-right">Call Result<span class="required">*</span>:</label>
+                                        <div class="col-md-8">
+                                            <select id="callresult_Type" class="form-control select2 input-sm">
+                                                <option value="">Select...</option>
+                                                <option value="1">Appointment</option>
+                                                <option value="2">Busy</option>
+                                                <option value="3">Contacted</option>
+                                                <option value="4">Left Message</option>
+                                                <option value="5">Letter Sent</option>
+                                                <option value="6">No Answer</option>
+                                                <option value="7">Not Qualified</option>
+                                                <option value="8">Other</option>
+                                                <option value="9">Previous Customer</option>
+                                                <option value="10">Referred to Ops</option>
+                                                <option value="11">Turn Down Letter</option>
+                                                <option value="12">Wrong #</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12" id="divOutcome">
+                                <!-- Spoke With -->
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="form_title" class="control-label col-md-3 input-sm text-right">Spoke With:</label>
+                                        <div class="col-md-8">
+                                            <input type="text" name="name" data-required="1" class="form-control input-sm" value="" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <!-- Call Back -->
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="form_startdate" class="control-label col-md-3 input-sm text-right">Call Back Date<span class="required"></span>:</label>
+                                        <div class="col-md-8">
+                                            <div class="input-group input-group-sm date form_datetime bs-datetime ">
+                                                <input id="dtp_Timestamp" type="text" size="16" class="form-control" aria-describedby="sizing-addondstart">
+                                                <span class="input-group-addon" id="sizing-addondstart">
+                                                    <button class="default date-set" type="button">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Note-->
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="form_description" class="control-label col-md-3 input-sm" style="text-align: right;">@JKCRMResource.note:</label>
+                                        <div class="col-md-8">
+                                            <textarea id="form_description" class="form-control input-sm" rows="6"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer" id="addActivity_modalview_footer">
+                <button id="cancel_addActivity_button" type="button" class="btn btn-default" data-dismiss="modal" onclick="resetAddActivityForm();">@JKCRMResource.cancel</button>
+                <button id="addToDo_button" type="button" class="btn btn-success">@JKCRMResource.save</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>

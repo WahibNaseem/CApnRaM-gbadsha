@@ -1,0 +1,1289 @@
+﻿
+@{
+    ViewBag.Title = "CustomerCredits";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/admin/assets/Card/dist/card.css" rel="stylesheet" />
+<link href="~/Content/admin/assets/global/plugins/bootstrap-sweetalert/sweetalert.css" rel="stylesheet" />
+<link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+
+
+@section styles{
+
+    <style type="text/css">
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        #ui-datepicker-div {
+            z-index: 99999 !important;
+        }
+
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .txtright {
+            text-align: right;
+        }
+
+        .txtCenter {
+            text-align: center;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+            font-weight: normal;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        #modal_RegionModel .modal-content {
+            width: 55% !important;
+            margin-left: 30% !important;
+        }
+
+        .text-bottom {
+            vertical-align: bottom !important;
+        }
+
+        input[type="radio"].bigger-radio {
+            -ms-transform: scale(1.5); /* IE 9 */
+            -webkit-transform: scale(1.5); /* Chrome, Safari, Opera */
+            transform: scale(1.5);
+            margin-bottom: 10px;
+        }
+    </style>
+
+}
+
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:left;">
+
+                    <div class="input-group">
+                        <div class="">
+                            <label class="check-inline" style="margin-top: 2px;">
+                                <input type="radio" name="radioCRType" value="1" class="i-checks chkNewCredit" id="chkNewCredit" checked="checked" />
+                                <span>NEW NORMAL CREDIT</span>
+                            </label>
+                            <label class="check-inline" style="margin-top: 2px;margin-left: 10px;">
+                                <input type="radio" name="radioCRType" value="2" class="i-checks chkTaxCredit" id="chkTaxCredit" />
+                                <span>NEW TAX CREDIT</span>
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-4 topheader">
+                    CREATE NEW CREDIT
+                </div>
+                <div class="col-md-2 pull-right" style="padding-right:5px;">
+                    <div style="display:table-cell;padding-right: 5px;">
+                        Region
+                    </div>
+                    <div style="display:table-cell;width:100%;">
+                        @if (ViewBag.regionlist != null)
+                        {
+                            <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                                @foreach (var item in (SelectList)ViewBag.regionlist)
+                                {
+                                    <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="custom-listbox" id="divfranchiseList" style="margin-top:4px;margin-bottom:3px;">
+    <div class="headerbox">
+        <div class="row no-padding">
+            <div class="col-md-2 trim-padding">
+                <div class="input-group">
+                    <div class="">
+                        <label class="check-inline" style="margin-top: 2px;">
+                            <input type="radio" name="radio2" value="1" class="i-checks chkInvoice" id="chkInvoice" checked="checked" />
+                            <span>Invoice</span>
+                        </label>
+                        <label class="check-inline" style="margin-top: 2px;margin-left: 10px;">
+                            <input type="radio" name="radio2" value="2" class="i-checks chkCustomer" id="chkCustomer" />
+                            <span>Customer</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            @*<div class="col-sm-1 page-size">
+                    <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                        <option value="-1">All</option>
+                        <option value="100" selected>100</option>
+                        <option value="50">50</option>
+                        <option value="25">25</option>
+                    </select>
+                </div>*@
+            <div class="col-md-3">
+                <div class="input-icon">
+                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                    @*<input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search Customer Name" value="" class="form-control input-sm typeahead" />*@
+                    <input type="text" placeholder="Search..." class="form-control input-sm" id="input_Search" />
+                </div>
+            </div>
+            <div class="col-md-1">
+                <input type="button" id="btnSearchInvoice" class="btn btn-primary button-next" value="Search" style="padding: 3px 12px;font-size: 13px;">
+            </div>
+            <div id="filtersearch">
+                <div class="col-md-6 pull-right no-padding">
+                    <div class="col-md-4">
+                        <div class="col-md-6">
+                            <label class="mt-checkbox" style="margin-bottom: 0px;">
+                                <input type="checkbox" id="chkConsolidated" class="search-field" checked="checked">Open
+                                <span></span>
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="mt-checkbox">
+                                <input type="checkbox" id="chkIncludeClosed" class="search-field">Paid
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-8 pull-right no-padding" style="text-align:center;">
+                        <div class="col-md-6 no-padding" style="margin-left:30px;">
+                            <select id="select_timeduration" class="form-control input-sm">
+                                <option value="1">This Week</option>
+                                <option value="2">This Week-to-date</option>
+                                <option value="3">This Month</option>
+                                <option value="4">This Month-to-date</option>
+                                <option value="5">This Quarter</option>
+                                <option value="6">This Quarter-to-date</option>
+                                <option value="7" selected="selected">This Fiscal Year</option>
+                                <option value="8">This Fiscal Year-to-date</option>
+                                <option value="9">Today</option>
+                                <option value="10">Yesterday</option>
+                                <option value="11">Last Week</option>
+                                <option value="12">Last Month</option>
+                                <option value="13">Last Quarter</option>
+                                <option value="14">Last Year</option>
+                                <option value="15">Custom Date</option>
+                            </select>
+                        </div>
+                        <div class="col-md-5 divspandate no-padding" style="margin-top: 3px; margin-left: 0px; display: block; float: right;" id="divspandate">
+                            <span id="spnStartDate"></span> - <span id="spnEndtDate"></span>
+                        </div>
+                        <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divSD">
+                            <input type="text" name="txtStartDate" id="txtStartDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                        </div>
+                        <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divED">
+                            <input type="text" name="txtEndtDate" id="txtEndtDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div id="divResult">
+    <div class="tablebox">
+        <div class="row padding-tb1">
+            <div class="row no-padding">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="CustomerCreditsList" style="width: 100%">
+                        <thead>
+                            <tr>
+                                <th class="tblInvoice_invoiceNo" style="width:50px;text-align:center;">
+                                    Invoice No
+                                </th>
+                                <th class="tblInvoice_invoiceDate" style="width:50px;text-align:center;">
+                                    Invoice Date
+                                </th>
+                                <th class="tblInvoice_customerNo" style="width:45px;text-align:center;">
+                                    Customer Number
+                                </th>
+                                <th class="tblInvoice_customerName" style="width:180px;text-align:center;">
+                                    Customer Name
+                                </th>
+                                <th class="tblInvoice_invoiceDesc" style="width:280px;text-align:center;">
+                                    Invoice Desc.
+                                </th>
+                                <th class="tblInvoice_invoiceAmt" style="text-align:center;width:80px;">
+                                    Inv. Amount
+                                </th>
+                                <th class="tblInvoice_balance" style="text-align:center;width:70px;">
+                                    Balance
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade in" id="modal_RegionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Select Region
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Select Region</label>
+                                @if (ViewBag.regionlist != null)
+                                {
+                                    <select class="form-control input-sm" id="selectregionlist">
+                                        <option value="">Select Region</option>
+                                        @foreach (var item in (SelectList)ViewBag.regionlist)
+                                        {
+                                            <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div class="col-md-12">
+                        <button type="button" name="SaveNew" id="btnRegion" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:0px;">Select Region</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="ApplyCreditDIV"></div>
+<div id="ApplyTaxCreditDIV"></div>
+<!--<form class="form-horizontal" role="form" id="form_applycreditform">
+    <div class="modal fade custom-model custom-form-design" id="modal_applycreditform" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" style="width:1000px">
+            <div class="modal-content" style="border-radius: 8px;">
+            </div>
+
+        </div>
+    </div>
+</form>-->
+
+<div class="modal fade custom-model custom-form custom-form-design" id="modal_customercreditprompt" tabindex="-1" style="display: none;">
+    <div class="modal-dialog" style="width:500px">
+        <div class="modal-content" style="border-radius: 8px; font-size: 16px">
+            <div class="headerbox">
+                <div class="row">
+                    &nbsp;
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12" style="padding: 20px 100px 40px 100px;">
+                        Do you want to apply <span id="lblPromptCreditAmt">&nbsp;</span> in customer credit for Customer <span id="lblPromptCreditCustomerName">&nbsp;</span>?
+                    </div>
+                    <div class="col-md-12">
+                        <div class="col-md-6"></div>
+                        <div class="col-md-3">
+                            <button type="button" class="btn green btn-block" onclick="onClickYesApplyCustomerCredit()">Yes</button>
+                        </div>
+
+                        <div class="col-md-3">
+                            <button type="button" class="btn green btn-block" onclick="onClickNoApplyCustomerCredit()">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade in" id="modal_FranchiseeChargebackCredit" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg" id="Render_FranchiseeChargebackCredit">
+    </div>
+</div>
+@section pageplugins{
+    @if (Request.IsSecureConnection)
+    {
+        <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    }
+    else
+    {
+        <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    }
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+}
+@section scripts{
+    <script src="@Url.Content("~/Areas/Portal/Scripts/ApplyCreditForm.js")" type="text/javascript"></script>
+
+    <script>
+
+        var invoiceList;
+        var saveAction;
+
+        function getTableURL() {
+            var _searchtextVal = $('#input_Search').val();
+            if ($('#chkInvoice').is(":checked")) {
+                _SearchBy = 1;
+            }
+            if ($('#chkCustomer').is(":checked")) {
+                _SearchBy = 2;
+            }
+
+            var _regionId = $("#regionlist").val();
+            var _fromDateVal = $('#spnStartDate').text();
+            var _toDateVal = $('#spnEndtDate').text();
+            var _incClosed = $('#chkIncludeClosed').prop("checked");
+            var _consolidated = $('#chkConsolidated').prop("checked");
+            var sURL = '@Url.Action("InvoicesSearchForCreditResultData", "AccountReceivable", new { area = "Portal" })?rgId=' + _regionId + '&fd=' + _fromDateVal + '&td=' + _toDateVal + '&st=' + _searchtextVal + '&closed=' + _incClosed + '&consolidated=' + _consolidated + '&sb=' + _SearchBy
+
+            return sURL;
+        }
+
+        function refreshTable() {
+            var url = getTableURL();
+
+            $.blockUI();//$.blockUI({ message: $('#throbberBlock'), theme: true, baseZ: 12000 });
+
+            invoiceList.ajax.url(url).load(function () {
+                //$("#divResult").show();
+                $.unblockUI();
+            });
+        }
+
+        $("#regionlist").change(function () {
+            // refreshTable();
+        })
+
+        $(window).load(function () {
+            if ('@ViewBag.selectedRegionId' == 0) {
+                $("#modal_RegionModel").modal({ backdrop: 'static' });
+            }
+            else {
+                //refreshTable();
+            }
+        });
+
+
+        $(".chkInvoice").change(function () {
+            $("#filtersearch").hide();
+        });
+
+        $(".chkCustomer").change(function () {
+            $("#filtersearch").show();
+        });
+
+        jQuery(document).ready(function () {
+
+            if ($('#chkInvoice').is(":checked")) {
+                $("#filtersearch").hide();
+            }
+            if ($('#chkCustomer').is(":checked")) {
+                $("#filtersearch").show();
+            }
+
+            //$("#divResult").hide();
+            $(".input-group-btn").click(function () {
+                $(this).prev().trigger("focus");
+                $(this).prev().trigger("focus");
+            });
+            $("#btnRegion").click(function () {
+                if ($("#selectregionlist").val() != "") {
+                    $("#regionlist option[value='" + $("#selectregionlist").val() + "']").attr("selected", 1);
+                    $("#regionlist").multiselect("refresh");
+                    //refreshTable();
+                    $(".close").click();
+                }
+            });
+
+             $('#btnSearchInvoice').click(function () {
+                if ($('#input_Search').val() != "") {
+                    //$("#divResult").show();
+                    refreshTable();
+                }
+            })
+
+
+            $("#regionlist").multiselect({
+                includeSelectAllOption: false,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2,
+                onChange: refreshTable,
+                onSelectAll: refreshTable,
+                onDeselectAll: refreshTable
+            });
+
+            if ('@ViewBag.selectedRegionId' > 0) {
+
+                $("#regionlist option[value='" + '@ViewBag.selectedRegionId' + "']").attr("selected", 1);
+                $("#regionlist").multiselect("refresh");
+            }
+
+            //$("#pageSize").change(function () {
+            //    setPaging();
+            //});
+
+            $('#divspandate').show();
+            $('#divSD').hide();
+            $('#divED').hide();
+
+            firstDay = moment().subtract(0, 'month').startOf('year').toString();
+            lastDay = moment().subtract(0, 'month').endOf('year').toString();
+
+            //firstDay = moment().startOf('year').toString();;
+            //lastDay = moment().endOf('year').toString();
+
+            $('#spnStartDate').html(moment(firstDay).format('L'));
+            $('#spnEndtDate').html(moment(lastDay).format('L'));
+            //$('#txtStartDate').inputmask("mm/dd/yyyy", {});
+            //$('#txtEndtDate').inputmask("mm/dd/yyyy", {});
+
+            //setSearchTime(3);
+            //var sURL = getTableURL();
+            //var ps = $('#pageSize').val();
+            //setSearchTime(3);
+            //selectDate(7);
+            invoiceList = $('#CustomerCreditsList').DataTable({
+                //"bProcessing": true,
+                "bServerSide": false,
+                //"order": false,
+                //"iDisplayLength": ps == '-1' ? 25 : ps,
+                "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                "aaSorting": [[0, "desc"]],
+
+                columnDefs: [
+                    {
+                        targets: "tblInvoice_invoiceNo",
+                        data: "InvoiceNo",
+                        sClass: "txtCenter",
+                        render: function (data, type, row, meta) {
+                            return '<a href="javascript:void(0);" onclick="btnOpenApplyCreditForm(' +
+                                row.InvoiceId +
+                                ')">' +
+                                data +
+                                '</a>';
+                        }
+                    },
+                    {
+                        targets: "tblInvoice_invoiceDate",
+                        data: "InvoiceDate",
+                        type: "date",
+                        sClass: "txtCenter",
+                        render: function (data, type, row, meta) {
+                            return moment(new Date(parseInt(data.substr(6)))).format("MM/DD/YYYY");
+                        }
+                    },
+                    { targets: "tblInvoice_customerNo", sClass: "txtCenter", data: "CustomerNo" },
+                    { targets: "tblInvoice_customerName", data: "CustomerName" },
+                    { targets: "tblInvoice_invoiceDesc", data: "Description" },
+                    {
+                        targets: "tblInvoice_invoiceAmt",
+                        data: "Amount",
+                        sClass: "txtright",
+                        render: function (data, type, row, meta) {
+                            return '$' +
+                                parseFloat(data, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString()
+                            //return '$' + parseFloat(data).toFixed(2);
+                        }
+                    },
+                    {
+                        targets: "tblInvoice_balance",
+                        data: "Balance",
+                        sClass: "txtright",
+                        render: function (data, type, row, meta) {
+                            return '$' +
+                                parseFloat(data, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString()
+                            //return '$' + parseFloat(data).toFixed(2);
+                        }
+                    },
+                ]
+            });
+
+            $(".search-field").change(function () {
+                //refreshTable();
+            });
+            //$("#input_Search").keyup(function () {
+            //    var table = $("#CustomerCreditsList").DataTable();
+            //    table.search($(this).val()).draw();
+            //});
+
+            $("#txtBalance").inputmask("numeric",
+                {
+                    decimal: ".",
+                    negative: false,
+                    scale: 2,
+                    groupSeparator: ",",
+                    digits: 2,
+                    autoGroup: true,
+                    prefix: "$",
+                    rightAlign: false,
+                    autoUnmask: true,
+                    removeMaskOnSubmit: true,
+                });
+
+            $("#txtAmount").inputmask("numeric",
+                {
+                    decimal: ".",
+                    negative: false,
+                    scale: 2,
+                    groupSeparator: ",",
+                    digits: 2,
+                    autoGroup: true,
+                    prefix: "$",
+                    rightAlign: false,
+                    autoUnmask: true,
+                    removeMaskOnSubmit: true,
+                });
+
+            //$("#select_dateRange").change(function () {
+            //    var value = this.value;
+            //    setSearchTime(value);
+            //    refreshTable();
+            //});
+
+            $('#select_timeduration').change(function () {
+                //alert($(this).val());
+                $('#spnStartDate').html('');
+                $('#spnEndtDate').html('');
+                $('#divspandate').show();
+                $('#divSD').hide();
+                $('#divED').hide();
+                switch (parseInt($(this).val())) {
+                    case 1:
+                        firstDay = moment().startOf('isoWeek').toString();
+                        lastDay = moment().endOf('isoWeek').toString();
+                        break;
+                    case 2:
+                        //code block
+                        firstDay = moment().startOf('isoWeek').toString();
+                        lastDay = new Date().toString();
+                        break;
+                    case 3:
+                        firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                        lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                        break;
+                    case 4:
+                        //code block
+                        firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                        lastDay = new Date().toString();
+                        break;
+                    case 5:
+                        //code block
+                        firstDay = moment().startOf('quarter').toString();
+                        lastDay = moment().endOf('quarter').toString();
+                        break;
+                    case 6:
+                        //code block
+                        firstDay = moment().startOf('quarter').toString();
+                        lastDay = new Date().toString();
+                        break;
+                    case 7:
+                        //code block
+                        firstDay = moment().startOf('year').toString();;
+                        lastDay = moment().endOf('year').toString();
+                        break;
+                    case 8:
+                        //code block
+                        firstDay = moment().startOf('year').toString();
+                        lastDay = new Date().toString();
+                        break;
+                    case 9:
+                        //code block
+                        firstDay = moment().toString();
+                        lastDay = moment().toString();
+                        break;
+                    case 10:
+                        //code block
+                        firstDay = moment().add(-1, 'days').toString();
+                        lastDay = moment().add(-1, 'days').toString();
+                        break;
+                    case 11:
+                        //code block
+                        firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                        lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                        break;
+                    case 12:
+                        //code block
+                        firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                        lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                        break;
+                    case 13:
+                        //code block
+                        firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                        lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                        break;
+                    case 14:
+                        //code block
+                        firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                        lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                        break;
+                    case 15:
+                        //code block
+                        $('#divspandate').hide();
+                        $('#divSD').show();
+                        $('#divED').show();
+                        $('#txtStartDate').val('');
+                        $('#txtEndtDate').val('')
+                        break;
+                    default:
+                    //code block
+                }
+                $('#spnStartDate').html(moment(firstDay).format('L'));
+                $('#spnEndtDate').html(moment(lastDay).format('L'));
+
+                //refreshTable();
+            });
+
+            $(".search-field").change(function () {
+                //refreshTable();
+            });
+
+            //refreshTable();
+            $(document).on("click",
+                ".submit-button",
+                function () {
+                    debugger;
+                    var flg = true;
+                    if ($("#select_ReasonList").val() == "") {
+                        flg = false;
+                        $("#select_ReasonList").css("border-color", "red");
+                    } else {
+                        $("#select_ReasonList").css("border-color", "#c2cad8")
+                    }
+                    if ($("#creditDesc").val() == "") {
+                        flg = false;
+                        $("#creditDesc").css("border-color", "red");
+                    } else {
+                        if (flg)
+                            flg = true;
+                        else
+                            flg = false;
+                        $("#creditDesc").css("border-color", "#c2cad8");
+                    }
+
+                    var _customerLineAmount = 0.00;
+                    var _franchiseeLineAmount = 0.00;
+                    $(".credit-line-item-total-field").each(function () {
+                        _customerLineAmount = _customerLineAmount + parseFloat($(this).val());
+                    });
+                    $(".credit-franchisee-field").each(function () {
+                        _franchiseeLineAmount = _franchiseeLineAmount + parseFloat($(this).val());
+                    });
+
+
+                    if (_franchiseeLineAmount != _customerLineAmount) {
+                        flg = false;
+                        swal('Please enter franchisee distribution amount equal line amount total.')
+                    } else {
+                        if (flg)
+                            flg = true;
+                        else
+                            flg = false;
+                    }
+
+
+                    if ($("#creditDesc").val() == "") {
+                        flg = false;
+                        $("#creditDesc").css("border-color", "red");
+                    } else {
+                        if (flg)
+                            flg = true;
+                        else
+                            flg = false;
+                        $("#creditDesc").css("border-color", "#c2cad8");
+                    }
+
+
+                    var CCflg = validateCreditAmount();
+
+                    if (flg && CCflg) {
+                        var balance = parseFloat($("#newBalance").val());
+                        var buttonName = $(this).attr("name");
+
+                        saveAction = buttonName;
+                        if (balance >= 0) // no customer credit necessary
+                            if (saveAction == 'SaveClose')
+                                submitForm();
+                            else
+                                submitFormandNew();
+                        else
+                            promptCustomerCredit();
+                    }
+                });
+
+            $(document).on("click",
+                ".submit-button-no-prompt",
+                function () {
+                    var flg = true;
+                    if ($("#select_ReasonList").val() == "") {
+                        flg = false;
+                        $("#select_ReasonList").css("border-color", "red");
+                    }
+                    if ($("#creditDesc").val() == "") {
+                        flg = false;
+                        $("#creditDesc").css("border-color", "red");
+                    }
+                    var _customerLineAmount = 0.00;
+                    var _franchiseeLineAmount = 0.00;
+                    $(".credit-line-item-total-field").each(function () {
+                        _customerLineAmount = _customerLineAmount + parseFloat($(this).val());
+                    });
+                    $(".credit-franchisee-field").each(function () {
+                        _franchiseeLineAmount = _franchiseeLineAmount + parseFloat($(this).val());
+                    });
+
+
+                    if (_franchiseeLineAmount != _customerLineAmount) {
+                        flg = false;
+                        swal('Please enter franchisee distribution amount equal line amount total.')
+                    } else {
+                        if (flg)
+                            flg = true;
+                        else
+                            flg = false;
+                    }
+
+
+
+                    var CCflg = validateCreditAmount();
+
+                    if (flg && CCflg) {
+                        var buttonName = $(this).attr("name");
+                        saveAction = buttonName;
+                        if (saveAction == 'SaveClose')
+                            submitForm();
+                        else
+                            submitFormandNew();
+                    }
+                }
+            );
+
+            $(document).on("change",
+                "input[type='radio'][name='rdApplyAmtType']",
+                function () {
+                    toggleApplyAmtField();
+                }
+            );
+        });
+
+        //function setPaging() {
+        //    var z = $("#pageSize").val();
+        //    var table = $("#CustomerCreditsList").DataTable();
+        //    if (z > 0) {
+        //        table.page.len(z).draw();
+        //    }
+        //    else if (z == -1) {
+        //        table.page.len(table.rows().count()).draw();
+        //    }
+        //    else {
+        //        table.page.page.len(25).draw();
+        //    }
+        //}
+
+        function showChargebackCredit(fid, InvNo) {
+
+            debugger
+            var sURL = '@Url.Action("PartialChargeBackCredit", "AccountsPayable", new { area = "Portal" })';
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#Render_FranchiseeChargebackCredit').html(data);
+                    initFMT();
+                    $('#divSearchbox').hide();
+                    $('#btnFCSaveNew').hide();
+                    $('#btnFCSaveClose').hide();
+                    $('#btnFCSaveClosePP').show();
+                     $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("GetFranchiseeComleteDetail", "AccountsPayable", new { area = "Portal" })?FranchiseeId=' + fid,
+                         success: function (res) {
+                             console.log(res)
+                            $('#hdfTaxRate').val(res.detail.ContractTaxRate);
+                            $('#hdfFranchiseeId').val(res.detail.FranchiseeId);
+                            $('#spnFranchiseeNumber').html(res.detail.FranchiseeNo);
+                            $('#spnFranchiseeName').html(res.detail.Name);
+                            $('#spnFranchiseeAddress').html(res.detail.Address1);
+                            $('#spnFranchiseeCityStatePincode').html(res.detail.City + ', ' + res.detail.StateName + ' ' + res.detail.PostalCode);
+                            CBC_franchiseeFee = res.fees;
+
+                            $('#ServiceTypeListId').val(53);
+                            $('#ServiceTypeListId').prop('readonly', true)
+                            $('#CBC_InvoiceNo').val($.trim(InvNo));
+                            $('#CBC_InvoiceNo').trigger("change");
+                            $('#CBC_InvoiceNo').prop('readonly', true)
+                             $('#Amount').prop('readonly', true)
+
+
+
+
+
+
+                             CalculateAmount();
+
+                             $('#btnFCSaveNew').hide()
+                             $('#btnFCSaveClose').hide()
+                             $('#btnFCSaveClosePP').show()
+                             $('#btnFCSaveClosePP').text('Save')
+
+                        }
+                    });
+
+                    $("#form_FranchiseeChargebackCredit").submit(function (event) {
+                        $.blockUI();
+                        var dataString;
+                        event.preventDefault();
+                        event.stopImmediatePropagation();
+                        var action = $("#form_FranchiseeChargebackCredit").attr("action");
+                        // Setting.
+                        dataString = new FormData($("#form_FranchiseeChargebackCredit").get(0));
+                        contentType = false;
+                        processData = false;
+                        $.ajax({
+                            type: "POST",
+                            url: action,
+                            data: dataString,
+                            dataType: "json",
+                            contentType: contentType,
+                            processData: processData,
+                            success: function (result) {
+                                $.unblockUI();
+                                $("#modal_FranchiseeChargebackCredit").modal('hide');
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                $("#modal_FranchiseeChargebackCredit").modal('hide');
+                                $.unblockUI();
+                            }
+                        });
+                    });
+
+                    $("#modal_FranchiseeChargebackCredit").modal({ backdrop: 'static' });
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+        }
+
+
+        function submitForm() {
+            $('.creditfieldcurrency').each(function () {
+                $('#' + this.id).inputmask('remove');
+            });
+            debugger
+
+            $.blockUI();//$.blockUI({ message: $('#throbberBlock'), theme: true, baseZ: 12000 });
+
+            $("#btnSaveClose").prop('disabled', true);
+            $("#btnSaveNew").prop('disabled', true);
+            $("#btnSaveApprove").prop('disabled', true);
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ApplyCredit","AccountReceivable","Portal")',
+                data: $("#form_applycreditform").serialize() + "&action=" + saveAction,
+                dataType: 'json',
+                success: function (data) {
+                    $('#modal_applycreditform').hide()
+                    $("#btnSaveClose").prop('disabled', false);
+                    $("#btnSaveNew").prop('disabled', false);
+                    $("#btnSaveApprove").prop('disabled', false);
+                    $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("HaveChargebackforInvoiceId", "AccountReceivable", new { area = "Portal" })?invoiceId=' + $('#creditinvoiceId').val(),
+                        contentType: "application/json; charset=utf-8",
+                        datatype: "json",
+                        success: function (data) {
+                            debugger
+                            console.log(data)
+                            if (data == true) {
+                                $("#modal_applycreditform").modal('hide');
+                                showChargebackCredit($('#creditfranchiseeId').val(), $('#creditinvoiceNo').val())
+
+                            } else {
+                                document.location.href = '@Url.Action("PendingCreditList", "AccountReceivable","Portal")';
+                            }
+                            $.unblockUI();
+                        },
+                        error: function () {
+                            $.unblockUI();
+                            alert("Content load failed.");
+                        }
+                    });
+                },
+                error: function (error) {
+                    $("#form_applycreditform").modal('hide');
+                    $("#btnSaveClose").prop('disabled', false);
+                    $("#btnSaveNew").prop('disabled', false);
+                    $("#btnSaveApprove").prop('disabled', false);
+                    $.unblockUI();
+                }
+            });
+
+        }
+
+
+        function submitFormandNew() {
+            $('.creditfieldcurrency').each(function () {
+                $('#' + this.id).inputmask('remove');
+            });
+
+            $.blockUI();//$.blockUI({ message: $('#throbberBlock'), theme: true, baseZ: 12000 });
+
+            $("#btnSaveClose").prop('disabled', true);
+            $("#btnSaveNew").prop('disabled', true);
+            $("#btnSaveApprove").prop('disabled', true);
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ApplyCredit","AccountReceivable","Portal")',
+                data: $("#form_applycreditform").serialize() + "&action=" + saveAction,
+                dataType: 'json',
+                success: function (data) {
+                    $('#modal_applycreditform').hide()
+                    $("#btnSaveClose").prop('disabled', false);
+                    $("#btnSaveNew").prop('disabled', false);
+                    $("#btnSaveApprove").prop('disabled', false);
+                     $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("HaveChargebackforInvoiceId", "AccountReceivable", new { area = "Portal" })?invoiceId=' + $('#creditinvoiceId').val(),
+                        contentType: "application/json; charset=utf-8",
+                        datatype: "json",
+                        success: function (data) {
+                            debugger
+                            console.log(data)
+                            if (data == true) {
+                                showChargebackCredit($('#creditfranchiseeId').val(), $('#creditinvoiceNo').val())
+                                $("#modal_applycreditform").modal('hide');
+
+                            } else {
+                                document.location.href = '@Url.Action("CustomerCredits", "AccountReceivable","Portal")';
+                            }
+                            $.unblockUI();
+                        },
+                        error: function () {
+                            $.unblockUI();
+                            alert("Content load failed.");
+                        }
+                    });
+
+                    $.unblockUI();
+                },
+                error: function (error) {
+                    $("#form_applycreditform").modal('hide');
+                    $("#btnSaveClose").prop('disabled', false);
+                    $("#btnSaveNew").prop('disabled', false);
+                    $("#btnSaveApprove").prop('disabled', false);
+                    $.unblockUI();
+                }
+            });
+
+        }
+
+        function btnOpenApplyCreditForm(id) {
+
+
+            if (!$('#chkTaxCredit').is(':checked')) {
+                var sURL = '@Url.Action("ApplyCreditForm", "AccountReceivable", new { area = "Portal" })?Id=' + id;
+                $.ajax({
+                    type: "GET",
+                    url: sURL,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (data) {
+                        $('#ApplyCreditDIV').html(data);
+                        $(".date-picker").datepicker();
+                        $(".input-group-btn").click(function () {
+                            $(this).prev().trigger("focus");
+                            $(this).prev().trigger("focus");
+                        });
+
+                        $("#modal_applycreditform").modal({ backdrop: 'static' });
+                        initCreditForm();
+                        $('.creditfieldcurrency').each(function () {
+                            applyMaskCurrency('#' + this.id);
+                        });
+
+                    },
+                    error: function () {
+
+                        alert("Content load failed.");
+                    }
+                });
+            } else {
+                var sURL = '@Url.Action("ApplyCreditTaxForm", "AccountReceivable", new { area = "Portal" })?Id=' + id;
+                $.ajax({
+                    type: "GET",
+                    url: sURL,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (data) {
+                        $('#ApplyTaxCreditDIV').html(data);
+                        $(".date-picker").datepicker();
+                        $(".input-group-btn").click(function () {
+                            $(this).prev().trigger("focus");
+                            $(this).prev().trigger("focus");
+                        });
+
+                        $("#modal_applycredittaxform").modal({ backdrop: 'static' });
+                        ////initCreditForm();
+                        //$('.creditfieldcurrency').each(function () {
+                        //    applyMaskCurrency('#' + this.id);
+                        //});
+
+                    },
+                    error: function () {
+
+                        alert("Content load failed.");
+                    }
+                });
+            }
+
+
+
+
+            /*if (id == 2) {
+                $("#modal_applycreditformconsolidated").modal({ backdrop: 'static' });
+            }
+            else {
+                $("#modal_applycreditform").modal({ backdrop: 'static' });
+            }*/
+        };
+
+        function promptCustomerCredit() {
+
+            var creditAmt = parseFloat(removeFormatting($("#newBalance").val()));
+            if (creditAmt < 0)
+                creditAmt = -creditAmt;
+
+            var customerName = $("#lblCustomerName").text();
+
+            $("#lblPromptCreditAmt").text("$" + formatCurrency(creditAmt));
+            $("#lblPromptCreditCustomerName").text(customerName.trim());
+            $("#modal_customercreditprompt").modal({ backdrop: 'static' });
+        }
+
+        function onClickYesApplyCustomerCredit() {
+            $("#modal_customercreditprompt").modal('hide');
+            submitForm();
+        }
+
+        function onClickNoApplyCustomerCredit() {
+            $("#modal_customercreditprompt").modal('hide');
+        }
+
+        //function setSearchTime(value) {
+
+        //    value = parseInt(value);
+        //    $("#select_dateRange").val(value.toString());
+
+        //    var custom_enabled = false;
+        //    var firstDay;
+        //    var lastDay;
+
+        //    switch (parseInt(value)) {
+        //        case 1:
+        //            firstDay = moment().startOf('isoWeek').toString();
+        //            lastDay = moment().endOf('isoWeek').toString();
+        //            break;
+        //        case 2:
+        //            //code block
+        //            firstDay = moment().startOf('isoWeek').toString();
+        //            lastDay = new Date().toString();
+        //            break;
+        //        case 3:
+        //            firstDay = moment().subtract(0, 'month').startOf('month').toString();
+        //            lastDay = moment().subtract(0, 'month').endOf('month').toString();
+        //            break;
+        //        case 4:
+        //            //code block
+        //            firstDay = moment().subtract(0, 'month').startOf('month').toString();
+        //            lastDay = new Date().toString();
+        //            break;
+        //        case 5:
+        //            //code block
+        //            firstDay = moment().startOf('quarter').toString();
+        //            lastDay = moment().endOf('quarter').toString();
+        //            break;
+        //        case 6:
+        //            //code block
+        //            firstDay = moment().startOf('quarter').toString();
+        //            lastDay = new Date().toString();
+        //            break;
+        //        case 7:
+        //            //code block
+        //            firstDay = moment().startOf('year').toString();;
+        //            lastDay = moment().endOf('year').toString();
+        //            break;
+        //        case 8:
+        //            //code block
+        //            firstDay = moment().startOf('year').toString();
+        //            lastDay = new Date().toString();
+        //            break;
+        //        case 9:
+        //            //code block
+        //            firstDay = moment().add(-1, 'days').toString();
+        //            lastDay = moment().add(-1, 'days').toString();
+        //            break;
+        //        case 10:
+        //            //code block
+        //            firstDay = moment().subtract(1, 'week').startOf('week').toString();
+        //            lastDay = moment().subtract(1, 'week').endOf('week').toString();
+        //            break;
+        //        case 11:
+        //            //code block
+        //            firstDay = moment().subtract(1, 'month').startOf('month').toString();
+        //            lastDay = moment().subtract(1, 'month').endOf('month').toString();
+        //            break;
+        //        case 12:
+        //            //code block
+        //            firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+        //            lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+        //            break;
+        //        case 13:
+        //            //code block
+        //            firstDay = moment().subtract(1, 'year').startOf('year').toString();
+        //            lastDay = moment().subtract(1, 'year').endOf('year').toString();
+        //            break;
+        //        case 14:
+        //            custom_enabled = true;
+        //            //code block
+        //            $('#dtpfrom').html(moment(firstDay).format('L'));
+        //            $('#dtpto').html(moment(lastDay).format('L'));
+        //            break;
+        //        default:
+        //            //code block
+        //    }
+        //    $('#dtpfrom').val(moment(firstDay).format('L'));
+        //    $('#dtpto').val(moment(lastDay).format('L'));
+
+        //    $(".search-date-field").prop('disabled', !custom_enabled);
+        //};
+
+        $(document).on('click', '#btnClosemodel', function () {
+            $("#modal_invoicedetail").modal('hide');
+        });
+
+        function formatCurrency(total) {
+            var neg = false;
+            if (total < 0) {
+                neg = true;
+                total = Math.abs(total);
+            }
+            return (neg ? "-" : '') + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        }
+
+        function removeFormatting(i) {
+            return typeof i === 'string' ?
+                i.replace(/[\$,]/g, '') * 1 :
+                typeof i === 'number' ?
+                i : 0;
+        }
+
+        function applyMaskCurrency(id) {
+            $(id).inputmask("currency", {
+                alias: 'currency',
+                prefix: '$ ',
+                digits: 2,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                unmaskAsNumber: true,
+                allowPlus: false,
+                allowMinus: true,
+                autoGroup: true,
+                positionCaretOnTab: false,
+                positionCaretOnClick: "select",
+                groupSeparator: ",",
+            });
+        }
+    </script>
+}

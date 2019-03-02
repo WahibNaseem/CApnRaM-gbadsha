@@ -1,0 +1,279 @@
+﻿@model JKApi.Service.Service.Company.CheckViewModelFinalizedReport
+
+@using System.Globalization;
+@{
+    var request = HttpContext.Current.Request;
+    var _siteUrl = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Authority);
+
+    string imgpath = _siteUrl + "/Content/admin/assets/layouts/layout2/img/lg_jklogo.jpg";
+
+}
+<DIV id="page_1" class="check-report">
+
+    <table class="header">
+        <tr>
+            <td width="25%">
+                <img src="@imgpath" style="height: 100px" />
+            </td>
+
+            <td width="50%">
+                <P>
+                    <b>@Model.RegionName</b>
+                </P>
+            </td>
+
+            <td width="25%">
+                <P>
+                    Check Number: @Model.CheckNumber<br />
+                    Check Date: @Model.Date
+                </P>
+            </td>
+        </tr>
+    </table>
+
+    <table class="header">
+        <tr>
+            <td width="25%">
+                &nbsp;
+            </td>
+
+            <td width="20%">
+                <P>
+                    Payee: @Html.DisplayFor(o => o.PayeeNumber)
+                </P>
+            </td>
+
+            <td width="55%">
+                <P>
+                    @Html.DisplayFor(o => o.PayeeName)
+                </P>
+            </td>
+        </tr>
+    </table>
+
+    @*<table class="price-list" style="width: 100%;">
+        <tr class="header-row">
+            <td width="30%">
+                Check Type
+            </td>
+            <td width="55%">
+                Month/Year
+            </td>
+            <td width="15%">
+                Amount
+            </td>
+        </tr>
+        <tr>
+            <td width="30%">
+                @Model.CheckType
+            </td>
+            <td width="55%">
+                @(Model.BillMonth)/@(Model.BillYear)
+            </td>
+            <td width="15%">
+                @Model.PayDollars
+            </td>
+        </tr>
+        <tr style="height: 3in">
+            <td width="30%">&nbsp;</td>
+            <td width="55%">&nbsp;</td>
+            <td width="15%">&nbsp;</td>
+        </tr>
+        <tr class="footer-row">
+            <td colspan="2" style="text-align: right">
+                Total Checks:
+            </td>
+            <td>
+                @Model.PayDollars
+            </td>
+        </tr>
+    </table>*@
+
+    @if (Model.ManualCheck != null && !Model.ManualCheck.IsPrintMemo)
+    {
+        <table class="memo">
+            <tr>
+                <td width="10%">
+                    <b><u>Memo:</u></b>
+                </td>
+                <td width="90%">
+                    @Model.ManualCheck.Memo
+                </td>
+            </tr>
+        </table>
+    }
+
+    else if (Model.FranchiseeReport != null)
+    {
+        <div style="width: 80%">
+            <table class="price-list">
+                <tr>
+                    <td colspan="2" class="list-header">
+                        FRANCHISEE REVENUES:
+                    </td>
+                    <td class="price2">&nbsp;</td>
+                </tr>
+                <tr class="new-section"><td>&nbsp;</td></tr>
+                @foreach (var service in Model.FranchiseeReport.DetailsByService)
+                {
+                    <TR>
+                        <TD class="text">@service.ServiceType</TD>
+                        <TD class="price1">@Model.FranchiseeReport.NumberDisplay(service.Details.Sum(o => o.Subtotal))</TD>
+                        <td class="price2">&nbsp;</td>
+                    </TR>
+                }
+                <TR class="new-subsection">
+                    <TD class="text">TOTAL REVENUE</TD>
+                    <TD class="price1">&nbsp;</TD>
+                    <td class="price2">@Model.FranchiseeReport.NumberDisplay(Model.FranchiseeReport.Report.TotalRevenue)</td>
+                </TR>
+                <TR class="new-subsection">
+                    <TD class="text">Client Sales Tax</TD>
+                    <TD class="price1">@Model.FranchiseeReport.NumberDisplay(Model.FranchiseeReport.Report.TotalTax)</TD>
+                    <td class="price2">&nbsp;</td>
+                </TR>
+                <TR class="new-subsection">
+                    <TD class="text">Total Customer Invoice</TD>
+                    <TD class="price1">@Model.FranchiseeReport.NumberDisplay(Model.FranchiseeReport.Report.TotalRevenue + Model.FranchiseeReport.Report.TotalTax)</TD>
+                    <td class="price2">&nbsp;</td>
+                </TR>
+                <tr class="new-section"><td>&nbsp;</td></tr>
+                <tr>
+                    <td colspan="2" class="list-header">
+                        FRANCHISEE DEDUCTIONS:
+                    </td>
+                    <td class="price2">&nbsp;</td>
+                </tr>
+                <tr class="new-section"><td>&nbsp;</td></tr>
+
+                @{decimal totalChargeback = 0.00m; }
+                @{bool hasChargeback = false;}
+                @foreach (var service in Model.FranchiseeReport.Deductions)
+                {
+                    if (service.ServiceTypeGroupListId == 12 /*Chargeback*/)
+                    {
+                        totalChargeback = service.Total;
+                        hasChargeback = true;
+                    }
+                    @*else
+                    {
+                        <TR>
+                            <TD class="text">@service.ServiceType</TD>
+                            <TD class="price1">@Model.FranchiseeReport.NumberDisplay(service.Deductions.Sum(o => o.Total))</TD>
+                            <td class="price2">&nbsp;</td>
+                        </TR>
+                    }*@
+                else
+                {
+                    if (service.ServiceTypeGroupListId != 1)
+                    {
+                        <tr class="new-subsection">
+                            <td class="text" style="font-size:12px;">@service.GroupName </td>
+                            <td class="price1" style="font-size:12px;">@Model.FranchiseeReport.NumberDisplay(service.Deductions.Sum(o => o.Total))</td>
+                            <td class="price2" style="font-size:12px;">&nbsp;</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        var minRoyalty = Model.FranchiseeReport.Deductions.Where(m => m.ServiceTypeListId == 73).FirstOrDefault();
+
+                        if (minRoyalty != null)
+                        {
+                            if (service.ServiceTypeListId == 17 || service.ServiceTypeListId == 73)
+                            {
+                                <tr class="new-subsection">
+                                    <td class="text" style="font-size:11px;width:20px;">&nbsp;&nbsp;&nbsp;@service.ServiceType</td>
+
+                                    <td class="price3" style="font-size:11px;width:20px;">@Model.FranchiseeReport.NumberDisplay(service.Deductions.Sum(o => o.Total))</td>
+                                    <td class="price2" style="font-size:12px;">&nbsp;&nbsp;&nbsp;</td>
+
+                                </tr>
+                            }
+                            else
+                            {
+
+                                <tr class="new-subsection">
+                                    <td class="text" style="font-size:12px;">@service.ServiceType</td>
+                                    <td class="price1" style="font-size:12px;">@Model.FranchiseeReport.NumberDisplay(service.Deductions.Sum(o => o.Total))</td>
+                                    <td class="price2" style="font-size:12px;">&nbsp;</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr class="new-subsection">
+                                <td class="text" style="font-size:12px;">@service.ServiceType</td>
+                                <td class="price1" style="font-size:12px;">@Model.FranchiseeReport.NumberDisplay(service.Deductions.Sum(o => o.Total))</td>
+                                <td class="price2" style="font-size:12px;">&nbsp;</td>
+                            </tr>
+
+                            }
+                        }
+
+
+                    }
+
+                }
+
+                @if (hasChargeback)
+                {
+                    <TR class="new-subsection">
+                        <TD class="text">Total Deductions</TD>
+                        <TD class="price1">&nbsp;</TD>
+                        <td class="price2">@Model.FranchiseeReport.NumberDisplay(Model.FranchiseeReport.Report.TotalDeductions - totalChargeback)</td>
+                    </TR>
+                    <tr class="new-section"><td>&nbsp;</td></tr>
+                    <tr class="new-section"><td>&nbsp;</td></tr>
+                    <tr>
+                        <td colspan="2" class="list-header">
+                            DUE TO FRANCHISEE BEFORE CHARGEBACK:
+                        </td>
+                        <td class="price2">@Model.FranchiseeReport.NumberDisplay(Model.FranchiseeReport.Report.TotalRevenue - (Model.FranchiseeReport.Report.TotalDeductions - totalChargeback))</td>
+                    </tr>
+
+                    foreach (var service in Model.FranchiseeReport.Deductions)
+                    {
+
+                        if (service.ServiceTypeGroupListId == 12)
+                        {
+                            <tr class="new-subsection">
+                                <td class="text" style="font-size:12px;">&nbsp;</td>
+                                <td class="text" style="font-size:12px;">&nbsp;</td>
+                                <td class="text" style="font-size:12px;">&nbsp;</td>
+                            </tr>
+                            <tr class="new-subsection">
+                                <td class="text" style="font-size:12px;">@service.GroupName </td>
+                                <td class="price1" style="font-size:12px;">@Model.FranchiseeReport.NumberDisplay(service.Deductions.Sum(o => o.Total))</td>
+                                <td class="price2" style="font-size:12px;">&nbsp;</td>
+                            </tr>
+                        }
+                    }
+
+
+                }
+                else
+                {
+                    <TR class="new-subsection">
+                        <TD class="text">Total Deductions</TD>
+                        <TD class="price1">&nbsp;</TD>
+                        <td class="price2">@Model.FranchiseeReport.NumberDisplay(Model.FranchiseeReport.Report.TotalDeductions)</td>
+                    </TR>
+
+                }
+
+                <tr class="new-section"><td>&nbsp;</td></tr>
+                <tr class="new-section"><td>&nbsp;</td></tr>
+                <tr>
+                    <td colspan="2" class="list-header">
+                        DUE TO FRANCHISEE:
+                    </td>
+                    <td class="price2">@Model.FranchiseeReport.NumberDisplay(Model.FranchiseeReport.Report.TotalPayment)</td>
+                </tr>
+
+
+            </table>
+
+        </div>
+   }
+
+</DIV>

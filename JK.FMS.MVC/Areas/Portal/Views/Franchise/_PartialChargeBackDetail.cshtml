@@ -1,0 +1,250 @@
+﻿@model IEnumerable<JKViewModels.Franchise.portal_spGet_F_ChargebackListForFranchiseeViewModel>
+@{
+    var modelData = new JKViewModels.Franchise.portal_spGet_F_ChargebackListForFranchiseeViewModel();
+    if (Model != null)
+    {
+        modelData = Model.FirstOrDefault();
+    }
+}
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+    </style>
+}
+<div class="modal fade custom-model custom-form-design" id="modal_ChargeBackDetail" tabindex="-1" role="basic" aria-hidden="true" style="display: none;" draggable>
+    <div class="modal-dialog" style="width:800px">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;" onclick="btnChargeBackDetailPopupClose()"></button>
+                <h4 class="modal-title" style="text-align:center;margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    CHARGEBACK DETAIL
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px 10px 15px 10px;">
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="form-body">
+                            <div class="row" style="padding: 3px;margin: 0;">Franchisee No: : @modelData.FranchiseeNo</div>
+                            <div class="row" style="padding: 3px;margin: 0;">Franchisee Name: @modelData.FranchiseeName</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3"></div>
+                    <div class="col-md-4">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <td class="text-right">Transaction No.</td>
+                                    <td class="text-center"><span>@modelData.TransactionNumber</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">Date</td>
+                                    <td class="text-center"><span>@String.Format("{0:d}", modelData.InvoiceDate)</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">Status</td>
+                                    <td class="text-center"><span>@modelData.StatusName</span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                            <thead>
+                                <tr>
+                                    <th style="width:110px;text-align:center;font-size: 10px;font-weight: normal;">ChargeBack Period</th>
+                                    <th style="width:200px;text-align:center;font-size: 10px;font-weight: normal;">Description</th>
+                                    <th style="text-align:center;width: 20px;font-size: 10px;font-weight: normal;">Invoice No</th>
+                                    <th style="width:100px;text-align:center;font-size: 10px;font-weight: normal;">Amount ChargeBack</th>
+                                    <th style="width:100px;text-align:center;font-size: 10px;font-weight: normal;">Total Fees</th>
+                                    <th style="width:100px;text-align:center;font-size: 10px;font-weight: normal;">Final Amount ChargeBack</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @if (Model != null)
+                                {
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td style="text-align:center;">@item.ChargeBackPeriod</td>
+                                            <td style="text-align:center;">@item.InvoiceDescription</td>
+                                            <td style="white-space:pre-line;text-align:center;">@item.InvoiceNo</td>
+                                            <td style="text-align:right;">$@item.ChargeBackAmount</td>
+                                            <td style="text-align:right;">$@item.TotalFee</td>
+                                            <td style="text-align:right;">$@item.FinalAmountChargeBack</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                            <tfoot>
+                                @if (Model != null)
+                                {
+                                    decimal total = 0;
+                                    foreach (var item in Model)
+                                    {
+                                        total += Convert.ToDecimal(item.FinalAmountChargeBack);
+                                    }
+                                        <tr>
+                                            <td colspan="5" style="text-align:right;">Total ChargeBack</td>
+
+                                            <td style="text-align:right;padding-right: 7px;">$@total</td>
+                                        </tr>
+                                   
+                                }
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 text-right">
+                        NOTE:
+                    </div>
+                    <div class="col-md-9 text-right">
+                        <textarea class="form-control input-sm" , rows="3"></textarea>
+                        @*@Html.TextArea("", new { @class = "form-control input-sm", rows = "3" })*@
+                    </div>
+                </div>
+                <div class="row" style="background: #3598dc;font-weight: bold;">
+                    <div class="col-md-12 text-center">
+                        CHARGEBACK TRANSACTION INFO
+                    </div>
+                </div>
+                <div class="row">
+                    <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                        <thead>
+                            <tr>
+                                <th style="width:60px;text-align:center;font-size: 10px;font-weight: normal;">Invoice No</th>
+                                <th style="width:40px;text-align:center;font-size: 10px;font-weight: normal;">Invoice Date</th>
+                                <th style="width:80px;text-align:center;font-size: 10px;font-weight: normal;">Customer No</th>
+                                <th style="width:160px;text-align:center;font-size: 10px;font-weight: normal;">Customer Name</th>
+                                <th style="width:70px;text-align:center;font-size: 10px;font-weight: normal;">Invoice Amount</th>
+                                <th style="width:50px;text-align:center;font-size: 10px;font-weight: normal;">Payment/Credit Amount</th>
+                                <th style="width:80px;text-align:center;font-size: 10px;font-weight: normal;">Invoice Amount Due</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td style="text-align:center">@item.InvoiceNo</td>
+                                        <td style="text-align:center">@String.Format("{0:d}", item.InvoiceDate)</td>
+                                        <td style="text-align:center">@item.CustomerNo</td>
+                                        <td style="text-align:center">@item.CustomerName</td>
+                                        <td style="text-align:right">$@item.InvoiceAmount</td>
+                                        <td style="text-align:right">$@item.InvoiceBalance</td>
+                                        <td style="text-align:right">$@item.AmountDue</td>
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-5">
+                        <button type="button" class="btn btn-primary button-next" style="margin-right:10px;" onclick="PrintChargeback('+@modelData.TransactionNumber+')">Print <i class="fa fa-print"></i></button>
+                        <button type="submit" class="btn btn-primary button-next" style="margin-right:10px;" onclick="ExportChargebackToPDF('+@modelData.TransactionNumber+')">Export PDF <i class="fa fa-download"></i></button>
+                    </div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-5">
+                        <button type="button" class="btn btn-primary button-next  pull-right" onclick="btnChargeBackDetailPopupClose()">
+                            Close
+                            <i class="fa fa-close"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function ExportChargebackToPDF(transactionNumber) {
+
+        if (transactionNumber != "") {
+            window.location.href = '@Url.Action("ChargeBackExportPDF", "Franchise", new { area = "Portal" })' + "?transactionNumber=" + transactionNumber;
+        }
+        else {
+            alert('Please select transaction no to export.')
+        }
+    }    
+    function PrintChargeback(transactionNumber) {
+        if (transactionNumber != "") {
+            var sURL = '@Url.Action("ChargeBackPrint", "Franchise", new { area = "Portal" })?transactionNumber=' + transactionNumber;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    var tUrl = data;
+                    printJS({ printable: document.location.origin + tUrl, type: 'pdf', showModal: false });
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+        else {
+            alert('Please select transaction no to print.')
+        }
+    }
+</script>

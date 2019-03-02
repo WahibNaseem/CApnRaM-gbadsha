@@ -1,0 +1,561 @@
+﻿@model JKViewModels.Franchisee.LeaseViewModel
+@{ 
+    JKViewModels.Franchisee.FranchiseeDetailViewModel Franmodel = new JKViewModels.Franchisee.FranchiseeDetailViewModel();
+    if (ViewBag.Franchisee != null)
+    {
+        Franmodel = (JKViewModels.Franchisee.FranchiseeDetailViewModel)ViewBag.Franchisee;
+    }
+}
+
+<style type="text/css">
+    .lbl-p5 {
+        padding: 5px;
+    }
+
+        .lbl-p5.red {
+            color: red;
+        }
+
+
+        .lbl-p5.green {
+            color: lightgreen;
+        }
+
+    input[type="text"].txtcolon:before {
+        content: ": ";
+    }
+
+    .credit-field {
+        width: 80px !important;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+
+    .alignCenter {
+        text-align: center;
+    }
+
+    .table-lease-payment-info {
+    }
+
+        .table-lease-payment-info thead > tr > th {
+            border: 1px solid #E8E8E8;
+            padding: 0;
+            vertical-align: middle;
+            text-align: center;
+            padding: 3px;
+            font-size: 10px;
+        }
+
+        .table-lease-payment-info tbody > tr > td {
+            border: 1px solid #E8E8E8;
+            padding: 0;
+            vertical-align: middle;
+            text-align: center;
+            padding: 3px;
+            font-size: 11px;
+        }
+
+    input[readonly] {
+        background-color: #e8e8e8;
+    }
+</style>
+
+<div class="modal-content" style="border-radius: 8px;">
+    <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+        <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+            Edit Franchisee Lease Info
+        </h4>
+    </div>
+    <div class="modal-body" style="padding: 0px 30px 15px 30px;">
+        <div style="max-width: 100%;margin: 0px auto;padding-left: 0px;padding-right: 0px;border-radius: 8px;">
+            @using (Html.BeginForm("FranchiseeLease", "Franchise", FormMethod.Post, new { @id = "form_FranchiseeLease", @role = "form", @class = "form form-horizontal" }))
+            {
+            <div class="form-group">
+                <div class="col-md-5" style="border: 1px solid #999;border-radius: 7px;padding: 7px;margin-bottom:7px;">
+                    <div class="row">
+                        <div class="col-md-2 control-label collapse" style="padding-top: 0px;">                             
+                        </div>
+                        <div class="col-md-4 control-label" style="padding-top: 0px;">
+                            <b>Franchise No.</b>
+                        </div>
+                        <div class="col-md-8">
+                            <span id="spnFranchiseeNumber">@Franmodel.FranchiseeNo </span>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 control-label" style="padding-top: 0px;">
+                            <b>Franchise Name</b>
+                        </div>
+                        <div class="col-md-8">
+                            <span id="spnFranchiseeName">@Franmodel.Name</span>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-4" style="border: 1px solid #999;border-radius: 7px;padding: 7px;">
+                    <div class="row">
+                        <div class="col-md-4 control-label" style="padding-top: 0px;">
+                            <b>Address</b>
+                        </div>
+                        <div class="col-md-8">
+                            <span id="spnFranchiseeAddress">@Franmodel.Address1</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 control-label" style="padding-top: 0px;">
+                        </div>
+                        <div class="col-md-8">
+                            <span id="spnCityStatePincode">@Franmodel.City @Franmodel.StateName @Franmodel.PostalCode </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" name="hdfTaxRate" id="hdfTaxRate" value="@ViewBag.oTaxRate" />
+            <input type="hidden" id="FranchiseeId" name="FranchiseeId" value="@ViewBag.fid" />
+            <input type="hidden" id="ClassId" name="ClassId" value="@ViewBag.fid" />
+            @Html.HiddenFor(one => one.LeaseId)
+            <div class="form-group">
+                <div class="col-md-12" style="background-color: #999;color: #fff;padding: 5px 8px;font-weight: bold;margin-bottom:10px;">
+                    Lease Information
+                </div>
+            </div>
+           
+            <div class="form-group" style="">
+                <div class="row" style="padding-bottom:0px;">
+                    <div class="col-md-2 control-label">
+                        Lease No<span class="required"> * </span>
+                    </div>
+                    <div class="col-md-2">
+                        @Html.TextBoxFor(one => one.LeaseNumber, new { @class = "form-control input-sm" })
+                        @*<input type="text" class="form-control input-sm" id="txtLeaseNumber" name="LeaseNumber" value="@Model.LeaseNumber"/>*@
+                    </div>
+                    <div class="col-md-2 control-label">
+                        Date Signed<span class="required"> * </span>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="input-group date" data-date-format="mm/dd/yyyy">
+                            @Html.TextBoxFor(one => one.SignDate, new { @class = "form-control input-sm date-picker" })
+                            @*<input type="text" class="form-control input-sm date-picker" id="txtSignDate" name="SignDate" value="@Model.SignDate"/>*@
+                            <span class="input-group-btn">
+                                <button class="btn default" type="button" style="margin-top: 2px;">
+                                    <i class="fa fa-calendar"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-2 control-label">
+                        Payment Starts<span class="required"> * </span>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="input-group date" data-date-format="mm/dd/yyyy">
+                            @Html.TextBoxFor(one => one.StartDate, new { @class = "form-control input-sm date-picker" })
+                            @*<input type="text" class="form-control input-sm date-picker" id="txtStartDate" name="StartDate" value="@Model.StartDate"/>*@
+                            <span class="input-group-btn">
+                                <button class="btn default" type="button" style="margin-top: 2px;">
+                                    <i class="fa fa-calendar"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row" style="padding-bottom:0px;">
+                    <div class="col-md-2 control-label">
+                        Make<span style="color:#000000;">&nbsp;:</span>
+                    </div>
+                    <div class="col-md-2">
+                        @Html.TextBoxFor(one => one.Make, new { @class = "form-control input-sm" })
+                        @*<input type="text" class="form-control input-sm" id="txtMake" name="Make" value="@Model.Make" />*@
+                    </div>
+                    <div class="col-md-2 control-label">
+                        Model<span style="color:#000000;">&nbsp;:</span>
+                    </div>
+                    <div class="col-md-2">
+                        @Html.TextBoxFor(one => one.Model, new { @class = "form-control input-sm" })
+                        @*<input type="text" class="form-control input-sm" id="txtModel" name="Model" value="@Model.Model" />*@
+                    </div>
+                    <div class="col-md-2 control-label">
+                        Serial No<span style="color:#000000;">&nbsp;:</span>
+                    </div>
+                    <div class="col-md-2">
+                        @Html.TextBoxFor(one => one.SerialNo, new { @class = "form-control input-sm" })
+                        @*<input type="text" class="form-control input-sm" id="txtSerialNo" name="SerialNo" value="@Model.SerialNo" />*@
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row" style="padding-bottom:0px;">
+                    <div class="col-md-2 control-label">
+                        Description<span style="color:#000000;">&nbsp;:</span>
+                    </div>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(one => one.LeaseDescription, new { @class = "form-control input-sm" })
+                        @*<input type="text" class="form-control input-sm" id="txtDescription" name="LeaseDescription" value="@Model.LeaseDescription" />*@
+                    </div>
+                </div>
+            </div>
+            <hr style="margin:8px 0px" />
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 control-label">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="mt-checkbox input-sm" style="margin-bottom: 0px;">
+                            <input type="checkbox" class="i-check" id="chkwithTax" name="chkwithTax" />With Tax
+                            <span style="margin-top: 4px;"></span>
+                        </label>
+                    </div>
+                    <div class="col-md-8">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 control-label">
+                        Lease Amount<span class="required"> * </span>
+                    </div>
+                    <div class="col-md-2">
+                        @Html.TextBoxFor(one => one.LeaseAmount, new { @class = "form-control input-sm text-right" })
+                        @*<input type="text" class="form-control input-sm text-right" id="txtLeaseAmount" name="LeaseAmount" value="@Model.LeaseAmount" />*@
+                    </div>
+
+                    <div class="col-md-2 control-label">
+                        Lease Term<span class="required"> * </span>
+                    </div>
+                    <div class="col-md-1">
+                        @Html.TextBoxFor(one => one.InstallmentMonthlyPaymentNum, new { @class = "form-control input-sm" })
+                        @*<input type="text" class="form-control input-sm text-right" id="txtMonthlyPaymentAmount" name="MonthlyPaymentAmount" value="@Model.MonthlyPaymentAmount" />*@
+                    </div>
+                    <div class="col-md-offset-1 col-md-4">
+                        <label class="mt-checkbox input-sm" style="margin-bottom: 0px;">
+                            @Html.CheckBoxFor(one => one.ChargeTaxUpFront, new { @checked = "checked", @class = "i-check" })Charge Tax Upfront
+                            @*<input type="checkbox" class="i-check" checked="checked" id="chkChargeTaxUpFront" name="ChargeTaxUpFront" />Charge Tax Upfront*@
+                            <span style="margin-top: 4px;"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 control-label">
+                        Total Tax<span class="required"> * </span>
+                    </div>
+                    <div class="col-md-2">
+                        @Html.TextBoxFor(one => one.LeaseTotalTax, new { @class = "form-control input-sm text-right", @readonly = "readonly" })
+                        @*<input type="text" class="form-control input-sm text-right" id="txtLeaseTotalTax" name="LeaseTotalTax" value="@Model.LeaseTotalTax" />*@
+                    </div>
+                    <div class="col-md-2 control-label">
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="mt-checkbox input-sm" style="margin-bottom: 0px;">
+                            @Html.CheckBoxFor(one => one.IncludeFirstPaymentInDownPayment, new { @checked = "checked", @class = "i-check" })Include First Payment in Down Payment
+                            @*<input type="checkbox" class="i-check" checked="checked" id="chkIncludeFirstPaymentInDownPayment" name="IncludeFirstPaymentInDownPayment" />Include First Payment in Down Payment*@
+                            <span style="margin-top: 4px;"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-2 control-label">
+                        Total Lease<span class="required"> * </span>
+                    </div>
+                    <div class="col-md-2">
+                        @Html.TextBoxFor(one => one.LeaseTotal, new { @class = "form-control input-sm text-right", @readonly = "readonly" })
+                        @*<input type="text" class="form-control input-sm text-right" id="txtLeaseTotal" name="LeaseTotal" value="@Model.LeaseTotal" />*@
+                    </div>
+                    <div class="col-md-2 control-label">
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-2 control-label">
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12" style="background-color: #999;color: #fff;padding: 5px 8px;font-weight: bold;margin-bottom:10px;">
+                    Lease Payment Information
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <table width="100%" class="table-lease-payment-info">
+                        <thead>
+                            <tr>
+                                <th># of Down Payment</th>
+                                <th># of Monthly Payment</th>
+                                <th># of Last Payment</th>
+                                <th># of Total Payment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>@Html.TextBoxFor(one => one.InstallmentDownPaymentNum, new { @class = "input-sm", @style = "width: 100px;border: 1px solid #c2cad8;text-align:center;" })</td>
+                                <td><input type="text" class="input-sm" readonly="readonly" style="width: 100px;border: 1px solid #c2cad8;text-align:center" id="InstallmentMonthlyPaymentNumNew" name="InstallmentMonthlyPaymentNumNew" value="" /></td>
+                                <td>@Html.TextBoxFor(one => one.InstallmentLastPaymentNum, new { @class = "input-sm", @style = "width: 100px;border: 1px solid #c2cad8;text-align:center;" })</td>
+                                <td><input type="text" class="input-sm" readonly="readonly" style="width: 100px;border: 1px solid #c2cad8;text-align:center" id="txtLeaseTotalPayment" name="txtLeaseTotalPayment" value="" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table width="100%" class="table-lease-payment-info">
+                        <thead>
+                            <tr>
+                                <th colspan="2">Due On Lease Signing</th>
+                                <th colspan="2">Monthly Payment</th>
+                                <th colspan="2">Due At End Of Term Purchase</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="control-label">Down Payment:</td>
+                                <td><input type="text" class="input-sm" readonly="readonly" style="width: 100px;border: 1px solid #c2cad8;text-align:right" id="txtLeaseDownPaymentAmount" name="txtLeaseDownPaymentAmount" value="" /></td>
+                                <td class="control-label">Monthly Payment:</td>
+                                <td>@Html.TextBoxFor(one => one.MonthlyPaymentAmount, new { @class = "input-sm", @style = "width: 100px;border: 1px solid #c2cad8;text-align:right;", @readonly = "readonly" })</td>
+                                <td class="control-label">Last Payment:</td>
+                                <td><input type="text" class="input-sm" readonly="readonly" style="width: 100px;border: 1px solid #c2cad8;text-align:right" id="txtLeaseLastPaymentAmount" name="txtLeaseLastPaymentAmount" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td class="control-label">Sales Tax:</td>
+                                <td><input type="text" class="input-sm" readonly="readonly" style="width: 100px;border: 1px solid #c2cad8;text-align:right" id="txtLeaseDownPaymentSalesTaxAmount" name="txtLeaseDownPaymentSalesTaxAmount" value="" /></td>
+                                <td class="control-label">Sales Tax:</td>
+                                <td>@Html.TextBoxFor(one => one.MonthlyTaxRate, new { @class = "input-sm", @style = "width: 100px;border: 1px solid #c2cad8;text-align:right;", @readonly = "readonly" })</td>
+                                <td class="control-label">Sales Tax:</td>
+                                <td><input type="text" class="input-sm" readonly="readonly" style="width: 100px;border: 1px solid #c2cad8;text-align:right" id="txtLeaseLastPaymentSalesTaxAmount" name="txtLeaseLastPaymentSalesTaxAmount" value="" /></td>
+                            </tr>
+                            <tr>
+                                <td class="control-label">Total Due on Signing:</td>
+                                <td><input type="text" class="input-sm" readonly="readonly" style="width: 100px;border: 1px solid #c2cad8;text-align:right" id="txtLeaseDownPaymentTotalAmount" name="txtLeaseDownPaymentTotalAmount" value="" /></td>
+                                <td class="control-label">Total Due Monthly:</td>
+                                <td>@Html.TextBoxFor(one => one.MonthlyPaymentTotal, new { @class = "input-sm", @style = "width: 100px;border: 1px solid #c2cad8;text-align:right;", @readonly = "readonly" })</td>
+                                <td class="control-label">Final Amount Due:</td>
+                                <td><input type="text" class="input-sm" readonly="readonly" style="width: 100px;border: 1px solid #c2cad8;text-align:right" id="txtLeaseLastPaymentTotalAmount" name="txtLeaseLastPaymentTotalAmount" value="" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+            <hr />
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="hidden" name="ButtonType" id="ButtonType" value="0" />
+                    <input type="button" class="btn btn-primary input-medium pull-right" value="Save" id="btnSaveNew" style="margin-left: 10px;width:95px !important;" />
+                    @*<input type="button" class="btn btn-primary input-sm pull-right" value="Save & Close" id="btnSaveClose" />*@
+                </div>
+            </div>
+            }
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <!-- /.modal-content -->
+</div>
+
+<script type="text/javascript">
+    var handleCurrencyInputMask1 = function (parentSelector) {
+        $(parentSelector).inputmask("numeric", {
+            decimal: ".",
+            negative: false,
+            scale: 2,
+            groupSeparator: ",",
+            digits: 2,
+            autoGroup: true,
+            prefix: "$",
+            rightAlign: true,
+            autoUnmask: true,
+            removeMaskOnSubmit: true,
+        });
+    }
+    var handleNumberInputMask1 = function (parentSelector) {
+        $(parentSelector).keydown(function (event) {
+            if (event.shiftKey == true) { event.preventDefault(); }
+            if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105) || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46) { }
+            else { event.preventDefault(); }
+        });
+    }
+    var initForm = function () {
+        handleCurrencyInputMask1('#LeaseAmount');
+        handleCurrencyInputMask1('#LeaseTotalTax');
+        handleCurrencyInputMask1('#LeaseTotal');
+        handleCurrencyInputMask1('#txtLeaseDownPaymentAmount');
+        handleCurrencyInputMask1('#txtLeaseDownPaymentSalesTaxAmount');
+        handleCurrencyInputMask1('#txtLeaseDownPaymentTotalAmount');
+        handleCurrencyInputMask1('#MonthlyPaymentAmount');
+        handleCurrencyInputMask1('#MonthlyTaxRate');
+        handleCurrencyInputMask1('#MonthlyPaymentTotal');
+        handleCurrencyInputMask1('#txtLeaseLastPaymentAmount');
+        handleCurrencyInputMask1('#txtLeaseLastPaymentSalesTaxAmount');
+        handleCurrencyInputMask1('#txtLeaseLastPaymentTotalAmount');
+
+        handleNumberInputMask1('#InstallmentMonthlyPaymentNum');
+        handleNumberInputMask1('#InstallmentDownPaymentNum');
+        handleNumberInputMask1('#InstallmentMonthlyPaymentNum');
+        handleNumberInputMask1('#InstallmentLastPaymentNum');
+        handleNumberInputMask1('#txtLeaseTotalPayment');
+
+
+        $('#chkwithTax').change(function () {
+            if ($('#chkwithTax').is(":checked")) {
+                $('#LeaseTotal').prop('readonly', false);
+                $('#LeaseAmount').prop('readonly', true);
+            } else {
+                $('#LeaseAmount').prop('readonly', false);
+                $('#LeaseTotal').prop('readonly', true);
+            }
+            LeaseCalculation();
+        });
+
+        $('#LeaseAmount').change(function () {
+            LeaseCalculation();
+        });
+        $('#LeaseTotal').change(function () {
+            LeaseCalculation();
+        });
+        $('#InstallmentMonthlyPaymentNum').change(function () {
+            LeaseCalculation();
+        });
+
+        $('#InstallmentDownPaymentNum').change(function () {
+            LeaseCalculation();
+        });
+
+        $('#InstallmentLastPaymentNum').change(function () {
+            LeaseCalculation();
+        });
+
+        if (@ViewBag.fid> 0 && @ViewBag.lId > 0) {
+            //getFranchiseDetails(@ViewBag.franchiseeId);
+            LeaseCalculation();
+        }
+
+
+    };
+
+    var LeaseCalculation = function () {
+
+        var _LeaseTaxRate = $('#hdfTaxRate').val() != "" ? parseFloat($('#hdfTaxRate').val()) : 8.75;
+        var _LeaseAmount = $('#LeaseAmount').val() != "" ? parseFloat($('#LeaseAmount').val()) : 0;
+        var _LeaseTerm = $('#InstallmentMonthlyPaymentNum').val() != "" ? parseInt($('#InstallmentMonthlyPaymentNum').val()) : 1;
+        var LeaseTotalTax = $('#LeaseTotalTax')
+        var LeaseTotal = $('#LeaseTotal')
+
+        var _wthTAX = $('#chkwithTax').is(":checked");
+
+        if (_wthTAX) {
+
+            var _LeaseTotal = $('#LeaseTotal').val() != "" ? parseFloat($('#LeaseTotal').val()) : 0;
+
+            var _LA = (100 * _LeaseTotal) / (100 + _LeaseTaxRate);
+
+            $('#LeaseAmount').val(_LA);
+            _LeaseAmount = _LA;
+            LeaseTotalTax.val((_LeaseAmount * _LeaseTaxRate) / 100);
+
+        } else {
+            LeaseTotalTax.val((_LeaseAmount * _LeaseTaxRate) / 100);
+            LeaseTotal.val(_LeaseAmount + parseFloat(LeaseTotalTax.val()));
+        }
+
+        var _LeaseDownPaymentNum = $('#InstallmentDownPaymentNum').val() != "" ? parseInt($('#InstallmentDownPaymentNum').val()) : 2;
+        var _LeaseLastPaymentNum = $('#InstallmentLastPaymentNum').val() != "" ? parseInt($('#InstallmentLastPaymentNum').val()) : 2;
+        $('#InstallmentDownPaymentNum').val(_LeaseDownPaymentNum);
+        $('#InstallmentLastPaymentNum').val(_LeaseLastPaymentNum);
+        $('#InstallmentMonthlyPaymentNum').val(_LeaseTerm);
+        $('#InstallmentMonthlyPaymentNumNew').val(_LeaseTerm);
+        $('#txtLeaseTotalPayment').val(_LeaseDownPaymentNum + _LeaseTerm + _LeaseLastPaymentNum);
+
+
+        //Monthly
+        $('#MonthlyPaymentAmount').val(_LeaseAmount / _LeaseTerm);
+        //$('#MonthlyTaxRate').val((_LeaseAmount / _LeaseTerm) * _LeaseTaxRate / 100);
+        //$('#MonthlyTaxRate').val(_LeaseTaxRate); //old
+        $('#MonthlyTaxRate').val((parseFloat($('#MonthlyPaymentAmount').val()) * _LeaseTaxRate) / 100); //new
+        $('#MonthlyPaymentTotal').val(parseFloat($('#MonthlyPaymentAmount').val()) + parseFloat($('#MonthlyTaxRate').val()));
+
+
+        $('#txtLeaseDownPaymentAmount').val(parseFloat($('#MonthlyPaymentAmount').val()) * _LeaseDownPaymentNum);
+        $('#txtLeaseDownPaymentSalesTaxAmount').val((parseFloat($('#MonthlyTaxRate').val()) * _LeaseDownPaymentNum)); // new
+        $('#txtLeaseDownPaymentTotalAmount').val(parseFloat($('#txtLeaseDownPaymentAmount').val()) + parseFloat($('#txtLeaseDownPaymentSalesTaxAmount').val()));
+
+
+        $('#txtLeaseLastPaymentAmount').val(parseFloat($('#MonthlyPaymentAmount').val()) * _LeaseLastPaymentNum);
+        $('#txtLeaseLastPaymentSalesTaxAmount').val(parseFloat($('#MonthlyTaxRate').val()) * _LeaseLastPaymentNum);
+        $('#txtLeaseLastPaymentTotalAmount').val(parseFloat($('#txtLeaseLastPaymentAmount').val()) + parseFloat($('#txtLeaseLastPaymentSalesTaxAmount').val()));
+
+
+
+    }
+
+    var LeaseValidForm = function () {
+        var isvalid = true;
+
+        if ($('#LeaseNumber').val() == '') { $('#LeaseNumber').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#LeaseNumber').css('border-color', ''); }
+        if ($('#SignDate').val() == '') { $('#SignDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#SignDate').css('border-color', ''); }
+        if ($('#StartDate').val() == '') { $('#StartDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#StartDate').css('border-color', ''); }
+
+        if ($('#LeaseAmount').val() == '') { $('#LeaseAmount').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#LeaseAmount').css('border-color', ''); }
+        if ($('#InstallmentDownPaymentNum').val() == '') { $('#InstallmentDownPaymentNum').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#InstallmentDownPaymentNum').css('border-color', ''); }
+        if ($('#InstallmentLastPaymentNum').val() == '') { $('#InstallmentLastPaymentNum').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#InstallmentLastPaymentNum').css('border-color', ''); }
+        if ($('#InstallmentMonthlyPaymentNum').val() == '') { $('#InstallmentMonthlyPaymentNum').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#InstallmentMonthlyPaymentNum').css('border-color', ''); }
+
+        return isvalid;
+    }
+
+
+
+    $(document).ready(function () {
+        initForm();
+
+        $(".input-group-btn").click(function () {
+            $(this).prev().trigger("focus");
+            $(this).prev().trigger("focus");
+        });
+        $('#btnSaveNew').click(function () {
+
+            if ($('#ClassId').val() == "" || $('#ClassId').val() == "0") {
+                swal('Oops...!', 'Please first search Franchise', 'info');
+                return false;
+            }
+            //$("#ButtonType").val("1");
+            if (LeaseValidForm()) {
+                //$("#form_FranchiseeLease").submit();
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SaveFranchiseEditLease", "Franchise", "Portal")',
+                    data: $("#form_FranchiseeLease").serialize(),
+                    dataType: 'json',
+                    success: function (data) {
+                        $("#modelFranchiseEditLeasePopup").modal("hide");    
+                    }
+                });
+
+            }
+        });
+        //$('#btnSaveClose').click(function () {
+
+        //    if ($('#ClassId').val() == "" || $('#ClassId').val() == "0") {
+        //        swal('Oops...!', 'Please first search Franchise', 'info');
+        //        return false;
+        //    }
+        //    $("#ButtonType").val("2");
+        //    if (LeaseValidForm()) {
+        //        $("#form_FranchiseeLease").submit();
+        //    }
+        //});
+    });
+
+
+</script>
+

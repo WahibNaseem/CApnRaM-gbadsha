@@ -1,0 +1,393 @@
+﻿
+@{
+    ViewBag.Title = "Close Current Period";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section styles{
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")' rel="stylesheet" type="text/css" />
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")' rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+}
+<style type="text/css">
+    .close {
+        background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+        height: 12px !important;
+        width: 12px !important;
+        margin-top: 0px !important;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .row {
+        margin: 0;
+        padding: 3px 0;
+    }
+
+    .page-size {
+        padding-left: 0;
+        padding-right: 0;
+        width: 62px;
+    }
+
+    .topheader {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFF !important;
+        text-transform: uppercase;
+        margin-top: 3px;
+    }
+
+    .alignRight {
+        text-align: right;
+    }
+
+    .alignCenter {
+        text-align: center;
+    }
+
+    #tblVendorList th {
+        vertical-align: middle;
+    }
+
+    .no-padding {
+        padding: 0;
+    }
+
+    .no-margin {
+        margin: 0;
+    }
+
+    .padding-tb1 {
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+
+    .margin-tb1 {
+        margin-top: 1px;
+        margin-bottom: 1px;
+    }
+
+    .custom-listbox .headerbox {
+        padding: 3px 0px 3px 5px;
+    }
+
+    .custom-listbox {
+        margin-top: 4px;
+        margin-bottom: 0px;
+    }
+
+    .btn.multiselect {
+        text-align: left;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .multiselect .caret {
+        right: 0;
+        position: absolute;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    .multiselect-container.dropdown-menu {
+        text-transform: none;
+        font-size: 14px;
+    }
+
+    .contract {
+        text-align: right;
+    }
+
+    .tablebox .table-responsive {
+        min-height: 600px;
+    }
+
+    #modal_RegionModel .modal-content {
+        width: 55% !important;
+        margin-left: 30% !important;
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+        <div class="headerbox">
+            <div class="row" style="background-color: #3598DC;color: #fff;">
+                <div class="col-md-12 no-padding">
+                    <div class="alignCenter">
+                        <div class="col-md-12 topheader">
+                            Close Current Period
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="custom-form portlet light">
+                <div class="portlet-body form">
+                    <div class="form-body">
+                        @*<div class="row">
+                            <div class="col-md-12 no-padding">
+                                <div style="display:table-cell;padding-right: 5px;">
+                                    Region
+                                </div>
+                                <div style="display:table-cell;width:100%;">
+                                    @if (ViewBag.regionlist != null)
+                                    {
+                                        <select class="form-control input-sm" id="regionlist" multiple="multiple" style="display:none;">
+                                            @foreach (var item in (SelectList)ViewBag.regionlist)
+                                            {
+                                                <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                            }
+                                        </select>
+                                    }
+                                </div>
+                            </div>
+                        </div>*@
+                        <div id="dvLoadCloseCurrentPeriodConfirm">
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12" style="text-align:center;">
+
+                                        @if (ViewBag.ResultMsgConfig != "")
+                                        {
+                                            <h5 style="text-align: center;">@ViewBag.ResultMsgConfig</h5>
+                                            <input type="hidden" id="txtPeriodClosedId" name="txtPeriodClosedId" value="" />
+                                            <input type="hidden" id="txtPeriod" name="txtPeriod" value="@ViewBag.Period" />
+                                        }
+                                        else
+                                        { <h5 style="text-align: center;">No Period Avalable for Close.</h5>}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-6 col-md-offset-3" style="text-align:center;">
+                                        @if (ViewBag.ResultMsgConfig != "")
+                                        {
+                                            <input type="button" onclick="ConfirmValidedPeriod(1)" class="btn btn-primary button-next" value="Yes" id="btnSave" />
+                                            <input type="button" onclick="ConfirmValidedPeriod(0)" class="btn btn-primary button-next" value="No" id="btnNo" />
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="dvLoadCloseCurrentPeriod" style="display:none">
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12" style="text-align:center;">
+                                        <h5 style="text-align: center;" id="txtResultMsg">@ViewBag.ResultMsg</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+@*<div class="modal fade in" id="modal_RegionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Select Region
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Select Region</label>
+                                @if (ViewBag.regionlist != null)
+                                {
+                                    <select class="form-control input-sm" id="selectregionlist">
+                                        <option value="">Select Region</option>
+                                        @foreach (var item in (SelectList)ViewBag.regionlist)
+                                        {
+                                            <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div class="col-md-12">
+                        <button type="button" name="SaveNew" id="btnRegion" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:0px;">Select Region</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>*@
+
+
+@section pageplugins{
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js")" type="text/javascript"></script>
+    @*<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/chosen.css")" />
+        <script src="@Url.Content("~/Scripts/chosen.jquery.min.js")" type="text/javascript"></script>
+        <script src="~/Scripts/jquery.uniform.min.js"></script>*@
+    @if (Request.IsSecureConnection)
+    {
+        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    }
+    else
+    {
+        <script src="http://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    }
+}
+
+@section scripts{
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+    <script type="text/javascript">
+
+
+
+        function ConfirmValidedPeriod(d) {
+            if (d == 1) {
+                $.blockUI();
+                $.ajax({
+                    type: "get",
+                    url: '@Url.Action("CloseCurrentPeriodData", "Company", new {area ="Portal" })',
+                    success: function (response) {
+                        $('#txtPeriodClosedId').val(response.PeriodClosedId);
+                        var IsVerified = response.IsVerified;
+                        var msgType = IsVerified ? "warning" : "warning";
+
+                        if (IsVerified) {
+                            swal({
+                                title: "",
+                                text: response.ResultMsg,
+                                type: msgType,
+                                showCancelButton: true,
+                                confirmButtonClass: "btn-confirmr",
+                                confirmButtonText: "Submit",
+                                cancelButtonText: "Cancel",
+                                closeOnConfirm: false,
+                                closeOnCancel: false
+                            },
+                               function (isConfirm) {
+                                   if (isConfirm) {
+                                       ConfirmValidedPeriodSubmit();
+                                   } else {
+                                       window.location.reload(true);
+                                   }
+                               }
+                           );
+                        } else {
+                            swal({
+                                title: "",
+                                text: response.ResultMsg,
+                                type: msgType,
+                            },
+                               function () {
+                                    window.location.reload(true);
+                                  
+                               }
+                           );
+
+                        }
+                           
+                       
+                        $.unblockUI();
+                    },
+                    error: function (data) {
+                        $.unblockUI();
+                    }
+                });
+
+            } else {
+
+                window.location.href = "/Portal/DashBoard";
+                @*$.ajax({
+                    type: "get",
+                    url: '@Url.Action("GetFindersFeeScheduleList", "Franchise",new {area ="Portal" })',
+                    success: function (response) {
+                        _FFSchedule = response;
+                        GetFindersFeeScheduleCalculation();
+                        $('#CustomerDetail_EffectiveDate').val(getFormattedDate(new Date()));
+                        $("#FindersFee_FindersFeeTypeListId").trigger("change");
+                    },
+                    error: function (data) {
+                        console.log(data);
+                    }
+                });*@
+            }
+        }
+
+        function ConfirmValidedPeriodSubmit() {
+            $.blockUI();
+            $.ajax({
+                type: "get",
+                url: '@Url.Action("CloseCurrentPeriodDataClosed", "Company", new {area ="Portal" })?PeriodClosedId=' + $('#txtPeriodClosedId').val(),
+                success: function (response) {
+                    swal({
+                        title: "",
+                        text: 'Period: ' + $('#txtPeriod').val() + ' successfully closed',
+                        type: "success"
+                    }, function (isConfirm) {
+                        window.location.href = "/Portal/DashBoard";
+                        //location.reload(true);
+                    });
+                    $.unblockUI();
+                },
+                error: function (data) {
+                    $.unblockUI();
+                }
+            });
+
+        }
+
+        function CancelPeriodSubmit() {
+
+        }
+
+        function ConfirmValidedPeriodBack() {
+            swal('Period: @ViewBag.Period successfully closed')
+        }
+
+       
+        function GetDataByRegion() { }
+
+        $(window).load(function () {
+            if ('@ViewBag.selectedRegionId' == 0) {
+                $("#modal_RegionModel").modal({ backdrop: 'static' });
+            }
+
+        });
+
+
+    </script>
+}

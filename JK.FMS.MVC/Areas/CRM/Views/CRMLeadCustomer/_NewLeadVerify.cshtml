@@ -1,0 +1,361 @@
+﻿@using JK.Resources;
+
+
+<div class="modal fade" id="addnewlead_popup" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" style="width:455px;">
+        <div class="modal-content">
+            <div class="modal-header" id="addnewlead_popup_header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="cancelAddLeadpopup();"></button>
+                <h4 class="modal-title">New Lead</h4>
+            </div>
+            <div class="modal-body" id="addnewlead_popup_body" style="clear: both; position: relative; margin-bottom: 0px; width: 100%;padding: 15px; margin-left: 0px;
+    left: 0px;
+    box-shadow: none;">
+                <div class="row">
+                    <div class="form-body">
+                        <div id="diverrmsg" style="color:red;display:none;padding-left:27px;font-size:13px;"></div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Company Name<span class="required">*</span>:</label>
+                                    <input id="txtcompanyname1" name="txtcompanyname" type="text" class="form-control input-sm" maxlength="100" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Phone Number<span class="required">*</span>:</label>
+                                    <input id="txtphonenumber1" name="txtphonenumber" type="text" class="form-control input-sm" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="modal-footer" id="addlead_popup_footer">
+                <button id="cancel_addlead_button" type="button" class="btn btn-default" data-dismiss="modal" onclick="cancelAddLeadpopup();">@JKCRMResource.cancel</button>
+                <button id="addlead_button" type="button" class="btn btn-success" data-dismiss="modal" onclick="checkCompanyDetails();">Submit</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="addnewlead_confirmpopup" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" style="width:522px;">
+        <div class="modal-content">
+            <div class="modal-header" id="confirm _popup_header">
+                <h4 class="modal-title">Confirm Company Details</h4>
+            </div>
+            <div class="modal-body" id="addnewlead_popup_body" style="clear: both; position: relative; margin-bottom: 0px; width: 100%;padding: 15px; margin-left: 0px;
+    left: 0px;
+    box-shadow: none;">
+                <div class="row">
+                    <div class="form-body">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label style="color:red;font-size:13px;">Comany name or phone already exists in New Leads. do you want to access it?</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="addlead_popup_footer">
+                <button id="btnconfirmno" type="button" class="btn btn-default" onclick="clickbtnconfirmno();">No</button>
+                <button id="btnconfirmYes" type="button" class="btn btn-success" onclick="">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addnewlead_modalview" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" id="addlead_modalview_header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="resetAddLeadForm();"></button>
+                <h4 class="modal-title">@JKCRMResource.addnewlead</h4>
+            </div>
+            <div class="modal-body" id="addlead_modalview_body" style="clear: both; position: relative; margin-bottom: 0px; width: 100%;padding: 15px; margin-left: 0px;
+    left: 0px;
+    box-shadow: none;">
+                <div class="row">
+                    <form action="#" id="addnewlead_form1">
+                        <div class="form-body">
+                            <div class="col-md-12">
+                                <!-- Lead Source -->
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="select_providertype">Source<span class="required">*</span>:</label>
+                                        @Html.DropDownList("providertypelist", (SelectList)ViewBag.ProviderTypeList, new { @class = "form-control input-sm", @id = "select_providertype" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="input_companyname">Company Name<span class="required">*</span>:</label>
+                                        <input id="input_companyname1" name="name" type="text" data-required="1" class="form-control input-sm" placeholder="" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="input_contactname">Contact Name<span class="required">*</span>:</label>
+                                        <input id="input_contactname1" name="name" type="text" data-required="1" class="form-control input-sm" placeholder="" />
+                                    </div>
+                                </div>
+                                @*<div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="input_lastname">@JKCRMResource.lastname<span class="required">*</span>:</label>
+                                            <input id="input_lastname" name="name" type="text" data-required="1" class="form-control input-sm" placeholder="" />
+                                        </div>
+                                    </div>*@
+                            </div>
+                            <div class="col-md-12">
+                                <!-- Phone Number -->
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="input_phonenumber">@JKCRMResource.phoneNumber<span class="required">*</span>:</label>
+                                        <input id="input_phonenumber1" name="phonenumber" type="text" data-required="1" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Email -->
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="input_email">@JKCRMResource.email:</label>
+                                        <input id="input_email1" name="email1" type="text" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Notes-->
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="input_note">@JKCRMResource.note:</label>
+                                        <textarea id="input_note1" class="form-control input-sm" rows="6"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer" id="addlead_modalview_footer">
+                <button id="cancel_addlead_button" type="button" class="btn btn-default" data-dismiss="modal" onclick="resetAddLeadForm();">@JKCRMResource.cancel</button>
+                <button id="addlead_button" type="button" class="btn btn-success" onclick="createNewLead();">@JKCRMResource.addlead</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+    //$(document).ready(function () {
+    //    JK.CRM.CRMFormInputMask.handlePhoneInputMask("#txtphonenumber");
+    //})
+
+    function cancelAddLeadpopup() {
+        $("#txtcompanyname1").val("");
+        $("#txtphonenumber1").val("");
+    }
+
+    function checkCompanyDetails() {
+        $.blockUI();
+            var isvalid = true;
+            $("#diverrmsg").hide();
+            $('#txtcompanyname1').css('border-color', '');
+            if ($('#txtcompanyname1').val().trim() == '') { $('#txtcompanyname1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtcompanyname1').css('border-color', ''); }
+            if ($('#txtphonenumber1').val().trim() == '') { $('#txtphonenumber1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtphonenumber1').css('border-color', ''); }
+            if (isvalid == true) {
+                $.ajax({
+                    url: '@Url.Action("CheckCompanynameExits", "CRMLeadCustomer",new { area = "CRM" })',
+                    dataType: "json",
+                    data: { CompanyName: $('#txtcompanyname1').val().trim(), Phone: $('#txtphonenumber1').val().trim() },
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        if (data != null) {
+                            setupForm();
+                            if (data.AccId == "-1") {
+                                $("#diverrmsg").html("Company name already in system so please contact to administrator.");
+                                $("#diverrmsg").show();
+                                $('#txtcompanyname1').css('border-color', 'red');
+                                $.unblockUI();
+                            }
+                            else if (data.AccId == "-2") {
+                                $("#diverrmsg").html("Phone number already in system so please contact to administrator.");
+                                $("#diverrmsg").show();
+                                $('#txtphonenumber1').css('border-color', 'red');
+                                $.unblockUI();
+                            }
+                            else if (data.AccId == "-3") {
+                                //$("#diverrmsg").html("Company name already in New Leads but not match with phone number so please contact to administrator.");
+                                //$("#diverrmsg").show();
+                                //$('#txtphonenumber').css('border-color', 'red');
+                                $("#diverrmsg").hide();
+                                $("#addlnewead_popup").modal('hide');
+                                $('#txtcompanyname1').css('border-color', '');
+                                $("#addnewlead_modalview").modal({ backdrop: 'static' });
+                                $("#input_companyname1").val($("#txtcompanyname1").val());
+                                $("#input_phonenumber1").val($("#txtphonenumber1").val());
+                                $("#txtcompanyname1").val("");
+                                $("#txtphonenumber1").val("");
+                                $.unblockUI();
+                            }
+                            else if (data.AccId == "-4") {
+                                //$("#diverrmsg").html("Phone number already in New Leads but not match with company name so please contact to administrator.");
+                                //$("#diverrmsg").show();
+                                //$('#txtcompanyname').css('border-color', 'red');
+                                $("#diverrmsg").hide();
+                                $("#addnewlead_popup").modal('hide');
+                                $('#txtcompanyname1').css('border-color', '');
+                                $("#addnewlead_modalview").modal({ backdrop: 'static' });
+                                $("#input_companyname1").val($("#txtcompanyname1").val());
+                                $("#input_phonenumber1").val($("#txtphonenumber1").val());
+                                $("#txtcompanyname1").val("");
+                                $("#txtphonenumber1").val("");
+                                $.unblockUI();
+                            }
+                            else if (data.AccId != "0") {
+                                $("#addnewlead_confirmpopup").modal({ backdrop: 'static' });
+                                $("#btnconfirmYes").attr("onclick", "clickbtnconfirmYes(" + data.AccId + ")");
+                                $.unblockUI();
+                            }
+                            else {
+                                $("#diverrmsg").hide();
+                                $("#addnewlead_popup").modal('hide');
+                                $('#txtcompanyname').css('border-color', '');
+                                $("#addnewlead_modalview").modal({ backdrop: 'static' });
+                                $("#input_companyname1").val($("#txtcompanyname1").val());
+                                $("#input_phonenumber1").val($("#txtphonenumber1").val());
+                                $("#txtcompanyname1").val("");
+                                $("#txtphonenumber1").val("");
+                                $.unblockUI();
+                            }
+                        }
+                    },
+                    error: function () { }
+                });
+            }
+        }
+
+        function resetfrm() {
+            $("#txtcompanyname1").val("");
+            $("#txtphonenumber1").val("");
+            $("#diverrmsg").hide()
+            $('#txtcompanyname1').css('border-color', '');
+        }
+
+        function clickbtnconfirmno() {
+            $("#addnewlead_confirmpopup").modal("hide");
+        }
+
+        function clickbtnconfirmYes(accountId) {
+
+            window.location.href = '@Url.Action("Detail", "CRMLeadCustomer",new { area = "CRM" })' + "?accountId=" + accountId;
+        }
+
+        function cancelAddLeadpopup() {
+            $("#txtcompanyname").val("");
+            $("#txtphonenumber").val("");
+    }
+
+    /**
+         * Create a new lead from the modal view.
+         */
+    function createNewLead () {
+
+        debugger;
+            var isvalid = true;
+            if ($('#select_providertype').val() == '' || $('#select_providertype').val() == '0') { $('#select_providertype').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#select_providertype').css('border-color', ''); }
+            if ($('#input_companyname1').val() == '') { $('#input_companyname1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_companyname1').css('border-color', ''); }
+        if ($('#input_contactname1').val() == '') { $('#input_contactname1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_contactname1').css('border-color', ''); }
+        if ($('#input_phonenumber1').val().trim() == '') { $('#input_phonenumber1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_phonenumber1').css('border-color', ''); }
+            //if ($('#input_email').val().trim() == '') { $('#input_email').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_email').css('border-color', ''); }
+
+            if (isvalid == true) {
+                //var addLeadForm = $("#addnewlead_form1");
+                //if (!addLeadForm.valid()) {
+                //    return;
+                //} else {
+
+                    var postData = {
+                        // Lead Source
+                        "SourceProvider": $("#select_providertype option:selected").val(),
+                        "CompanyName": $("#input_companyname1").val(),
+                        "ContactName": $("#input_contactname1").val(),
+                        "PhoneNumber": $("#input_phonenumber1").val(),
+                        "EmailAddress": $("#input_email1").val(),
+                        "Note": $("#input_note1").val()
+                    };
+                    console.log(postData);
+
+                    $("#cancel_addlead_button").prop("disabled", true);
+                    $("#addlead_button").prop("disabled", true);
+                    JK.CRM.CRMApp.showActivity("#addlead_modalview_footer");
+
+                    $.ajax({
+                        url: "/CRM/CRMLeadCustomer/Create",
+                        type: "POST",
+                        data: postData,
+                        dataType: "json",
+                        cache: false,
+                        success: function (response) {
+                            if (response.success) {
+                                JK.CRM.CRMApp.hideActivity("#addlead_modalview_footer");
+                                var accountId = response.result["CRM_AccountId"];
+                                var url = '@Url.Action("Detail", "CRMLeadCustomer")?accountId=' + accountId;
+                                location.href = url;
+                            }
+                            else {
+                                location.reload();
+                            }
+                        },
+                        error: function (error) {
+                            JK.CRM.CRMApp.hideActivity("#addlead_modalview_footer");
+                            console.log(error.message);
+                        }
+                    });
+                //}
+            }
+    }
+
+    $(document).ready(function () {
+        setupForm();
+    });
+
+
+    /**
+     * Setup the form.
+     */
+    var setupForm = function () {
+        JK.CRM.CRMFormValidation.init("#addnewlead_form1");
+        JK.CRM.CRMFormInputMask.handlePhoneInputMask("#input_phonenumber1");
+        JK.CRM.CRMFormInputMask.handlePhoneInputMask("#input_mobilenumber1");
+        JK.CRM.CRMFormInputMask.handlePhoneInputMask("#txtphonenumber1");
+
+    }
+
+    /**
+     * Reset all fields in the add lead form.
+     */
+    var resetAddLeadForm = function () {
+        $("#input_companyname1").val("");
+        $("#input_contactname1").val("");
+        $("#input_phonenumber1").val("");
+        $("#input_email1").val("");
+        $("#input_note1").val("");
+        JK.CRM.CRMFormValidation.reset("#addnewlead_form1");
+    };
+</script>

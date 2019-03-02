@@ -1,0 +1,182 @@
+﻿@model JKViewModels.CRM.CRMFollowUpViewModel
+
+@{
+    var followSch = new JKViewModels.CRM.CRMScheduleViewModel();
+    if (ViewBag.followSch != null)
+    {
+        followSch = (JKViewModels.CRM.CRMScheduleViewModel)ViewBag.followSch;
+    }
+
+    var followPD = new JKViewModels.CRM.CRMScheduleViewModel();
+    if (ViewBag.followPD != null)
+    {
+        followPD = (JKViewModels.CRM.CRMScheduleViewModel)ViewBag.followPD;
+    }
+}
+
+<div class="modal-header modal-custom-header" id="followupdetail_modalview_header">
+    <button type="button" class="close modal-close-button" data-dismiss="modal" aria-hidden="true"></button>
+    <h4 class="modal-title">Follow-Up</h4>
+</div>
+<div class="modal-body" id="followup_detail_modalview_body">
+    <div class="row">
+        <form action="#" id="form_followstagedetail" class="form-horizontal">
+            <div class="form-body">
+                @Html.Hidden("AccountDetailId", "", new { @id = "accountdetailid" })
+                 
+                <!--Start Date/Time-->
+                <div class="form-group" >
+                    <label for="schedule_start" class="control-label col-md-4">Start Date/Time<span class="required">*</span>:</label>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control input-group input-group-sm input-sm date date-picker RemovePeriodvalidation input_followupPd_startdate"
+                               data-date-format="mm/dd/yyyy" id="input_followupPd_startdate" disabled="disabled" value="@((followPD!=null && followPD.StartDate != null) ? Convert.ToDateTime(followPD.StartDate).ToString("MM-dd-yyyy") :string.Empty)" />
+                    </div>
+                    <!--Start Time-->
+                    <div class="col-md-3">
+                        <div class="input-icon">
+                            <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                            <input type="text" class="form-control input-group input-group-sm input-sm  timepicker timepicker-default input_followupPd_starttime" id="input_followupPd_starttime" value="@((followPD!=null && followPD.StartDate != null) ? Convert.ToDateTime(followPD.StartDate).ToString("hh:mm tt") :string.Empty)" disabled="disabled" />
+                        </div>
+                    </div>
+                </div>
+
+                <!--End Date/Time-->
+                <div class="form-group">
+                    <label for="schedule_start" class="control-label col-md-4">End Date/Time<span class="required">*</span>:</label>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control input-group input-group-sm input-sm date date-picker RemovePeriodvalidation input_followupPd_enddate" data-date-format="mm/dd/yyyy"
+                               id="input_followupPd_enddate" value="@((followPD!=null && followPD.EndDate != null) ? Convert.ToDateTime(followPD.EndDate).ToString("MM-dd-yyyy") :string.Empty)"  disabled="disabled" />
+                    </div>
+                    <!--End Time-->
+                    <div class="col-md-3">
+                        <div class="input-icon">
+                            <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                            <input type="text" class="form-control input-group input-group-sm input-sm  timepicker timepicker-default input_followupPd_endtime"
+                                   id="input_followupPd_endtime" disabled="disabled" value="@((followPD!=null && followPD.EndDate != null) ? Convert.ToDateTime(followPD.EndDate).ToString("hh:mm tt") :string.Empty)"  />
+                        </div>
+
+                    </div>
+                </div>
+
+                <!--Purpose-->
+                <div class="form-group">
+                    <label for="schedule_purpose" class="control-label col-md-4">Purpose:</label>
+                    <div class="col-md-6">
+                        <select id="selectModal_followupavailablemeetpurpose" class="form-control input-sm" name="options2" disabled="disabled">
+                            <option value="">Select</option>
+                            <option value="5" @(followPD.PurposeId == 5 ? "selected=selected" : string.Empty)>Call Back</option>
+                            <option value="11" @(followPD.PurposeId == 11 ? "selected=selected" : string.Empty)>Follow up meeting</option>
+                            <option value="12" @(followPD.PurposeId == 12 ? "selected=selected" : string.Empty)>Contract Signed</option>
+                            <option value="9001" @(followPD.PurposeId == 9001 ? "selected=selected" : string.Empty)>Cannot break contract per agreement</option>
+                            <option value="9002" @(followPD.PurposeId == 9002 ? "selected=selected" : string.Empty)>Giving current service more time</option>
+                            <option value="9003" @(followPD.PurposeId == 9003 ? "selected=selected" : string.Empty)>Going in-house</option>
+                            <option value="9004" @(followPD.PurposeId == 9004 ? "selected=selected" : string.Empty)>Price too High</option>
+                            <option value="9005" @(followPD.PurposeId == 9005 ? "selected=selected" : string.Empty)>Contact Not Available</option>
+                            <option value="9006" @(followPD.PurposeId == 9006 ? "selected=selected" : string.Empty)>JK Rep Missed Appointment</option>
+                            <option value="9007" @(followPD.PurposeId == 9007 ? "selected=selected" : string.Empty)>Re-scheduled by Contact</option>
+                            <option value="9008" @(followPD.PurposeId == 9008 ? "selected=selected" : string.Empty)>Re-scheduled by JK rep</option>
+                            <option value="9009" @(followPD.PurposeId == 9009 ? "selected=selected" : string.Empty)>Appointment Cancelled</option>
+                            <option value="9101" @(followPD.PurposeId == 9101 ? "selected=selected" : string.Empty)>Cannot Break Current Contract</option>
+                            <option value="9103" @(followPD.PurposeId == 9103 ? "selected=selected" : string.Empty)>Need to check with other Partners/Officers</option>
+                            <option value="9104" @(followPD.PurposeId == 9104 ? "selected=selected" : string.Empty)>Jani-King is too big (Perception)</option>
+                            <option value="9105" @(followPD.PurposeId == 9105 ? "selected=selected" : string.Empty)>Our facility has special needs</option>
+                            <option value="9106" @(followPD.PurposeId == 9106 ? "selected=selected" : string.Empty)>Going to take cleaning in-house</option>
+                            <option value="9102" @(followPD.PurposeId == 9102 ? "selected=selected" : string.Empty)>Giving existing company more time</option>
+                            <option value="9999" @(followPD.PurposeId == 9999 ? "selected=selected" : string.Empty)>Other</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Close -->
+                <div class="form-group">
+                    <label for="select_priceapproved" class="control-label col-md-4">Close<span class="required">*</span>:</label>
+                    <div class="col-md-6">
+                        <select id="selectModal_closetype" class="form-control input-sm" name="options2" disabled="disabled">
+                            <option value="">Select</option>
+                            <option value="1" @(Model.Close == 1 ? "selected=selected":string.Empty) >Rebidding</option>
+                            <option value="2" @(Model.Close == 2 ? "selected=selected":string.Empty) >Contract Signed</option>
+                            <option value="3" @(Model.Close == 3 ? "selected=selected":string.Empty) >Need To ReSchedule</option>
+                            <option value="4" @(Model.Close == 4 ? "selected=selected":string.Empty) >Pending Decision</option>
+                            <option value="5" @(Model.Close == 5 ? "selected=selected":string.Empty) >Close Sale Cycle</option>
+                        </select>
+                    </div>
+                </div> 
+                @if (Model.Close != 2)
+                {
+                <div class="col-md-12" id="divModal_reschedule"> 
+                    <!-- Available To Meet -->                     
+                    <div class="form-group">
+                        <label for="schedule_purpose" class="control-label col-md-4">Purpose:</label>
+                        <div class="col-md-6">
+                            <select id="selectModal_followmeetagainpurpose" class="form-control input-sm" name="options2" disabled="disabled">
+                                <option value="">Select</option>
+                                <option value="5" @(followPD.PurposeId == 5 ? "selected=selected" : string.Empty)>Call Back</option>
+                                <option value="11" @(followPD.PurposeId == 11 ? "selected=selected" : string.Empty)>Follow up meeting</option>
+                                <option value="12" @(followPD.PurposeId == 12 ? "selected=selected" : string.Empty)>Contract Signed</option>
+                                <option value="9001" @(followPD.PurposeId == 9001 ? "selected=selected" : string.Empty)>Cannot break contract per agreement</option>
+                                <option value="9002" @(followPD.PurposeId == 9002 ? "selected=selected" : string.Empty)>Giving current service more time</option>
+                                <option value="9003" @(followPD.PurposeId == 9003 ? "selected=selected" : string.Empty)>Going in-house</option>
+                                <option value="9004" @(followPD.PurposeId == 9004 ? "selected=selected" : string.Empty)>Price too High</option>
+                                <option value="9005" @(followPD.PurposeId == 9005 ? "selected=selected" : string.Empty)>Contact Not Available</option>
+                                <option value="9006" @(followPD.PurposeId == 9006 ? "selected=selected" : string.Empty)>JK Rep Missed Appointment</option>
+                                <option value="9007" @(followPD.PurposeId == 9007 ? "selected=selected" : string.Empty)>Re-scheduled by Contact</option>
+                                <option value="9008" @(followPD.PurposeId == 9008 ? "selected=selected" : string.Empty)>Re-scheduled by JK rep</option>
+                                <option value="9009" @(followPD.PurposeId == 9009 ? "selected=selected" : string.Empty)>Appointment Cancelled</option>
+                                <option value="9101" @(followPD.PurposeId == 9101 ? "selected=selected" : string.Empty)>Cannot Break Current Contract</option>
+                                <option value="9103" @(followPD.PurposeId == 9103 ? "selected=selected" : string.Empty)>Need to check with other Partners/Officers</option>
+                                <option value="9104" @(followPD.PurposeId == 9104 ? "selected=selected" : string.Empty)>Jani-King is too big (Perception)</option>
+                                <option value="9105" @(followPD.PurposeId == 9105 ? "selected=selected" : string.Empty)>Our facility has special needs</option>
+                                <option value="9106" @(followPD.PurposeId == 9106 ? "selected=selected" : string.Empty)>Going to take cleaning in-house</option>
+                                <option value="9102" @(followPD.PurposeId == 9102 ? "selected=selected" : string.Empty)>Giving existing company more time</option>
+                                <option value="9999" @(followPD.PurposeId == 9999 ? "selected=selected" : string.Empty)>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Start Date/Time-->
+                <div class="form-group">
+                    <label for="schedule_start" class="control-label col-md-4">Start Date/Time<span class="required">*</span>:</label>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control input-group input-group-sm input-sm date date-picker RemovePeriodvalidation input_followupPd_startdate"
+                               data-date-format="mm/dd/yyyy" id="input_followupPd_startdate" value="@((followSch != null && followSch.StartDate != null) ? Convert.ToDateTime(followSch.StartDate).ToString("MM-dd-yyyy") : string.Empty)"  disabled="disabled" />
+                    </div>
+                    <!--Start Time-->
+                    <div class="col-md-3">
+                        <div class="input-icon">
+                            <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                            <input type="text" class="form-control input-group input-group-sm input-sm  timepicker timepicker-default input_followupPd_starttime" id="input_followupPd_starttime" value="@((followSch != null && followSch.StartDate != null) ? Convert.ToDateTime(followSch.StartDate).ToString("hh:mm tt") : string.Empty)"  disabled="disabled" />
+                        </div>
+                    </div>
+                </div>
+
+                <!--End Date/Time-->
+                <div class="form-group">
+                    <label for="schedule_start" class="control-label col-md-4">End Date/Time<span class="required">*</span>:</label>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control input-group input-group-sm input-sm date date-picker RemovePeriodvalidation input_followupPd_enddate" data-date-format="mm/dd/yyyy"
+                               id="input_followupPd_enddate" value="@((followSch != null && followSch.EndDate != null) ? Convert.ToDateTime(followSch.EndDate).ToString("MM-dd-yyyy") : string.Empty)" disabled="disabled" />
+                    </div>
+                    <!--End Time-->
+                    <div class="col-md-3">
+                        <div class="input-icon">
+                            <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                            <input type="text" class="form-control input-group input-group-sm input-sm  timepicker timepicker-default input_followupPd_endtime"
+                                   id="input_followupPd_endtime" value="@((followSch != null && followSch.EndDate != null) ? Convert.ToDateTime(followSch.EndDate).ToString("hh:mm tt") : string.Empty)" disabled="disabled" />
+                        </div>
+
+                    </div>
+                </div>
+
+                }
+                <div class="form-group">
+                    <label for="select_stagestatus" class="control-label col-md-4">Note<span class="required"></span>:</label>
+                    <div class="col-md-6">
+                        <textarea name="note" class = "form-control autosizeme" rows = "6" style = "font-size: 11px" id = "textfollowupModal_initialcommunication" disabled = "disabled"> @Model.Note </textarea>
+                        @*@Html.TextArea("note", "", new { @class = "form-control autosizeme", rows = "6", style = "font-size: 11px", @id = "textfollowupModal_initialcommunication", disabled = "disabled" })*@
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>

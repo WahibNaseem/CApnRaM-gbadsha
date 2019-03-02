@@ -1,0 +1,52 @@
+﻿@using JKViewModels;
+@model AssignEDModel
+
+@if (Model != null && Model.RoleBasedMenuAccessList != null && Model.RoleBasedMenuAccessList.Count > 0)
+{
+
+    @Html.HiddenFor(m => m.RoleId, new { @id = "hdnRoleId", Value = Model.RoleId })
+
+    for (int i = 0; i < Model.RoleBasedMenuAccessList.Count; i++)
+    {
+        @Html.HiddenFor(m => m.RoleBasedMenuAccessList[i].EDPermissionId, new { @id = "hdnMenu_" + Model.RoleBasedMenuAccessList[i].EDPermissionId, Value = Model.RoleBasedMenuAccessList[i].EDPermissionId })
+        @Html.HiddenFor(m => m.RoleBasedMenuAccessList[i].IsEdit, new { @id = "hdnIsApprove_" + Model.RoleBasedMenuAccessList[i].EDPermissionId, Value = Model.RoleBasedMenuAccessList[i].IsEdit })
+        @Html.HiddenFor(m => m.RoleBasedMenuAccessList[i].IsDeletePer, new { @id = "hdnIsReject_" + Model.RoleBasedMenuAccessList[i].EDPermissionId, Value = Model.RoleBasedMenuAccessList[i].IsDeletePer })
+
+    }
+}
+
+
+<div class="treeview-header clearfix">
+    <label class="colLeft">Section Name</label>
+    <div class="chkMenuAccess">
+        <div class="colMiddle">Is Edit <input type="checkbox" class="chkMenu chkAll" id="chkAllRead" /></div>
+        <div class="colRight">Is Delete <input type="checkbox" class="chkMenu chkAll" id="chkAllWrite" /></div>
+    </div>
+</div>
+<ul id="treeView" class="treeview-red">
+    @if (Model != null && Model.RoleBasedMenuAccessList != null && Model.RoleBasedMenuAccessList.Count > 0)
+    {
+
+        List<RolebasedEDAccessDetailModel> menus = Model.RoleBasedMenuAccessList;
+
+        for (int i = 0; i < menus.Count; i++)
+        {
+            <li id="li_@menus[i].EDPermissionId" data-tt-id="@menus[i].EDPermissionId">
+
+                <label>@menus[i].DisplayName</label>
+
+                <div class="chkMenuAccess">
+                    <input type="checkbox" class="chkMenu chkAllRead chkParentRead" checked="checked" data-parentmenuid="@menus[i].EDPermissionId" data-menuid="@menus[i].EDPermissionId" id="chkIsAprove_@menus[i].EDPermissionId" />
+
+                    <input type="checkbox" class="chkMenu chkAllWrite chkParentWrite" checked="checked" data-parentmenuid="@menus[i].EDPermissionId" data-menuid="@menus[i].EDPermissionId" id="chkIsReject_@menus[i].EDPermissionId" />
+
+                </div>
+
+            </li>
+        }
+    }
+</ul>
+
+@Html.HiddenFor(m => Model.Message, new { @id = "hdnMessage", Value = Model.Message })
+@Html.HiddenFor(m => Model.MessageType, new { @id = "hdnMessageType", Value = Model.MessageType })
+

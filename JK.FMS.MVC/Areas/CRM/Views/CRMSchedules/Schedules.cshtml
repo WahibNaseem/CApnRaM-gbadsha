@@ -1,0 +1,571 @@
+﻿@model JKViewModels.DashboardViewModel
+@using JKApi.Core
+@using JKApi.Core.Common
+@using System.Linq
+
+@{
+    Layout = null;
+}
+
+
+
+<style>
+    .form-actions {
+        padding-top: 10px;
+        margin-top: 20px;
+        border-top: 1px solid #e7ecf1;
+    }
+
+    .form-section {
+        margin-top: 10px;
+        padding: 5px;
+        border-bottom: 1px solid #e7ecf1;
+    }
+
+    .forminput {
+        text-align: left;
+        margin-left: -20px;
+        border: none;
+        background: transparent;
+    }
+
+    .portlet-bottom {
+        margin-bottom: 10px;
+    }
+
+    .portlet-align {
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+
+    .modal-custom-content {
+        padding: 0px;
+        border-radius: 20px;
+    }
+
+    .modal-custom-header {
+        background: #3598DC;
+        padding: 8px;
+        border-top-left-radius: 18px;
+        border-top-right-radius: 18px;
+    }
+
+    .modal-close-button {
+        margin-top: 10px;
+        margin-right: 10px;
+    }
+
+    .fc-toolbar .fc-left {
+        float: right;
+    }
+
+    .fc-button-group {
+        margin-right: -100px;
+    }
+
+    .col-md-8 {
+        width: 98.66667%;
+    }
+
+    .dd-item > button {
+        margin-top: 1px;
+    }
+
+    .selectbox {
+        font-weight: bold;
+        font-size: 15px;
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-lg-12 col-md-8 col-sm-8">
+        <div class="portlet light portlet-fit calendar">
+            <div class="portlet-title">
+                <a class="btn btn-primary" data-toggle="modal" href="#newschedule_modalview" style="background:#2a8aa9;">Add New Schedule</a>
+            </div>
+            <div class="portlet-body">
+                <div class="row">
+                    <div class="col-md-2 col-sm-2 dd" id="nestable_list_1" style="margin-top:45px; background-color:#eef1f5; height: 780px;">
+                        <div class="col-md-12" style="margin-top:10px; margin-left:12px;">
+                            <ol class="dd-list">
+                                <li class="dd-item" data-id="1" style="font-size:18px; font-weight:600;">
+                                    <input type="checkbox" name="mycalendar" value="" id="chkAllCalendarTypes" style="font-size:18px;" checked="checked"> My Calendars
+                                    <ol class="dd-list" style="margin-top: 6px;">
+                                        @*<li class="dd-item selectbox" data-id="2">
+                                                <input type="checkbox" name="mycalendar" value="1" checked="checked" disabled="disabled"> Calendar
+                                            </li>*@
+                                        <li class="dd-item selectbox" data-id="2" id="listout">
+                                            <input type="checkbox" name="mycalendar" class="chkCalendarType" value="1" checked="checked"> Outlook
+                                        </li>
+                                        <li class="dd-item selectbox" data-id="3" id="listcrm">
+                                            <input type="checkbox" name="mycalendar" class="chkCalendarType" value="2" checked="checked"> CRM
+                                        </li>
+                                    </ol>
+                                </li>
+                            </ol>
+                        </div>
+
+                        @{
+                            var userCalim = ClaimView.Instance;
+                            var roleType = string.Empty;
+                            if (Session["DisPlayUserName"] == null && userCalim.GetCLAIM_PERSON_INFORMATION() != null)
+                            {
+                                roleType = userCalim.GetCLAIM_ROLE_TYPE();
+                            }
+
+                            if (roleType != "CRM-Sales")
+                            {
+                                <div class="col-md-12" style="margin-top:30px;">
+                                    <ol class="dd-list">
+                                        <li class="dd-item" data-id="4" style="font-size:17px; font-weight:600;" id="liLstUser">
+                                            @*@if (ViewBag.lstRegion != null)
+                                                {
+                                                    foreach (var region in ViewBag.lstRegion)
+                                                    {
+                                                        <input type="checkbox" name="mycalendar" value="" id="@region.RegionId"> @region.RegionName
+
+                                                        if (ViewBag.lstUser != null)
+                                                        {
+                                                            <ol class="dd-list" style="margin-top: 6px;margin-left: -10px;">
+                                                                @foreach (var user in ViewBag.lstUser)
+                                                                {
+                                                                    if (region.RegionId == user.RegionId)
+                                                                    {
+                                                                        <li class="dd-item" data-id="5" id="lista">
+                                                                            <input type="checkbox" name="mycalendar"
+                                                                                   class="chkCalendarUser" checked="checked" value="@user.UserId"> @user.UserName
+                                                                            </li>
+                                                                    }
+                                                                }
+                                                            </ol>
+                                                        }
+                                                    }
+                                                }*@
+                                            @*<input type="checkbox" name="mycalendar" value="" id="chkAllCalendarUsers"> Other Calendars
+                                                <ol class="dd-list" style="margin-top: 6px;">
+                                                    <li class="dd-item" data-id="5" id="lista">
+                                                        <input type="checkbox" name="mycalendar" class="chkCalendarUser" value="11"> John
+                                                    </li>
+                                                    <li class="dd-item" data-id="6" id="listb">
+                                                        <input type="checkbox" name="mycalendar" class="chkCalendarUser" value="12"> Gaurav
+                                                    </li>
+                                                </ol>*@
+                                        </li>
+                                    </ol>
+                                </div>
+                            }
+                        }
+
+
+                        <div class="col-md-12" style="background-color:azure; margin-top:70px; height:220px;">
+                            <div class="col-lg-12" style="margin-top:15px;">
+                                <div class="col-md-12" style="width:25px; height:25px; background-color:#e88504; margin-left:-20px;"></div>
+                                <div style="margin-left:30px; margin-top:5px;  font-size:14px;"><label>Fv   </label></div>
+                            </div>
+                            <div class="col-md-12" style="margin-top:15px;">
+                                <div class="col-md-12" style="width:25px; height:25px; background-color:#4ca344; font-weight:bold; margin-left:-20px;"></div>
+                                <div style="margin-left:30px; margin-top:5px; font-size:14px; font-weight:bold;"><label>Bidding</label></div>
+                            </div>
+                            <div class="col-md-12" style="margin-top:15px;">
+                                <div class="col-md-12" style="width:25px; height:25px; background-color:#b7a45f; font-weight:bold; margin-left:-20px;"></div>
+                                <div style="margin-left:30px; margin-top:5px; font-size:13px; font-weight:bold;"><label>Pd-Appointment</label></div>
+                            </div>
+                            <div class="col-md-12" style="margin-top:15px;">
+                                <div class="col-md-12" style="width:25px; height:25px; background-color:#b3b36f; font-weight:bold; margin-left:-20px;"></div>
+                                <div style="margin-left:30px; margin-top:5px; font-size:14px; font-weight:bold;"><label>Follow-Up</label></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-10" style="margin-left:-10px;">
+                        @*<div class="col-md-12  col-sm-10">*@
+                        <div id="calendar" class="has-toolbar"> </div>
+                        @*</div>*@
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--New Schedule Model View -->
+<form id="form_addnewschedule">
+    <div class="modal fade custom-model custom-form-design" id="newschedule_modalview" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content modal-custom-content">
+                <div class="modal-header modal-custom-header" id="newschedule_modalview_header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"  onclick="resetAddScheduleForm();"></button>
+                    <h4 class="modal-title" style="text-transform:uppercase; font-weight: bold;">New Schedule</h4>
+                </div>
+
+                <div class="modal-body" id="newschedule_modalview_body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <!--Schedule Subject-->
+                                <div class="form-group">
+                                    <label for="form_title" class="control-label col-md-2 input-sm">Subject<span class="required">*</span>:</label>
+                                    <input id="input_crmscheduleid" name="input_crmscheduleid" type="hidden"/>
+                                    <div class="col-md-10">
+                                        <input id="input_scheduletitle" name="input_scheduletitle" type="text" data-required="1" class="form-control input-sm" style="margin-left:-35px;" placeholder="" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <!--Schedule Location-->
+                                <div class="form-group">
+                                    <label for="form_title" class="control-label col-md-2 input-sm">Location<span class="required">*</span>:</label>
+                                    <div class="col-md-10">
+                                        <input id="input_schedulelocation" name="input_schedulelocation" type="text" data-required="1" class="form-control input-sm" style="margin-left:-35px;" placeholder="" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Schedule Type-->
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="form_scheduletype" class="control-label col-md-4 input-sm">Schedule Type<span class="required">*</span>:</label>
+                                    <div class="col-md-4">
+                                        <select id="input_scheduletype" name="input_scheduletype" class="form-control input-sm" style="margin-left:-105px;">
+                                            <option value="1">Outlook</option>
+                                            <option value="2">CRM</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Start Date/Time-->
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="form_title" class="control-label col-md-2 input-sm">Start Date/Time<span class="required">*</span>:</label>
+                                    <div class="col-md-2">
+                                        <input type="text" class="form-control input-sm date date-picker RemovePeriodvalidation" name="input_schedulestartdate" data-date-format="mm/dd/yyyy" id="input_schedulestartdate" style="margin-left:-2px;" />
+                                    </div>
+                                    <!--Start Time-->
+                                    <div class="col-md-3" style="margin-left:-5px;">
+                                        <div class="input-icon">
+                                            <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                                            <input type="text" class="form-control input-sm  timepicker timepicker-default" name="input_schedulestarttime" id="input_schedulestarttime">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--End Date/Time-->
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="form_title" class="control-label col-md-2 input-sm">End Date/Time<span class="required">*</span>:</label>
+                                    <div class="col-md-2">
+                                        <input type="text" class="form-control input-sm date date-picker RemovePeriodvalidation" name="input_scheduleenddate" data-date-format="mm/dd/yyyy" id="input_scheduleenddate" style="margin-left:-2px;" />
+                                    </div>
+                                    <!--End Time-->
+                                    <div class="col-md-3" style="margin-left:-5px;">
+                                        <div class="input-icon">
+                                            <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                                            <input type="text" class="form-control input-sm  timepicker timepicker-default" name="input_scheduleendtime" id="input_scheduleendtime">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Description-->
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="col-md-12" style="margin-top:5px;">
+                                        <br />
+                                        <textarea id="input_scheduledescription" name="input_scheduledescription" class="form-control input-sm" rows="6"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer" id="schedule_modalview_footer">
+                    <button id="cancel_addschedule_button" type="button" class="btn btn-default" data-dismiss="modal" onclick="resetAddScheduleForm();">Cancel</button>
+                    <button type="button" class="btn btn-success" id="btnSaveScheduleData">Save</button>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</form>
+
+
+
+
+
+
+
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap/js/bootstrap.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/fullcalendar/fullcalendar.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/pages/scripts/ui-blockui.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery.blockui.min.js")" type="text/javascript"></script>
+
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/clockface/js/clockface.js")" type="text/javascript"></script>
+
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+@*<script src="@Url.Content("~/Content/admin/assets/pages/scripts/ui-nestable.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-nestable/jquery.nestable.js")" type="text/javascript"></script> *@
+
+<script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<!-- END PAGE LEVEL PLUGINS -->
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        reCreateCalendar();
+        getSalesSchedules();
+
+        $("#liLstUser").on("change", "input.chkCalendarUser", function () {
+            getSalesSchedules();
+        });
+
+        $("#chkAllCalendarTypes").on("change", function () {
+            $("input.chkCalendarType").prop('checked', this.checked);
+            getSalesSchedules();
+
+        });
+
+        $("input.chkCalendarType").change(function () {
+            getSalesSchedules();
+        });
+        $(document).on("click", "#btnSaveScheduleData", function () {
+            addSchedule();
+        });
+
+    });
+
+
+
+    function reCreateCalendar() {
+        var scheduleCalendar = $("#calendar");
+        scheduleCalendar.fullCalendar('destroy');
+        scheduleCalendar.fullCalendar({
+            header: {
+                left: 'title',
+                center: '',
+                right: 'prev,next,today,month,agendaWeek,agendaDay'
+            },
+            defaultView: 'month'
+        });
+    }
+
+    function refreshcalendar(data) {
+        var scheduleCalendar = $("#calendar");
+        scheduleCalendar.fullCalendar('destroy');
+        scheduleCalendar.fullCalendar({
+            header: {
+                left: 'title',
+                center: '',
+                right: 'prev,next,today,month,agendaWeek,agendaDay'
+            },
+            eventClick: function (calEvent, jsEvent, view) {
+                if (moment().format('YYYY-MM-DD') <= calEvent.start.format('YYYY-MM-DD')) {
+                    $("#input_crmscheduleid").val(calEvent.CRM_ScheduleId);
+                    $("#input_scheduletitle").val(calEvent.title);
+                    $("#input_schedulelocation").val(calEvent.Location);
+                    $("#input_scheduledescription").val(calEvent.Description);
+                    $("#input_schedulestartdate").val(calEvent.StartDate);
+                    $("#input_scheduletype").val(calEvent.CRM_ScheduleTypeId);
+                    $("#input_scheduleenddate").val(calEvent.EndDate);
+                    $("#input_schedulestarttime").val(calEvent.StartTime);
+                    $("#input_scheduleendtime").val(calEvent.EndTime);
+                    $("#newschedule_modalview").modal('show');
+                }
+            },
+            dayClick: function (calEvent, jsEvent, view) {
+                if (moment().format('YYYY-MM-DD') === calEvent.format('YYYY-MM-DD') || calEvent.isAfter(moment())) {
+                    $("#input_crmscheduleid").val(0);
+                    $("#input_scheduletitle").val('');
+                    $("#input_schedulelocation").val('');
+                    $("#input_scheduledescription").val('');
+                    $("#input_scheduletype").val(2);
+                    $("#input_schedulestartdate").val(calEvent.format("MM/DD/YYYY"));
+                    $("#input_scheduleenddate").val(calEvent.format("MM/DD/YYYY"));
+                    $("#input_schedulestarttime").val("8:00:00 AM");
+                    $("#input_scheduleendtime").val("9:00:00 AM");
+                    $("#newschedule_modalview").modal('show');
+                } 
+            },
+            defaultView: 'month',
+
+            events: data.result
+        });
+    }
+
+    function getSelectedIds(selector) {
+        var Ids = "";
+        $(selector).each(function (item) {
+            if ($(this).is(":checked")) {
+                var mId = $(this).val();
+                if (Ids != "")
+                    Ids = Ids + "," + mId;
+                else
+                    Ids = mId;
+            }
+        });
+        return Ids;
+    }
+
+    function getSalesUrl() {
+        var types = getSelectedIds('input.chkCalendarType');
+        var users = getSelectedIds('input.chkCalendarUser');
+        return '@Url.Action("GetSalesSchedule", "CRMSchedules", new { area = "CRM" })?types=' + types + '&users=' + users;
+    }
+
+    function getSalesSchedules() {
+        var u = getSalesUrl();
+
+        $.ajax({
+            url: u,
+            type: "GET",
+            dataType: "json",
+            cache: false,
+            success: function (response) {
+                refreshcalendar(response);
+                bindUserList(response.region, response.user, response.selectedUser);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+
+        });
+    }
+
+    function addSchedule() {
+
+        var isvalid = true;
+
+        var input_scheduletitle = $('#input_scheduletitle').val();
+        var input_schedulelocation = $('#input_schedulelocation').val();
+        var input_scheduletype = $('#input_scheduletype').val();
+        var input_schedulestartdate = $('#input_schedulestartdate').val();
+        var input_schedulestarttime = $('#input_schedulestarttime').val();
+        var input_scheduleenddate = $('#input_scheduleenddate').val();
+        var input_scheduleendtime = $('#input_scheduleendtime').val();
+
+        if (input_scheduletitle.trim() == '') { $('#input_scheduletitle').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_scheduletitle').css('border-color', ''); }
+        if (input_schedulelocation.trim() == '') { $('#input_schedulelocation').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_schedulelocation').css('border-color', ''); }
+        if (input_scheduletype.trim() == '') { $('#input_scheduletype').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_scheduletype').css('border-color', ''); }
+        if (input_schedulestartdate.trim() == '') { $('#input_schedulestartdate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_schedulestartdate').css('border-color', ''); }
+        if (input_schedulestarttime.trim() == '') { $('#input_schedulestarttime').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_schedulestarttime').css('border-color', ''); }
+        if (input_scheduleenddate.trim() == '') { $('#input_scheduleenddate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_scheduleenddate').css('border-color', ''); }
+        if (input_scheduleendtime.trim() == '') { $('#input_scheduleendtime').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_scheduleendtime').css('border-color', ''); }
+
+        if (input_scheduleenddate) {
+            if (Date.parse(input_schedulestartdate) > Date.parse(input_scheduleenddate)) {
+                $('#input_scheduleenddate').css('border-color', 'red');
+                if (isvalid == true) { isvalid = false; }
+            } else {
+                $('#input_scheduleenddate').css('border-color', '');
+            }
+        }
+
+        if (isvalid) {
+
+            var addnewSchedule = $("#form_addnewschedule");
+
+            $.ajax({
+                url: "/CRM/CRMSchedules/AddNewSchedule",
+                type: "POST",
+                dataType: "json",
+                data: $("#form_addnewschedule").serialize(),
+                cache: false,
+                success: function (response) {
+                    resetAddScheduleForm();
+                    refreshcalendar(response);
+                    bindUserList(response.region, response.user, response.selectedUser);
+                    $("#newschedule_modalview").modal('hide');
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+    }
+
+    function resetAddScheduleForm() {
+
+        $("#input_scheduletitle").val("");
+        $("#input_schedulelocation").val("");
+        $("#input_schedulestartdate").val("");
+        //$("#checkbox_alldayevent").prop("checked", false);
+        $("#input_scheduleenddate").val("");
+        $("#input_scheduledescription").val("");
+    }
+
+    function bindUserList(lstregion, lstUser, selectedUser) {
+        $('#liLstUser').html("");
+        if (lstUser.length > 0) {
+            var cartList = $('#liLstUser');
+            var liListUserHtml = "";
+            var appendhtml = "";
+            var lstselectedUser = selectedUser.split(',');
+
+            $.each(lstregion, function (index, region) {
+                appendhtml = '<input type="checkbox" name="mycalendar" class="chkAllCalendarUsers" checked="checked" value="" id="' + region.RegionId + '">' + region.RegionName + '</input> <ol class="dd-list" style="margin-top: 6px;margin-left: -10px;">';
+
+                var lihtml = "";
+                $.each(lstUser, function (index, user) {
+                    if (region.RegionId == user.RegionId) {
+                        var li = "";
+                        var liChecked = false;
+
+                        var liselectedUser = $.grep(lstselectedUser, function (seluser) {
+                            if (user.UserId == parseInt(seluser)) {
+                                liChecked = true;
+                                return true;
+                            }
+                        });
+
+                        li += '<li class="dd-item" data-id="' + user.UserId + '" id="' + user.UserId + '">';
+                        if (selectedUser != "") {
+                            if (liChecked) {
+                                li += '<input type="checkbox" name="mycalendar" class="chkCalendarUser" checked="checked" value="' + user.UserId + '">' + user.FirstName + '</input>';
+
+                            } else {
+                                li += '<input type="checkbox" name="mycalendar" class="chkCalendarUser" value="' + user.UserId + '">' + user.FirstName + '</input>';
+                            }
+                        } else {
+                            li += '<input type="checkbox" name="mycalendar" class="chkCalendarUser" checked="checked" value="' + user.UserId + '">' + user.FirstName + '</input>';
+                        }
+
+                        li += '</li>';
+                        lihtml += li;
+                    }
+                });
+                appendhtml += lihtml + '</ol>';
+                liListUserHtml += appendhtml;
+            });
+            cartList.append(liListUserHtml);
+        }
+    }
+</script>

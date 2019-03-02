@@ -1,0 +1,149 @@
+﻿<div class="modal fade" id="AddFranchiseeVerifyPopup" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" style="width:455px;">
+        <div class="modal-content">
+            <div class="modal-header" id="AddFranchiseeVerifyPopup_header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="cancelAddFranchiseepopup();"></button>
+                <h4 class="modal-title">New Franchisee</h4>
+            </div>
+            <div class="modal-body" id="AddFranchiseeVerifyPopup_body">
+                <div class="row">
+                    <div class="form-body">
+                        <div id="diverrmsgfranchisee" style="color:red;display:none;padding-left:27px;font-size:13px;"></div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Franchisee Name<span class="required">*</span>:</label>
+                                    <input id="txtfranchiseename" name="txtfranchiseename" type="text" class="form-control input-sm" maxlength="100" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Phone Number<span class="required">*</span>:</label>
+                                    <input id="txtfranchiseephone" name="txtfranchiseephone" type="text" class="form-control input-sm" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="AddFranchiseeVerifyPopup_footer">
+                <button id="cancel_addlead_button" type="button" class="btn btn-default" data-dismiss="modal" onclick="resetfranchiseefrm();">Cancel</button>
+                <button id="addlead_button" type="button" class="btn btn-success" onclick="checkfranchiseeDetails();">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addfranchisee_confirmpopup" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" style="width:522px;">
+        <div class="modal-content">
+            <div class="modal-header" id="confirm _popup_header">
+                <h4 class="modal-title">Confirm Franchisee Details</h4>
+            </div>
+            <div class="modal-body" id="addlead_popup_body">
+                <div class="row">
+                    <div class="form-body">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label style="color:red;font-size:13px;">Franchisee name or phone already exists in Franchisee. do you want to access it?</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="addlead_popup_footer">
+                <button id="btnconfirmno" type="button" class="btn btn-default" onclick="clickbtnfranchiseeconfirmno();">No</button>
+                <button id="btnconfirmYesfranchisee" type="button" class="btn btn-success" onclick="">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+    function clickbtnfranchiseeconfirmno() {
+        $("#addfranchisee_confirmpopup").modal("hide");
+        $("#AddFranchiseeVerifyPopup").modal({ backdrop: 'static' });
+    }
+    function clickbtnfranchiseeconfirmYes(Id) {
+
+        window.location.href = '@Url.Action("FranchiseeDetail", "Franchise", new { area = "Portal" })' + "?id=" + Id;
+    }
+    //function AddNewFranchiseeVefiry() {
+    //    $("#AddFranchiseeVerifyPopup").modal({ backdrop: 'static' });
+    //    $('#txtfranchiseephone').inputmask("mask", {
+    //        "mask": "(999) 999-9999", removeMaskOnSubmit: true,
+    //    });
+    //}
+    function cancelAddFranchiseepopup() {
+        $("#txtfranchiseename").val("");
+        $("#txtfranchiseephone").val("");
+        $("#AddFranchiseeVerifyPopup").modal("hide");
+    }
+    function resetfranchiseefrm() {
+        $("#txtfranchiseename").val("");
+        $("#txtfranchiseephone").val("");
+        $("#diverrmsgfranchisee").hide()
+        $('#txtfranchiseename').css('border-color', '');
+        $("#AddFranchiseeVerifyPopup").modal("hide");
+    }
+    function checkfranchiseeDetails() {
+        var isvalid = true;
+        $("#diverrmsgfranchisee").hide();
+        $('#txtfranchiseename').css('border-color', '');
+        if ($('#txtfranchiseename').val().trim() == '') { $('#txtfranchiseename').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtfranchiseename').css('border-color', ''); }
+        if ($('#txtfranchiseephone').val().trim() == '') { $('#txtfranchiseephone').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtfranchiseephone').css('border-color', ''); }
+        if (isvalid == true) {
+            $.ajax({
+                url: '@Url.Action("CheckFranchiseenameExits", "Franchise", new { area = "Portal" })',
+                dataType: "json",
+                data: { FranchiseeName: $('#txtfranchiseename').val().trim(), Phone: $('#txtfranchiseephone').val().trim() },
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+                        @*if (data.FranchiseeId == "-2") {
+                            $("#diverrmsgfranchisee").html("Franchisee name already in system so please contact to administrator.");
+                            $("#diverrmsgfranchisee").show();
+                            $('#txtfranchiseename').css('border-color', 'red');
+                        }
+                        else if (data.FranchiseeId == "-3") {
+                            $("#diverrmsgfranchisee").html("This phone number not match with franchisee so please contact to administrator.");
+                            $("#diverrmsgfranchisee").show();
+                            $('#txtfranchiseephone').css('border-color', 'red');
+                        }
+                        else if (data.FranchiseeId == "-1") {
+                            $("#AddFranchiseeVerifyPopup").modal("hide");
+                            window.location.href = '@Url.Action("MaintenanceStepOne", "Franchise", new { area = "Portal" })' + "?searchin=1&status=1&title=" + $('#txtfranchiseename').val().trim() + "&phone=" + $('#txtfranchiseephone').val().trim();
+                        }
+                        else if (data.FranchiseeId > 0) {
+                            $("#AddFranchiseeVerifyPopup").modal("hide");
+
+                            $("#addfranchisee_confirmpopup").modal({ backdrop: 'static' });
+                            $("#btnconfirmYesfranchisee").attr("onclick", "clickbtnfranchiseeconfirmYes(" + data.FranchiseeId + ")");
+
+                        }*@
+
+                        if (data.FranchiseeId > 0) {
+                            $("#AddFranchiseeVerifyPopup").modal("hide");
+                            $("#addfranchisee_confirmpopup").modal({ backdrop: 'static' });
+                            $("#btnconfirmYesfranchisee").attr("onclick", "clickbtnfranchiseeconfirmYes(" + data.FranchiseeId + ")");
+
+                        }
+                        else {
+                            $("#AddFranchiseeVerifyPopup").modal("hide");
+                            window.location.href = '@Url.Action("MaintenanceStepOne", "Franchise", new { area = "Portal" })' + "?searchin=1&status=1&title=" + $('#txtfranchiseename').val().trim() + "&phone=" + $('#txtfranchiseephone').val().trim();
+
+                        }
+                    }
+                },
+                error: function () { }
+            });
+        }
+    }
+</script>
+

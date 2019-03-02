@@ -1,0 +1,146 @@
+﻿
+@{
+    ViewBag.Title = "FranchiseeChargeback";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="custom-form portlet light">
+    <div class="headerbox">
+        <div class="row">
+            <div class="col-md-4">
+                Franchisee Chargeback
+            </div>
+        </div>
+    </div>
+    <div class="portlet-body form">
+        <div class="form-body">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-2 text-right" style="padding-top: 4px;">
+                            Period<span style="color:#000000;">&nbsp;:</span>
+                        </div>
+                        <div class="col-md-1">
+                            <label class="input-sm" id="lbldateFrom"></label>
+                        </div>
+                        <div class="col-md-1" style="padding-top: 4px;">To</div>
+                        <div class="col-md-1">
+                            <label class="input-sm" id="lbldateTo" style="margin-left: -62px;"></label>
+                        </div>
+                        <div class="col-md-7">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row" style="padding-top:6px;">
+                    <div class="col-md-12">
+                        <div class="col-md-2 col-md-offset-2">
+                            <label class="mt-checkbox">
+                                <input type="checkbox" id="chkConsolidated">Change Period
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-12" style="padding-top: 6px;">
+                        <div class="col-md-2 col-md-offset-2">
+                            @Html.DropDownList("optionList", (SelectList)ViewBag.StatusList, new { @class = "form-control input-sm", @id = "select_optionList" })
+                            @*<select class="form-control input-sm">
+                                <option>This Week</option>
+                            </select>*@
+                        </div>
+                        <div class="col-md-1 text-right" style="margin-left: -32px;">
+                            From
+                        </div>
+                        <div class="col-md-2">
+                            <div class="input-group date" data-date-format="mm/dd/yyyy">
+                                <input type="text" name="name" value="" class="form-control input-sm date-picker" id="dtpfrom" />
+                                <span class="input-group-btn">
+                                    <button class="btn default" type="button">
+                                        <i class="fa fa-calendar"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-1 text-center" style="margin-left: -30px;">
+                            To
+                        </div>
+                        <div class="col-md-2" style="margin-left: -30px;">
+                            <div class="input-group date" data-date-format="mm/dd/yyyy">
+                                <input type="text" name="name" value="" class="form-control input-sm date-picker" id="dtpto" />
+                                <span class="input-group-btn">
+                                    <button class="btn default" type="button">
+                                        <i class="fa fa-calendar"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-12 text-center" style="padding-top: 6px;margin-bottom: -8px;">
+                        <input type="button"  class="btn btn-primary button-next" value="Generate Chargeback List" id="btnGenerateChargeback" />
+                        @*<button type="button" class="btn btn-primary button-next" id="btnGenerateChargeback">
+                            Generate Chargeback List
+                        </button>*@
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        jQuery(document).ready(function () {
+            thisweek();
+            $("#select_optionList").change(function () {
+                var value = this.value;
+                if (value == 3) {
+                    var d = new Date();
+                    var month = d.getMonth() + 1;
+                    var day = d.getDate();
+                    var year = d.getFullYear();
+                    year = year.toString().substr();
+                    $("#dtpfrom").val(month + '/' + 01 + '/' + year);
+                    $("#dtpto").val(month + '/' + 30 + '/' + year);
+                    $("#lbldateFrom").text(month + '/' + 01 + '/' + year);
+                    $("#lbldateTo").text(month + '/' + 30 + '/' + year);
+                }
+                if (value == 1) {
+                    thisweek();
+                }
+            });
+
+            $('#btnGenerateChargeback').click(function (e) {
+                window.location.href = '@Url.Content("~/Portal/Franchise/FranchiseeChargebackList/")';
+            });
+        })
+
+        function thisweek() {
+            var curr = new Date(); // get current date
+            var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
+            var last = first + 6; // last day is the first day + 6
+            var firstday = new Date(curr.setDate(first));
+            var lastday = new Date(curr.setDate(last));
+            var day = firstday.getDate();
+            var month = firstday.getMonth() + 1;
+            var year = firstday.getFullYear();
+            year = year.toString().substr();
+            $("#dtpfrom").val(month + '/' + day + '/' + year);
+            $("#lbldateFrom").text(month + '/' + day + '/' + year);
+            var daylast = lastday.getDate();
+            var monthlast = lastday.getMonth() + 1;
+            var yearlast = lastday.getFullYear();
+            yearlast = yearlast.toString().substr();
+            $("#dtpto").val(monthlast + '/' + daylast + '/' + yearlast);
+            $("#lbldateTo").text(monthlast + '/' + daylast + '/' + yearlast);
+        };
+</script>
+}

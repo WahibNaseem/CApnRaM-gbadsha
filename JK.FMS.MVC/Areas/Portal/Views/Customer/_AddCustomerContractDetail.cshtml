@@ -1,0 +1,563 @@
+﻿@model JKViewModels.Customer.ContractDetailViewModel
+@{
+    ViewBag.Title = "Contract Detail";
+    Layout = null;
+}
+@section scripts{
+
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+
+}
+
+
+<div class="modal-dialog">
+
+    @Html.HiddenFor(one => one.ContractDetailId)
+    @Html.HiddenFor(one => one.ContractId)
+    @Html.HiddenFor(one => one.LineNumber)
+    @Html.HiddenFor(one => one.CreatedDate)
+    @Html.HiddenFor(one => one.CreatedBy)
+
+    <div class="modal-content" style="border-radius: 8px;">
+        <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+            <button type="button" class="close" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;" onclick="ClickContractDetailCancel()"></button>
+            <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                Customer Contract Detail
+            </h4>
+        </div>
+        <div class="modal-body" style="padding: 0px 30px 15px 30px;">
+            <div class="form-group" id="errmsg" style="display:none;">
+                <span style="color:red;font-size:14px;">Contract detail amount should not be higher than contract amount</span>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="control-label col-md-4 text-right">
+                            Service Type<span class="required"> * </span>
+                        </label>
+                        <div class="col-md-4">
+                            @*@Html.DropDownList("AccountTypeList",null, new { @class = "form-control input-sm", required = "required" })*@
+                            @Html.DropDownListFor(one => one.ServiceTypeListId, (SelectList)ViewBag.ServiceTypeListModel, "Select",new { @class = "form-control input-sm", required = "required", @id = "ServiceTypeListModel" })
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="control-label col-md-4 text-right">
+                            Billing Frequency
+                        </label>
+                        <div class="col-md-4">
+                            @*@Html.DropDownList("FrequencyList",null, new { @class = "form-control input-sm", required = "required" })*@
+                            @Html.DropDownListFor(one => one.BillingFrequencyListId, (SelectList)ViewBag.FrequencyListModel, null, new { @class = "form-control input-sm", required = "required", @id = "FrequencyListModel" })
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label class="control-label col-md-4 text-right">
+                        Square Footage
+                    </label>
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(one => one.SquareFootage, new { @class = "form-control input-sm", id = "ContractDetail_SquareFootage" })
+                        @Html.ValidationMessageFor(one => one.SquareFootage, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label class="control-label col-md-4">
+                        Start Time
+                    </label>
+                    <div class="col-md-4">
+                        <div class="input-group timepicker timepicker-default">
+                            <input type="hidden" value="@Convert.ToDateTime(Model.StartTime).ToShortTimeString()" id="hdnStartTime" />
+                            @Html.TextBoxFor(one => one.StartTime, (Model.StartTime != null ? Model.StartTime?.ToString("hh:mm tt") : string.Empty), new { @class = "form-control input-sm timepicker timepicker-default", id = "Contract_StartTime" })
+                            <span class="input-group-btn cal-btn">
+                                <button class="btn default cal-btn" type="button">
+                                    <i class="fa fa-clock-o"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <label class="control-label col-md-4">
+                        End Time
+                    </label>
+                    <div class="col-md-4">
+                        <div class="input-group timepicker timepicker-default">
+                            <input type="hidden" value="@Convert.ToDateTime(Model.EndTime).ToShortTimeString()" id="hdnEndTime" />
+                            @Html.TextBoxFor(one => one.EndTime, (Model.EndTime != null ? Model.EndTime?.ToString("hh:mm tt") : string.Empty) , new { @class = "form-control input-sm timepicker timepicker-default", id = "Contract_EndTime" })
+                           
+                            <span class="input-group-btn cal-btn">
+                                <button class="btn default cal-btn" type="button">
+                                    <i class="fa fa-clock-o"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label class="control-label col-md-4">
+                        Amount <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(one => one.Amount, new { @class = "form-control input-sm", id = "ContractDetail_Amount" })
+                        @Html.ValidationMessageFor(one => one.Amount, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-4"></div>
+                    <input type="hidden" id="hdnContractDetailAmount"  value="@(Model.Amount.HasValue ? Model.Amount.Value : 0 ) "/>
+                </div>
+                @*</div>
+                    <div class="form-group">
+                        <div class="row">
+                            <label class="control-label col-md-4">
+                                Start Time
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-group timepicker timepicker-default">
+                                    @Html.TextBoxFor(one => one.StartTime, new { @class = "form-control input-sm timepicker timepicker-default", id = "Contract_StartTime" })
+                                    <span class="input-group-btn cal-btn">
+                                        <button class="btn default cal-btn" type="button">
+                                            <i class="fa fa-clock-o"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4"></div>
+                        </div>
+                    </div>*@
+                @*<div class="form-group">
+                        <div class="row">
+                            <label class="control-label col-md-4">
+                                End Time
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-group timepicker timepicker-default">
+                                    @Html.TextBoxFor(one => one.EndTime, new { @class = "form-control input-sm timepicker timepicker-default", id = "Contract_EndTime" })
+                                    <span class="input-group-btn cal-btn">
+                                        <button class="btn default cal-btn" type="button">
+                                            <i class="fa fa-clock-o"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4"></div>
+                        </div>
+                    </div>*@
+                <div class="form-group">
+                    <div class="row">
+                        <label class="control-label col-md-4 text-right">
+                            Clean Times <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-1">
+                            @Html.TextBoxFor(one => one.CleanTimes, new { @class = "form-control input-sm", required = "required", id = "ContractDetail_CleanTimes", maxlength = "2" })
+                            @Html.ValidationMessageFor(one => one.CleanTimes, "", new { @class = "text-danger" })
+                        </div>
+                         
+                        <label class="control-label col-md-3 text-right" style="width:125px;">
+                            Clean Frequency <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-3">
+                            @*  @Html.TextBoxFor(one => one.ContractDetail.CleanFrequency, new { @class = "form-control", id = "ContractDetail_CleanFrequency" } )*@
+                            @Html.DropDownListFor(one => one.CleanFrequencyListId, (SelectList)ViewBag.CleanFrequencyListModel, null, new { @class = "form-control input-sm", required = "required", @id = "ContractDetail_CleanFrequency" })
+                            @*@Html.DropDownListFor(one => one.CleanFrequency, new List<SelectListItem>
+                                { new SelectListItem{Text="Daily", Value="D"},
+                                new SelectListItem{Text="Weekly", Value="W"},
+                                new SelectListItem{Text="Monthly", Value="M"},
+                                new SelectListItem{Text="Weekday", Value="X"}}, new { @class = "form-control input-sm", id = "ContractDetail_CleanFrequency" })*@
+                            @Html.ValidationMessageFor(one => one.BillingFrequencyListId, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <div class="row" id="divweek">
+                        <div class="col-md-2"></div>
+                        <label class="checkbox-inline">
+                            @Html.CheckBoxFor(one => one.Mon, new { @class = "i-checks", @checked = "true", id = "ContractDetail_Mon" }) Mon
+                            <span></span>
+                        </label>
+                        <label class="checkbox-inline">
+                            @Html.CheckBoxFor(one => one.Tues, new { @class = "i-checks", @checked = "true", id = "ContractDetail_Tues" }) Tue
+                            <span></span>
+                        </label>
+                        <label class="checkbox-inline">
+                            @Html.CheckBoxFor(one => one.Wed, new { @class = "i-checks", @checked = "true", id = "ContractDetail_Wed" }) Wed
+                            <span></span>
+                        </label>
+                        <label class="checkbox-inline">
+                            @Html.CheckBoxFor(one => one.Thur, new { @class = "i-checks", @checked = "true", id = "ContractDetail_Thur" }) Thu
+                            <span></span>
+                        </label>
+                        <label class="checkbox-inline">
+                            @Html.CheckBoxFor(one => one.Fri, new { @class = "i-checks", @checked = "true", id = "ContractDetail_Fr" }) Fri
+                            <span></span>
+                        </label>
+                        <label class="checkbox-inline">
+                            @Html.CheckBoxFor(one => one.Sat, new { @class = "i-checks", @checked = "true", id = "ContractDetail_Sat" }) Sat
+                            <span></span>
+                        </label>
+                        <label class="checkbox-inline">
+                            @Html.CheckBoxFor(one => one.Sun, new { @class = "i-checks", @checked = "true", id = "ContractDetail_Sun" }) Sun
+                            <span></span>
+                        </label>
+                    </div>
+                    <span id="spnerr" style="display:none;color:red;padding-left:75px;font-size:12px;">At least one checkbox required</span>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-2">
+                        </div>
+                        @*<div class="col-md-3">
+                                <label class="mt-checkbox">
+                                    @Html.CheckBoxFor(one => one.BPPAdmin, new { @class = "i-checks input-sm", @checked = "true" })  BPPAdmin
+                                    <span></span>
+                                </label>
+                            </div>*@
+
+                        <div class="col-md-3">
+                            <label class="mt-checkbox">
+                                @Html.CheckBoxFor(one => one.CPIIncrease, new { @class = "i-checks", @checked = "checked" }) CPI Increase
+
+                                <span></span>
+                            </label>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="mt-checkbox">
+                                @Html.CheckBoxFor(one => one.SeparateInvoice, new { @class = "i-checks input-sm", @checked = "true" }) Separate Invoice
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="control-label col-md-4 text-right">
+                            Description
+                        </div>
+                        <div class="col-md-6">
+                            @Html.TextAreaFor(one => one.Description, new { @class = "form-control input-sm", id = "ContractDetail_Description" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-6">
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" onclick="addEditContractDetail()" class="btn btn-primary pull-right" id="btnSubmit">
+                                Save
+                                <i class="fa fa-check"></i>
+                            </button>
+
+                            @*<button type="button" class="btn btn-primary button-next pull-right" id="btnContractDetailCancel" style="margin-right:5px;" onclick="ClickContractDetailCancel()">
+                                    Cancel
+                                    <i class="fa fa-angle-right"></i>
+                                </button>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+
+
+
+        @*}*@
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function addEditContractDetail() {
+        
+        $("#errmsg").hide();
+        $('#ContractDetail_Amount').css('border-color', '');
+
+        var isvalid = true;
+        if ($('#ServiceTypeListModel').val() == '') { $('#ServiceTypeListModel').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ServiceTypeListModel').css('border-color', ''); }
+        if ($('#ContractDetail_Amount').val() == '' || $('#ContractDetail_Amount').val() == '0') { $('#ContractDetail_Amount').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContractDetail_Amount').css('border-color', ''); }
+        if ($('#ContractDetail_CleanFrequency').val() == '') { $('#ContractDetail_CleanFrequency').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContractDetail_CleanFrequency').css('border-color', ''); }
+        if ($('#ContractDetail_CleanTimes').val() == '') { $('#ContractDetail_CleanTimes').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ContractDetail_CleanTimes').css('border-color', ''); }
+        
+        //if ($("#ContractDetail_CleanFrequency").val() == "1")
+        //{
+            if ($("#ContractDetail_CleanTimes").val() >= 1) {
+                if ($("#ContractDetail_Mon").prop('checked') == false && $("#ContractDetail_Tues").prop('checked') == false && $("#ContractDetail_Wed").prop('checked') == false
+                    && $("#ContractDetail_Thur").prop('checked') == false && $("#ContractDetail_Fr").prop('checked') == false && $("#ContractDetail_Sat").prop('checked') == false && $("#ContractDetail_Sun").prop('checked') == false) {
+                    $("#spnerr").show();
+                    if (isvalid == true) { isvalid = false; }
+                }
+                else {
+                    $("#spnerr").hide();
+                }
+            }             
+        //}
+
+        if (isvalid == true) {             
+
+            var ContractAmount = 0;
+            if ($("#ContractDetailId").val() == "0" || $("#ContractDetailId").val() == "") {
+                ContractAmount = parseFloat(parseFloat($("#hdnAmount").val()).toFixed(2) - parseFloat($("#hdnTotAmount").val()).toFixed(2)).toFixed(2);
+            }
+            else {
+                var EditAmt = parseFloat($("#hdnTotAmount").val()).toFixed(2) - parseFloat($("#hdnContractDetailAmount").val()).toFixed(2);
+                ContractAmount = parseFloat(parseFloat($("#hdnAmount").val()) - parseFloat(parseFloat(EditAmt))).toFixed(2);
+                //ContractAmount = parseFloat(parseFloat($("#hdnAmount").val()) - parseFloat(parseFloat(EditAmt) + parseFloat($("#ContractDetail_Amount").val()))).toFixed(2);
+            }
+            if (parseFloat(parseFloat($("#ContractDetail_Amount").val()).toFixed(2)) <= (parseFloat(ContractAmount) + parseFloat($("#ContractDetail_Amount").val())).toFixed(2)) {
+
+
+            //var ContractAmount = 0;
+            //if ($("#ContractDetailId").val() == "0" || $("#ContractDetailId").val() == "") {
+            //    ContractAmount = parseFloat(parseFloat($("#hdnAmount").val()).toFixed(2) - parseFloat($("#hdnTotAmount").val()).toFixed(2)).toFixed(2);
+            //}
+            //else {
+            //    var EditAmt = parseFloat($("#hdnTotAmount").val()).toFixed(2) - parseFloat($("#hdnContractDetailAmount").val()).toFixed(2);
+            //    ContractAmount = parseFloat(parseFloat($("#hdnAmount").val()).toFixed(2) - parseFloat(parseFloat(EditAmt).toFixed(2) + parseFloat($("#ContractDetail_Amount").val()).toFixed(2)).toFixed(2)).toFixed(2);
+            //}
+            //if (parseFloat(parseFloat($("#ContractDetail_Amount").val()).toFixed(2)) <= parseFloat(ContractAmount)) {
+                $("#errmsg").hide();
+                $('#ContractDetail_Amount').css('border-color', '');
+
+                $("#btnSubmit").hide();
+
+                var url = '@Url.Action("AddEditContractDetail", "Customer", new { area="Portal" })';
+                $.ajax({
+
+                    type: "POST",
+                    url: url,
+                    data: $("#form_wizard_1").serialize(),
+                    success: function (result) {
+                      
+                        loadOwners(result.id);
+                        $('#modalData').modal('toggle');
+                    },
+                    error: function (result) {
+                       
+                        loadOwners(result.id);
+                        $('#modalData').modal('toggle');
+                    }
+
+                });
+            }
+            else {
+                $("#errmsg").show();
+                $('#ContractDetail_Amount').css('border-color', 'red');
+
+                //swal('Oops...', 'Contract detail amount should not be higher than contract amount!', 'warning');
+                return false;
+            }
+        }
+    }
+
+    function loadOwners(id) {
+        $.blockUI({
+            baseZ: 99999,
+            message: '<center><img height: src="/Images/loading_icon.gif" /><h3> <b>Processing....</br> Please wait! and do not refresh page.</b></h3></center>',
+            css: { backgroundColor: 'rgb{0,0,0}', border: '0', color: '#fff', "z-index": 99999 }
+        });
+
+        $.ajax({
+            cache: false,
+            crossDomain: true,
+            type: "GET",
+            url: '@Url.Action("GetContractDetail", "Customer", new { @area = "Portal" })?id=' + id,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                $('#tblContractDescriptionData').html(response);
+                $.unblockUI();
+            },
+            error: function (xhr, textStatus, error) {
+                if (typeof console == "object") {
+
+                    $('#tblContractDescriptionData').html(xhr.responseText);
+                    
+                }
+                console.log(xhr.status + "," + xhr.responseText + "," + textStatus + "," + error);
+                $.unblockUI();
+            }
+        });
+
+        $.unblockUI();
+    }
+
+    $("#FranchiseeOwner_OwnerInfoPhone_Phone1").focus(function () {
+
+        $('#FranchiseeOwner_OwnerIdentification_IdentifierNumer').inputmask("mask", {
+            "mask": "aaa-aa-aaaa"
+        });
+        $('#FranchiseeOwner_OwnerInfoPhone_Phone1').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+
+        $('#FranchiseeOwner_OwnerInfoPhone_Cell').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+        $('#FranchiseeOwner_OwnerInfoPhone_Fax').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+    });
+
+
+    $("#FranchiseeOwner_OwnerIdentification_IdentifierNumer").focus(function () {
+
+        $('#FranchiseeOwner_OwnerIdentification_IdentifierNumer').inputmask("mask", {
+            "mask": "aaa-aa-aaaa"
+        });
+        $('#FranchiseeOwner_OwnerInfoPhone_Phone1').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+
+        $('#FranchiseeOwner_OwnerInfoPhone_Cell').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+        $('#FranchiseeOwner_OwnerInfoPhone_Fax').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+    });
+
+
+    $("#FranchiseeOwner_OwnerInfoPhone_Cell").focus(function () {
+
+        $('#FranchiseeOwner_OwnerIdentification_IdentifierNumer').inputmask("mask", {
+            "mask": "aaa-aa-aaaa"
+        });
+        $('#FranchiseeOwner_OwnerInfoPhone_Phone1').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+
+        $('#FranchiseeOwner_OwnerInfoPhone_Cell').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+        $('#FranchiseeOwner_OwnerInfoPhone_Fax').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+    });
+
+    $("#FranchiseeOwner_OwnerInfoPhone_Fax").focus(function () {
+
+        $('#FranchiseeOwner_OwnerIdentification_IdentifierNumer').inputmask("mask", {
+            "mask": "aaa-aa-aaaa"
+        });
+        $('#FranchiseeOwner_OwnerInfoPhone_Phone1').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+
+        $('#FranchiseeOwner_OwnerInfoPhone_Cell').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+        $('#FranchiseeOwner_OwnerInfoPhone_Fax').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+    });
+     
+    $(document).ready(function () {
+         
+        $("#ContractDetail_CleanTimes").keypress(function (e) {
+            if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {        
+                return false;
+            }
+        });
+
+        if ($("#ContractDetailId").val() == 0 || $("#ContractDetailId").val() == "") {
+
+            var ContractAmount = parseFloat($("#hdnAmount").val()) - parseFloat($("#hdnTotAmount").val());
+            if (ContractAmount > 0) {
+                $("#ContractDetail_Amount").val(ContractAmount);
+            }
+            else {
+                $("#ContractDetail_Amount").val("0")
+            }
+
+            //$("#CPIIncrease").prop("checked", true);
+            if ($("#hdnAgreementTypeCPI").val() == 1) {
+                $("#CPIIncrease").prop("checked", true);
+                $("#CPIIncrease").bind("click", false);
+            }
+            else {
+                //$("#CPIIncrease").prop("checked", true);
+                $("#CPIIncrease").bind("click", true);
+            }
+        }
+        else {
+            if ('@Convert.ToBoolean(Model.CPIIncrease)' == 'True') {
+                $("#CPIIncrease").bind("click", false);
+            }
+        }
+
+        $("#ContractDetail_Amount").inputmask("numeric", {
+            decimal: ".",
+            negative: false,
+            scale: 2,
+            groupSeparator: ",",
+            digits: 2,
+            autoGroup: true,
+            prefix: "$",
+            rightAlign: false,
+            autoUnmask: true,
+            removeMaskOnSubmit: true,
+        });
+
+        //if ($('#ContractDetail_CleanFrequency').val() == '1' || $('#ContractDetail_CleanFrequency').val() == '') {
+        //    $("#divweek").show();
+        //} else {
+        //    $("#divweek").hide();
+
+        //}
+
+        $('#Contract_StartTime').timepicker({ timeFormat: 'h:mm:ss p' });
+        $('#Contract_EndTime').timepicker({ timeFormat: 'h:mm:ss p' });
+        $('#ContractDetail_CleanFrequency').on('change', function () {
+            if (this.value == '1') {
+                $('#ContractDetail_Mon').removeAttr('checked');
+                $('#ContractDetail_Tues').removeAttr('checked');
+                $('#ContractDetail_Wed').removeAttr('checked');
+                $('#ContractDetail_Thur').removeAttr('checked');
+                $('#ContractDetail_Fr').removeAttr('checked');
+                $("#divweek").show();
+            }
+                //else if (this.value == '4') {
+                //    $('#ContractDetail_Mon').prop('checked', true);
+                //    $('#ContractDetail_Tues').prop('checked', true);
+                //    $('#ContractDetail_Wed').prop('checked', true);
+                //    $('#ContractDetail_Thur').prop('checked', true);
+                //    $('#ContractDetail_Fr').prop('checked', true);
+                //    //$('#ContractDetail_Mon').attr('checked', true);
+                //    //$('#ContractDetail_Tues').attr('checked', true);
+                //    //$('#ContractDetail_Wed').attr('checked', true);
+                //    //$('#ContractDetail_Thur').attr('checked', true);
+                //    //$('#ContractDetail_Fr').attr('checked', true);
+                //    $("#divweek").show();
+                //}
+            else {
+                $("#divweek").show();
+                //$("#divweek").hide();
+            }
+        });
+
+    });
+    function ClickContractDetailCancel() {
+        $('#modalData').modal("hide");
+    }
+
+</script>

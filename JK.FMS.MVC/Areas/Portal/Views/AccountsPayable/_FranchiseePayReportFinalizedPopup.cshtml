@@ -1,0 +1,313 @@
+﻿@model List<JKApi.Service.AccountPayable.FranchiseeReportFinalizedDetailsViewModel>
+
+@*@section styles{
+    <link rel="stylesheet" href="@Url.Content("~/Content/FranchiseeReport.css")" />
+}*@
+
+
+@if (ViewBag.IsPrintView == true)
+{
+    <div class="print-container no-print">
+    <input type="button" class="print-button" value="Create PDF" onclick="createPDF()" />
+    <input type="button" class="print-button" value="Back to Portal" onclick="backToPortal()" />
+    </div>
+}
+
+@foreach (var vm in Model)
+{
+    @Html.Partial("_PartialFranchiseeReportFinalizedSummary", vm)
+    
+    if (vm.DetailsByTransaction.Count > 0)
+    {
+        <P class="page-divider" />
+
+        @Html.Partial("_PartialFranchiseeReportFinalizedTransactions", vm)
+    }
+
+    if (vm.DetailsByService.Count > 0)
+    {
+        <P class="page-divider" />
+
+        @Html.Partial("_PartialFranchiseeReportFinalizedServices", vm)
+    }
+
+    foreach (var service in vm.Deductions)
+    {
+        if (service.DisplaySubReport)
+        {
+            <P class="page-divider" />
+
+            @Html.Partial("_PartialFranchiseeReportFinalizedDeductions", vm, new ViewDataDictionary(ViewData) { { "Service", service } })
+        }
+    }
+
+    <P class="page-divider page-divider-last" />
+}
+
+@section scripts{
+    <script>
+         
+        function createPDF() {
+            window.open('@Url.Action("FranchiseeReportExportToPDF", "AccountsPayable", new { area = "Portal" })?ids=@(Request.QueryString["ids"])', '_blank');
+        }
+        function backToPortal() {
+            window.location.href = '@Url.Action("FranchiseePay", "AccountsPayable", new { area = "Portal" })';
+        }                 
+    </script>
+}
+<script >
+    function ExportPDFFranchiseePayReport() {
+        window.open('@Url.Action("FranchiseeReportExportToPDFFinalized", "AccountsPayable", new { area = "Portal" })?ids=@(Request.QueryString["ids"])', '_blank');
+    }
+    function PrintFranchiseePayReport() {
+        var sURL = '@Url.Action("PrintFranchiseePayReportFinalized", "AccountsPayable", new { area = "Portal" })?ids=' + @(Request.QueryString["ids"]);
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                var tUrl = data;
+                printJS({ printable: document.location.origin + tUrl, type: 'pdf', showModal: false });
+
+            },
+            error: function () {
+                alert("Content load failed.");
+            }
+        });
+    }
+</script>
+
+<style>
+    div.print-container {
+        width: 100%;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .print-button {
+        padding: 5px;
+        margin: 10px;
+    }
+
+    p.page-divider {
+        page-break-before: always;
+    }
+
+    p.page-divider {
+        height: 20px;
+        display: block;
+        width: 100%;
+        background-color: black;
+        margin-top: 60px;
+        margin-bottom: 60px;
+    }
+
+    p.page-divider-last {
+        height: 0px !important;
+    }
+
+
+    /* page_1 - Summary */
+
+    table {
+        width: 100%;
+        border-spacing: 0px;
+        border-collapse: unset;
+    }
+
+        table.header {
+            margin-bottom: 50px;
+        }
+
+            table.header td {
+                vertical-align: top;
+            }
+
+    #page_1 {
+        font: 14px 'Helvetica';
+    }
+
+    table.price-list {
+        width: 97%;
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+
+        table.price-list td.list-header {
+            width: 80%;
+            color: #0000cd;
+            margin-top: 10px;
+            margin-bottom: 2px;
+            border-bottom: #191970 1px solid;
+        }
+
+    #page_1 table.price-list td {
+        font-size: inherit;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        height: inherit;
+        vertical-align: inherit;
+    }
+
+        #page_1 table.price-list td.text {
+            width: 60%;
+            padding-left: 20px;
+        }
+
+        #page_1 table.price-list td.price1 {
+            width: 20%;
+            text-align: right;
+        }
+
+        #page_1 table.price-list td.price2 {
+            width: 20%;
+            text-align: right;
+        }
+
+    #page_1 table.price-list tr.new-section td {
+        height: 10px;
+    }
+
+    #page_1 table.price-list tr.new-subsection td {
+        padding-top: 10px;
+    }
+
+    table.price-list tr.title-row td {
+        font-size: 16px;
+    }
+
+    table.price-list tr.header-row td, table.price-list tr.footer-row td {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        border-top: 1px solid black;
+        border-bottom: 1px solid black;
+        height: initial;
+        font-size: 12px;
+    }
+
+    table.price-list tr.footer-row td {
+        border-bottom: 0px;
+    }
+
+    table.price-list td {
+        font-size: 11px;
+        padding-right: 20px;
+        height: 22px;
+        vertical-align: top;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+
+    #page_1 table.check-table {
+        border-spacing: 10px;
+    }
+
+        #page_1 table.check-table td {
+            padding-right: 20px;
+            text-align: right;
+        }
+
+            #page_1 table.check-table td.line {
+                border-bottom: 1px solid black;
+            }
+
+            #page_1 table.check-table td.text1 {
+                width: 18%;
+            }
+
+            #page_1 table.check-table td.line1 {
+                width: 15%;
+            }
+
+            #page_1 table.check-table td.text2 {
+                width: 13%;
+            }
+
+            #page_1 table.check-table td.line2 {
+                width: 20%;
+            }
+
+            #page_1 table.check-table td.text3 {
+                width: 14%;
+            }
+
+            #page_1 table.check-table td.line3 {
+                width: 20%;
+            }
+
+    #page_2 table.price-list td.col1 {
+        width: 5%;
+    }
+
+    #page_2 table.price-list td.col2 {
+        width: 30%;
+    }
+
+    #page_2 table.price-list td.col3 {
+        width: 10%;
+    }
+
+    #page_2 table.price-list td.col4 {
+        width: 35%;
+    }
+
+    #page_2 table.price-list td.col5 {
+        width: 5%;
+        text-align: center;
+    }
+
+    #page_2 table.price-list td.price1 {
+        width: 15%;
+        text-align: right;
+        padding-right: 0px;
+    }
+
+    #page_3 table.price-list td.col1 {
+        width: 25%;
+    }
+
+    #page_3 table.price-list td.col2 {
+        width: 10%;
+    }
+
+    #page_3 table.price-list td.col3 {
+        width: 50%;
+    }
+
+    #page_3 table.price-list td.price1 {
+        width: 15%;
+        text-align: right;
+        padding-right: 0px;
+    }
+
+    #page_4 table.price-list td.col1 {
+        width: 40%;
+    }
+
+    #page_4 table.price-list td.col2 {
+        width: 30%;
+    }
+
+    #page_4 table.price-list td.price1 {
+        width: 10%;
+        text-align: right;
+    }
+
+    #page_4 table.price-list td.price2 {
+        width: 10%;
+        text-align: right;
+    }
+
+    #page_4 table.price-list td.price3 {
+        width: 10%;
+        text-align: right;
+        padding-right: 0px;
+    }
+    .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+</style>

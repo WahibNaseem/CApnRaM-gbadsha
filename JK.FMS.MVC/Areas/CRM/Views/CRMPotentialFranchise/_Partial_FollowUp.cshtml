@@ -1,0 +1,175 @@
+﻿@using JK.Resources
+
+<!--Follow Up-->
+<div class="col-md-7" id="contact_followup" style="margin-left:-30px;">
+    <div class="row">
+        <div class="col-md-12 portlet-align">
+            <div class="portlet box div-right portlet-bottom" style="background-color: #a3a9ad;">
+                <div class="portlet-title compact">
+                    <div class="caption">
+                        Follow Up Detail
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <form action="#" id="form_fdstagedetail" class="form-horizontal">
+                        <div class="form-body">
+
+                            <!-- Signing Schedule-->
+                            <div class="form-group">
+                                <!-- Date/Time-->
+                                <label for="schedule_start" class="control-label col-md-3">Signing Schedule <span class="required">*</span>:</label>
+                                <div class="col-md-2" style="padding-left:0px;">
+                                    <input type="text" class="form-control input-group input-group-sm input-sm date date-picker" name="datepicker" id="input_signingschedule" data-date-format="mm/dd/yyyy" />
+                                </div>
+                                <!-- Time -->
+                                <div class="col-md-3" style="padding-left:0px;">
+                                    <div class="input-icon">
+                                        <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                                        <input type="text" class="form-control input-group input-group-sm input-sm  timepicker" id="input_signingtime" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Close:</label>
+                                <div class="col-md-5 fieldspadding-left" style="padding-left:0px;">
+                                    @Html.DropDownList("CloseType", (SelectList)ViewBag.CloseType, "Select", new { @class = "form-control input-sm", @id = "select_signingpurpose" })
+
+                                </div>
+                            </div>
+
+                            <div class="form-group errmsg" style="display:none; text-align:center" id="dateTooEarlyMsg">
+                                <span style="color:red;">Start date must be more recent than previous meetings.</span>
+                            </div>
+
+                            <div class="form-group errmsg" style="display:none; text-align:center" id="scheduleConflictMsg">
+                                <span style="color:red;">You have a schedule conflict at the selected time.</span>
+                            </div>
+
+
+                            <!--Available To Meet -->
+                            <div id="div_franchise_reschedule" style="display:none;">
+                                <div class="form-group">
+                                    <div class="col-md-9">
+                                        <div class="row">
+                                            <!-- Date -->
+                                            <label for="schedule_start" class="control-label col-md-4">Start Date/Time<span class="required">*</span>:</label>
+                                            <div class="col-md-3" style="padding-left:0px;">
+                                                <input type="text" class="form-control input-group input-group-sm input-sm date date-picker" name="datepicker" id="input_followup_franchise_startdate" data-date-format="mm/dd/yyyy" />
+                                            </div>
+                                            <!--Time-->
+                                            <div class="col-md-4" style="padding-left:0px;">
+                                                <div class="input-icon">
+                                                    <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                                                    <input type="text" class="form-control input-group input-group-sm input-sm  timepicker" value="" id="input_followup_franchise_starttime" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <!-- Date -->
+                                            <label for="schedule_start" class="control-label col-md-4">End Date/Time<span class="required">*</span>:</label>
+                                            <div class="col-md-3" style="padding-left:0px;">
+                                                <input type="text" class="form-control input-group input-group-sm input-sm date date-picker" name="datepicker" id="input_followup_franchise_enddate" data-date-format="mm/dd/yyyy" />
+                                            </div>
+                                            <!--Time-->
+                                            <div class="col-md-4" style="padding-left:0px;">
+                                                <div class="input-icon">
+                                                    <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                                                    <input type="text" class="form-control input-group input-group-sm input-sm  timepicker" value="" id="input_followup_franchise_endtime" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-2">
+                                        <a class="btn green btn-block" data-toggle="modal" id="assignee_calendar" style="height: 57px; line-height: 57px; padding: 0px; width: 100px">Schedules</a>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Purpose:</label>
+                                    <div class="col-md-5 fieldspadding-left" style="padding-left:0px;">
+                                        @Html.DropDownList("PurposeType", (SelectList)ViewBag.PurposeType, new { @class = "form-control input-sm", @id = "select_followup_franchise_schedulepurpose" })
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!-- Disclose Additional Purpose -->
+                            <form>
+                                <div class="form-group">
+                                    <input type="checkbox" name="service" class="i -checks control-label col-md-4 col-md-push-2 col-md-sm-4" style="margin-top:12px;" id="check_followup_additionalpurpose" />
+                                    <div class="col-md-5">
+                                        <label for="check_contact_additionalpurpose" class="control-label" id="lbl_discloseadditionpurpose">Disclose Additional Purpose</label>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!-- Completed Franchise Application -->
+                            <form>
+                                <div class="form-group" style="margin-top:5px;">
+                                    <label for="radio_contact_creationconfirmed" class="control-label col-md-4" id="lbl_statuscreationconfirmed">Status Creation Confirmed<span class="required">*</span>:</label>
+                                    <div class="col-md-8 fieldspadding-left">
+                                        <label class="check-inline" style="margin-top: 6px;">
+                                            <input type="radio" name="membership" value="1" class="i-checks" id="followup_yes_creationconfirmed" />
+                                            <span>Yes</span>
+                                        </label>
+
+                                        <label class="check-inline" style="margin-top: 6px; margin-left:40px;">
+                                            <input type="radio" name="membership" value="0" class="i-checks" id="followup_no_creationconfirmed" />
+                                            <span>No</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!--Notify Next Training-->
+                            <form>
+                                <div class="form-group">
+                                    <input type="checkbox" name="service" class="i -checks control-label col-md-4 col-md-push-2 col-md-sm-4" style="margin-top:12px;" id="check_followup_notifytraining" />
+                                    <div class="col-md-4">
+                                        <label for="check_contact_notifytraining" class="control-label" id="lbl_notifynexttraning">Notify Next Training</label>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!-- Keep it active-->
+                            <form>
+                                <div class="form-group" style="margin-top:5px;">
+                                    <label for="radio_contact_keepactive" class="control-label col-md-4" id="lbl_keepitactive">Keep it active<span class="required">*</span>:</label>
+                                    <div class="col-md-8 fieldspadding-left">
+                                        <label class="check-inline" style="margin-top: 6px;">
+                                            <input type="radio" name="membership" value="1" class="i-checks" id="folowup_yeskeepactive" />
+                                            <span>Yes</span>
+                                        </label>
+
+                                        <label class="check-inline" style="margin-top: 6px; margin-left:40px;">
+                                            <input type="radio" name="membership" value="0" class="i-checks" id="followup_nokeepactive" />
+                                            <span>No</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <h5 class="form-section sbold uppercase"><b>@JKCRMResource.note:</b></h5>
+                            <!-- Note -->
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    @Html.TextArea("note", "", new { @class = "form-control autosizeme", rows = "8", style = "font-size: 11px", @id = "text_franchise_followup" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <div class="row" id="summary_action">
+                                <div class="col-md-3 pull-right">
+                                    <button type="button" class="btn green btn-block" onclick="valiadteFranchiseFollowup();">@CommonResource.btnSave</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

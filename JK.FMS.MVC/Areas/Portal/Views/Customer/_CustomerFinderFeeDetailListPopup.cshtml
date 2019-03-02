@@ -1,0 +1,192 @@
+﻿@model List<JKViewModels.Franchisee.FranchiseeFinderFeeDetailViewModel>
+@{
+
+    Layout = null;
+}
+
+<div class="modal fade custom-model custom-form-design" id="modal_CustomerFinderFeeDetailPopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width: 1400px;">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Finder Fee Detail
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px 30px 15px 30px;">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <input type="hidden" name="hddFF_FranchiseeId" id="hddFF_FranchiseeId" value="0" />
+                                <table class="table table-striped table-bordered order-column">
+                                    <thead>
+                                        <tr style="background-color: #e8e8e8;">
+                                            <th style="width:100px;text-align:center;font-size: 12px;">
+                                                Customer No
+                                            </th>
+                                            <th colspan="6" style="text-align:center;font-size: 12px;">
+                                                Customer Name
+                                            </th>
+                                            <td style="text-align:center;width:140px;">
+                                                Total FinderFee
+                                            </td>
+                                            <td style="text-align:center;width:140px;">
+                                                Total DownPayment
+                                            </td>
+                                            <td style="text-align:center;width:140px;">
+                                                Total Monthly Payment
+                                            </td>
+                                            <td style="text-align:center;width:80px;">
+                                                Total Paid
+                                            </td>
+                                            <td style="text-align:center;width:80px;">
+                                                Balance
+                                            </td>
+                                        </tr>
+
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="text-align:center;">@Model.First().CustomerNo</td>
+                                            <td colspan="6" style="text-align:center;">@Model.First().CustomerName</td>
+                                            <td style="text-align:center;">@String.Format("{0:c}", Model.Sum(i => i.TotalFinderFee))</td>
+                                            <td style="text-align:center;">@String.Format("{0:c}", Model.Sum(i => i.TotalDownPayment))</td>
+                                            <td style="text-align:center;">@String.Format("{0:c}", Model.Sum(i => i.MonthlyPaymentAmount))</td>
+                                            <td style="text-align:center;">@String.Format("{0:c}", Model.Sum(i => i.PaidAmount))</td>
+                                            <td style="text-align:center;">@Model.Sum(i => i.TotalBalance)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered order-column">
+                                    <thead>
+                                        <tr style="background-color: #e8e8e8;">
+                                            <th style="width:100px;text-align:center;font-size: 12px;">
+                                                Franchisee No.
+                                            </th>
+                                            <th style="text-align:center;font-size: 12px;">
+                                                Franchisee Name
+                                            </th>
+                                            <td style="text-align:center;">
+                                                FF Type
+                                            </td>
+                                            <td style="text-align:center;">
+                                                Contract Billing
+                                            </td>
+                                            <td style="text-align:center;">
+                                                FF Started
+                                            </td>
+                                            <td style="text-align:center;">
+                                                Payment #
+                                            </td>
+                                            <td style="text-align:center;">
+                                                No of Payment
+                                            </td>
+                                            <td style="text-align:center;width:140px;">
+                                                Total FinderFee
+                                            </td>
+                                            <td style="text-align:center;width:140px;">
+                                                Total DownPayment
+                                            </td>
+                                            <td style="text-align:center;width:140px;">
+                                                Total Monthly Payment
+                                            </td>
+                                            <td style="text-align:center;width:80px;">
+                                                Total Paid
+                                            </td>
+                                            <td style="text-align:center;width:80px;">
+                                                Balance
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            if (@item.FindersFeeId > 0)
+                                            {
+                                            <tr>
+                                                <td style="text-align:center;"><a href="javascript:void(0);" onclick="showFeeFinderDetail(@item.FindersFeeId)">@item.FranchiseeNo</a></td>
+                                                <td style="text-align:left;">@item.FranchiseeName</td>
+                                                <td style="text-align:left;">@item.FindersFeeTypeListName</td>
+                                                <td style="text-align:center;">@String.Format("{0:MM/dd/yyyy}", item.StartTime)</td>
+                                                <td style="text-align:center;">@String.Format("{0:MM/dd/yyyy}", item.StartDate)</td>
+                                                <td style="text-align:center;">@item.TotalNumOfpayments</td>
+                                                <td style="text-align:center;">@item.NumOfPaymentsPaid</td>
+                                                <td style="text-align:right;">@String.Format("{0:c}", item.TotalFinderFee)</td>
+                                                <td style="text-align:right;">@String.Format("{0:c}", item.TotalDownPayment)</td>
+                                                <td style="text-align:right;">@String.Format("{0:c}", item.MonthlyPaymentAmount)</td>
+                                                <td style="text-align:right;">@String.Format("{0:c}", item.PaidAmount)</td>
+                                                <td style="text-align:right;">$ @item.TotalBalance</td>
+                                            </tr>
+                                            }
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="col-md-12">
+                    &nbsp;<button type="button" class="btn btn-primary button-next pull-right" style="margin-left:10px;" onclick="CDetailListPrint()">Print</button>
+                    &nbsp;<button type="submit" class="btn btn-primary button-next pull-right" onclick="CDetailListExportPDF()">Export</button>
+                </div>
+                <div style="clear:both"></div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<div id="div_FeeFinderdetailResult"></div>
+    <script type="text/javascript">
+
+        function showFeeFinderDetail(id) {
+            $('#div_FeeFinderdetailResult').html('');
+            var sURL = '@Url.Action("GetFeeFinderDetail", "Customer", new { area = "Portal" })?id=' + id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#div_FeeFinderdetailResult').html(data);
+                    $('.date-picker').datepicker({ autoclose: true ,dateFormat: 'mm/dd/yyyy'});
+                    $('.date-picker').attr("placeholder","mm/dd/yyyy");
+                    $('.edit-txtbx').prop("readonly", true);
+                    $("#modal_FeeFinderdetailResult").modal({ backdrop: 'static' });
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+        function CDetailListExportPDF() {
+            $.blockUI();
+            window.location.href = '@Url.Action("CFFDetailListExportPDF", "Customer", new { area = "Portal" })?id=' + @Model.First().CustomerId;
+            $.unblockUI();
+        }
+
+        function CDetailListPrint() {
+            $.blockUI();
+            var sURL = '@Url.Action("CFFDetailListPrint", "Customer", new { area = "Portal" })?id=' + @Model.First().CustomerId;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    var tUrl = data;
+                    printJS({ printable: document.location.origin + tUrl, type: 'pdf', showModal: false });
+                    $.unblockUI();
+                },
+                error: function () {
+                    alert("Content load failed.");
+                    $.unblockUI();
+                }
+            });
+        }
+    </script>

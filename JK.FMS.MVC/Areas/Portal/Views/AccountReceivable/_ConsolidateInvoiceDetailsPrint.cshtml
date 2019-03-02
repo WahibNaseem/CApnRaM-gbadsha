@@ -1,0 +1,289 @@
+﻿@model JKApi.Service.AccountReceivable.ConsolidatedInvoiceDetailViewModel
+@{    
+    var request = HttpContext.Current.Request;
+    var _siteUrl = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Authority);
+    string imgpath = _siteUrl + "/Content/admin/assets/layouts/layout2/img/lg_jklogo.jpg";
+    
+}
+<style>
+    .tblAccountHistory thead th,
+    .tblAccountHistory thead td {
+        padding: 3px 0px !important;
+        font-size: 12px !important;
+        /*background-color: #95A5A6 !important;
+        color: #fff;*/
+    }
+    .tblAccountHistory tbody td {
+        padding: 3px 0px !important;
+        font-size: 12px !important;
+    }
+    .tblAccountHistory thead th {
+        vertical-align: middle;
+        font-weight: bold;
+    }
+    .tblbordertrtd {
+        border: 1px solid #000000 !important;
+    }
+    .clsbordertop {
+        border-top: 1px solid #000000 !important;
+    }
+    .clsborderbottom {
+        border-bottom: 1px solid #000000 !important;
+    }
+</style>
+<table>
+    <tr>
+        <td width="20%">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-4">
+                        <img src="@imgpath" width="90" height="70" />
+                    </div>
+                </div>
+            </div>
+        </td>
+        <td width="40%">
+            <div class="row">
+                <div class="col-md-12" style="text-align:left;font-size:12px;">
+                    <strong>Remit To:</strong><br />
+                    @Html.DisplayFor(one => one.InvoiceRegion.Displayname)<br />
+                    @Html.DisplayFor(one => one.InvoiceRegion.Address)<br />
+                    @Html.DisplayFor(one => one.InvoiceRegion.City), @Html.DisplayFor(one => one.InvoiceRegion.State) @Html.DisplayFor(one => one.InvoiceRegion.PostalCode)<br />
+                    @*@Html.DisplayFor(one => one.InvoiceRegion.phone)*@
+                    @if (Model.InvoiceRegion.Phone != null)
+                    {
+                        string phoneFormat = Model.InvoiceRegion.Phone.Trim();
+                        if (Model.InvoiceRegion.Phone != null)
+                        {
+                            if (phoneFormat.Length == 10)
+                            {
+                                @Html.Label("(" + phoneFormat.Substring(0, 3) + ")" + " " + phoneFormat.Substring(3, 3) + "-" + phoneFormat.Substring(6, 4));
+                            }
+                            else
+                            {
+                                @Html.Label(phoneFormat);
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        </td>
+        <td width="40%">
+            <div class="row">
+                <div class="col-md-4">
+                    <table class="tblbordertrtd" cellpadding="4" style="font-size:12px">
+                        <tr>
+                            <td colspan="2" align="center" class="clsborderbottom">Invoice</td>
+                        </tr>
+                        <tr>
+                            <td align="center" class="clsborderbottom" style="border-right:1px solid #000000 !important"><b>Date</b><br /> @Convert.ToDateTime(Model.ConsolidatedInvoiceDate).ToString("MM/dd/yyyy") </td>
+                            <td align="center" class="clsborderbottom"><b>Number</b><br /> @Html.DisplayFor(one => one.ConsolidatedInvoiceNo) </td>
+                        </tr>
+                        <tr>
+                            <td align="center" class="clsborderbottom" style="border-right:1px solid #000000 !important"><b>Due Date</b><br /> @Convert.ToDateTime(Model.ConsolidatedInvoiceDueDate).ToString("MM/dd/yyyy")</td>
+                            <td align="center" class="clsborderbottom"><b>Customer No</b><br /> @Html.DisplayFor(one => one.CustomerNo)</td>
+                        </tr>
+                        <tr>
+                            <td align="center" class="clsborderbottom" style="border-right:1px solid #000000 !important"><b>Invoice Amount</b><br /> @*@string.Format("{0:c}", Model.Select(s => s.Total).Sum())*@ </td>
+                            <td align="center" class="clsborderbottom" valign="top"><b>Amount Remitted</b><br /></td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+        </td>
+    </tr>
+</table>
+<table style="font-size:12px;margin-top:10px!important;" cellpadding="4">
+    <tr>
+        <td>
+            <strong>Bill To:</strong><br />
+            @Html.DisplayFor(one => one.B_Name) <br />
+            @Html.DisplayFor(one => one.B_Attention)
+            @Html.DisplayFor(one => one.B_Address1),@Html.DisplayFor(one => one.B_Address2) <br />
+            @Html.DisplayFor(one => one.B_City), @Html.DisplayFor(one => one.B_State) @Html.DisplayFor(one => one.B_PostalCode)
+
+        </td>
+        <td>&nbsp;</td>
+        <td>
+            <strong>Sold To:  </strong><br />
+            @*@Html.DisplayFor(one => one.InvoiceDetail.CustomerNo)<br />*@
+            @Html.DisplayFor(one => one.CustomerName) <br />
+            @Html.DisplayFor(one => one.Address1),@Html.DisplayFor(one => one.Address2) <br />
+            @Html.DisplayFor(one => one.City), @Html.DisplayFor(one => one.State) @Html.DisplayFor(one => one.PostalCode) <br />
+            @*@Html.DisplayFor(one => one.InvoiceRegion.phone)*@
+
+        </td>
+    </tr>
+</table>
+<table cellpadding="4" style="font-size:11px;text-align:center;margin-top:8px!important;" width="100%">
+    <tr>
+        <td>
+            Make All Checks Payable to: @Html.DisplayFor(one => one.InvoiceRegion.Displayname)
+        </td>
+    </tr>
+    <tr>
+        <td>
+            RETURN THIS PORTION WITH YOUR PAYMENT
+        </td>
+    </tr>
+</table>
+<table cellpadding="4" style="font-size:11px" class="tabborder">
+    <tr>
+        <th align="center" valign="top" colspan="2" class="clsbordertop"><b>PO Number</b></th>
+        <th align="center" valign="top" class="clsbordertop"></th>
+        <th align="center" valign="top" class="clsbordertop"><b>Consolidated Billing</b></th>
+        <th align="center" valign="top" class="clsbordertop"></th>
+        <th align="center" valign="top" class="clsbordertop"></th>
+        <th align="center" valign="top" class="clsbordertop"></th>
+        <th align="center" valign="top" class="clsbordertop"></th>
+        <th align="center" valign="top" class="clsbordertop"></th>
+    </tr>
+    <tr>
+        <th align="center" valign="top" style="width:55px;" class="clsborderbottom"><b>Invoice#</b></th>
+        <th align="center" valign="top" style="width:125px;" class="clsborderbottom"><b>Invoice Date</b></th>
+        <th align="center" valign="top" style="width:30px;" class="clsborderbottom"><b>Class</b></th>
+        <th align="center" valign="top" style="width:210px;" class="clsborderbottom"><b>Description</b></th>
+        <th align="center" valign="top" style="width:30px;" class="clsborderbottom"><b>Qty</b></th>
+        <th align="center" valign="top" style="width:60px;" class="clsborderbottom"><b>Itm Amt</b></th>
+        <th align="center" valign="top" style="width:60px;" class="clsborderbottom"><b>Ext Amt</b></th>
+        <th align="center" valign="top" style="width:40px;" class="clsborderbottom"><b>Tax</b></th>
+        <th align="center" valign="top" style="width:60px;" class="clsborderbottom"><b>Total</b></th>
+    </tr>
+    @{
+        int _LastCustId = 0;
+        string _LastCustNo = "";
+        decimal _itemCustomerExtendedPrice = 0;
+        decimal _itemCustomerTax = 0;
+        decimal _itemCustomerTotal = 0;
+
+        decimal _bottomCustomerExtendedPrice = 0;
+        decimal _bottomCustomerTax = 0;
+        decimal _bottomCustomerTotal = 0;
+    }
+    @foreach (var item in Model.Invoices)
+    {
+        if (_LastCustId != item.CustomerId && _LastCustId != 0)
+        {
+            _bottomCustomerExtendedPrice += _itemCustomerExtendedPrice;
+            _bottomCustomerTax += _itemCustomerTax;
+            _bottomCustomerTotal += _itemCustomerTotal;
+
+            <tr>
+                <td align="center" valign="top"></td>
+                <td align="center" valign="top"></td>
+                <td align="center" valign="top"></td>
+                @*<td align="left" valign="top"></td>
+                    <td align="center" valign="top"></td>*@
+                <td align="left" colspan="3" class="clsbordertop clsborderbottom" style="border-left:1px solid #000000 !important">
+                    Total For Customer @_LastCustNo
+                </td>
+                <td align="right" class="clsbordertop clsborderbottom">
+                    @string.Format("{0:c}", _itemCustomerExtendedPrice)
+                </td>
+                <td align="right" class="clsbordertop clsborderbottom">
+                    @string.Format("{0:c}", _itemCustomerTax)
+                </td>
+                <td align="right" class="clsbordertop clsborderbottom" style="border-right:1px solid #000000 !important">
+                    @string.Format("{0:c}", _itemCustomerTotal)
+                </td>
+            </tr>
+        }
+        if (_LastCustId != item.CustomerId)
+        {
+            _LastCustId = (int)item.CustomerId;
+            _LastCustNo = item.CustomerNo;
+            _itemCustomerExtendedPrice = (decimal)item.ExtendedPrice;
+            _itemCustomerTax = (decimal)item.TAXAmount;
+            _itemCustomerTotal = (decimal)item.Total;
+        }
+        else
+        {
+            _itemCustomerExtendedPrice += (decimal)item.ExtendedPrice;
+            _itemCustomerTax += (decimal)item.TAXAmount;
+            _itemCustomerTotal += (decimal)item.Total;
+        }
+        <tr>
+            <td align="left" valign="top">
+                @item.CustomerNo
+            </td>
+            <td colspan="2" align="left" valign="top">
+                @item.CustomerName
+            </td>
+            <td colspan="6" align="left" valign="top">
+                @(item.Address1 + ", " + item.City + ", " + item.State + ", " + item.PostalCode)
+            </td>
+        </tr>
+        <tr>
+            <td align="center" valign="top">
+                @item.InvoiceNo
+            </td>
+            <td align="left" valign="top">
+                @Convert.ToDateTime(item.InvoiceDate).ToString("MM/dd/yyyy")
+            </td>
+            <td align="center" valign="top">
+                B
+            </td>
+            <td align="left" valign="top">
+                @if (item.InvoiceDescription != null)
+                {                    
+                    @Html.Raw((item.InvoiceDescription != null ? item.InvoiceDescription.Replace("\r\n", "<br />") : ""))                    
+                }
+            </td>
+            <td align="center">
+                @item.Quantity
+            </td>
+            <td align="right">
+                @string.Format("{0:c}", item.UnitPrice)
+            </td>
+            <td align="right">
+                @string.Format("{0:c}", item.ExtendedPrice)
+            </td>
+            <td align="right">
+                @string.Format("{0:c}", item.TAXAmount)
+            </td>
+            <td align="right">
+                @string.Format("{0:c}", item.Total)
+            </td>
+        </tr>
+    }
+    <tr>
+        <td align="center" valign="top"></td>
+        <td align="center" valign="top"></td>
+        <td align="center" valign="top"></td>
+        @* <td align="left" valign="top"></td>
+            <td align="center" valign="top"></td>*@
+        <td align="left" colspan="3" class="clsbordertop clsborderbottom" style="border-left:1px solid #000000 !important">
+            Total For Customer @_LastCustNo
+        </td>
+        <td align="right" class="clsbordertop clsborderbottom">
+            @string.Format("{0:c}", _itemCustomerExtendedPrice)
+        </td>
+        <td align="right" class="clsbordertop clsborderbottom">
+            @string.Format("{0:c}", _itemCustomerTax)
+        </td>
+        <td align="right" class="clsbordertop clsborderbottom" style="border-right:1px solid #000000 !important">
+            @string.Format("{0:c}", _itemCustomerTotal)
+        </td>
+    </tr>
+    <tr >
+        <td align="center" valign="top"></td>
+        <td align="center" valign="top"></td>
+        <td align="center" valign="top"></td>
+        @*<td align="left" valign="top"></td>
+            <td align="center" valign="top"></td>*@
+        <td align="left" colspan="3">
+            <b>Consolidated Bill Total:</b>
+        </td>
+        <td align="right">
+            @string.Format("{0:c}", _bottomCustomerExtendedPrice)
+        </td>
+        <td align="right">
+            @string.Format("{0:c}", _bottomCustomerTax)
+        </td>
+        <td align="right">
+            @string.Format("{0:c}", _bottomCustomerTotal)
+        </td>
+    </tr>
+</table>
+<div style="page-break-before:always"></div>

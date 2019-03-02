@@ -1,0 +1,272 @@
+﻿@model JKViewModels.CRM.CRMPdAppointmentViewModel
+
+@{
+    var pdContact = new JKViewModels.CRM.CRMContactViewModel();
+    var pdSch = new JKViewModels.CRM.CRMScheduleViewModel();
+
+    if (ViewBag.pdContact != null)
+    {
+        pdContact = (JKViewModels.CRM.CRMContactViewModel)ViewBag.pdContact;
+    }
+    if (ViewBag.pdSch != null)
+    {
+        pdSch = (JKViewModels.CRM.CRMScheduleViewModel)ViewBag.pdSch;
+    }
+
+    var bidContact = new JKViewModels.CRM.CRMContactViewModel();
+    var bidSch = new JKViewModels.CRM.CRMScheduleViewModel();
+
+    if (ViewBag.bidContact != null)
+    {
+        bidContact = (JKViewModels.CRM.CRMContactViewModel)ViewBag.bidContact;
+    }
+    if (ViewBag.bidSch != null)
+    {
+        bidSch = (JKViewModels.CRM.CRMScheduleViewModel)ViewBag.bidSch;
+    }
+}
+<div class="modal-header modal-custom-header" id="pdappointmentdetail_modalview_header">
+    <button type="button" class="close modal-close-button" data-dismiss="modal" aria-hidden="true"></button>
+    <h4 class="modal-title">PD Appointment</h4>
+</div>
+<div class="modal-body" id="pdappointment detail_modalview_body">
+    <div class="row">
+        <form action="#" id="form_pdstagedetail" class="form-horizontal">
+            <div class="form-body">
+                @Html.Hidden("AccountDetailId", "", new { @id = "accountdetailid" })
+                <div class="form-group">
+                    <label for="select_priceapproved" class="control-label col-md-4">Meeting Person<span class="required">*</span>:</label>
+                    <div class="col-md-6">
+                        <input id="inputModal_pdmeetwith" name="name" type="text" data-required="1" class="form-control input-sm" value="@(bidContact!=null ? Convert.ToString(bidContact.ContactName) :string.Empty )" disabled="disabled" />
+                    </div>
+                </div>
+
+                <!--Contact Phone-->
+                <div class="form-group">
+                    <label for="input_contactphone" class="control-label col-md-4">Contact Phone<span class="required">*</span>:</label>
+                    <div class="col-md-6">
+                        <input id="input_modal_pdcontactphone" name="name" type="text" data-required="1" class="form-control input-sm" value="@(bidContact!=null ?string.Format("{0:(###) ###-####}", Convert.ToDecimal(bidContact.ContactPhone)) :string.Empty )" disabled="disabled" />
+                    </div>
+                </div>
+
+                <!--Contact Email-->
+                <div class="form-group">
+                    <label for="input_contactemail" class="control-label col-md-4">Contact Email<span class="required">*</span>:</label>
+                    <div class="col-md-6">
+                        <input id="input_modal_pdcontactemail" name="name" type="text" data-required="1" class="form-control input-mysize3  input-sm" value="@(bidContact!=null ? Convert.ToString(bidContact.ContactEmail) :string.Empty )" disabled="disabled" />
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="schedule_start" class="control-label col-md-4">Start Date/Time<span class="required">*</span>:</label>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control input-mysize input-group input-group-sm input-sm date date-picker RemovePeriodvalidation" name="datepicker" data-date-format="mm/dd/yyyy"
+                               id="input_schedulestartdate" value="@((bidSch!=null && bidSch.StartDate != null) ? Convert.ToDateTime(bidSch.StartDate).ToString("MM-dd-yyyy") :string.Empty)" disabled="disabled" />
+                        <!--Start Time-->
+                    </div>
+                    <div class="col-md-3">
+                        <div class="input-icon">
+                            <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                            <input type="text" class="form-control input-group input-mysize2 input-group-sm input-sm  timepicker timepicker-default" id="input_schedulestarttime" value="@((bidSch!=null && bidSch.StartDate != null) ? Convert.ToDateTime(bidSch.StartDate).ToString("hh:mm tt") :string.Empty)" disabled="disabled">
+                        </div>
+                    </div>
+                </div>
+
+                <!--End Date/Time-->
+                <div class="form-group">
+                    <label for="schedule_start" class="control-label col-md-4">End Date/Time<span class="required">*</span>:</label>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control input-mysize input-group input-group-sm input-sm date date-picker RemovePeriodvalidation" name="datepicker" data-date-format="mm/dd/yyyy" id="input_scheduleenddate" value="@((bidSch!=null && bidSch.EndDate != null) ? Convert.ToDateTime(bidSch.EndDate).ToString("MM-dd-yyyy") :string.Empty)" disabled="disabled" />
+                    </div>
+                    <!--End Time-->
+                    <div class="col-md-3">
+                        <div class="input-icon">
+                            <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                            <input type="text" class="form-control input-group input-mysize2 input-group-sm input-sm  timepicker timepicker-default" id="input_scheduleendtime" value="@((bidSch!=null && bidSch.EndDate != null) ? Convert.ToDateTime(bidSch.EndDate).ToString("hh:mm tt") :string.Empty)" disabled="disabled" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="callback_purpose" class="control-label col-md-4">Purpose:</label>
+                    <div class="col-md-4">
+                        <select id="select_pdbid_pdpotential_Schedulepurpose" class="form-control input-sm select_bidpurpose" disabled="disabled">
+                            <option value="">Select</option>
+                            @*<option value="1" @(bidSch.PurposeId == 1 ? "selected=selected" : string.Empty)>Call Back</option>
+                    <option value="2" @(bidSch.PurposeId == 2 ? "selected=selected" : string.Empty)>Meeting</option>
+                    <option value="3" @(bidSch.PurposeId == 3 ? "selected=selected" : string.Empty)>Follow-Up</option>*@
+                            <option value="5" @(bidSch.PurposeId == 5 ? "selected=selected" : string.Empty)>Call Back</option>
+                            <option value="2" @(bidSch.PurposeId == 2 ? "selected=selected" : string.Empty)>Proposal Delivery</option>
+                            <option value="3" @(bidSch.PurposeId == 3 ? "selected=selected" : string.Empty)>Proposal Follow-Up</option>
+                            <option value="12" @(bidSch.PurposeId == 12 ? "selected=selected" : string.Empty)>Contract Sign</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top:5px;">
+                    <label for="radio_pdpotentialdecision" class="control-label col-md-4">Meeting Contact<span class="required">*</span>:</label>
+                    <div class="col-md-2" style="width:60px;">
+                        <label class="check-inline" style="margin-top: 6px;">
+                            <input type="radio" name="membership" value="1" class="i-checks pd_yesdecisionmaker" id="pd_yesdecisionmaker" @(Model.MeetDecisionMaker == true ? "checked=checked" : string.Empty) disabled="disabled" />
+                            <span>Yes</span>
+                        </label>
+                    </div>
+                    <div class="col-md-1">
+                        <label class="check-inline" style="margin-top: 6px; margin-left:0px;">
+                            <input type="radio" name="membership" value="0" class="i-checks pd_nodecisionmaker" @(Model.MeetDecisionMaker == false ? "checked=checked" : string.Empty) disabled="disabled" />
+                            <span>No</span>
+                        </label>
+
+                    </div>
+                </div>
+                <!--potential Decision-->
+                <div class="pd_decision" @(Model.MeetDecisionMaker == true ? "style=display:none;" : string.Empty)>
+                    <!--Decision Meeting Person-->
+                    <div class="form-group">
+                        <label for="input_pdmeetwith" class="control-label col-md-4">Meeting Person Name<span class="required">*</span>:</label>
+                        <div class="col-md-4">
+                            <input id="input_potential_decisioncontactname" type="text" data-required="1" class="form-control input-sm" value="@pdContact.ContactName" disabled="disabled" />
+                        </div>
+                    </div>
+                    <!--Decision Contact Phone-->
+                    <div class="form-group">
+                        <label for="input_contactphone" class="control-label col-md-4">Meeting Person Phone<span class="required">*</span>:</label>
+                        <div class="col-md-4">
+                            <input id="input_potential_decisioncontactphone" type="text" data-required="1" class="form-control input-sm" value="@pdContact.ContactPhone" disabled="disabled" />
+                        </div>
+                    </div>
+                    <!--Decision Contact Email-->
+                    <div class="form-group">
+                        <label for="input_contactemail" class="control-label col-md-4">Meeting Person Email<span class="required">*</span>:</label>
+                        <div class="col-md-4">
+                            <input id="input_potential_decisioncontactemail" type="text" data-required="1" class="form-control input-sm" value="@pdContact.ContactEmail" />
+                        </div>
+                    </div>
+                </div>
+
+                <!--Present Proposal Presentation-->
+                <div class="form-group">
+
+                    <label for="radio_pdpotentialpresent" class="control-label col-md-4">Present Proposal Presentation<span class="required">*</span>:</label>
+                    <div class="col-md-2" style="width:60px;">
+                        <label class="check-inline" style="margin-top: 6px;">
+                            <input type="radio" name="present" value="1" class="i-checks check_bidpresentedproposal" id="checkboxpdpotential_presentproposalpp" disabled="disabled" @(Model.PresentProposal == true ? "checked=checked" : string.Empty) />
+                            <span>Yes</span>
+                        </label>
+                    </div>
+                    <div class="col-md-1">
+                        <label class="check-inline" style="margin-top: 6px; margin-left:0px;">
+                            <input type="radio" name="present" value="0" class="i-checks check_bidpresentedproposal" disabled="disabled" @(Model.PresentProposal == false ? "checked=checked" : string.Empty) />
+                            <span>No</span>
+                        </label>
+
+                    </div>
+
+                </div>
+
+                <!-- OverCome Objections -->
+                <div class="form-group">
+                    <label for="select_potentialovercome" class="control-label col-md-4">Overcome Objections<span class="required">*</span>:</label>
+                    <div class="col-md-4">
+                        <select id="select_pdpotentialovercomepp" class="form-control input-sm select_overcomeobjection" disabled>
+                            <option value="">Select</option>
+                            <option value="1" @(Model.OverComeObjections == true ? "selected=selected" : string.Empty)>Yes</option>
+                            <option value="0" @(Model.OverComeObjections == false ? "selected=selected" : string.Empty)>No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <input type="hidden" id="hdnPdPopup_PurposeId" value="@Model.PurposeId" />
+
+                <div class="form-group pdpp_selectovercome pdpp_overcome_yes" style="display:none">
+                    <label for="schedule_purpose" class="control-label col-md-4">Result<span class="required">*</span>:</label>
+                    <div class="col-md-4">
+                        <select id="select_pdpotential_scheduleresultpp" class="form-control input-sm select_pdpurpose" name="options2" disabled="disabled">
+                            <option value="">Select</option>
+                            <option value="12">Signed Contract</option>
+                            <option value="5">Delivered Proposal Scheduled Call-Back</option>
+                            @*<option value="11">Follow up meeting</option>*@
+                            <option value="9002">Giving current service more time</option>
+                            <option value="9999">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group pdpp_selectovercome pdpp_overcome_no" style="display:none">
+                    <label for="schedule_purpose" class="control-label col-md-4">Reason<span class="required">*</span>:</label>
+                    <div class="col-md-4">
+                        <select id="select_pdpotential_schedulereasonpp" class="form-control input-sm select_pdpurpose" name="options2"  disabled="disabled">
+                            <option value="">Select</option>
+                            <option value="9004">Price too High</option>
+                            <option value="9101">Cannot Break Current Contract</option>
+                            <option value="9103">Need to check with other Partners/Officers</option>
+                            <option value="9104">Jani-King is too big (Perception)</option>
+                            <option value="9105">Our facility has special needs</option>
+                            <option value="9106">Going to take cleaning in-house</option>
+                            <option value="9102">Giving existing company more time</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group pd_present_no" style="display:none">
+                    <label for="schedule_purpose" class="control-label col-md-4">Reason<span class="required">*</span>:</label>
+                    <div class="col-md-4">
+                        <select id="select_pdpotential_nopresentreasonpp" class="form-control input-sm select_pdpurpose" name="options2"  disabled="disabled">
+                            <option value="">Select</option>
+                            <option value="9001">Cannot break contract per agreement</option>
+                            <option value="9003">Going in-house</option>
+                            <option value="9004">Price too High</option>
+                            <option value="9005">Contact Not Available</option>
+                            <option value="9006">JK Rep Missed Appointment</option>
+                            <option value="9007">Re-scheduled by Contact</option>
+                            <option value="9008">Re-scheduled by JK rep</option>
+                            <option value="9009">Appointment Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Follow Appointment Schedule-->
+                <div class="pdpp_followup_time_div" style="display: none">
+                    <div class="form-group">
+                        <label for="schedule_start" class="control-label col-md-4">Start Date/Time<span class="required">*</span>:</label>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control input-group input-group-sm input-sm date date-picker RemovePeriodvalidation" name="datepicker" data-date-format="mm/dd/yyyy"
+                                   id="input_schedulestartdate" value="@((pdSch!=null && pdSch.StartDate != null) ? Convert.ToDateTime(pdSch.StartDate).ToString("MM-dd-yyyy") :string.Empty)" disabled="disabled" />
+                            <!--Start Time-->
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-icon">
+                                <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                                <input type="text" class="form-control input-group input-group-sm input-sm  timepicker timepicker-default" id="input_schedulestarttime" value="@((pdSch!=null && pdSch.StartDate != null) ? Convert.ToDateTime(pdSch.StartDate).ToString("hh:mm tt") :string.Empty)" disabled="disabled">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--End Date/Time-->
+                    <div class="form-group">
+                        <label for="schedule_start" class="control-label col-md-4">End Date/Time<span class="required">*</span>:</label>
+
+                        <div class="col-md-3">
+                            <input type="text" class="form-control input-group input-group-sm input-sm date date-picker RemovePeriodvalidation" name="datepicker" data-date-format="mm/dd/yyyy" id="input_scheduleenddate" value="@((pdSch!=null && pdSch.EndDate != null) ? Convert.ToDateTime(pdSch.EndDate).ToString("MM-dd-yyyy") :string.Empty)" disabled="disabled" />
+                        </div>
+                        <!--End Time-->
+                        <div class="col-md-3">
+                            <div class="input-icon">
+                                <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                                <input type="text" class="form-control input-group input-group-sm input-sm  timepicker timepicker-default" id="input_scheduleendtime" value="@((pdSch!=null && pdSch.EndDate != null) ? Convert.ToDateTime(pdSch.EndDate).ToString("hh:mm tt") :string.Empty)" disabled="disabled" />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="schedule_purpose" class="control-label col-md-4">Note:</label>
+                    <div class="col-md-6">
+                        <textarea name="note" id="text_pdpotential_note" class="form-control autosizeme textarea_bidnote" rows="6" style="font-size: 11px" disabled="disabled">@Model.Note</textarea>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>

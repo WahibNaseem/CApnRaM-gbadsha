@@ -1,0 +1,226 @@
+﻿
+@{
+    ViewBag.Title = "PastDue";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+    <style type="text/css">
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .selectable .ui-selecting {
+            background: #124D8E;
+        }
+
+        .selectable .ui-selected {
+            background: #124D8E;
+            color: white;
+        }
+
+        .selectable {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+            .selectable li {
+                margin: 3px;
+                padding: 0.4em;
+                font-size: 1.2em;
+                height: 42px;
+            }
+
+        a:hover, a:focus {
+            color: #2a6496 !important;
+            text-decoration: none !important;
+            cursor: pointer;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        #CustomerPaymentList tfoot > tr > td {
+            padding: 5px !important;
+            padding-top: 5px !important;
+            padding-right: 5px !important;
+            padding-bottom: 5px !important;
+            padding-left: 5px !important;
+            font-size: 12px !important;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+    </style>
+}
+<div class="headerbox">
+    <div class="col-md-12" style="background-color: #4b85cc;color: #fff;">
+        <div class="alignCenter">
+            <div class="col-md-offset-4 col-md-4 topheader">
+                <h5><b>CREATE CUSTOMER PAST DUE STATEMENT</b></h5>
+            </div>
+            <div class="col-md-2 pull-right" style="padding-right:5px;padding-top: 4px;">
+                <div style="display:table-cell;padding-right: 5px;">
+                    Region
+                </div>
+                <div style="display:table-cell;width:100%;">
+                    @if (ViewBag.regionlist != null)
+                    {
+
+                        <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                            @{
+                                foreach (var item in (SelectList)ViewBag.regionlist)
+                                {
+                                    <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                                }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="custom-form portlet light form form-horizontal" style="margin: 0px auto;padding:0;">
+    <div class="custom-form portlet light">
+        <div class="portlet-body form">
+            <div class="form-body" style="padding-top:0px !important;margin-top: 0px !important;">
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <div class="col-md-5 control-label">
+                            Report Date:
+                        </div>
+                        <div class="col-md-2">
+                            <input type="text" name="txtReportDate" id="txtReportDate" value="" class="form-control input-sm date-picker" style="padding: 3px;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <div class="col-md-5 control-label">
+                            Months to Include:
+                        </div>
+                        <div class="col-md-1">
+                            <input type="text" name="txtMonthlstoInclude" id="txtMonthlstoInclude" value="24" class="form-control input-sm" style="padding: 3px;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <div class="col-md-5"></div>
+                            <div class="col-md-2">
+                                <input type="submit" class="btn btn-primary pull-left" id="btnsubmit" value="submit">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script type="text/javascript">
+
+    jQuery(document).ready(function () {
+        $("#txtReportDate").datepicker();
+        $("#txtReportDate").datepicker({ dateFormat: 'MM/dd/yyyy' }).datepicker("setDate", new Date());
+        $(".selectable").selectable();
+
+        $("#regionlist").multiselect({
+            includeSelectAllOption: false,
+            selectAllText: 'Select all',
+            buttonWidth: '100%',
+            nonSelectedText: 'Select region..',
+            dropRight: true,
+            numberDisplayed: 2,
+        });
+    });
+
+    $('#btnsubmit').click(function () {
+        showPastDueReport();
+    })
+
+    var showPastDueReport = function () {
+        var data = new Object();
+        data.reportDate = $('#txtReportDate').val();
+        data.monthsToInclude = $('#txtMonthlstoInclude').val();
+        var regionIds = $("#regionlist").val();
+        console.log(data);
+        var url = '/Portal/AccountReceivable/PastDueStatementlist';
+        window.location.replace(url + '?reportDate=' + data.reportDate + '&monthsToInclude=' + data.monthsToInclude + '&regionIds=' + regionIds);
+
+    };
+
+
+    </script>
+}
+

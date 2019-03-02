@@ -1,0 +1,309 @@
+﻿@model JKViewModels.Customer.ServiceCallLogModel
+
+
+
+
+<!--Show Service Call log Modal (Log call pop up)-->
+<div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+        Service Call Log
+        @*<a href="Javascrpit:void(0)" onclick=Editfunction(); style="color:red"><b>Edit</b></a>*@
+    </h4>
+</div>
+
+<div class="modal-body" style="padding: 0px 30px 15px 30px;">
+
+
+    @using (Html.BeginForm("ServiceCallLogPop", "Customer", FormMethod.Post, new { @id = "frmServiceCallLog", @role = "form" }))
+    {
+        @Html.HiddenFor(x => x.ClassId, new { @Value = ViewBag.CustomerDetail.CustomerId })
+        @Html.HiddenFor(x => x.TypeListId, new { @Value = "1" })
+        @Html.HiddenFor(x => x.RegionId, new { @Value = ViewBag.CustomerDetail.RegionId })
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-2 control-label" style="padding-top: 0px;">
+                        <span>
+                            <b>Customer No</b><span style="color:#000000;">&nbsp;:</span>
+                        </span>
+                    </div>
+                    <div class="col-md-2">
+                        @*<span><b>@ViewBag.CustomerDetail.CustomerNo</b></span>*@
+                        <span>
+                            <b>
+                                <label id="CustomerNos">
+                                    @if (ViewBag.CustomerDetail != null)
+                                    {
+                                        if (ViewBag.CustomerDetail.CustomerNo != null)
+                                        {
+                                            @ViewBag.CustomerDetail.CustomerNo
+                                        }
+                                    }
+                                </label>
+                            </b>
+                        </span>
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-2 control-label" style="padding-top: 0px;padding-bottom: 12px;">
+                        <span>
+                            <b>Contact</b><span style="color:#000000;">&nbsp;:</span>
+
+                        </span>
+                    </div>
+                    <div class="col-md-3">
+                        <span>
+                            <b>
+                                <label id="ContactNames">
+                                    @if (ViewBag.CustomerDetail != null)
+                                    {
+                                        if (ViewBag.CustomerDetail.ContactName != null)
+                                        {
+                                            @ViewBag.CustomerDetail.ContactName
+                                        }
+                                    }
+                                </label>
+                            </b>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-2 control-label" style="padding-top: 0px;">
+                        <span>
+                            <b>Customer Name</b><span style="color:#000000;">&nbsp;:</span>
+                        </span>
+                    </div>
+                    <div class="col-md-4">
+                        <span>
+                            <b>
+                                <label id="CustomerNames">
+                                    @if (ViewBag.CustomerDetail != null)
+                                    {
+                                        if (ViewBag.CustomerDetail.CustomerName != null)
+                                        {
+                                            @ViewBag.CustomerDetail.CustomerName
+                                        }
+                                    }
+                                </label>
+                            </b>
+                        </span>
+                    </div>
+                    <div class="col-md-2 control-label" style="padding-top: 0px;padding-bottom: 12px;">
+                        <span>
+                            <b>Phone No</b><span style="color:#000000;">&nbsp;:</span>
+
+                        </span>
+                    </div>
+                    <div class="col-md-3">
+                        <span>
+                            <b>
+                                <label id="Phones">
+                                    @if (ViewBag.CustomerDetail != null)
+                                    {
+                                        if (ViewBag.CustomerDetail.Phone != null)
+                                        {
+                                            @ViewBag.CustomerDetail.Phone
+                                        }
+                                    }
+                                </label>
+                            </b>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-2 control-label" style="text-align:right;">
+                        Initiated By<span style="color:#000000;"> &nbsp;:<span class="required">*</span></span>
+                    </div>
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(x => x.InitiatedBy, new SelectList(ViewBag.InitiatedBy, "Value", "Key"), new { @class = "form-control input-sm", required = "required" })
+                    </div>
+                    <div class="col-md-2 control-label" style="text-align:right;">
+                        Area<span style="color:#000000;">&nbsp;:<span class="required">*</span></span>
+                    </div>
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(x => x.ServiceLogAreaListId, (IEnumerable<SelectListItem>)ViewBag.ServiceCallAreaList, new { @class = "form-control input-sm", required = "required" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-2 control-label" style="text-align:right;">
+                        Spoke With<span style="color:#000000;">&nbsp;:<span class="required">*</span></span>
+                    </div>
+                    <div class="col-md-4">
+                        @*<input type="text" class="input-sm form-control" />*@
+                        @Html.TextBoxFor(x => x.SpokeWith, new { @class = "input-sm form-control" })
+                    </div>
+
+                    <div class="col-md-2 control-label" style="text-align:right;">
+                        Type<span style="color:#000000;">&nbsp;:<span class="required">*</span></span>
+                    </div>
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(x => x.ServiceLogTypeListId, (IEnumerable<SelectListItem>)ViewBag.ServiceCallLogTypeList, new { @class = "form-control input-sm", required = "required" })
+                        @*<select class="input-sm form-control">
+                                <option>Claim / Incident</option>
+                            </select>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-2 control-label" style="text-align:right;">
+                        Action<span style="color:#000000;">&nbsp;:</span>
+                    </div>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(x => x.Action, new { @class = "input-sm form-control" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-2 control-label" style="text-align:right;">
+                        Comments<span style="color:#000000;">&nbsp;:</span>
+                    </div>
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(x => x.Comments, new { @class = "input-sm form-control", @rows = "5", @style = "min-width: 667px;" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-2 control-label" style="text-align:right;">
+                        Status<span style="color:#000000;">&nbsp;:<span class="required">*</span></span>
+                    </div>
+                    <div class="col-md-4">
+                        @*@Html.DropDownListFor(, ViewBag.StatusResultList, new { @class = "form-control input-sm", required = "required", @id = "StatusResultListId", @name = "StatusResultListId" })*@
+                        @Html.DropDownListFor(x => x.StatusResultListId, (IEnumerable<SelectListItem>)ViewBag.StatusResultList, new { @class = "form-control input-sm", required = "required" })
+                    </div>
+                    <div class="col-md-2 control-label" style="text-align:right;">
+                        Call Back<span style="color:#000000;">&nbsp;:</span>
+                    </div>
+                    <div class="col-md-4">
+                        @*<div class="input-group input-medium date" data-date-format="mm/dd/yyyy">
+                                @Html.TextBoxFor(x => x.CallBack, new { @class = "form-control input-sm date" })
+                                <span class="input-group-btn">
+                                    <button class="btn default" type="button">
+                                        <i class="fa fa-calendar"></i>
+                                    </button>
+                                </span>
+                            </div>*@
+
+                        <div class="col-md-6" style="padding-right:2px; padding-left:0px;">
+                            <input type="text" id="txtCallBack" name="CallBack" value="@Model.CallBack" class="form-control input-sm date date-picker" />
+                            @*@Html.TextBoxFor(x => x.CallBack, new { @class = "form-control input-sm date date-picker" })*@
+                            @*<input type="hidden" name="CallBack" id="CallBack" value="@Model.CallBack" />*@
+                        </div>
+                        <div class="col-md-6" style="padding-right:0px; padding-left:2px;">
+                            <div class="input-icon">
+                                <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                                @Html.TextBoxFor(x => x.CallTime, new { @class = "form-control input-sm timepicker timepicker-default", @Id = "txtCallTime" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-2 control-label" style="text-align:right;">
+                        Follow By<span style="color:#000000;">&nbsp;:</span>
+                    </div>
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(x => x.FollowUpBy, (IEnumerable<SelectListItem>)ViewBag.ServiceCallFollowBy, new { @class = "form-control input-sm", required = "required" })
+                    </div>
+
+                    <div class="col-md-2 control-label" style="text-align:right;">
+                        Email Call Notes to<span style="color:#000000;">&nbsp;:</span>
+                    </div>
+                    <div class="col-md-4">
+                        @Html.HiddenFor(x => x.EmailNotesTo, new { @id = "hdnEmailNotesTo" })
+                        @* @Html.DropDownListFor(x => x.EmailNotesTo, (IEnumerable<SelectListItem>)ViewBag.ServiceEmailCall, new { @class = "chosen-select form-control input-sm", required = "required" })*@
+                        @Html.ListBox("ddlEmailNotesTo", ViewBag.ServiceEmailCall as MultiSelectList, new { @id = "ddlEmailNotesTo", @class = "chosen-select form-control col-md-4 input-sm", data_placeholder = "--Select--" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr style="margin-bottom: -10px;" />
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-12 text-right" style="padding:25px;">
+                    <input type="button" id="btnSaveSubmitForm" class="btn btn-primary btn-default" value="Save" />
+                    <input type="reset" class="btn btn-primary btn-default" value="Cancel" data-dismiss="modal" />
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
+
+<script src="~/Content/admin/assets/global/plugins/jquery-multi-select/js/jquery.multi-select.js"></script>
+<script src="~/Scripts/multiselect.min.js"></script>
+
+<script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+
+
+
+
+<script type="text/javascript">
+
+    $(document).ready(function ($) {
+
+        // $(".chosen-select").chosen({ no_results_text: "Oops, nothing found!" });
+
+        $('#ddlEmailNotesTo').chosen();
+    });
+
+    $("#btnSaveSubmitForm").click(function () {
+
+        //var today = new Date();
+        //var dd = today.getDate();
+        //var mm = today.getMonth() + 1; //January is 0!
+
+        //var yyyy = today.getFullYear();
+        //if (dd < 10) {
+        //    dd = '0' + dd;
+        //}
+        //if (mm < 10) {
+        //    mm = '0' + mm;
+        //}
+        //var today = mm + '/' + dd + '/' + yyyy;
+         
+        var isvalid = true;
+        if ($('#InitiatedBy').val() == '') { $('#InitiatedBy').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#InitiatedBy').css('border-color', ''); }
+        if ($('#ServiceLogAreaListId').val() == '0') { $('#ServiceLogAreaListId').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ServiceLogAreaListId').css('border-color', ''); }
+        if ($('#ServiceLogTypeListId').val() == '0') { $('#ServiceLogTypeListId').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ServiceLogTypeListId').css('border-color', ''); }
+        if ($('#SpokeWith').val() == '') { $('#SpokeWith').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#SpokeWith').css('border-color', ''); }
+        if ($('#StatusResultListId').val() == '0') { $('#StatusResultListId').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#StatusResultListId').css('border-color', ''); }
+        //if ($('#CallBack').val() == '0') {$('#CallBack').css('border-color', 'red'); if (isvalid == true) {isvalid = false; } } else {$('#CallBack').css('border-color', ''); }
+
+        $("#CallBack").val($("#txtCallBack").val() + " " + $("#CallTime").val());
+
+        var option_all = $("#ddlEmailNotesTo option:selected").map(function () {
+            return $(this).val();
+        }).get().join(',');
+
+        $("#hdnEmailNotesTo").val(option_all);
+
+        if (isvalid == true) {
+            $("#frmServiceCallLog").submit();
+        }
+    });
+</script>
+

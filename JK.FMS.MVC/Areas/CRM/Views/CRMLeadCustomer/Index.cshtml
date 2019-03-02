@@ -1,0 +1,1388 @@
+﻿@using JK.FMS.MVC.Areas.CRM.Common
+@using JK.Resources
+@model IEnumerable<JKViewModels.CRM.CRMPotentialCustomerViewModel>
+
+@{
+    /**/
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" type="text/css" />
+
+    <style type="text/css">
+        th {
+            text-transform: uppercase;
+            text-align: center;
+        }
+    </style>
+
+    <style>
+        .form-actions {
+            padding-top: 10px;
+            margin-top: 20px;
+            border-top: 1px solid #e7ecf1;
+        }
+
+        .form-section {
+            margin-top: 10px;
+            padding: 5px;
+            border-bottom: 1px solid #e7ecf1;
+        }
+
+        .forminput {
+            text-align: left;
+            margin-left: -20px;
+            border: none;
+            background: transparent;
+        }
+
+        .portlet-bottom {
+            margin-bottom: 10px;
+        }
+
+        .portlet-align {
+            padding-left: 6px;
+            padding-right: 6px;
+        }
+
+        .modal-custom-content {
+            padding: 0px;
+            border-radius: 20px;
+        }
+
+        .modal-custom-header {
+            background: #3598DC;
+            padding: 8px;
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
+        }
+
+        .modal-close-button {
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .capitaltext {
+            text-transform: uppercase;
+        }
+
+        .tabpointer {
+            cursor: pointer;
+        }
+
+        .rowPadding {
+            padding-top: .5em;
+            padding-bottom: .5em;
+        }
+    </style>
+
+    <style>
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .page-size {
+            padding-left: 0;
+            padding-right: 0;
+            width: 62px;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        #CustomerList th {
+            vertical-align: middle;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .no-margin {
+            margin: 0;
+        }
+
+        .padding-tb1 {
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        .margin-tb1 {
+            margin-top: 1px;
+            margin-bottom: 1px;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .contract {
+            text-align: right;
+        }
+
+        .tablebox .table-responsive {
+            min-height: 80px;
+        }
+    </style>
+
+    <style>
+        @@media (min-width: 768px) {
+            .seven-cols .col-md-1,
+            .seven-cols .col-sm-1,
+            .seven-cols .col-lg-1 {
+                width: 100%;
+                *width: 100%;
+            }
+        }
+
+        @@media (min-width: 992px) {
+            .seven-cols .col-md-1,
+            .seven-cols .col-sm-1,
+            .seven-cols .col-lg-1 {
+                width: 14.285714285714285714285714285714%;
+                *width: 14.285714285714285714285714285714%;
+            }
+        }
+
+        @@media (min-width: 1200px) {
+            .seven-cols .col-md-1,
+            .seven-cols .col-sm-1,
+            .seven-cols .col-lg-1 {
+                width: 14.285714285714285714285714285714%;
+                *width: 14.285714285714285714285714285714%;
+            }
+        }
+    </style>
+
+}
+
+@section pageplugins{
+
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js")" type="text/javascript"></script>
+
+}
+
+@section scripts {
+
+    <script type="text/javascript">
+
+        /**
+         * Setup the lead table.
+         */
+        var setupTable = function () {
+            var table = $('#lead_table');
+
+            table.DataTable({
+                "pageLength": 10, // default records per page
+                "dom": "<'headerboxcustom list'<'row'<'col-md-1'l><'col-md-4'f><'#divrightddl.col-md-5 pull-right text-center'>>><'table-responsive't><'bottom'ip><'clear'>",
+                "bInfo": false,
+                "bStateSave": false,
+                "fnStateSaveParams": function (oSettings, sValue) {
+                    $("#lead_table tr.filter .form-control").each(function () {
+                        sValue[$(this).attr('name')] = $(this).val();
+                    });
+
+                    return sValue;
+                },
+                "columnDefs": [
+                    { "width": "7%", "targets": 0 },
+                    { "width": "30%", "targets": 1 },
+                    { "width": "18%", "targets": 2 },
+                    { "width": "20%", "targets": 3 },
+                    { "width": "15%", "targets": 4 },
+                    { "width": "7%", "targets": 5 },
+                    { "width": "15%", "targets": 6 },
+                    { "width": "15%", "targets": 7 },
+                    { "width": "15%", "targets": 8 }
+                ],
+
+                buttons: [
+                    { extend: 'print' },
+                    { extend: 'pdf' },
+                    { extend: 'excel' }
+                ]
+            });
+
+            var exp = '<div class="actions pull-right">';
+            exp += '<div class="btn-group">';
+            exp += '<a class="btn btn-circle" href="" data-toggle="dropdown" style="background-color: white;"><i class="fa fa-download"></i>';
+            exp += '<span class="hidden-xs"> @JKCRMResource.export </span>';
+            exp += '<i class="fa fa-angle-down"></i></a><ul class="dropdown-menu pull-right" id="lead_table_tools">';
+            exp += '<li><a href="javascript:;" data-action="0" class="tool-action"><i class="icon-printer"></i> @JKCRMResource.print</a></li>';
+            exp += '<li><a href="javascript:;" data-action="1" class="tool-action"><i class="icon-doc"></i> @JKCRMResource.pdf</a></li>';
+            exp += '<li><a href="javascript:;" data-action="2" class="tool-action"><i class="icon-paper-clip"></i> @JKCRMResource.excel</a></li></ul></div></div>';
+            $("#divrightddl").append(exp);
+
+
+            @*var imp = '<div class="actions pull-right">';
+            imp += '<a class="btn btn-circle" data-toggle="modal" href="#import_modalview" style="background-color: white;">';
+            imp += '<i class="fa fa-plus"></i> ';
+            imp += '@JKCRMResource.import </a>';
+            imp += '</div>';
+            $("#divrightddl").append(imp);*@
+
+            var addnew = '<div class="actions pull-right">';
+            addnew += '<a class="btn btn-circle" data-toggle="modal" href="#addlead_popup" style="background-color: white;">';
+            addnew += '<i class="fa fa-plus"></i> ';
+            addnew += '@JKCRMResource.addnewlead </a>';
+            addnew += '</div>';
+            $("#divrightddl").append(addnew);
+
+        }
+
+        /**
+         * Setup the form.
+         */
+        var setupForm = function () {
+            JK.CRM.CRMFormValidation.init("#addlead_form");
+            JK.CRM.CRMFormInputMask.handlePhoneInputMask("#input_phonenumber");
+            JK.CRM.CRMFormInputMask.handlePhoneInputMask("#input_mobilenumber");
+            JK.CRM.CRMFormInputMask.handlePhoneInputMask("#txtphonenumber");
+
+        }
+
+        /**
+         * Reset all fields in the add lead form.
+         */
+        var resetAddLeadForm = function () {
+            $("#input_companyname").val("");
+            $("#input_contactname").val("");
+            $("#input_phonenumber").val("");
+            $("#input_email").val("");
+            $("#input_note").val("");
+            JK.CRM.CRMFormValidation.reset("#addlead_form");
+        };
+
+        /**
+        * Import Excel file
+        */
+
+        var excelfile;
+        //$('input[type=file]').trigger('click');
+        $('input[type=file]').change(function () {
+            excelfile = ($(this).val());
+        });
+
+
+        var UploadImportfile = function () {
+            //$('input[type=file]').trigger('click');
+            $('input[type=file]').change(function () {
+                console.log($(this).val());
+            });
+
+            var ImportForm = $("#import_form");
+
+            if (!ImportForm.valid()) {
+                return;
+            } else {
+
+                var postData = {
+                    // Lead Source
+                    "SourceProvider": $("#select_providertype option:selected").val(),
+                    "CompanyName": $("#input_companyname").val(),
+                    "ContactName": $("#input_contactname").val(),
+                    "PhoneNumber": $("#input_phonenumber").val(),
+                    "EmailAddress": $("#input_email").val(),
+                };
+                //var postData = {
+                //    // Lead Source
+                //    "SourceProvider": $("#select_providertype option:selected").text(),
+                //    "FirstName": $("#input_firstname").val(),
+                //    "LastName": $("#input_lastname").val(),
+                //    "PhoneNumber": $("#input_phonenumber").val(),
+                //    "EmailAddress": $("#input_email").val()
+                //};
+
+                // Make a request
+                JK.CRM.CRMApp.showActivity("#addlead_modalview_footer");
+
+                $.ajax({
+                    url: "/CRM/CRMLeadCustomer/Create",
+                    type: "POST",
+                    data: postData,
+                    dataType: "json",
+                    cache: false,
+                    success: function (response) {
+                        JK.CRM.CRMApp.hideActivity("#addlead_modalview_footer");
+                        console.log(response);
+                        console.log(response.success);
+
+                    },
+                    error: function (error) {
+                        JK.CRM.CRMApp.hideActivity("#addlead_modalview_footer");
+                        console.log(error.message);
+                    }
+                });
+            }
+        }
+
+        /**
+         * Create a new lead from the modal view.
+         */
+        var createNewLead = function () {
+
+            var isvalid = true;
+            if ($('#select_providertype').val() == '' || $('#select_providertype').val() == '0') { $('#select_providertype').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#select_providertype').css('border-color', ''); }
+            if ($('#input_companyname').val().trim() == '') { $('#input_companyname').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_companyname').css('border-color', ''); }
+            if ($('#input_contactname').val().trim() == '') { $('#input_contactname').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_contactname').css('border-color', ''); }
+            if ($('#input_phonenumber').val().trim() == '') { $('#input_phonenumber').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_phonenumber').css('border-color', ''); }
+            //if ($('#input_email').val().trim() == '') { $('#input_email').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#input_email').css('border-color', ''); }
+
+            if (isvalid == true) {
+                var addLeadForm = $("#addlead_form");
+                if (!addLeadForm.valid()) {
+                    return;
+                } else {
+
+                    var postData = {
+                        // Lead Source
+                        "SourceProvider": $("#select_providertype option:selected").val(),
+                        "CompanyName": $("#input_companyname").val(),
+                        "ContactName": $("#input_contactname").val(),
+                        "PhoneNumber": $("#input_phonenumber").val(),
+                        "EmailAddress": $("#input_email").val(),
+                        "Note": $("#input_note").val()
+                    };
+
+                    $("#cancel_addlead_button").prop("disabled", true);
+                    $("#addlead_button").prop("disabled", true);
+                    JK.CRM.CRMApp.showActivity("#addlead_modalview_footer");
+
+                    $.ajax({
+                        url: "/CRM/CRMLeadCustomer/Create",
+                        type: "POST",
+                        data: postData,
+                        dataType: "json",
+                        cache: false,
+                        success: function (response) {
+                            if (response.success) {
+                                JK.CRM.CRMApp.hideActivity("#addlead_modalview_footer");
+                                var accountId = response.result["CRM_AccountId"];
+                                var url = '@Url.Action("Detail", "CRMLeadCustomer")?accountId=' + accountId;
+                                location.href = url;
+                            }
+                            else {
+                                location.reload();
+                            }
+                        },
+                        error: function (error) {
+                            JK.CRM.CRMApp.hideActivity("#addlead_modalview_footer");
+                            console.log(error.message);
+                        }
+                    });
+                }
+            }
+        }
+
+        function getCurrentUrl() {
+            return '@Url.Action("NewLeadListData", "CRMLeadCustomer", new { area = "CRM" })';
+        }
+        //Set Number of Record to show
+        function setPaging() {
+            var z = $("#pageSize").val();
+            var table = $("#NewLeadList").DataTable();
+            if (z > 0) {
+                table.page.len(z).draw();
+            }
+            else if (z == -1) {
+                table.page.len(table.rows().count()).draw();
+            }
+            else {
+                table.page.page.len(10).draw();
+            }
+        }
+
+        $(document).ready(function () {
+
+            //$("#select_searchfield").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectAllText: 'Select all',
+            //    buttonWidth: '100%',
+            //    nonSelectedText: 'Select status..',
+            //    dropRight: true,
+            //    numberDisplayed: 2,
+            //    onChange: initTable,
+            //    onSelectAll: initTable,
+            //    onDeselectAll: initTable
+            //});
+
+            // setupTable();
+
+            $.fn.dataTableExt.afnFiltering.push(function (oSettings, aData, iDataIndex) {
+                return true;
+            });
+
+
+            $(document).on('init.dt', function (e, settings) {
+                var api = new $.fn.dataTable.Api(settings);
+                if ($(api.table().node()).attr('id') == 'NewLeadList') {
+                    setPaging();
+                }
+            });
+
+            $('#lead_table_tools > li > a.tool-action').on('click', function () {
+                var action = $(this).attr('data-action');
+                $('#NewLeadList').DataTable().button(action).trigger();
+            });
+
+            function initTable() {
+
+                var ps = $('#pageSize').val();
+                var dtable = $('#NewLeadList').dataTable({
+                    "bAutoWidth": false,
+                    cache: true,
+                    "iDisplayLength": ps == '-1' ? 10 : ps,
+                    "bDestroy": true,                   
+                    "aLengthMenu": [[5, 7, 10, 25, 50, -1], [5, 7, 10, 25, 50, "All"]],
+                    //"dom": "<'headerbox list'<'row'<'col-md-1'l><'col-md-4'f><'#divrightckbox.col-md-5 pull-right text-center'>>><'table-responsive't><'bottom'ip><'clear'>",
+                    "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                    "aaSorting": [[0, "desc"]],
+                    "sAjaxSource": getCurrentUrl(),
+                    "sAjaxDataProp": "aadata",  // Internationalisation. For more info refer to http://datatables.net/manual/i18n
+                    "rowCallback": function (nRow, data) {
+                    },
+                    "aoColumns": [
+                        {
+                            "sName": "AccountId",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+                                return '<span>' + full.CRM_AccountId + '</span>';
+                            }
+                        },
+                        {
+                            "sName": "CompanyName",
+                            "bSortable": true,
+                            "sClass": "tabpointer",
+                            "mRender": function (data, type, full) {
+                                return "<a href='@Url.Action("Detail","CRMLeadCustomer")?accountId=" + full.CRM_AccountId + "' style='color:#0c9cff'>" + full.CompanyName + "</a>";
+                            }
+                        },
+                        {
+                            "sName": "FirstName",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+                                return "<span>" + full.Firstname + "</span>";
+                            }
+                        },
+                        {
+                            "sName": "Phone",
+                            "bSortable": true,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                if (full.PhoneNumber != null) {
+                                    if (full.PhoneNumber.length == 10)
+                                        var value = '(' + full.PhoneNumber.substr(0, 3) + ')' + ' ' + full.PhoneNumber.substr(3, 3) + '-' + full.PhoneNumber.substr(6, 4);
+                                    return '<span>' + value + '</span>';
+                                } else { return ''; }
+                            }
+                        },
+                        {
+                            "sName": "IndustryTypeName",
+                            "bSortable": true,
+                            "sClass": "capitaltext",
+                            "mRender": function (data, type, full) {
+                                return full.AccountTypeName;
+                            }
+                        },
+                        {
+                            "sName": "NumberOfLocations",
+                            "bSortable": true,
+                            "sClass": "alignCenter",
+                            "mRender": function (data, type, full) {
+                                return full.NumberOfLocations;
+                            }
+                        },
+                        {
+                            "sName": "BudgetAmount",
+                            "bSortable": true,
+                            "sClass": "right contract",
+                            "mRender": function (data, type, full) {
+                                if (full.BudgetAmount != null) {
+                                    var value = '$' + full.BudgetAmount.toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")
+                                    return '<span>' + value + '</span>';
+                                } else { return ''; }
+                            }
+                        },
+                        {
+                            "sName": "MonthlyPrice",
+                            "bSortable": true,
+                            "sClass": "right contract",
+                            "mRender": function (data, type, full) {
+                                if (full.MonthlyPrice != null) {
+                                    var value = '$' + full.MonthlyPrice.toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")
+                                    return '<span>' + value + '</span>';
+                                } else { return ''; }
+                            }
+                        },
+                        {
+                            "sName": "ContractAmount",
+                            "bSortable": true,
+                            "sClass": "right contract",
+                            "mRender": function (data, type, full) {
+                                if (full.ContractAmount != null) {
+                                    var value = '$' + full.ContractAmount.toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")
+                                    return '<span>' + value + '</span>';
+                                } else { return ''; }
+                            }
+
+                        },
+                        {
+                            "sName": "StageStatusName",
+                            "bSortable": true,
+                            "sClass": "alignCenter capitaltext",
+                            "mRender": function (data, type, full) {
+                                if (full.StageStatusName == "initialcommunication")
+                                    return '<span class="label label-sm label-warning" style="background-color:#567ca5;">' + full.StageStatusName + '</span>'
+                                if (full.StageStatusName == "fvpresentation")
+                                    return '<span class="label label-sm label-warning" style="background-color:#b3b36f;">' + full.StageStatusName + '</span>'
+                                if (full.StageStatusName == "bidding")
+                                    return '<span class="label label-sm label-warning" style="background-color:#8a7447;">' + full.StageStatusName + '</span>'
+                                if (full.StageStatusName == "pdappointment")
+                                    return '<span class="label label-sm label-warning">' + full.StageStatusName + '</span>'
+                                if (full.StageStatusName == "followup")
+                                    return '<span  class="label label-sm label-warning" style="background-color:#e67070;">' + full.StageStatusName + '</span>'
+                                if (full.StageStatusName == "sold")
+                                    return '<span class="label label-sm label-warning" style="background-color:#75923a;">' + full.StageStatusName + '</span>'
+                                if (full.StageStatusName == "close")
+                                    return '<span class="label label-sm label-warning" style="background-color:#75923a;">' + full.StageStatusName + '</span>'
+                                if (full.StageStatusName == "newlead" || full.StageStatusName == "callback" || full.StageStatusName == "qualifiedlead" || full.StageStatusName == "unqualifiedlead")
+                                    return '<span class="label label-sm label-warning" style="background-color:#75923a;">' + full.StageStatusName + '</span>'
+                            }
+                        }
+                    ]
+                });
+            }
+            /*Search key up event*/
+            $("#input_Search").keyup(function () {
+                var table = $("#NewLeadList").DataTable();
+                table.search($(this).val()).draw();
+            });
+
+            /*page size change event*/
+            $("#pageSize").change(function () {
+                setPaging();
+            })
+
+            /*Call table initialize function*/
+            initTable();
+
+            /*Show New Lead Table and New Lead Div */
+            $('#NewLeadList').show();
+            $('#divnewleadList').show();
+
+            /*SetUp the Form */
+            setupForm();
+        });
+
+
+        function checkCompanyDetails() {
+            var isvalid = true;
+            $("#diverrmsg").hide();
+            $('#txtcompanyname').css('border-color', '');
+            if ($('#txtcompanyname').val().trim() == '') { $('#txtcompanyname').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtcompanyname').css('border-color', ''); }
+            if ($('#txtphonenumber').val().trim() == '') { $('#txtphonenumber').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtphonenumber').css('border-color', ''); }
+            if (isvalid == true) {
+                $.ajax({
+                    url: '@Url.Action("CheckCompanynameExits", "CRMLeadCustomer",new { area = "CRM" })',
+                    dataType: "json",
+                    data: { CompanyName: $('#txtcompanyname').val().trim(), Phone: $('#txtphonenumber').val().trim() },
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        if (data != null) {
+                            if (data.AccId == "-1") {
+                                $("#diverrmsg").html("Company name already in system so please contact to administrator.");
+                                $("#diverrmsg").show();
+                                $('#txtcompanyname').css('border-color', 'red');
+                            }
+                            else if (data.AccId == "-2") {
+                                $("#diverrmsg").html("Phone number already in system so please contact to administrator.");
+                                $("#diverrmsg").show();
+                                $('#txtphonenumber').css('border-color', 'red');
+                            }
+                            else if (data.AccId == "-3") {
+                                //$("#diverrmsg").html("Company name already in New Leads but not match with phone number so please contact to administrator.");
+                                //$("#diverrmsg").show();
+                                //$('#txtphonenumber').css('border-color', 'red');
+                                $("#diverrmsg").hide();
+                                $("#addlead_popup").modal('hide');
+                                $('#txtcompanyname').css('border-color', '');
+                                $("#addlead_modalview").modal({ backdrop: 'static' });
+                                $("#input_companyname").val($("#txtcompanyname").val());
+                                $("#input_phonenumber").val($("#txtphonenumber").val());
+                                $("#txtcompanyname").val("");
+                                $("#txtphonenumber").val("");
+                            }
+                            else if (data.AccId == "-4") {
+                                //$("#diverrmsg").html("Phone number already in New Leads but not match with company name so please contact to administrator.");
+                                //$("#diverrmsg").show();
+                                //$('#txtcompanyname').css('border-color', 'red');
+                                $("#diverrmsg").hide();
+                                $("#addlead_popup").modal('hide');
+                                $('#txtcompanyname').css('border-color', '');
+                                $("#addlead_modalview").modal({ backdrop: 'static' });
+                                $("#input_companyname").val($("#txtcompanyname").val());
+                                $("#input_phonenumber").val($("#txtphonenumber").val());
+                                $("#txtcompanyname").val("");
+                                $("#txtphonenumber").val("");
+                            }
+                            else if (data.AccId != "0") {
+                                $("#addlead_confirmpopup").modal({ backdrop: 'static' });
+                                $("#btnconfirmYes").attr("onclick", "clickbtnconfirmYes(" + data.AccId + ")");
+                            }
+                            else {
+                                $("#diverrmsg").hide();
+                                $("#addlead_popup").modal('hide');
+                                $('#txtcompanyname').css('border-color', '');
+                                $("#addlead_modalview").modal({ backdrop: 'static' });
+                                $("#input_companyname").val($("#txtcompanyname").val());
+                                $("#input_phonenumber").val($("#txtphonenumber").val());
+                                $("#txtcompanyname").val("");
+                                $("#txtphonenumber").val("");
+                            }
+                        }
+                    },
+                    error: function () { }
+                });
+            }
+        }
+
+        function resetfrm() {
+            $("#txtcompanyname").val("");
+            $("#txtphonenumber").val("");
+            $("#diverrmsg").hide()
+            $('#txtcompanyname').css('border-color', '');
+        }
+
+        function clickbtnconfirmno() {
+            $("#addlead_confirmpopup").modal("hide");
+        }
+
+        function clickbtnconfirmYes(accountId) {
+
+            window.location.href = '@Url.Action("Detail", "CRMLeadCustomer",new { area = "CRM" })' + "?accountId=" + accountId;
+        }
+
+        function cancelAddLeadpopup() {
+            $("#txtcompanyname").val("");
+            $("#txtphonenumber").val("");
+        }
+
+        var searchfieldcount = 0;
+        function AppendLeadSearch() {
+
+            if (!($("#select_searchfield").children('option').length - 1 == searchfieldcount)) {
+
+                var leadsearch = "";
+                leadsearch = '<div class="col-md-12 rowPadding" id="itemchild" >';
+                leadsearch += '<div class="col-md-11">';
+                leadsearch += '<div class="control-label col-md-2 input-sm text-left">';
+                leadsearch += '<form>';
+                leadsearch += '<input type="radio" name="service" value="2" class="i-checks" checked="checked" id="And_' + searchfieldcount.toString() + '"/>';
+                leadsearch += '<span>&nbspAND&nbsp</span>';
+                leadsearch += '<input type="radio" name="service" value="2" class="i-checks" id="OR_' + searchfieldcount.toString() + '" />';
+                leadsearch += '<span>&nbspOR&nbsp</span>';
+                leadsearch += '</form>';
+                leadsearch += '</div>';
+                leadsearch += '<div class="col-md-3">';
+                leadsearch += '<select id="select_searchfield_' + searchfieldcount.toString() + '" class="form-control input-sm">';
+                leadsearch += '<option value="ACTCUSDTL.BudgetAmount">Budget Amount</option>';
+                leadsearch += '<option value="ACTCUSDTL.CompanyCity">City</option>';
+                leadsearch += '<option value="ContactPerson">Contact Person</option>';
+                leadsearch += '<option value="CC.ContractAmount">Contract Amount</option>';
+                leadsearch += '<option value="ACTCUSDTL.CreatedDate">Create Date</option>';
+                leadsearch += '<option value="ACT.EmailAddress">E-Mail</option>';
+                leadsearch += '<option value="ACT.CRM_AccountId">Lead ID</option>';
+                leadsearch += '<option value="ACTCUSDTL.BudgetAmount">Proposal Amount</option>';
+                leadsearch += '<option value="ACTCUSDTL.SqFt">Square Footage</option>';
+                leadsearch += '<option value="ACTCUSDTL.CompanyAddressLine1">Street</option>';
+                leadsearch += '<option value="ACTCUSDTL.CompanyZipCode">Zip Code</option>';
+                leadsearch += '<option value="ACTCUSDTL.CompanyName">Company Name</option>';
+                leadsearch += '</select>';
+                leadsearch += '</div>';
+                leadsearch += '<div class="col-md-3">';
+                leadsearch += '<select id="select_searchoperation_' + searchfieldcount.toString() + '" class="form-control input-sm"> ';
+                leadsearch += '<option value="1">Equal To</option>';
+                leadsearch += '<option value="2">Greater than</option>;'
+                leadsearch += '<option value="3">Less Than</option>';
+                leadsearch += '</select>';
+                leadsearch += '</div>';
+                leadsearch += '<div class="col-md-3">';
+                leadsearch += '<input id="input_operationtext_' + searchfieldcount.toString() + '" name="name" type="text" data-required="1" class="form-control input-sm" placeholder="" />';
+                leadsearch += '</div>';
+                leadsearch += '</div> ';
+                leadsearch += '<div class="col-md-1">';
+                leadsearch += '</div> ';
+                leadsearch += '</div>';
+                $("#lead_search").append(leadsearch);
+                searchfieldcount++;
+            }
+        }
+
+        function LeadSearch() {
+
+            var fieldModel = [{
+                "SearchField": $("#select_searchfield").val(),
+                "Operation": $("#select_searchoperation").val(),
+                "Text": $("#input_operationtext").val(),
+                "Condition": true,
+            }]
+            console.log("Search Field Count " + searchfieldcount);
+            for (var i = 0 ; i < searchfieldcount ; i++) {
+                var data = {
+                    "SearchField": $("#select_searchfield_" + i.toString()).val(),
+                    "Operation": $("#select_searchoperation_" + i.toString()).val(),
+                    "Text": $("#input_operationtext_" + i.toString()).val(),
+                    "Condition": $("#And_" + i.toString()).is(':checked'),
+                }
+                fieldModel.push(data);
+            }
+
+            var crmsearchfiled = {
+                "AccountType": $("#select_searchaccounttype").val(),
+                "Territory": $("#select_territory").val(),
+                "Source": $("#select_searchprovidertypelist").val(),
+                "Status": $("#select_searchstatus").val(),
+                "SortBy": $("#select_searchsortby").val(),
+                "LeadOnly": $("#checkbox_myleadsonly").is(':checked'),
+                "IncludeCallBackPending": $("#checkbox_includecallbackpending").is(':checked'),
+                "Exception": $("#checkbox_exceptiongrouponly").is(':checked')
+            }
+
+            var postData = {
+                "SearchField": fieldModel,
+                "CrmLeadSearch": crmsearchfiled
+            }
+
+            $.ajax({
+                url: "/CRM/CRMLeadCustomer/SearchCustomerLead",
+                type: "POST",
+                data: postData,
+                dataType: "json",
+                cache: false,
+                success: function (result) {
+                    var count = result.aadata.length;
+                    var newleadlst = $('#NewLeadList').DataTable();
+                    newleadlst.clear().draw();
+                    for (var i = 0; i < count; i++) {
+                        newleadlst.row.add({
+                            "CRM_AccountId": result.aadata[i].CRM_AccountId,
+                            "CompanyName": result.aadata[i].CompanyName,
+                            "Firstname": result.aadata[i].Firstname,
+                            "PhoneNumber": result.aadata[i].PhoneNumber,
+                            "AccountTypeName": result.aadata[i].AccountTypeName,
+                            "NumberOfLocations": result.aadata[i].NumberOfLocations,
+                            "BudgetAmount": result.aadata[i].BudgetAmount,
+                            "MonthlyPrice": result.aadata[i].MonthlyPrice,
+                            "ContractAmount": result.aadata[i].ContractAmount,
+                            "StageStatusName": result.aadata[i].StageStatusName,
+                        }).draw();
+                    }
+                }
+            });
+        }
+
+
+        /*Reset LeadSearch*/
+        function resetLeadSearch() {
+            /*Remove child*/
+            $('div#lead_search div#itemchild').remove();
+            //reset searchfiledcount
+            searchfieldcount = 0;
+            $("#checkbox_myleadsonly").prop("checked", false);
+            $("#checkbox_includecallbackpending").prop("checked", false);
+            $("#checkbox_exceptiongrouponly").prop("checked", false);
+            $("#select_searchprovidertypelist").val("");
+            $("#select_searchaccounttype").val("");
+            $("#select_searchstatus").val("All");
+            $("#select_searchsortby").val("All");
+            $("#select_searchfield").val("ACTCUSDTL.BudgetAmount");
+            $("#select_searchoperation").val(1);
+            $("#select_territory").val(0);
+            $("#input_operationtext").val("");
+        }
+
+        $(".upload-leads").click(function (e) {
+            e.preventDefault(); // avoid to execute the actual submit of the form.
+            var formData = new FormData();
+            var totalFiles = document.getElementById("FileUpload").files.length;
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById("FileUpload").files[i];
+                formData.append("FileUpload", file);
+            }
+
+            var url = "/CRMLeadCustomer/UploadExcel/";
+            $.ajax({
+                type: 'POST',
+                url: "../../" + url,
+                data: formData,
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    alert(result.Message);
+                    window.location.reload();
+                }
+            });
+        });
+
+
+
+
+    </script>
+
+}
+
+@*New Lead Header*@
+<div class="custom-listbox" style="margin-top:-7px;">
+    <div class="headerbox">
+        <div class="row no-padding">
+            <div class="col-md-1 page-size" style="margin-top:4px;">
+                <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                    <option value="-1">All</option>
+                    <option value="10" selected>10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </div>
+            <div class="col-md-3" style="margin-top:4px;">
+                <div class="input-icon">
+                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                    <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search..." value="" class="form-control input-sm typeahead" />
+                </div>
+            </div>
+            <div class="col-md-2"></div>
+            <div class="col-md-4 pull-right" style="padding-right:5px;">
+                <div class="actions pull-right">
+                    <div class="btn-group">
+                        <a class="btn btn-circle" href="" data-toggle="dropdown" style="background-color: white;">
+                            <i class="fa fa-download"></i><span class="hidden-xs"> @JKCRMResource.export </span><i class="fa fa-angle-down"></i>
+                        </a>
+                        <ul class="dropdown-menu pull-right" id="lead_table_tools">
+                            <li><a href="javascript:;" data-action="0" class="tool-action"><i class="icon-printer"></i> @JKCRMResource.print</a></li>
+                            <li><a href="javascript:;" data-action="1" class="tool-action"><i class="icon-doc"></i> @JKCRMResource.pdf</a></li>
+                            <li><a href="javascript:;" data-action="2" class="tool-action"><i class="icon-paper-clip"></i> @JKCRMResource.excel</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="actions pull-right">
+                    <a class="btn btn-circle" data-toggle="modal" href="#import_modalview" style="background-color: white;"><i class="fa fa-plus"></i>@JKCRMResource.import</a>
+                </div>
+                <div class="actions pull-right">
+                    <a class="btn btn-circle" data-toggle="modal" href="#addlead_popup" style="background-color: white;">
+                        <i class="fa fa-plus"></i>
+                        @JKCRMResource.addnewlead
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-2 col-md-offset-2 pull-right" style="padding-right:5px;">
+                <a class="btn btn-circle" data-toggle="modal" href="#customerLeadSearch_modalview" style="background-color: white;">
+                    <i class="fa fa-search"></i>
+                    Search
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*New Lead Table*@
+<div class="tablebox">
+    <div class="table-responsive" id="divnewleadList" style="display:none;">
+        <table class="table table-striped table-bordered table-hover order-column" id="NewLeadList" style="display:none;margin-top:0 !important;">
+            <thead>
+                <tr>
+                    <th style="width:30px;text-align:center;">
+                        Lead #
+                    </th>
+                    <th style="width:160px;text-align:center;">
+                        Company Name
+                    </th>
+                    <th style="text-align:center;width:75px;">
+                        Contact Name
+                    </th>
+                    <th style="text-align:center;width:52px;">
+                        Contact No
+                    </th>
+                    <th style="text-align:center;width:80px;">
+                        Account Type
+                    </th>
+                    <th style="text-align:center;width:25px;">
+                        # LOC
+                    </th>
+                    <th style="text-align:center;width:10px;">
+                        Budget
+                    </th>
+                    <th style="text-align:center;width:10px;">
+                        Bidding
+                    </th>
+                    <th style="text-align:center;width:4px;">
+                        Contract Amount
+                    </th>
+                    <th style="text-align:center;width:38px;">
+                        @JKCRMResource.leadstatus
+                    </th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+
+@*Add New Lead Modal*@ 
+
+<div class="modal fade" id="addlead_popup" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" style="width:455px;">
+        <div class="modal-content">
+            <div class="modal-header" id="addlead_popup_header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="cancelAddLeadpopup();"></button>
+                <h4 class="modal-title">New Lead</h4>
+            </div>
+            <div class="modal-body" id="addlead_popup_body">
+                <div class="row">
+                    <div class="form-body">
+                        <div id="diverrmsg" style="color:red;display:none;padding-left:27px;font-size:13px;"></div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Company Name<span class="required">*</span>:</label>
+                                    <input id="txtcompanyname" name="txtcompanyname" type="text" class="form-control input-sm" maxlength="100" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Phone Number<span class="required">*</span>:</label>
+                                    <input id="txtphonenumber" name="txtphonenumber" type="text" class="form-control input-sm" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="addlead_popup_footer">
+                <button id="cancel_addlead_button" type="button" class="btn btn-default" data-dismiss="modal" onclick="resetfrm();">@JKCRMResource.cancel</button>
+                <button id="addlead_button" type="button" class="btn btn-success" onclick="checkCompanyDetails();">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="addlead_confirmpopup" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" style="width:522px;">
+        <div class="modal-content">
+            <div class="modal-header" id="confirm _popup_header">
+                <h4 class="modal-title">Confirm Company Details</h4>
+            </div>
+            <div class="modal-body" id="addlead_popup_body">
+                <div class="row">
+                    <div class="form-body">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label style="color:red;font-size:13px;">Comany name or phone already exists in New Leads. do you want to access it?</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="addlead_popup_footer">
+                <button id="btnconfirmno" type="button" class="btn btn-default" onclick="clickbtnconfirmno();">No</button>
+                <button id="btnconfirmYes" type="button" class="btn btn-success" onclick="">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Add Lead Modal View -->
+<div class="modal fade" id="addlead_modalview" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" id="addlead_modalview_header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="resetAddLeadForm();"></button>
+                <h4 class="modal-title">@JKCRMResource.addnewlead</h4>
+            </div>
+            <div class="modal-body" id="addlead_modalview_body">
+                <div class="row">
+                    <form action="#" id="addlead_form">
+                        <div class="form-body">
+                            <div class="col-md-12">
+                                <!-- Lead Source -->
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="select_providertype">Source<span class="required">*</span>:</label>
+                                        @Html.DropDownList("providertypelist", (SelectList)ViewBag.ProviderTypeList, new { @class = "form-control input-sm", @id = "select_providertype" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="input_companyname">Company Name<span class="required">*</span>:</label>
+                                        <input id="input_companyname" name="name" type="text" data-required="1" class="form-control input-sm" placeholder="" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="input_contactname">Contact Name<span class="required">*</span>:</label>
+                                        <input id="input_contactname" name="name" type="text" data-required="1" class="form-control input-sm" placeholder="" />
+                                    </div>
+                                </div>
+                                @*<div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="input_lastname">@JKCRMResource.lastname<span class="required">*</span>:</label>
+                                            <input id="input_lastname" name="name" type="text" data-required="1" class="form-control input-sm" placeholder="" />
+                                        </div>
+                                    </div>*@
+                            </div>
+                            <div class="col-md-12">
+                                <!-- Phone Number -->
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="input_phonenumber">@JKCRMResource.phoneNumber<span class="required">*</span>:</label>
+                                        <input id="input_phonenumber" name="phonenumber" type="text" data-required="1" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Email -->
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="input_email">@JKCRMResource.email:</label>
+                                        <input id="input_email" name="email1" type="text" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Notes-->
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="input_note">@JKCRMResource.note:</label>
+                                        <textarea id="input_note" class="form-control input-sm" rows="6"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer" id="addlead_modalview_footer">
+                <button id="cancel_addlead_button" type="button" class="btn btn-default" data-dismiss="modal" onclick="resetAddLeadForm();">@JKCRMResource.cancel</button>
+                <button id="addlead_button" type="button" class="btn btn-success" onclick="createNewLead();">@JKCRMResource.addlead</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>
+
+<!-- Import Model View -->
+<div class="modal fade" id="import_modalview" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" id="import_modalview_header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="resetAddLeadForm();"></button>
+                <h4 class="modal-title">Import Leads</h4>
+            </div>
+            <div class="modal-body" id="import_modalview_body">
+                <div class="row">
+
+                    @using (Html.BeginForm("UploadExcel", "CRMLeadCustomer", FormMethod.Post, new { enctype = "multipart/form-data", id = "uploadLeadsForm" }))
+                    {
+
+                        @*@using (Ajax.BeginForm("UploadExcel", "CRMLeadCustomer", new AjaxOptions { OnSuccess = "Callback55", OnFailure = "OnFailure", }, new { enctype = "multipart/form-data" }))
+                            {*@
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-12 text-center">
+                                    <div class="form-group">
+                                        <div class="col-md-offset-1 col-md-10">
+                                            <div class="fileinput fileinput-new" data-provides="fileinput">
+                                                <div class="input-group input-large">
+                                                    <div class="form-control uneditable-input input-fixed input-medium" data-trigger="fileinput">
+                                                        <i class="fa fa-file fileinput-exists"></i>&nbsp;
+                                                        <span class="fileinput-filename"></span>
+                                                    </div>
+                                                    <span class="input-group-addon btn default btn-file">
+                                                        <span class="fileinput-new"> Select file </span>
+                                                        <span class="fileinput-exists"> Change </span>
+                                                        <input type="hidden" value="" name="..."><input type="file" id="FileUpload" name="FileUpload">
+                                                    </span>
+                                                    <a href="javascript:;" class="input-group-addon btn red fileinput-exists" data-dismiss="fileinput"> Remove </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <input type="submit" value="Upload" id="btnSubmit" class="btn btn-primary  action upload-leads" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>
+
+
+<!-- Customer Lead Search Modal View -->
+<div class="modal fade custom-model custom-form-design" id="customerLeadSearch_modalview" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content modal-custom-content" style="width: 750px;margin-left: -120px!important;">
+            <div class="modal-header modal-custom-header" id="customerLeadSearch_modalview_header">
+                <button type="button" class="close modal-close-button" data-dismiss="modal" aria-hidden="true" onclick="resetLeadSearch();"></button>
+                <h4 class="modal-title">Customer Lead Search</h4>
+            </div>
+            <div class="modal-body" id="customerLeadSearch_modalview_body">
+                <div class="row">
+                    <form action="#" id="addNote_form">
+                        <div class="form-body">
+
+                            <div class="col-md-12 rowPadding" id="lead_search">
+                                <div class="col-md-11">
+                                    <!--Note Title-->
+                                    <div class="control-label col-md-2 input-sm text-right">
+                                        Search Field:
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select id="select_searchfield" class="form-control input-sm">
+                                            <option value="ACTCUSDTL.BudgetAmount">Budget Amount</option>
+                                            <option value="ACTCUSDTL.CompanyCity">City</option>
+                                            <option value="ContactPerson">Contact Person</option>
+                                            <option value="CC.ContractAmount">Contract Amount</option>
+                                            <option value="ACTCUSDTL.CreatedDate">Create Date</option>
+                                            <option value="ACT.EmailAddress">E-Mail</option>
+                                            <option value="ACT.CRM_AccountId">Lead ID</option>
+                                            <option value="ACTCUSDTL.BudgetAmount">Proposal Amount</option>
+                                            <option value="ACTCUSDTL.SqFt">Square Footage</option>
+                                            <option value="ACTCUSDTL.CompanyAddressLine1">Street</option>
+                                            <option value="ACTCUSDTL.CompanyZipCode">Zip Code</option>
+                                            <option value="ACTCUSDTL.CompanyName">Company Name</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select id="select_searchoperation" class="form-control input-sm">
+                                            <option value="1">Equal To</option>
+                                            <option value="2">Greater than</option>
+                                            <option value="3">Less Than</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input id="input_operationtext" name="name" type="text" data-required="1" class="form-control input-sm" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <a href="javascript:void(0);" onclick="AppendLeadSearch();">+ Add</a>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 rowPadding">
+                                <div class="col-md-11">
+                                    <!--Note Title-->
+                                    <div class="control-label col-md-2 input-sm text-right">
+                                        Account Type:
+                                    </div>
+                                    <div class="col-md-3">
+                                        @Html.DropDownList("select_searchaccounttype", (SelectList)ViewBag.AccountTypeList, "All", new { @class = "form-control input-sm", @id = "select_searchaccounttype" })
+                                    </div>
+                                    <div class="col-md-3  input-sm text-right">
+                                        Territory:
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select id="select_territory" name="select_territory" class="form-control input-sm">
+                                            <option value="0">All</option>
+                                            <option value="1">Buffalo North</option>
+                                            <option value="2">Buffalo South</option>
+                                            <option value="3">Exception</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 rowPadding">
+                                <div class="col-md-11">
+                                    <!--Note Title-->
+                                    <div class="control-label col-md-2 input-sm text-right">
+                                        Source:
+                                    </div>
+                                    <div class="col-md-3">
+                                        @Html.DropDownList("select_searchprovidertypelist", (SelectList)ViewBag.ProviderTypeList, "All", new { @class = "form-control input-sm", @id = "select_searchprovidertypelist" })
+                                    </div>
+                                    <div class="col-md-3 input-sm text-right">
+                                        Status:
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select id="select_searchstatus" name="select_status" class="form-control input-sm">
+                                            <option value="All">All Active</option>
+                                            <option value="Active">&nbsp;&nbsp;&nbsp;&nbsp;Active</option>
+                                            <option value="PreCust">&nbsp;&nbsp;&nbsp;&nbsp;Previous Customer</option>
+                                            <option value="AllIA">All InActive</option>
+                                            <option value="CurCust">&nbsp;&nbsp;&nbsp;&nbsp;Current Customer</option>
+                                            <option value="DoNotCall">&nbsp;&nbsp;&nbsp;&nbsp;Do Not Call</option>
+                                            <option value="NotQual">&nbsp;&nbsp;&nbsp;&nbsp;Not Qualified</option>
+                                            <option value="Sold">&nbsp;&nbsp;&nbsp;&nbsp;Sold</option>
+                                            <option value="Wrong #">&nbsp;&nbsp;&nbsp;&nbsp;Wrong #</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 rowPadding">
+                                <div class="col-md-11">
+                                    <!--Note Title-->
+                                    <div class="control-label col-md-2 input-sm text-right">
+                                        Sort By:
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select id="select_searchsortby" class="form-control input-sm">
+                                            <option value="All">All</option>
+                                            <option value="BudgetAmount">Budget Amount</option>
+                                            <option value="CompanyCity">City</option>
+                                            <option value="ContactPerson">Contact Person</option>
+                                            <option value="BudgetAmount">Contract Amount</option>
+                                            <option value="CreatedDate">Create Date</option>
+                                            <option value="EmailAddress">E-Mail</option>
+                                            <option value="CRM_AccountId">Lead ID</option>
+                                            <option value="BudgetAmount">Proposal Amount</option>
+                                            <option value="MeasureFacility">Square Footage</option>
+                                            <option value="CompanyAddressLine1">Street</option>
+                                            <option value="CompanyZipCode">Zip Code</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+
+                                    </div>
+                                    <div class="col-md-3">
+
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="col-md-11">
+                                    <!--Note Title-->
+                                    <div class="control-label col-md-2 input-sm text-right">
+
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="checkbox" name="service" value="2" class="i-checks" id="checkbox_myleadsonly" />
+                                        <span>My Leads Only</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="checkbox" name="service" value="2" class="i-checks" id="checkbox_includecallbackpending" />
+                                        <span>Include Call Backs Pending</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="checkbox" name="service" value="2" class="i-checks" id="checkbox_exceptiongrouponly" />
+                                        <span>Exception Group Only</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer" id="addschedule_modalview_footer">
+                <button id="leadsearch_cancel_button" type="button" class="btn btn-default" data-dismiss="modal" onclick="resetLeadSearch();">Cancel</button>
+                <button id="leadsearch_reset_button" type="button" class="btn btn-success" onclick="resetLeadSearch();">Reset</button>
+                <button id="leadsearch_button" type="button" class="btn btn-success" data-dismiss="modal" onclick="LeadSearch();">Search</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>

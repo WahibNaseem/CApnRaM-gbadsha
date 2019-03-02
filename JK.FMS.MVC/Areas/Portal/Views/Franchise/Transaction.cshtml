@@ -1,0 +1,403 @@
+﻿@model JKViewModels.Franchise.ManageFranchiseViewModel
+@{
+    ViewBag.Title = "Franchise Recurring Transaction-1";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section styles{
+    <style type="text/css">
+        .jkcustom-page-title {
+            font-size: 18px;
+            padding: 3px;
+            color: #fff !important;
+            background: #3598dc !important;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .jkcustom-form-table {
+            width: 100%;
+        }
+
+            .jkcustom-form-table tr {
+            }
+
+                .jkcustom-form-table tr > td {
+                    padding-bottom: 3px;
+                    padding-top: 3px;
+                }
+
+        .form-group.form-md-line-input {
+            position: relative;
+            margin: 0 0 15px;
+            padding-top: 20px;
+        }
+    </style>
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
+
+
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="jkcustom-page-title">
+            Franchise Recurring Transaction
+        </div>
+    </div>    
+    <div style="width:950px;margin:0 auto;margin-top:50px;">
+
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="form-body">
+                    <form novalidate="novalidate">
+                        <input type="hidden" id="hdnfranchiseeid" name="hdnfranchiseeid" value="0">
+                        <input type="hidden" id="hdnfranchiseetransid" name="hdnfranchiseetransid" value="-1">
+                        @Html.Hidden("hdntranstype", (object)ViewBag.Type)
+
+                        <table class="jkcustom-form-table">
+                            <tr style="border-bottom:1px solid #E1E5EC;">
+                                <td style="width: 150px;padding-bottom:5px;"><label for="txtfranchiseenumber" class="control-label">Franchisee Number<span class="required">*</span></label></td>
+                                <td style="width: 100px;padding-bottom:5px;"><input type="text" name="txtfranchiseenumber" id="txtfranchiseenumber" value="" placeholder="" required class="form-control input-sm" onblur="loadFranchiseetransaction()" /></td>
+                                <td style="padding-left:8px;padding-bottom:5px;"><span id="divfranchiseename">Franchisee Name</span></td>
+                            </tr>
+                        </table>
+                        <br />
+                        <table class="jkcustom-form-table">
+                            <tr>
+                                <td style="width: 90px;"><label for="txtfranchiseenumber" class="control-label">Type<span class="required">*</span></label></td>
+                                <td style="width: 350px;">@Html.DropDownList("TransactionType", null, "Select One", htmlAttributes: new { @class = "form-control", @id = "ddlType", onclick = "ddlstatuschange()" })</td>
+
+                                <td style="padding-left:8px;text-align:right" colspan="2">
+                                    <div class="md-checkbox-inline">
+                                        <div class="md-checkbox">
+                                            <input type="checkbox" id="chkcredit" name="chkcredit" value="-1000" class="md-check" onclick="clickchkValue(this)">
+                                            <label for="chkcredit">
+                                                <span></span>
+                                                <span class="check"></span>
+                                                <span class="box"></span> Credit
+                                            </label>
+                                        </div>
+                                        <div class="md-checkbox">
+                                            <input type="checkbox" id="chkresell" name="chkresell" value="-1000" class="md-check" onclick="clickchkValue(this)">
+                                            <label for="chkresell">
+                                                <span class="inc"></span>
+                                                <span class="check"></span>
+                                                <span class="box"></span> Resell
+                                            </label>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="jkcustom-form-table">
+                            <tr>
+                                <td style="width: 90px;"><label for="txtdate" class="control-label">Date<span class="required">*</span></label></td>
+                                <td style="width: 120px;"><input type="text" name="txtdate" id="txtdate" value="" placeholder="Date" class="form-control date-picker" /></td>
+
+                                <td style="padding-left:8px;text-align:right" colspan="2"></td>
+                            </tr>
+                        </table>
+                        <table class="jkcustom-form-table">
+                            <tr>
+                                <td style="width: 90px;"><label for="txtdate" class="control-label">Status<span class="required">*</span></label></td>
+                                <td style="width: 120px;">@Html.DropDownList("Status", null, null, htmlAttributes: new { @class = "form-control", @id = "ddlstatus" })</td>
+                                <td style="width: 110px;text-align:right;"><label for="txtdate" class="control-label">Start Date<span class="required">*</span></label></td>
+                                <td style="width: 100px;"><input type="text" name="txtstartdate" id="txtstartdate" value="" placeholder="Date" class="form-control date-picker" /></td>
+                                <td style="width: 120px;text-align:right;"><label for="txtdate" class="control-label">No of Payments<span class="required">*</span></label></td>
+                                <td style="width: 65px;text-align:right;"><input type="text" name="txtnoofpayments" id="txtnoofpayments" value="" placeholder="0" class="form-control" /></td>
+                                <td style="text-align:right;"><label for="txtdate" class="control-label">Payments Billed<span class="required">*</span></label></td>
+                                <td style="width: 65px;"><input type="text" name="txtpaymentbiiled" id="txtpaymentbiiled" value="0" disabled="disabled" class="form-control" /></td>
+                                <td><label for="txtdate" class="control-label">Gross Total<span class="required">*</span></label></td>
+                                <td style="width: 100px;"><input type="text" name="txtgrosstotal" id="txtgrosstotal" value="" placeholder="$0.00" class="form-control" data-inputmask="'alias': 'currency'" /></td>
+
+                            </tr>
+                        </table>
+                        <table class="jkcustom-form-table">
+                            <tr>
+                                <td style="width: 90px;"><label for="txtdescription" class="control-label">Description<span class="required">*</span></label></td>
+                                <td style="width: 120px;" colspan="3"><input type="text" name="txtdescription" id="txtdescription" value="" placeholder="Description" class="form-control required" required /></td>
+                            </tr>
+                        </table>
+                        <table class="jkcustom-form-table">
+                            <tr>
+                                <td style="width: 90px;"><label for="txtdate" class="control-label">Quantity<span class="required">*</span></label></td>
+                                <td style="width: 80px;"><input type="text" name="txtquantity" id="txtquantity" onblur="calculateSubTotal()" value="" placeholder="1" class="form-control" /></td>
+                                <td style="width: 100px;text-align:right;"><label for="txtdate" class="control-label">Item Amount<span class="required">*</span></label></td>
+                                <td style="width: 100px;"><input type="text" name="txtitemamount" id="txtitemamount" onblur="calculateSubTotal()" value="" placeholder="$0.00" class="form-control" data-inputmask="'alias': 'currency'" /></td>
+                                <td style="width: 120px;text-align:right;"><label for="txtdate" class="control-label">Sub-Total<span class="required">*</span></label></td>
+                                <td style="width: 80px;text-align:right;"><input type="text" name="txtsubtotal" id="txtsubtotal" value="" placeholder="$0.00" class="form-control" data-inputmask="'alias': 'currency'" /></td>
+                                <td style="text-align:right;"><label for="txtdate" class="control-label">Tax<span class="required">*</span></label></td>
+                                <td style="width: 80px;"><input type="text" name="txttax" id="txttax" value="" onblur="calculateTotal()" placeholder="$0.00" class="form-control" data-inputmask="'alias': 'currency'" /></td>
+                                <td><label for="txtdate" class="control-label">Total<span class="required">*</span></label></td>
+                                <td style="width: 120px;"><input type="text" name="txttotal" id="txttotal" value="" placeholder="$0.00" class="form-control" data-inputmask="'alias': 'currency'" /></td>
+
+                            </tr>
+                        </table>
+
+                        <div class="form-actions row">
+                            <div class="col-md-12">
+                                <div class="btn btn-set pull-right">
+                                    <button type="button" id="btnsubmit" class="btn green">Submit</button>
+                                    <button type="button" class="btn default">Cancel</button>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="row" id="divfranchisetransList">
+    <div class="col-md-12">
+        <!-- BEGIN VALIDATION STATES-->
+        <div class="portlet light portlet-fit portlet-datatable">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="icon-layers"></i>
+                    <span class="caption-subject sbold uppercase">Transactions</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <table class="table table-striped table-bordered table-hover order-column" id="franchisetransList">
+                    <thead>
+                        <tr>
+
+                            <th style="width:5%">Date</th>
+                            <th>Customer</th>
+                            <th style="width:8%">Invoice</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th style="width:4%">Qty</th>
+                            <th style="width:8%">Sub-Total</th>
+                            <th style="width:8%">Tax</th>
+                            <th style="width:10%">Total</th>
+                            <th style="width:50px"></th>
+                            <th style="width:50px"></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <!-- END VALIDATION STATES-->
+    </div>
+
+</div>
+<div id="divfranchisetransRList"></div>
+
+
+
+
+
+@section pageplugins{
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/clockface/js/clockface.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+
+
+}
+
+@section scripts{ 
+
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+
+    <script type="text/javascript">
+
+        var isrecuring = false;
+        $(document).ready(function () {
+            $("#divfranchisetransList").hide();
+            $("#divfranchisetransRList").hide();
+            $("#divfranchiseename").hide();
+            $("#hdnfranchiseeid").val(0)
+            isrecuring = $("#hdntranstype").val();
+            if (isrecuring == false || isrecuring == 'False')
+                isrecuring == false;
+            else
+                isrecuring == true;
+
+            resetFranchiseetransaction();
+            $('[data-inputmask]').inputmask();
+        });
+
+
+        $("#btnsubmit").click(function (e) {
+            e.preventDefault();
+            var _this = $(this);
+            var _form = _this.closest("form");
+
+            var validator = $("form").validate(); // obtain validator
+            var anyError = false;
+            _form.find("input").each(function () {
+                if (!validator.element(this)) { // validate every input element inside this step
+                    anyError = true;
+                }
+            });
+
+            if (anyError)
+                return false; // exit if any error found
+
+            //$.post(_form.attr("action"), _form.serialize(), function (data) {
+            //check the result and do whatever you want
+            //})
+
+            var inputdata = {
+                id: $("#hdnfranchiseetransid").val()
+             , franid: $("#hdnfranchiseeid").val()
+             , trxtypeid: $("#ddlType").val()
+             , trxdate: $("#txtdate").val()
+             , credit: $("#chkcredit").val()
+             , resell: $("#chkresell").val()
+             , quantity: $("#txtquantity").val()
+             , unitprice: $("#txtitemamount").val()
+             , extendedprice: $("#txtitemamount").val()
+             , subtotal: $("#txtsubtotal").val()
+             , tax: $("#txttax").val() != '' ? $("#txttax").val().substring(2) : "0"
+             , trxtotal: $("#txttotal").val()
+             , description: $("#txtdescription").val()
+             , noofpayments: $("#txtnoofpayments").val()
+             , paymentsbilled: $("#txtpaymentbiiled").val()
+             , startdate: $("#txtstartdate").val() != "" ? $("#txtstartdate").val() : $("#txtdate").val()
+             , status: $("#ddlstatus").val()
+             , grosstotal: $("#txtgrosstotal").val()
+            };
+            var baseurl = '@Url.Action("SaveFranchiseeTransaction", "Franchise",new {area= "Portal" })';
+            $.ajax({
+                type: 'POST',
+                url: baseurl,
+                data: inputdata,
+                cache: false,
+                success: function (result) {
+                    if (result) {
+                        loadFranchiseetransaction();
+                        resetFranchiseetransaction();
+                    }
+                }
+
+            });
+        });
+
+        function resetFranchiseetransaction() {
+
+            if (isrecuring == false || isrecuring == 'False') {
+                $("#txtsubtotal").prop('disabled', true);
+                $("#txttax").prop('disabled', true);
+                $("#txttotal").prop('disabled', true);
+
+            }
+
+            $("#txtnoofpayments").val(0);
+            $("#txtpaymentbiiled").val(0)
+            $("#txtgrosstotal").val(0)
+            $("#hdnfranchiseetransid").val()
+            $("#ddlType").val('')
+            $("#txtdate").val('')
+            $("#chkcredit").val(-1000)
+            $("#chkresell").val(-1000)
+            $("#txtquantity").val(1)
+            $("#txtitemamount").val(0.00)
+
+            $("#txtdescription").val('')
+            $("#txtstartdate").val('')
+            $("#ddlstatus").val(1)
+
+            $("#txtsubtotal").val(0.00).prop('disabled', true);
+            $("#txttax").val(0).prop('disabled', true);
+            $("#txttotal").val(0).prop('disabled', true);
+        }
+        var strFranchiseenumber = "";
+        function loadFranchiseetransaction() {
+
+            if (strFranchiseenumber != $("#txtfranchiseenumber").val() && $("#txtfranchiseenumber").val() != "") {
+                strFranchiseenumber = $("#txtfranchiseenumber").val();
+                var baseurl = '@Url.Action("GetFranchiseeDetail", "Franchise",new {area= "Portal" })?franchiseeid=' + strFranchiseenumber + "&recurring=" + isrecuring;
+                $("#hdnfranchiseeid").val("0");
+                $.ajax({
+                    url: baseurl,
+                    cache: false,
+                    success: function (result) {
+                        if (result.length > 0) {
+                            $("#divfranchiseename").show();
+                            $("#hdnfranchiseeid").val(result[0].x.id);
+                            $("#txtfranchiseename").html(result[0].x.name);
+                            if (isrecuring == true || isrecuring == 'True')
+                                bindTransactionRecuring(result[0].x.id);
+
+                        }
+
+                    }
+                });
+            }
+        }
+        function bindTransactionRecuring(id) {
+            $.ajax({
+                url: '@Url.Action("TransactionRecurringList", "Franchise",new {area= "Portal" })?id=' + id,
+                datatype: "json",
+                type: "get",
+                contenttype: 'application/json; charset=utf-8',
+                async: true,
+                success: function (data) {
+                    $("#divfranchisetransRList").html(data);
+                    $("#divfranchisetransRList").show();
+                    $('#franchisetransRList').DataTable();
+                },
+                error: function (xhr) {
+                    alert('error');
+                }
+            });
+        }
+        function saveFranchiseetransaction() {
+
+
+
+        }
+
+
+        var ddlstatuschange = function () {
+            if ($("#hdnfranchiseeid").val() != "0")
+                var str = $("#ddltype").val();
+            else {
+                alert('Please select a Franchise.');
+                $("#ddltype").selectedIndex = 0
+            }
+        }
+        var clickchkValue = function (e) {
+            if (e.value == -1000)
+                e.value = 1;
+            else
+                e.value - 1000;
+        }
+        var calculateSubTotal = function () {
+            var vQTY = parseFloat($("#txtquantity").val() != '' ? $("#txtquantity").val() : "0");
+            var vItemAmount = parseFloat($("#txtitemamount").val() != '' ? $("#txtitemamount").val().substring(2) : "0");
+            $("#txtsubtotal").val(vQTY * vItemAmount);
+            calculateTotal();
+        }
+        var calculateTotal = function (e) {
+            var vSubTotal = parseFloat($("#txtsubtotal").val() != '' ? $("#txtsubtotal").val().substring(2) : "0");
+            var vTax = parseFloat($("#txttax").val() != '' ? $("#txttax").val().substring(2) : "0");
+            $("#txttotal").val(vSubTotal + vTax);
+        }
+
+    </script>
+}
+

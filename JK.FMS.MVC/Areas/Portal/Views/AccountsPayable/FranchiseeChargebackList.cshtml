@@ -1,0 +1,1493 @@
+﻿
+@{
+    ViewBag.Title = "FranchiseeChargebackList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section styles{
+    <link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+    <style type="text/css">
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .no-padding {
+            padding: 0 !important;
+        }
+
+        .no-margin {
+            margin: 0 !important;
+        }
+
+        .padding-tb1 {
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        .margin-tb1 {
+            margin-top: 1px;
+            margin-bottom: 1px;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+            font-weight: normal;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .page-size {
+            padding-left: 0;
+            padding-right: 0;
+            width: 62px;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        #modal_RegionModel .modal-content {
+            width: 55% !important;
+            margin-left: 30% !important;
+        }
+
+
+        #FranchiseeChargebackDetailsList thead > tr > th,
+        #FranchiseeChargebackDetailsList tbody > tr > td,
+        #FranchiseeChargebackDetailsList tfoot > tr > td #FranchiseeChargebackSummaryList thead > tr > th,
+        #FranchiseeChargebackSummaryList tbody > tr > td,
+        #FranchiseeChargebackSummaryList tfoot > tr > td {
+            padding: 5px !important;
+            font-size: 11px !important;
+        }
+
+        #FranchiseeChargebackDetailsList thead > tr > th,
+        #FranchiseeChargebackSummaryList thead > tr > th {
+            vertical-align: middle;
+        }
+    </style>
+}
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    Franchisee Chargeback
+                </div>
+                <div class="col-md-4" style="padding-right:5px;">
+                    <div class="col-md-7 pull-right no-padding">
+                        <div style="display:table-cell;padding-right: 5px;">
+                            Region
+                        </div>
+                        <div style="display:table-cell;width:100%;">
+                            @if (ViewBag.regionlist != null)
+                            {
+                                <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                                    @foreach (var item in (SelectList)ViewBag.regionlist)
+                                    {
+                                        <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="custom-listbox" id="divfranchiseList" style="margin-top:4px;margin-bottom:3px;">
+    <div class="headerbox">
+        <div class="row" no-padding">
+
+            <div class="col-sm-1 page-size">
+                <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                    <option value="-1">All</option>
+                    <option value="100" selected>100</option>
+                    <option value="50">50</option>
+                    <option value="25">25</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <div class="input-icon">
+                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                    <input id="input_Search" type="text" required name="customernumber" autocomplete="off" placeholder="Search" value="" class="form-control input-sm typeahead" />
+                </div>
+            </div>
+            <div class="col-md-3" style="padding-left: 0px;padding-right: 0px;">
+                <div class="input-group">
+                    <div class="icheck-inline">
+                        <label class="icheck-inline">
+                            <input type="radio" name="isSummaryView" value="1" class="icheck" checked> Summary View
+                        </label>
+                        <label class="icheck-inline">
+                            <input type="radio" name="isSummaryView" value="2" class="icheck"> Detail View
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-1">
+                <input type="button" class="btn btn-primary pull-right" id="btnPrint" onclick="onclickPrint()" value="Print" style="margin-left:10px;margin-right:15px !important">
+            </div>
+            <div class="col-md-4" style="padding-right:0px;">
+                <div class="col-md-12 pull-right no-padding">
+                    <div class="col-md-6 text-right" style="padding-top: 5px;">
+                        Report Period
+                    </div>
+                    <div class="col-md-6">
+                        @Html.DropDownList("BillMonthYearList", (SelectList)ViewBag.BillMonthYears, new { @class = "form-control input-sm", @id = "select_BillMonthYearList" })
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="divFranchiseeChargebackSummaryList" style="display:none;">
+
+    <div class="table-responsive" id="divFranchiseeChargebackSummaryList">
+        <table class="table table-striped table-bordered table-hover order-column" id="FranchiseeChargebackSummaryList" style="margin-top:0px !important;">
+            <thead>
+                <tr>
+                    <th style="text-align:center;width:60px;">
+                        Region
+                    </th>
+                    <th style="text-align:center;width:100px;">
+                        Franchisee No
+                    </th>
+                    <th style="text-align:center;width:270px;">
+                        Franchisee Name
+                    </th>
+                    <th style="text-align:center;width:110px;">
+                        Total Invoice Amount
+                    </th>
+                    <th style="text-align:center;width:110px;">
+                        Invoice Balance
+                    </th>
+                    <th style="text-align:center;width:110px;">
+                        Total Amount Paid
+                    </th>
+                    <th style="text-align:center;width:110px;">
+                        Total CB Fees
+                    </th>
+                    <th style="text-align:center;width:110px;">
+                        ChargeBack Amount
+                    </th>
+
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+                <tr style="background:#95a5a6;color:white;">
+                    <td style="text-align:center;" colspan="3"><strong>Total:</strong> </td>
+                    <td style="text-align:right;width:50px;" class="totFInvAmount">&nbsp;</td>
+                    <td style="text-align:right;width:50px;" class="totFInvBalance">&nbsp;</td>
+                    <td style="text-align:right;width:50px;" class="totFAmtPaid">&nbsp;</td>
+                    <td style="text-align:right;width:50px;" class="totFCBFees">&nbsp;</td>
+                    <td style="text-align:right;width:50px;" class="totFChargeBackAmt">&nbsp;</td>
+                </tr>
+            </tfoot>
+        </table>
+
+    </div>
+
+</div>
+<div class="divFranchiseeChargebackDetailsList" style="display:none;">
+
+    <div class="table-responsive" id="divFranchiseeChargebackDetailsList" style="min-height:600px">
+        <table class="table table-striped table-bordered table-hover order-column FranchiseeChargebackDetailsList" id="FranchiseeChargebackDetailsList" style="margin-top:0px !important;">
+            <thead>
+                <tr>
+                    <th style="text-align:center;width:60px;">
+                        Date
+                    </th>
+
+                    <th style="text-align:center;width:80px;">
+                        Invoice No
+                    </th>
+                    <th style="text-align:center;">
+                        Customer Name
+                    </th>
+                    <th style="text-align:center;width:90px;">
+                        Fran BillNo
+                    </th>
+                    <th style="text-align:center;width:120px;">
+                        Total Invoice Amount (w/o tax)
+                    </th>
+                    <th style="text-align:center;width:120px;">
+                        Invoice Balance (w/o tax)
+                    </th>
+                    <th style="text-align:center;width:120px;">
+                        Total Amount Paid (w/o tax)
+                    </th>
+                    <th style="text-align:center;width:100px;">
+                        Total CB Fees
+                    </th>
+                    <th style="text-align:center;width:120px;">
+                        ChargeBack Amount
+                    </th>
+                    <th style="text-align:center;width:55px;">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+            </tfoot>
+        </table>
+    </div>
+
+</div>
+<div class="modal fade in" id="modal_RegionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Select Region
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Select Region</label>
+                                @if (ViewBag.regionlist != null)
+                                {
+                                    <select class="form-control input-sm" id="selectregionlist">
+                                        <option value="">Select Region</option>
+                                        @foreach (var item in (SelectList)ViewBag.regionlist)
+                                        {
+                                            <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div class="col-md-12">
+                        <button type="button" name="SaveNew" id="btnRegion" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:0px;">Select Region</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-horizontal" id="form_ChargeBackDetail"></div>
+<div class="form-horizontal" id="form_invoicedetail"></div>
+<div class="form-horizontal" id="form_FranchiseeBillingDetail"></div>
+<div class="modal fade in" id="modal_FranchiseeChargebackCredit" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg" id="Render_FranchiseeChargebackCredit">
+    </div>
+</div>
+
+@section pageplugins{
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js")" type="text/javascript"></script>
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js")" type="text/javascript"></script>
+}
+@section scripts{
+    <script>
+        function getCurrentUrl() {
+            var regionIds = $('#regionlist').val();
+            var spnStartDate = $("#spnStartDate").text();
+            var spnEndDate = $("#spnEndtDate").text();
+            var _monthVal = $('#monthlist').val();
+            var _yearVal = $('#yearlist').val();
+            var isSummaryView = true;
+            var summaryView = $("input[name='isSummaryView']:checked").val();
+            if (summaryView == 2) {
+                isSummaryView = false;
+            }
+
+            var _monthVal = 0;
+            var _yearVal = 0;
+            var sURL = '@Url.Action("GetFranchiseeWiseChargebackSummaryOrDetailsResult", "AccountsPayable", new { area = "Portal" })?RegionIds=' + regionIds + '&IsSummaryView=' + isSummaryView + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate + '&month=' + _monthVal + '&year=' + _yearVal + '&PeriodId=' + $("#select_BillMonthYearList").val();
+            return sURL;
+        }
+
+        $(window).load(function () {
+            if ('@ViewBag.selectedRegionId' == 0) {
+                $("#modal_RegionModel").modal({ backdrop: 'static' });
+            } else {
+                showtable();
+            }
+        });
+
+        $(document).ready(function () {
+            $('.divFranchiseeChargebackDetailsList').hide();
+            $('.divFranchiseeChargebackSummaryList').hide();
+            $("#btnRegion").click(function () {
+                if ($("#selectregionlist").val() != "") {
+                    $("#regionlist option[value='" + $("#selectregionlist").val() + "']").attr("selected", 1);
+                    $("#regionlist").multiselect("refresh");
+                    showtable();
+                    $(".close").click();
+                }
+            });
+
+            $("input[type='radio'][name='isSummaryView']").change(function () {
+                showtable();
+            });
+
+            $("#regionlist").multiselect({
+                includeSelectAllOption: true,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2
+            });
+
+            $('#monthlist').change(function () {
+                $('#spnStartDate').html('');
+                if ($('#monthlist').val() != '' && $('#yearlist').val() != '')
+                    showtable();
+            });
+
+            $('#yearlist').change(function () {
+                $('#spnEndtDate').html('');
+                if ($('#monthlist').val() != '' && $('#yearlist').val() != '')
+                    showtable();
+            });
+
+            applyDurationFilter(3);
+            $('#divspandate').show();
+
+            firstDay = moment().subtract(0, 'month').startOf('month').toString();
+            lastDay = moment().subtract(0, 'month').endOf('month').toString();
+
+            $('#lbldateFrom').html(moment(firstDay).format('L'));
+            $('#lbldateTo').html(moment(lastDay).format('L'));
+
+            $("#regionlist").change(function () {
+                showtable();
+            });
+            $(document).on('init.dt', function (e, settings) {
+                var api = new $.fn.dataTable.Api(settings);
+                if ($(api.table().node()).attr('id') == 'FranchiseeChargebackSummaryList') {
+                    setPaging();
+                }
+            });
+
+            $(document).on('init.dt', function (e, settings) {
+                var api = new $.fn.dataTable.Api(settings);
+                if ($(api.table().node()).attr('id') == 'FranchiseeChargebackDetailsList') {
+                    setPaging();
+                }
+            });
+            $('#select_timeduration').change(function () {
+                applyDurationFilter(parseInt($(this).val()));
+                showtable();
+            });
+            $('#select_BillMonthYearList').change(function () {
+                showtable();
+            });
+
+            $("#pageSize").change(function () {
+                setPaging();
+            })
+            $('#txtStartDate').change(function () {
+                $('#spnStartDate').html($(this).val());
+                var startDate = $('#spnStartDate').text();
+                var endDate = $('#spnEndtDate').text();
+                var franchiseeId = $('#FranchiseeId').text();
+                if (startDate && endDate && $('#txtEndtDate').val() != '') {
+                    showtable();
+                }
+            });
+            $('#txtEndtDate').change(function () {
+                $('#spnEndtDate').html($(this).val());
+                var startDate = $('#spnStartDate').text();
+                var endDate = $('#spnEndtDate').text();
+                var franchiseeId = $('#FranchiseeId').text();
+                if (startDate && endDate && $('#txtStartDate').val() != '') {
+                    showtable();
+                }
+            });
+            $("#input_Search").keyup(function () {
+
+
+                var isSumryView = $("input[name='isSummaryView']:checked").val();
+                if (isSumryView == 1) {
+                    var table = $("#FranchiseeChargebackSummaryList").DataTable();
+                    table.search($(this).val()).draw();
+
+                    //Invoice Amount
+                    var InvAmt = 0
+                    $(".clsInvoiceAmount").each(function (index) {
+                        InvAmt = parseFloat(InvAmt) + parseFloat($(this).text().replace('$', '').replace(',', ''));
+                    });
+                    $(".totFInvAmount").html("$" + formatCurrency(InvAmt));
+
+                    //InvoiceBalance
+                    var InvBln = 0
+                    $(".clsInvoiceBalance").each(function (index) {
+                        InvBln = parseFloat(InvBln) + parseFloat($(this).text().replace('$', '').replace(',', ''));
+                    });
+                    $(".totFInvBalance").html("$" + formatCurrency(InvBln));
+
+                    //Invoice Paid
+                    var AmtPaid = 0
+                    $(".clsTotalAmountPaid").each(function (index) {
+                        AmtPaid = parseFloat(AmtPaid) + parseFloat($(this).text().replace('$', '').replace(',', ''));
+                    });
+                    $(".totFAmtPaid").html("$" + formatCurrency(AmtPaid));
+
+                    //CB Fees
+                    var AmtCBFees = 0
+                    $(".clsTotalFee").each(function (index) {
+                        AmtCBFees = parseFloat(AmtCBFees) + parseFloat($(this).text().replace('$', '').replace(',', ''));
+                    });
+                    $(".totFCBFees").html("$" + formatCurrency(AmtCBFees));
+
+                    //Charge Back Amount
+                    var ChargeBackAmt = 0
+                    $(".clsChargeAmount").each(function (index) {
+                        ChargeBackAmt = parseFloat(ChargeBackAmt) + parseFloat($(this).text().replace('$', '').replace(',', ''));
+                    });
+                    $(".totFChargeBackAmt").html("$" + formatCurrency(ChargeBackAmt));
+                }
+                else
+                {
+                    //var table = $("#FranchiseeChargebackDetailsList").DataTable();
+                    //table.search($(this).val()).draw();
+
+                    //// Details Invoice Amount
+                    //var DtlInvAmt = 0
+                    //$(".clsDtlInvAmt").each(function (index) {
+                    //    DtlInvAmt = parseFloat(DtlInvAmt) + parseFloat($(this).text().replace('$', '').replace(',', ''));
+                    //});
+                    //$(".clsFDtlInvAmt").html("$" + formatCurrency(DtlInvAmt));
+
+                    //// Details Invoice Balance
+                    //var DtlInvBln = 0
+                    //$(".clsDtlInvBln").each(function (index) {
+                    //    DtlInvBln = parseFloat(DtlInvBln) + parseFloat($(this).text().replace('$', '').replace(',', ''));
+                    //});
+                    //$(".clsFDtlInvBln").html("$" + formatCurrency(DtlInvBln));
+
+                    //// Details Amount Paid
+                    //var DtlAmtPaid = 0
+                    //$(".clsDtlAmtPaid").each(function (index) {
+                    //    DtlAmtPaid = parseFloat(DtlAmtPaid) + parseFloat($(this).text().replace('$', '').replace(',', ''));
+                    //});
+                    //$(".clsFDtlAmtPaid").html("$" + formatCurrency(DtlAmtPaid));
+
+                    //// Details CB Fees
+                    //var DtlCBFees = 0
+                    //$(".clsDtlCBFees").each(function (index) {
+                    //    DtlCBFees = parseFloat(DtlCBFees) + parseFloat($(this).text().replace('$', '').replace(',', ''));
+                    //});
+                    //$(".clsFDtlCBFees").html("$" + formatCurrency(DtlCBFees));
+
+                    //// Details Charge Back
+                    //var DtlChargeBack = 0
+                    //$(".clsDtlChargeBack").each(function (index) {
+                    //    DtlChargeBack = parseFloat(DtlChargeBack) + parseFloat($(this).text().replace('$', '').replace(',', ''));
+                    //});
+                    //$(".clsFDtlChargeBack").html("$" + formatCurrency(DtlChargeBack));
+
+                    //var table = $("#tblChargeBackSummaryReport").DataTable();
+                    //table.search($(this).val()).draw();
+                    //table = $("#tblChargeBackDetailReport").DataTable();
+                    //table.search($(this).val()).draw();
+                    if ($(this).val() != '') {
+                        $("#FranchiseeChargebackDetailsList tbody>tr").hide()
+                        $("#FranchiseeChargebackDetailsList tbody>tr[relcusn*='" + $(this).val().toUpperCase() + "']").show()
+                    } else {
+                        $("#FranchiseeChargebackDetailsList tbody>tr").show()
+                    }
+                }
+
+
+
+            });
+        });
+
+
+        function showtable() {
+            var isSummaryView = $("input[name='isSummaryView']:checked").val();
+            if (isSummaryView == 1) {
+                $("#input_Search").val('');
+                initTableSummary();
+            } else {
+                $("#input_Search").val('');
+                //initTableDetails();
+                initTableDetailsViewNew();
+            }
+        };
+        function initTableSummary() {
+            $('.divFranchiseeChargebackDetailsList').hide();
+            $('.divFranchiseeChargebackSummaryList').show();
+
+            var ps = $('#pageSize').val();
+            var totalInvoiceAmount = 0.0;
+            var totalPayment = 0.0;
+            var totalDue = 0.0;
+            var totalChargeback = 0.0;
+
+            //$('#totalInvoiceAmount').text(formatCurrency(totalInvoiceAmount, true));
+            //$('#totalPayment').text(formatCurrency(totalPayment, true));
+            //$('#totalDue').text(formatCurrency(totalDue, true));
+            //$('#totalChargeback').text(formatCurrency(totalChargeback, true));
+
+            var dtable = $('#FranchiseeChargebackSummaryList').dataTable({
+                "bAutoWidth": false,
+                cache: false,
+                "iDisplayLength": ps == '-1' ? 25 : ps,
+                "bDestroy": true,
+                "aLengthMenu": [[5, 7, 10, 25, 50, -1], [5, 7, 10, 25, 50, "All"]],
+                "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                "aaSorting": [[0, "desc"]],
+                "sAjaxSource": getCurrentUrl(),
+                "sAjaxDataProp": "aadata",
+                "rowCallback": function (nRow, data) {
+                },
+
+                "aoColumns": [
+                    {
+                        "sName": "RegionName",
+                        "bSortable": true,
+                        "sClass": "alignCenter",
+                        "mRender": function (data, type, full) {
+                            return full.RegionName;
+                        }
+                    },
+                    {
+                        "sName": "FranchiseeNo",
+                        "bSortable": true,
+                        "mRender": function (data, type, full) {
+                            return full.FranchiseeNo;
+                        }
+                    },
+                    {
+                        "sName": "FranchiseeName",
+                        "bSortable": true,
+                        "mRender": function (data, type, full) {
+                            return full.FranchiseeName;
+                        }
+                    },
+                    {
+                        "sName": "InvoiceAmount",
+                        "bSortable": true,
+                        data: "InvoiceAmount",
+                        "mRender": function (data, type, full) {
+                            //if (type == 'display') {
+                            //    totalInvoiceAmount = totalInvoiceAmount + parseFloat(full.InvoiceAmount);
+                            //    $('#totalInvoiceAmount').text(formatCurrency(totalInvoiceAmount, true));
+                            //}
+                            return '<span style="float: right;" class="clsInvoiceAmount">' + formatCurrency(full.InvoiceAmount, true) + '</span>';
+
+                        }
+                    },
+                    {
+                        "sName": "InvoiceBalance",
+                        "bSortable": true,
+                        data: "InvoiceBalance",
+                        "mRender": function (data, type, full) {
+                            //if (type == 'display') {
+                            //    totalInvoiceAmount = totalInvoiceAmount + parseFloat(full.InvoiceAmount);
+                            //    $('#totalInvoiceBalance').text(formatCurrency(totalInvoiceAmount, true));
+                            //}
+                            return '<span style="float: right;" class="clsInvoiceBalance">' + formatCurrency(full.InvoiceBalance, true) + '</span>';
+
+                        }
+                    },
+                    {
+                        "sName": "TotalAmountPaid",
+                        "bSortable": true,
+                        data: "TotalAmountPaid",
+                        "mRender": function (data, type, full) {
+                            //if (type == 'display') {
+                            //    totalInvoiceAmount = totalInvoiceAmount + parseFloat(full.InvoiceAmount);
+                            //    $('#totalInvoiceBalance').text(formatCurrency(totalInvoiceAmount, true));
+                            //}
+                            return '<span style="float: right;" class="clsTotalAmountPaid">' + formatCurrency(full.TotalAmountPaid, true) + '</span>';
+
+                        }
+                    },
+                     {
+                         "sName": "TotalFee",
+                         "bSortable": true,
+                         data: "TotalFee",
+                         "mRender": function (data, type, full) {
+                             //if (type == 'display') {
+                             //    totalInvoiceAmount = totalInvoiceAmount + parseFloat(full.InvoiceAmount);
+                             //    $('#totalInvoiceBalance').text(formatCurrency(totalInvoiceAmount, true));
+                             //}
+                             return '<span style="float: right;" class="clsTotalFee">' + formatCurrency(full.TotalFee, true) + '</span>';
+
+                         }
+                     },
+                     {
+                         "sName": "ChargeBackAmount",
+                         "bSortable": true,
+                         data: "ChargeBackAmount",
+                         "mRender": function (data, type, full) {
+                             //if (type == 'display') {
+                             //    totalInvoiceAmount = totalInvoiceAmount + parseFloat(full.InvoiceAmount);
+                             //    $('#totalInvoiceBalance').text(formatCurrency(totalInvoiceAmount, true));
+                             //}
+                             return '<span style="float: right;" class="clsChargeAmount">' + formatCurrency(full.ChargeBackAmount, true) + '</span>';
+
+                         }
+                     }
+
+                ],
+                "footerCallback": function (row, data, start, end, display) {
+                    var api = this.api(), data;
+
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function (i) {
+                        return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '') * 1 :
+                            typeof i === 'number' ?
+                            i : 0;
+                    };
+
+                    var invoiceAmount = api
+                        .column(3, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                    var totalInvoiceBalance = api
+                        .column(4, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    var totalPayment = api
+                        .column(5, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    var totalCBFees = api
+                        .column(6, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    var totalChargeback = api
+                        .column(7, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    $(api.column(3).footer()).html("$" + formatCurrency(invoiceAmount));
+                    $(api.column(4).footer()).html("$" + formatCurrency(totalInvoiceBalance));
+                    $(api.column(5).footer()).html("$" + formatCurrency(totalPayment));
+                    $(api.column(6).footer()).html("$" + formatCurrency(totalCBFees));
+                    $(api.column(7).footer()).html("$" + formatCurrency(totalChargeback));
+                }
+            });
+
+        };
+
+        function initTableDetails() {
+
+            $('.divFranchiseeChargebackDetailsList').show();
+            $('.divFranchiseeChargebackSummaryList').hide();
+
+            var ps = $('#pageSize').val();
+            var totalInvoiceAmountDetails = 0.0;
+            var totalFinalAmountChargebackDetails = 0.0;
+
+            $('#totalInvoiceAmountDetails').text(formatCurrency(totalInvoiceAmountDetails, true));
+            $('#totalFinalAmountChargebackDetails').text(formatCurrency(totalFinalAmountChargebackDetails, true));
+
+            var dtable = $('#FranchiseeChargebackDetailsList').dataTable({
+                "bAutoWidth": false,
+                cache: false,
+                "iDisplayLength": ps == '-1' ? 25 : ps,
+                "bDestroy": true,
+                "aLengthMenu": [[5, 7, 10, 25, 50, -1], [5, 7, 10, 25, 50, "All"]],
+                "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                "aaSorting": [[0, "desc"]],
+                "sAjaxSource": getCurrentUrl(),
+                "sAjaxDataProp": "aadata",
+                "rowCallback": function (nRow, data) {
+                },
+                "aoColumns":
+                [
+                {
+                    "sName": "Invoicedate",
+                    "bSortable": true,
+                    "sClass": "alignCenter",
+                    "mRender": function (data, type, full) {
+                        var date = formatJSONDate(full.Invoicedate);
+                        return date;
+                    }
+                        },
+                        {
+                            "sName": "FranchiseeNo",
+                            "sClass": "alignCenter",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+                                return full.FranchiseeNo;
+                            }
+                        },
+                        {
+                            "sName": "FranchiseeName",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+                                return full.FranchiseeName;
+                            }
+                        },
+                {
+                    "sName": "InvoiceNo",
+                    "bSortable": true,
+                    "sClass": "alignCenter",
+                    "mRender": function (data, type, full) {
+                        //return full.InvoiceNo;
+                        return '<a onclick="btnOpenInvoiceDetail(' + full.InvoiceId + ')">' + full.InvoiceNo + '</a>';
+                    }
+                },
+                {
+                    "sName": "CustomerName",
+                    "bSortable": true,
+                    "mRender": function (data, type, full) {
+                        return full.CustomerName;
+                    }
+                },
+                        {
+                            "sName": "FranBillNo",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+                                return '<a onclick="btnFranchiseeBillingDetailPopup(' + full.BillingPayId + ')">' + full.TransactionNumber + '</a>';
+                            }
+                        },
+                {
+                    "sName": "InvoiceAmount",
+                    data: "InvoiceAmount",
+                    "bSortable": true,
+                    "mRender": function (data, type, full) {
+                        //if (type == 'display') {
+                        //    totalInvoiceAmount = totalInvoiceAmount + parseFloat(full.InvoiceAmount);
+                        //    $('#totalInvoiceAmount').text(formatCurrency(totalInvoiceAmount, true));
+                        //}
+                        return '<span style="float: right;" class="clsDtlInvAmt">' + formatCurrency(full.InvoiceAmount, true) + '</span>';
+
+                    }
+                },
+                {
+                    "sName": "InvoiceBalance",
+                    data: "InvoiceBalance",
+                    "bSortable": true,
+                    "mRender": function (data, type, full) {
+                        //if (type == 'display') {
+                        //    totalInvoiceAmount = totalInvoiceAmount + parseFloat(full.InvoiceAmount);
+                        //    $('#totalInvoiceBalance').text(formatCurrency(totalInvoiceAmount, true));
+                        //}
+                        return '<span style="float: right;" class="clsDtlInvBln">' + formatCurrency(full.InvoiceBalance, true) + '</span>';
+
+                    }
+                },
+                {
+                    "sName": "TotalAmountPaid",
+                    data: "TotalAmountPaid",
+                    "bSortable": true,
+                    "mRender": function (data, type, full) {
+                        //if (type == 'display') {
+                        //    totalInvoiceAmount = totalInvoiceAmount + parseFloat(full.InvoiceAmount);
+                        //    $('#totalInvoiceBalance').text(formatCurrency(totalInvoiceAmount, true));
+                        //}
+                        return '<span style="float: right;" class="clsDtlAmtPaid">' + formatCurrency(full.TotalAmountPaid, true) + '</span>';
+
+                    }
+                },
+                {
+                    "sName": "TotalFee",
+                    data: "TotalFee",
+                    "bSortable": true,
+                    "mRender": function (data, type, full) {
+                        //if (type == 'display') {
+                        //    totalInvoiceAmount = totalInvoiceAmount + parseFloat(full.InvoiceAmount);
+                        //    $('#totalInvoiceBalance').text(formatCurrency(totalInvoiceAmount, true));
+                        //}
+                        return '<span style="float: right;" class="clsDtlCBFees">' + formatCurrency(full.TotalFee, true) + '</span>';
+
+                    }
+                },
+                {
+                    "sName": "ChargeBackAmount",
+                    data: "ChargeBackAmount",
+                    "bSortable": true,
+                    "mRender": function (data, type, full) {
+                        //if (type == 'display') {
+                        //    totalInvoiceAmount = totalInvoiceAmount + parseFloat(full.InvoiceAmount);
+                        //    $('#totalInvoiceBalance').text(formatCurrency(totalInvoiceAmount, true));
+                        //}
+                        return '<span style="float: right;" class="clsDtlChargeBack">' + formatCurrency(full.ChargeBackAmount, true) + '</span>';
+
+                    }
+                },
+                {
+                    "sName": "Action",
+                    "bSortable": false,
+                    "mRender": function (data, type, full) {
+                        //if (type == 'display') {
+                        //    totalInvoiceAmount = totalInvoiceAmount + parseFloat(full.InvoiceAmount);
+                        //    $('#totalInvoiceBalance').text(formatCurrency(totalInvoiceAmount, true));
+                        //}
+                        var _strHtml=''
+                        _strHtml = _strHtml +'<div class="btn-group dropdown">'
+                        _strHtml = _strHtml +'    <a target="_blank" dropdown-toggle="" data-toggle="dropdown"><i class="fa fa-hand-o-right" aria-hidden="true"></i></a>'
+                        _strHtml = _strHtml +'    <ul class="dropdown-menu pull-right">'
+                        _strHtml = _strHtml + '        <li><a href="#" onclick="showChargeBackCredit(' + full.FranchiseeId+')"><i class="fa fa-plus"></i> Customer Service log </a></li>'
+                        _strHtml = _strHtml + '        <li><a href="#" onclick="showCollectionLog(' + full.FranchiseeId +')"><i class="fa fa-plus"></i> Collection Call Log </a></li>'            
+                        _strHtml = _strHtml +'    </ul>'
+                        _strHtml = _strHtml +'</div>'
+
+
+                        return _strHtml;
+
+                    }
+                }],
+                "footerCallback": function (row, data, start, end, display) {
+                    var api = this.api(), data;
+
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function (i) {
+                        return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '') * 1 :
+                            typeof i === 'number' ?
+                            i : 0;
+                    };
+
+                    var invoiceAmount = api
+                        .column(6, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                    var totalInvoiceBalance = api
+                        .column(7, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    var totalPayment = api
+                        .column(8, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    var totalCBFees = api
+                        .column(9, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    var totalChargeback = api
+                        .column(10, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    $(api.column(6).footer()).html("$" + formatCurrency(invoiceAmount));
+                    $(api.column(7).footer()).html("$" + formatCurrency(totalInvoiceBalance));
+                    $(api.column(8).footer()).html("$" + formatCurrency(totalPayment));
+                    $(api.column(9).footer()).html("$" + formatCurrency(totalCBFees));
+                    $(api.column(10).footer()).html("$" + formatCurrency(totalChargeback));
+                }
+            });
+
+        };
+
+        function initTableDetailsViewNew() {
+
+            $.blockUI();
+            //var table2= $('#tblChargeBackDetailReport').DataTable();
+            //table2.clear();
+
+            $('.divFranchiseeChargebackDetailsList').show();
+            $('.divFranchiseeChargebackSummaryList').hide();
+
+            $('#FranchiseeChargebackDetailsList tbody').html('');
+
+            $.ajax({
+                type: "GET",
+                url: getCurrentUrl(),
+                success: function (data) {
+
+                    var frId = 0;
+                    var sec_frid = 0;
+
+                    var invoiceAmount = 0;
+                    var totalInvoiceBalance = 0;
+                    var totalPayment = 0;
+                    var totalCBFees = 0;
+                    var totalChargeback = 0;
+
+                    var cbTotal = 0;
+                    var tarTotal = 0;
+                    var balanceTotal = 0;
+
+                    for (var i = 0; i <= data.aadata.length; i++) {
+                        var lengthdata = data.aadata.length;
+
+                        if (data.aadata[i] != null) {
+                            frId = data.aadata[i].FranchiseeNo;
+                            trInvoicelist = "";
+                            if (sec_frid != frId) {
+                                if (sec_frid != 0 && sec_frid != frId) {
+                                    trInvoicelist += '<tr relcusn="' + data.aadata[i].FranchiseeNo + ' ' + data.aadata[i].FranchiseeName + '">';
+                                    trInvoicelist += '<td style="text-align:center;"colspan="3"></td>';
+                                    trInvoicelist += '<td style="text-align:center;"><b>Total</b></td>';
+                                    trInvoicelist += '<td style="text-align:right;"><b>' + formatCurrency(parseFloat(invoiceAmount), true) + '</b></td>';
+                                    trInvoicelist += '<td style="text-align:right;"><b>' + (parseFloat(totalInvoiceBalance) < 0 ? '<span style="color:red">(' + formatCurrency(parseFloat(totalInvoiceBalance), true) + ')</span>' : formatCurrency(parseFloat(totalInvoiceBalance), true)) + '</b></td>';
+                                    trInvoicelist += '<td style="text-align:right;"><b>' + formatCurrency(parseFloat(totalPayment), true) + '</b></td>';
+                                    trInvoicelist += '<td style="text-align:right;"><b>' + formatCurrency(parseFloat(totalCBFees), true) + '</b></td>';
+                                    trInvoicelist += '<td style="text-align:right;"><b>' + formatCurrency(parseFloat(totalChargeback), true) + '</b></td>';
+                                    trInvoicelist += '<td style="text-align:right;"></td></tr>';
+
+                                    invoiceAmount = 0;
+                                    totalInvoiceBalance = 0;
+                                    totalPayment = 0;
+                                    totalCBFees = 0;
+                                    totalChargeback = 0;
+                                }
+                                trInvoicelist += '<tr relcusn="' + data.aadata[i].FranchiseeNo + ' ' + data.aadata[i].FranchiseeName + '">';
+                                trInvoicelist += '<td style="font-size:12px" colspan="10"><b>' + data.aadata[i].FranchiseeNo + '</b>-<span style="color: blue;"> <b>' + data.aadata[i].FranchiseeName + '</b></span></td></tr>';
+                                sec_frid = data.aadata[i].FranchiseeNo;
+                            }
+                            trInvoicelist += '<tr relcusn="' + data.aadata[i].FranchiseeNo + ' ' + data.aadata[i].FranchiseeName + '">';
+                            trInvoicelist += '<td style="text-align:center;">' + formatJSONDate(data.aadata[i].Invoicedate) + '</td>';
+                            trInvoicelist += '<td style="text-align:center;"><a onclick="btnOpenInvoiceDetail(' + data.aadata[i].InvoiceId + ')">' + data.aadata[i].InvoiceNo + '</a></td>';
+                            trInvoicelist += '<td style="text-align:left;">' + data.aadata[i].CustomerName + '</td>';
+                            if (data.aadata[i].TransactionNumber == null) {
+                                data.aadata[i].TransactionNumber = "";
+                            }
+                            trInvoicelist += '<td style="text-align:center;"><a onclick="btnFranchiseeBillingDetailPopup(' + data.aadata[i].BillingPayId + ')">' + data.aadata[i].TransactionNumber + '</a></td>';
+                            trInvoicelist += '<td style="text-align:right;">' + formatCurrency(parseFloat(data.aadata[i].InvoiceAmount), true) + '</td>';
+                            trInvoicelist += '<td style="text-align:right;">' + (parseFloat(data.aadata[i].InvoiceBalance) < 0 ? '<span style="color:red">(' + formatCurrency(parseFloat(data.aadata[i].InvoiceBalance), true) + ')</span>' : formatCurrency(parseFloat(data.aadata[i].InvoiceBalance), true)) + '</td>';
+                            trInvoicelist += '<td style="text-align:right;">' + formatCurrency(parseFloat(data.aadata[i].TotalAmountPaid), true) + '</td>';
+                            trInvoicelist += '<td style="text-align:right;">' + formatCurrency(parseFloat(data.aadata[i].TotalFee), true) + '</td>';
+                            trInvoicelist += '<td style="text-align:right;">' + formatCurrency(parseFloat(data.aadata[i].ChargeBackAmount), true) + '</td>';
+                            var _strHtml = ''
+                            _strHtml = _strHtml + '<div class="btn-group dropdown">'
+                            _strHtml = _strHtml + '    <a target="_blank" dropdown-toggle="" data-toggle="dropdown"><i class="fa fa-hand-o-right" aria-hidden="true"></i></a>'
+                            _strHtml = _strHtml + '    <ul class="dropdown-menu pull-right">'
+                            _strHtml = _strHtml + '        <li><a href="#" onclick="showChargebackRevert(' + data.aadata[i].FranchiseeId + ',\'' + data.aadata[i].InvoiceNo + '\')"><i class="fa fa-plus"></i> Chargeback Revert </a></li>'
+                            _strHtml = _strHtml + '        <li><a href="#" onclick="showChargebackCredit(' + data.aadata[i].FranchiseeId + ',\'' + data.aadata[i].InvoiceNo + '\')"><i class="fa fa-plus"></i> Chargeback Credit </a></li>'
+                            _strHtml = _strHtml + '    </ul>'
+                            _strHtml = _strHtml + '</div>'
+
+                            trInvoicelist += '<td style="text-align:center;">' + _strHtml + '</td>';
+                            trInvoicelist += '</tr>';
+                            if (sec_frid == frId) {
+
+                                invoiceAmount += data.aadata[i].InvoiceAmount;
+                                totalInvoiceBalance += data.aadata[i].InvoiceBalance;
+                                totalPayment += data.aadata[i].TotalAmountPaid;
+                                totalCBFees += data.aadata[i].TotalFee;
+                                totalChargeback += data.aadata[i].ChargeBackAmount;
+
+                            }
+                            if (i == lengthdata - 1) {
+                                trInvoicelist += '<tr relcusn="' + data.aadata[i].FranchiseeNo + ' ' + data.aadata[i].FranchiseeName + '">';
+                                trInvoicelist += '<td style="text-align:center;" colspan="3"></td>';
+                                trInvoicelist += '<td style="text-align:center;"><b>Total</b></td>';
+                                trInvoicelist += '<td style="text-align:right;"><b>' + formatCurrency(parseFloat(invoiceAmount), true) + '</b></td>';
+                                trInvoicelist += '<td style="text-align:right;"><b>' + (parseFloat(totalInvoiceBalance) < 0 ? '<span style="color:red">(' + formatCurrency(parseFloat(totalInvoiceBalance), true) + ')</span>' : formatCurrency(parseFloat(totalInvoiceBalance), true)) + '</b></td>';
+                                trInvoicelist += '<td style="text-align:right;"><b>' + formatCurrency(parseFloat(totalPayment), true) + '</b></td>';
+                                trInvoicelist += '<td style="text-align:right;"><b>' + formatCurrency(parseFloat(totalCBFees), true) + '</b></td>';
+                                trInvoicelist += '<td style="text-align:right;"><b>' + formatCurrency(parseFloat(totalChargeback), true) + '</b></td>';
+                                trInvoicelist += '<td style="text-align:right;"></td></tr>';
+                            }
+
+                            $('#FranchiseeChargebackDetailsList tbody').append(trInvoicelist);
+                        }
+
+                    }
+
+                    $.unblockUI();
+                },
+                error: function () {
+                    $.unblockUI();
+                    alert("Content load failed");
+                }
+            });
+        }
+
+        function showChargebackRevert(fid,InvNo) {
+            var sURL = '@Url.Action("PartialChargeBackCredit", "AccountsPayable", new { area = "Portal" })';
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#Render_FranchiseeChargebackCredit').html(data);
+                    initFMT();
+                    $('#divSearchbox').hide();
+                    $('#btnFCSaveNew').hide();
+                    $('#btnFCSaveClose').hide();
+                    $('#btnFCSaveClosePP').show();
+                     $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("GetFranchiseeComleteDetail", "AccountsPayable", new { area = "Portal" })?FranchiseeId=' + fid,
+                        success: function (res) {
+                            $('#hdfTaxRate').val(res.detail.ContractTaxRate);
+                            $('#hdfFranchiseeId').val(res.detail.FranchiseeId);
+                            $('#spnFranchiseeNumber').html(res.detail.FranchiseeNo);
+                            $('#spnFranchiseeName').html(res.detail.Name);
+                            $('#spnFranchiseeAddress').html(res.detail.Address1);
+                            $('#spnFranchiseeCityStatePincode').html(res.detail.City + ', ' + res.detail.StateName + ' ' + res.detail.PostalCode);
+                            CBC_franchiseeFee = res.fees;
+                            
+                            $('#ServiceTypeListId').val(53);
+                            $('#ServiceTypeListId').prop('readonly', true)                            
+                            $('#CBC_InvoiceNo').val($.trim(InvNo));
+                            $('#CBC_InvoiceNo').trigger("change");
+                            $('#CBC_InvoiceNo').prop('readonly', true)
+                            $('#Amount').prop('readonly', true)
+                           
+                            CalculateAmount();
+                            
+                        }
+                    });
+
+                    $("#form_FranchiseeChargebackCredit").submit(function (event) {
+                        $.blockUI();
+                        var dataString;
+                        event.preventDefault();
+                        event.stopImmediatePropagation();
+                        var action = $("#form_FranchiseeChargebackCredit").attr("action");
+                        // Setting.
+                        dataString = new FormData($("#form_FranchiseeChargebackCredit").get(0));
+                        contentType = false;
+                        processData = false;
+                        $.ajax({
+                            type: "POST",
+                            url: action,
+                            data: dataString,
+                            dataType: "json",
+                            contentType: contentType,
+                            processData: processData,
+                            success: function (result) {
+                                $.unblockUI();
+                                $("#modal_FranchiseeChargebackCredit").modal('hide');
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                $("#modal_FranchiseeChargebackCredit").modal('hide');
+                                $.unblockUI();
+                            }
+                        });
+                    });
+
+                    $("#modal_FranchiseeChargebackCredit").modal({ backdrop: 'static' });                   
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+        }
+        function showChargebackCredit(fid,InvNo) {
+            var sURL = '@Url.Action("PartialChargeBackCredit", "AccountsPayable", new { area = "Portal" })';
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#Render_FranchiseeChargebackCredit').html(data);
+                    initFMT();
+                    $('#divSearchbox').hide();
+                    $('#btnFCSaveNew').hide();
+                    $('#btnFCSaveClose').hide();
+                    $('#btnFCSaveClosePP').show();
+                     $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("GetFranchiseeComleteDetail", "AccountsPayable", new { area = "Portal" })?FranchiseeId=' + fid,
+                        success: function (res) {
+                            $('#hdfTaxRate').val(res.detail.ContractTaxRate);
+                            $('#hdfFranchiseeId').val(res.detail.FranchiseeId);
+                            $('#spnFranchiseeNumber').html(res.detail.FranchiseeNo);
+                            $('#spnFranchiseeName').html(res.detail.Name);
+                            $('#spnFranchiseeAddress').html(res.detail.Address1);
+                            $('#spnFranchiseeCityStatePincode').html(res.detail.City + ', ' + res.detail.StateName + ' ' + res.detail.PostalCode);
+                            CBC_franchiseeFee = res.fees;
+                           
+                            $('#ServiceTypeListId').val(32);
+                            $('#ServiceTypeListId').prop('readonly', true)
+
+                            $('#CBC_InvoiceNo').val($.trim(InvNo));
+                            $('#CBC_InvoiceNo').trigger("change");
+                            $('#CBC_InvoiceNo').prop('readonly', true)
+                            CalculateAmount();
+                        }
+                    });
+
+                    $("#form_FranchiseeChargebackCredit").submit(function (event) {
+                        $.blockUI();
+                        var dataString;
+                        event.preventDefault();
+                        event.stopImmediatePropagation();
+                        var action = $("#form_FranchiseeChargebackCredit").attr("action");
+                        // Setting.
+                        dataString = new FormData($("#form_FranchiseeChargebackCredit").get(0));
+                        contentType = false;
+                        processData = false;
+                        $.ajax({
+                            type: "POST",
+                            url: action,
+                            data: dataString,
+                            dataType: "json",
+                            contentType: contentType,
+                            processData: processData,
+                            success: function (result) {
+                                $.unblockUI();
+                                $("#modal_FranchiseeChargebackCredit").modal('hide');
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                $("#modal_FranchiseeChargebackCredit").modal('hide');
+                                $.unblockUI();
+                            }
+                        });
+                    });
+
+                    $("#modal_FranchiseeChargebackCredit").modal({ backdrop: 'static' });                   
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+            
+           
+        }
+
+
+
+
+        function formatCurrency(total, dollar) {
+            dollar = (dollar == true ? true : false);
+            var neg = false;
+            if (total < 0) {
+                neg = true;
+                total = Math.abs(total);
+            }
+            return (neg ? "-" : '') + (dollar ? "$" : "") + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        };
+
+          function btnFranchiseeBillingDetailPopup(id) {
+
+            var sURL = '@Url.Action("FranchiseeBillingDetailPopup", "AccountsPayable", new { area = "Portal" })?Id=' + id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_FranchiseeBillingDetail').html(data);
+                    $("#modal_FranchiseeBillingDetail").modal({ backdrop: 'static' });
+                    //$("#modal_FranchiseeBillingDetail").draggable();
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        };
+
+        function btnInvoiceWinClose() {
+            $("#modal_FranchiseeBillingDetail").modal('hide');
+        }
+
+        function setPaging() {
+            var z = $("#pageSize").val();
+            var table = '';
+            var isSummaryView = $("input[name='isSummaryView']:checked").val();
+            if (isSummaryView == 1) {
+                table = $("#FranchiseeChargebackSummaryList").DataTable();
+            } else {
+                table = $("#FranchiseeChargebackDetailsList").DataTable();
+            }
+            if (z > 0) {
+                table.page.len(z).draw();
+            }
+            else if (z == -1) {
+                table.page.len(table.rows().count()).draw();
+            }
+            else {
+                table.page.page.len(25).draw();
+            }
+        }
+
+        function applyDurationFilter(v) {
+            $('#spnStartDate').html('');
+            $('#spnEndtDate').html('');
+            $('.divspandate').show();
+            $('#divSD').hide();
+            $('#divED').hide();
+            $('#divmonth').hide();
+            $('#divyear').hide();
+            $('#monthlist').val('');
+            $('#yearlist').val('');
+            switch (v) {
+                case 1:
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = moment().endOf('isoWeek').toString();
+                    break;
+                case 2:
+                    //code block
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 3:
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                    break;
+                case 4:
+                    //code block
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 5:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = moment().endOf('quarter').toString();
+                    break;
+                case 6:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 7:
+                    //code block
+                    firstDay = moment().startOf('year').toString();;
+                    lastDay = moment().endOf('year').toString();
+                    break;
+                case 8:
+                    //code block
+                    firstDay = moment().startOf('year').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 9:
+                    //code block
+                    firstDay = moment().add(0, 'days').toString();
+                    lastDay = moment().add(0, 'days').toString();
+                    break;
+                case 10:
+                    //code block
+                    firstDay = moment().subtract(1, 'days').toString();
+                    lastDay = moment().subtract(1, 'days').toString();
+                    break;
+                case 11:
+                    //code block
+                    firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                    lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                    break;
+                case 12:
+                    //code block
+                    firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                    break;
+                case 13:
+                    //code block
+                    firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                    lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                    break;
+                case 14:
+                    //code block
+                    firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                    lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                    break;
+                case 15:
+                    //code block
+                    $('.divspandate').hide();
+                    $('#divSD').show();
+                    $('#divED').show();
+                    $('#txtStartDate').val('');
+                    $('#txtEndtDate').val('')
+                    break;
+                case 16:
+                    //code block
+                    $('.divspandate').hide();
+                    $('#divSD').hide();
+                    $('#divED').hide();
+                    $('#divmonth').show();
+                    $('#divyear').show();
+                    break;
+                default:
+                    //code block
+            }
+            $('#spnStartDate').html(moment(firstDay).format('L'));
+            $('#spnEndtDate').html(moment(lastDay).format('L'));
+        }
+
+        function formatJSONDate(jsonDate) {
+            if (jsonDate != null) {
+                var dateString = jsonDate.substr(6);
+                var currentTime = new Date(parseInt(dateString));
+                var month = currentTime.getMonth() + 1;
+                var day = currentTime.getDate();
+                var year = currentTime.getFullYear();
+                var date = month + "/" + day + "/" + year;
+                return date;
+            }
+            return null;
+        }
+
+        function btnInvoicePopupClose() {
+            $("#modal_invoicedetail").modal('hide');
+        }
+
+        function showChargeBackDetail(TxNo) {
+            $.blockUI();
+            var sURL = '@Url.Action("ChargeBackDetailPopUp", "Franchise", new { area = "Portal" })?TrNo=' + TxNo.toString();
+            console.log(sURL);
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_ChargeBackDetail').html(data);
+                    $.unblockUI();
+                    $("#modal_ChargeBackDetail").modal({ backdrop: 'static' });
+                },
+                error: function () {
+                    $.unblockUI();
+                    alert("Content load failed.");
+                }
+            });
+
+        }
+
+        function btnOpenInvoiceDetail(id) {
+
+            $.blockUI();
+
+            var sURL = '@Url.Action("InvoiceDetail", "AccountReceivable", new { area = "Portal" })?Id=' + id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_invoicedetail').html(data);
+                    $.unblockUI();
+                    $("#modal_invoicedetail").modal({ backdrop: 'static' });
+                },
+                error: function () {
+                    $.unblockUI();
+                    alert("Content load failed.");
+                }
+            });
+        };
+
+        function btnChargeBackDetailPopupClose() {
+            $("#modal_ChargeBackDetail").modal('hide');
+        }
+
+        function onclickPrint() {
+
+
+            var regionIds = $('#regionlist').val();
+            var spnStartDate = $("#spnStartDate").text();
+            var spnEndDate = $("#spnEndtDate").text();
+            var _monthVal = $('#monthlist').val();
+            var _yearVal = $('#yearlist').val();
+            var isSummaryView = true;
+            var summaryView = $("input[name='isSummaryView']:checked").val();
+            if (summaryView == 2) {
+                isSummaryView = false;
+            }
+
+            var _monthVal = 0;
+            var _yearVal = 0;
+            var PrintURL = '@Url.Action("FranchiseeChargebackListPrint", "AccountsPayable", new { area = "Portal" })?RegionIds=' + regionIds + '&IsSummaryView=' + isSummaryView + '&spnStartDate=' + spnStartDate + '&spnEndDate=' + spnEndDate + '&month=' + _monthVal + '&year=' + _yearVal + '&PeriodId=' + $("#select_BillMonthYearList").val();
+
+            var _searchtext = $("#input_Search").val();
+            var _startDate = $('#spnStartDate').text();
+            var _endDate = $('#spnEndtDate').text();
+            var r = $('#regionlist').val();
+            var ty = $("#select_timeduration").val();
+
+            $.ajax({
+                type: "GET",
+                url: PrintURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    var tUrl = data;
+                    printJS({ printable: document.location.origin + tUrl, type: 'pdf', showModal: false });
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+        }
+    </script>
+}

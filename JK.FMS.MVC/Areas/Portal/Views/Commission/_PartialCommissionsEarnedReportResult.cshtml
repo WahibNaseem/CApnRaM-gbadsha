@@ -1,0 +1,116 @@
+﻿@model List<JKViewModels.Commission.CurrentScheduledCommissionViewModel>
+
+<div class="headerbox" style="margin-top:3px;">
+    <div class="row" style="padding: 0 15px;">
+        <div class="col-md-12" style="background-color: #3598DC;color: #fff;padding: 5px;">
+            <div class="alignCenter">
+                <div class="col-md-4">
+
+                </div>
+                <div class="col-md-4" style="text-align:center;">
+                    Commissions Earned Report
+                </div>
+                <div class="col-md-4">
+                    <input type="button" id="btnBackReport" value="Back" class="btn red dropdown-toggle pull-right subsectionBtn" style="padding: 0px 12px;" onclick="resetBackReport()" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="tablebox">
+    <div class="table-responsive" id="divcustomerList" style="background-color:#ffffff;">
+        <table class="table table-striped table-bordered order-column dataTable no-footer" id="AdditionalBonusScheduleList" style="margin-top:0 !important;">
+            <thead>
+                <tr style="background-color: #6fa0c1;color: #fff;">
+                    <td style="text-align:center;width:150px;vertical-align:middle;">
+                        Customer No
+                    </td>
+                    <td style="text-align:center;vertical-align:middle;">
+                        Customer Name
+                    </td>
+                    <td style="text-align:center;width:200px;vertical-align:middle;">
+                        Contract Amount
+                    </td>
+                    <td style="text-align:center;width:150px;vertical-align:middle;">
+                        Start Date
+                    </td>
+                    <td style="text-align:center;width:100px;vertical-align:middle;">
+                        CommissionType
+                    </td>
+                    <td style="text-align:center;width:200px;vertical-align:middle;">
+                        Commission Amount
+                    </td>
+                    <td style="text-align:center;width:100px;vertical-align:middle;">
+                        Action
+                    </td>
+
+                </tr>
+
+            </thead>
+            @if (Model.Count() == 0)
+            {
+                <tr >
+                    <td colspan="7" style="text-align:center"> No records available for this month.</td>
+                </tr>
+            }
+            else
+            {
+
+
+                int LastUserId = 0;
+
+                foreach (var item in Model.OrderBy(f => f.SaleAE_UserId))
+                {
+                    if (LastUserId != item.SaleAE_UserId)
+                    {
+                        <tr style="background-color: #6fa0c1;color: #fff;">
+                            <td colspan="2" style="vertical-align:middle;">
+                                <strong>User : @item.SaleAE_Name</strong>
+                            </td>
+                            <td colspan="2" style="vertical-align:middle;">
+                                <strong>Title : @item.RoleName</strong>
+                            </td>
+                            <td colspan="3" style="vertical-align:middle;">
+                                <strong>Totel Sales : $ @Model.Where(o => o.SaleAE_UserId == item.SaleAE_UserId).ToList().Sum(d => d.ContractAmount)</strong>
+                            </td>
+                        </tr>
+                        <span style="display:none">@(LastUserId = item.SaleAE_UserId);</span>
+                        
+                    }
+
+                    <tr>
+                        <td style="text-align:center;width:150px;vertical-align:middle;">
+                            @item.CustomerNo
+                        </td>
+                        <td style="text-align:center;vertical-align:middle;">
+                            @item.CustomerName
+                        </td>
+                        <td style="text-align:center;width:200px;vertical-align:middle;">
+
+                            @String.Format("{0:c}", item.ContractAmount)
+                        </td>
+                        <td style="text-align:center;width:150px;vertical-align:middle;">
+                            @String.Format("{0:MM/dd/yyyy}", item.ContractStartDate)
+                        </td>
+                        <td style="text-align:center;width:100px;vertical-align:middle;">
+                            @item.CompensationTypeListDescription
+                        </td>
+                        <td style="text-align:center;width:200px;vertical-align:middle;">
+                            @item.BonusAmount
+                        </td>
+                        <td><a href="#">View</a></td>
+
+                    </tr>
+                }
+                <tr>
+                    <td colspan="3"></td>
+                    <td colspan="2">Total Commissions Earned:</td>
+                    <td style="text-align:center;width:200px;vertical-align:middle;">
+                        @String.Format("{0:c}", Model.Sum(d => d.ContractAmount))
+                    </td>
+                    <td colspan="1"></td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>

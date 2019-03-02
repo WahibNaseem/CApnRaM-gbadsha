@@ -1,0 +1,244 @@
+﻿@model JKViewModels.AccountReceivable.PastDueStatementDetailModel
+@{
+    Layout = "~/Areas/Portal/Views/Shared/_LayoutPortal.cshtml";
+
+    var request = HttpContext.Current.Request;
+    var _siteUrl = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Authority);
+
+    string imgpath = _siteUrl + "/Content/admin/assets/layouts/layout2/img/lg_jklogo.jpg";
+}
+@{
+    decimal TotalAmount = 0;
+}
+
+<style>
+    .t33 {
+        border: 0.01px solid gray;
+        border-spacing: 0px;
+    }
+
+    .t11 {
+        border: 0.01px solid #fff;
+        border-spacing: 0px;
+    }
+
+    .tabcoll {
+        border-collapse: collapse;
+    }
+
+    .t22 {
+        border-left: 0.01px solid gray;
+        border-right: 0.01px solid gray;
+        border-spacing: 0px;
+    }
+</style>
+
+
+<table style="width: 100%">
+    <tr style="vertical-align: top">
+        <td width="40%">
+            <img src="@imgpath" style="height: 80px" />
+        </td>
+        <td width="25%"></td>
+        <td width="35%">
+            <table style="width:100%">
+                <tr>
+                    <td colspan="2" align="right" style="font-size:16px;"><b>Past Due Statement</b></td>
+                </tr>
+            </table>
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:40%;font-size: 14px;">
+                        <span>Date:</span>
+                    </td>
+                    <td style="width:60%;font-size: 14px;" class="t33">
+                        <div style="padding:2px;"> @DateTime.Today.ToString("MMMM d, yyyy")</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:40%;font-size: 14px;">
+                        <span>Customer No:</span>
+                    </td>
+                    <td style="width:60%;font-size: 14px;" class="t33">
+                        <div style="padding:2px;">@Model.CustomerNo</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:40%;font-size: 14px;">
+                        <span>Total Past Due:</span>
+                    </td>
+                    <td style="width:60%;font-size: 14px;" class="t33">
+                        <div style="padding:2px;"> 
+                        @(string.Format("{0:C}",(Model.PastDueStatementInvoices != null && Model.PastDueStatementInvoices.Count() > 0) ? Model.PastDueStatementInvoices.Sum(s=>s.Total) : 0))                        
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table><br />
+<table style="width: 100%">
+    <tr>
+        <td width="40%">
+            <div style="width:100%;background-color:#67809F;color:white;padding:8px"><b>Bill To:</b></div>
+            <div style="padding:5px;font-size: 13px;">@Model.CustomerName</div>
+            <div style="padding:5px;font-size: 13px;">@Model.Address1</div>
+            <div style="padding:5px;font-size: 13px;">@((Model.Address2 != null && Model.Address2 != "") ? Model.Address2 + "," : string.Empty) @Model.City, @Model.PostalCode</div>
+            <div style="padding:5px;font-size: 13px;">@(Model.Phone != null && Model.Phone != "" ? String.Format("{0: (###) ###-####}", long.Parse(Model.Phone)) : "")</div>
+            <br /><br />
+        </td>
+        <td width="20%"></td>
+        <td width="40%">
+            <div style="width:100%;background-color:#67809F;color:white;padding:8px"><b>Sold To:</b></div>
+            <div style="padding:5px;font-size: 13px;">@Model.CustomerName</div>
+            <div style="padding:5px;font-size: 13px;">@Model.SoldAddress1</div>
+            <div style="padding:5px;font-size: 13px;">@((Model.SoldAddress2 != null && Model.SoldAddress2 != "") ? Model.SoldAddress2 + "," : string.Empty) @Model.SoldCity, @Model.SoldPostalCode</div>
+            <div style="padding:5px;font-size: 13px;">@(Model.SoldPhone != null && Model.SoldPhone != "" ? String.Format("{0: (###) ###-####}", long.Parse(Model.SoldPhone)) : "")</div>
+            <br /><br />
+        </td>
+    </tr>
+</table>
+
+<table style="width: 100%;" class="tabcoll t11 ">
+
+    <tr>
+        <th style="text-align:center;width:70px;background-color: #67809F;color:white;border:0">
+            <div style="padding:6px;font-size: 12px;">Date</div>
+        </th>
+        <th style="width:92px;text-align:center;background-color: #67809F;color:white;border:0">
+            <div style="padding:6px;font-size: 12px;">Franchisee No</div>
+        </th>
+        <th style="width:88px;text-align:center;width:160px;background-color: #67809F;color:white;border:0">
+            <div style="padding:6px;font-size: 12px;">Franchisee Name</div>
+        </th>
+        <th style="text-align:center;width:92px;background-color: #67809F;color:white;border:0">
+            <div style="padding:6px;font-size: 12px;">Due Date</div>
+        </th>
+    </tr>
+    @if (Model.PastDueStatementFranchisee != null && Model.PastDueStatementFranchisee.Count() > 0)
+    {
+        foreach (var item in Model.PastDueStatementFranchisee)
+        {
+            <tr>
+                <td class="t22" style="text-align: center;"><div style="padding:3px;font-size: 12px;">@(DateTime.Now.ToString("MM/dd/yyyy"))</div></td>
+                <td class="t22" style="text-align: center;"><div style="padding:5px;font-size: 11px;">@item.FranchiseeNo</div> </td>
+                <td class="t22" style="text-align: center;"><div style="padding:5px;font-size: 11px;">@item.FranchiseeName</div> </td>
+                <td class="t22" style="text-align: center;"><div style="padding:5px;font-size: 11px;">Upon Receipt</div></td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td colspan="4" style="text-align: center;"><div style="padding:5px;font-size: 11px;">No record found</div></td>
+        </tr>
+    }
+</table><br />
+
+<table style="width: 100%;" class="tabcoll t11 ">
+    <thead>
+        <tr>
+            <th style="text-align:center;width:64px;background-color: #67809F;color:white;border:0">
+                <div style="padding:6px;font-size: 12px;">Invoice Date</div>
+            </th>
+            <th style="width:64px;text-align:center;background-color: #67809F;color:white;border:0">
+                <div style="padding:6px;font-size: 12px;">Invoice No</div>
+            </th>
+            <th style="text-align:left;width:225px;background-color: #67809F;color:white;border:0">
+                <div style="padding:6px;font-size: 12px;">Description</div>
+            </th>
+            <th style="text-align:center;width:58px;background-color: #67809F;color:white;border:0">
+                <div style="padding:6px;font-size: 12px;">Due Date</div>
+            </th>
+            <th style="text-align:center;width:58px;background-color: #67809F;color:white;border:0">
+                <div style="padding:6px;font-size: 12px;"># Days Pastdue</div>
+            </th>
+            <th style="text-align:center;width:58px;background-color: #67809F;color:white;border:0">
+                <div style="padding:6px;font-size: 12px;">PastDue Balance</div>
+            </th>
+        </tr>
+    </thead>
+</table>
+@for (var i = 0; i <= 36; i++)
+{
+    JKViewModels.AccountReceivable.PastDueStatementInvoiceModel t = null;
+
+    if (i < Model.PastDueStatementInvoices.Count)
+    {
+        t = Model.PastDueStatementInvoices[i];
+        TotalAmount += Model.PastDueStatementInvoices[i].Total;
+    }
+    if (t != null)
+    {
+        <table style="width: 100%;" class="tabcoll">
+            <tr>
+                <td class="t22" style="text-align: center;width:64px;"><div style="padding:5px;font-size: 12px;">@((t != null && t.InvoiceDate != null) ? Convert.ToDateTime(t.InvoiceDate).ToString("MM/dd/yyyy") : string.Empty)</div></td>
+                <td class="t22" style="text-align: center;width:64px;"><div style="padding:5px;font-size: 11px;">@(t?.InvoiceNo)</div> </td>
+                <td class="t22" style="text-align: left;width:225px;"><div style="padding:5px;font-size: 11px;"> @(t?.InvoiceDescription)</div></td>
+                <td class="t22" style="text-align: right;width:58px;"><div style="padding:5px;font-size: 11px;">@((t != null && t.DueDate != null) ? Convert.ToDateTime(t.DueDate).ToString("MM/dd/yyyy") : string.Empty)</div> </td>
+                <td class="t22" style="text-align: right;width:58px;">
+                    <div style="padding:5px;font-size: 11px;text-align:center;">
+                    @if (t.DayDifference > 0 && 30 >= t.DayDifference)
+                    {
+                            <text>1-30</text>
+                        }
+                        else if (t.DayDifference >= 31 && 60 >= t.DayDifference)
+                        {
+                            <text>31-60</text>
+                        }
+                        else if (t.DayDifference >= 61 && 90 >= t.DayDifference)
+                        {
+                            <text>61-90</text>
+                        }
+                        else
+                        {
+                            <text>+90</text>
+                        }
+
+                    </div>
+                </td>
+                <td class="t22" style="text-align: right;width:58px;">
+                    <div style="padding:5px;font-size: 11px;">@string.Format("{0:C}", t.Total)</div>
+                </td>
+            </tr>
+        </table>
+    }
+    else
+    {
+        <table style="width: 100%;" class="tabcoll">
+            <tr>
+                <td class="t22" style="text-align: center;width:64px;"><div style="padding:5px;font-size: 11px;"></div></td>
+                <td class="t22" style="text-align: center;width:64px;"><div style="padding:5px;font-size: 11px;"></div> </td>
+                <td class="t22" style="text-align: center;width:225px;"><div style="padding:5px;font-size: 11px;"></div> </td>
+                <td class="t22" style="text-align: left;width:58px;"><div style="padding:5px;font-size: 11px;"></div></td>
+                <td class="t22" style="text-align: right;width:58px;"><div style="padding:5px;font-size: 11px;"></div> </td>
+                <td class="t22" style="text-align: right;width:58px;"><div style="padding:5px;font-size: 11px;"></div> </td>
+            </tr>
+        </table>
+    }
+}
+<table style="width: 100%;" class="tabcoll t11 ">
+    <tr>
+        <td colspan="5" style="text-align: right; background-color: #67809F;color:white;width:475px;"><div style="padding:5px;font-size: 14px">Total:</div></td>
+        <td style="text-align: right; background-color: #67809F;color:white;width:90px;"><div style="padding:5px;font-size: 14px">@string.Format("{0:C}", TotalAmount)</div></td>
+    </tr>
+</table>
+<div style="width:100%; text-align: center;font-size: 14px;padding-top:12px;">
+    Your account balance is @(string.Format("{0:C}", TotalAmount)). Please make your payment to cover the balance by the due date.
+</div>
+
+<div style="width:100%; text-align: center;font-size:16px;padding-top:10px;">
+    <b>Thank you for your business!</b>
+</div>
+
+<div style="width:100%; text-align: center;font-size:14px;padding-top:10px;">
+    Should you have any inquiries concerning this statement, please contact @(Model.RemitTo?.ContactName) at @(Model.RemitTo?.ContactPhone).
+</div>
+<hr />
+<div style="width:100%; text-align: center;font-size:14px;">
+    Make all checks payable to @(Model.RemitTo?.RegionName)
+</div>
+<div style="width:100%; text-align: center;font-size:14px;padding-top:5px;">
+    @(Model.RemitTo?.Address.FullAddress)
+</div>
+<div style="page-break-before:always">&nbsp;</div>

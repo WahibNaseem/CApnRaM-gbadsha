@@ -1,0 +1,1998 @@
+﻿@model JKViewModels.Customer.FullCustomerViewModel
+
+@using JKApi.Core.Common
+@{
+    ViewBag.Title = "CustomerFailedInspectionDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    List<JKViewModels.Customer.CustomerFranchiseeDistributionModel> FranchiseeDistribution = new List<JKViewModels.Customer.CustomerFranchiseeDistributionModel>();
+
+    if (ViewBag.FranchiseeDistribution != null)
+    {
+        FranchiseeDistribution = (List<JKViewModels.Customer.CustomerFranchiseeDistributionModel>)ViewBag.FranchiseeDistribution;
+    }
+
+    //var FranchiseeDistribution = (List<JKViewModels.Customer.CustomerFranchiseeDistributionModel>)ViewBag.FranchiseeDistribution;
+
+}
+
+@section styles{
+
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")' rel="stylesheet" type="text/css" />
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")' rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" type="text/css" />
+    <link href="~/Content/admin/assets/global/css/components.min.css" rel="stylesheet" />
+
+    <style>
+        .form-actions {
+            padding-top: 10px;
+            margin-top: 20px;
+            border-top: 1px solid #e7ecf1;
+        }
+
+        .form-section {
+            margin-top: 10px;
+            padding: 5px;
+            border-bottom: 1px solid #e7ecf1;
+        }
+
+        .forminput {
+            text-align: left;
+            margin-left: -20px;
+            border: none;
+            background: transparent;
+        }
+
+        .portlet-bottom {
+            margin-bottom: 10px;
+        }
+
+        .portlet-align {
+            padding-left: 6px;
+            padding-right: 6px;
+        }
+
+        .modal-custom-content {
+            padding: 0px;
+            border-radius: 20px;
+        }
+
+        .modal-custom-header {
+            background: #3598DC;
+            padding: 8px;
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
+        }
+
+        .modal-close-button {
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .capitaltext {
+            text-transform: uppercase;
+        }
+
+        .tabpointer {
+            cursor: pointer;
+        }
+    </style>
+
+    <style>
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .page-size {
+            padding-left: 0;
+            padding-right: 0;
+            width: 62px;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        #PotentialLeadList th {
+            vertical-align: middle;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .no-margin {
+            margin: 0;
+        }
+
+        .padding-tb1 {
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        .margin-tb1 {
+            margin-top: 1px;
+            margin-bottom: 1px;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .contract {
+            text-align: right;
+        }
+
+        .tablebox .table-responsive {
+            min-height: 80px;
+        }
+
+        .input-mysize {
+            min-width: 150px;
+        }
+
+        .input-mysize2 {
+            min-width: 90px;
+        }
+
+        .input-mysize3 { /*min-width: 250px*/
+        }
+
+        .divitemhide {
+            display: none;
+        }
+    </style>
+
+    <style>
+        @@media (min-width: 768px) {
+            .seven-cols .col-md-1,
+            .seven-cols .col-sm-1,
+            .seven-cols .col-lg-1 {
+                width: 100%;
+                *width: 100%;
+            }
+        }
+
+        @@media (min-width: 992px) {
+            .seven-cols .col-md-1,
+            .seven-cols .col-sm-1,
+            .seven-cols .col-lg-1 {
+                width: 14.285714285714285714285714285714%;
+                *width: 14.285714285714285714285714285714%;
+            }
+        }
+
+        @@media (min-width: 1200px) {
+            .seven-cols .col-md-1,
+            .seven-cols .col-sm-1,
+            .seven-cols .col-lg-1 {
+                width: 14.285714285714285714285714285714%;
+                *width: 14.285714285714285714285714285714%;
+            }
+        }
+    </style>
+}
+
+@section pageplugins{
+
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js")" type="text/javascript"></script>
+    @*<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/chosen.css")" />
+        <script src="@Url.Content("~/Scripts/chosen.jquery.min.js")" type="text/javascript"></script>
+        <script src="~/Scripts/jquery.uniform.min.js"></script>*@
+    @if (Request.IsSecureConnection)
+    {
+        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    }
+    else
+    {
+        <script src="http://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    }
+}
+<div class="portlet light bordered" id="divBelow">
+    <div class="headerbox">
+        <div class="row" style="background-color: #4b85cc;color: #fff;padding-top:8px;padding-bottom:8px;margin-left: 0px;margin-right: 0px;">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="input-icon">
+                            <a href="@Url.Action("CustomerServiceFailedInspectionList","CustomerService",new { area = "Portal" })" class="btn-custom btn btn-primary">Back to List</a>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="input-icon" style="text-align:center;">
+                            OPERATIONS FAILED INSPECTION HANDLE PROCESS
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="input-icon">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12 portlet-align" id="right-content">
+                    <div class="portlet box div-right portlet-bottom" style="background-color: #a3a9ad;">
+                        <div class="portlet-body">
+                            <form action="#" id="form_summary" class="form-horizontal">
+                                <div class="form-body">
+
+                                    <div class="form-group">
+                                        <label for="select_stagestatus" class="control-label col-md-2">Customer No:</label>
+                                        <div class="col-md-2">
+                                            <input class="form-control input-sm" value="@(Model.CustomerViewModel != null ?Model.CustomerViewModel.CustomerNo:string.Empty)" />
+                                        </div>
+                                        <label for="select_stagestatus" class="control-label col-md-2">Contract Date:</label>
+                                        <div class="col-md-2">
+                                            <input class="form-control input-sm" value="@(Model.Contract != null ?  Convert.ToDateTime(Model.Contract.SignDate).ToString("MM/dd/yyyy") :string.Empty)" />
+                                        </div>
+                                        <label for="select_stagestatus" class="control-label col-md-2">Request Date:</label>
+                                        <div class="col-md-2">
+                                            <input class="form-control input-sm" value="@ViewBag.CallDate" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="select_stagestatus" class="control-label col-md-2">Customer Name:</label>
+                                        <div class="col-md-2">
+                                            <input class="form-control input-sm" value="@(Model.CustomerViewModel != null ?Model.CustomerViewModel.Name:string.Empty)" />
+                                        </div>
+                                        <label for="select_stagestatus" class="control-label col-md-2">Contract Amount:</label>
+                                        <div class="col-md-2">
+                                            <input class="form-control input-sm" value="@(Model.Contract != null ? string.Format("{0:c}", Model.Contract.Amount) :string.Empty)" />
+                                        </div>
+                                        <label for="select_stagestatus" class="control-label col-md-2">Reason:</label>
+                                        <div class="col-md-2">
+                                            <input class="form-control input-sm" value="@ViewBag.StatusReason" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="portlet-title compact">
+        <div class="btn-group pull-right">
+            <button id="btnActivity" type="button" class="btn green btn-block" onclick="showActivityPopup()">Activity</button>
+        </div>
+        <div class="tabbable-line">
+            <ul class="nav nav-tabs" style="width:100%;">
+                <li class="active" style="width:13%;text-align:center;">
+                    <a id="Potential_tbCustomerInfo" class="potentialdetailtab" href="#tabcontent_customerinfo" data-toggle="tab">Customer Info</a>
+                </li>
+                <li style="width:13%;text-align:center">
+                    <a id="Potential_tbContractInfo" class="potentialdetailtab" href="#tabcontent_contactinfo" data-toggle="tab">Contract Info </a>
+                </li>
+                <li style="width:13%;text-align:center">
+                    <a id="Potential_tbFranchiseeInfo" class="potentialdetailtab" href="#tabcontent_franchiseeinfo" data-toggle="tab">Franchisee / Distribution </a>
+                </li>
+                @*<li style="width:13%;text-align:center">
+                        <a id="Potential_tbDocumentsInfo" class="potentialdetailtab" href="#tabcontent_documentsinfo" data-toggle="tab">Documents</a>
+                    </li>*@
+                <li style="width:13%;text-align:center">
+                    <a id="" class="" onclick="OpenCustomerUploadDocumentPopup()">Documents</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="portlet-body">
+        <div class="tab-content">
+            <input type="hidden" id="hdnCustomerId" value="@ViewBag.CustomerId" />
+            <input type="hidden" id="hdnServiceCallLogId" value="@ViewBag.ServiceCallLogId" />
+            <input type="hidden" id="hdnStageId" value="0" />
+            <div class="tab-pane active" id="tabcontent_customerinfo">
+                @Html.Partial("_CustomerComplainSteps")
+                <!--Contact Info-->
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="row">
+                            <div class="col-md-12 portlet-align" id="right-content">
+                                <div class="portlet box div-right portlet-bottom" style="background-color: #a3a9ad;">
+                                    <div class="portlet-title compact">
+                                        <div class="caption">
+                                            Customer information
+                                        </div>
+                                    </div>
+                                    <div class="portlet-body">
+                                        <form action="#" id="form_summary" class="form-horizontal">
+                                            <div class="form-body">
+                                                <div class="form-group">
+                                                    <label for="select_stagestatus" class="control-label col-md-4">Customer Name:</label>
+                                                    <div class="col-md-6">
+                                                        <input class="form-control input-sm" value="@(Model.CustomerViewModel != null ?Model.CustomerViewModel.Name:string.Empty)" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="select_stagestatus" class="control-label col-md-4">Address:</label>
+                                                    <div class="col-md-6">
+                                                        <input class="form-control input-sm" value="@(Model.MainAddress != null ?Model.MainAddress.Address1 :string.Empty)" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="select_stagestatus" class="control-label col-md-4">City/State/Zipcode:</label>
+                                                    <div class="col-md-3" style="padding-right:0px;">
+                                                        <input class="form-control input-sm" value="@(Model.MainAddress != null ?Model.MainAddress.City :string.Empty)" />
+                                                    </div>
+                                                    <div class="col-md-1" style="min-width:36px !important;">
+                                                        <input class="form-control input-sm" value="@(Model.MainAddress != null ?Model.MainAddress.StateName :string.Empty)" style="width:45px;" />
+                                                    </div>
+                                                    <div class="col-md-2" style="min-width:85px !important;">
+                                                        <input class="form-control input-sm" value="@(Model.MainAddress != null ?Model.MainAddress.PostalCode :string.Empty)" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="select_stagestatus" class="control-label col-md-4">Business Phone:</label>
+                                                    <div class="col-md-6">
+                                                        <input class="form-control input-sm" value="@((Model.MainPhone != null && Model.MainPhone.Phone1 != null && Model.MainPhone.Phone1 != "" )? string.Format("{0:(###) ###-####}", Convert.ToDecimal(Model.MainPhone.Phone1.Trim().Replace(" ", "").Replace("-", "").Replace(")", "").Replace("(", ""))) :string.Empty)" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="select_stagestatus" class="control-label col-md-4">Contact Name:</label>
+                                                    <div class="col-md-6">
+                                                        <input class="form-control input-sm" value="@(Model.MainContact != null ?Model.MainContact.Name :string.Empty)" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="select_stagestatus" class="control-label col-md-4">Title:</label>
+                                                    <div class="col-md-6">
+                                                        <input class="form-control input-sm" value="@(Model.MainContact != null ?Model.MainContact.Title :string.Empty)" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="select_stagestatus" class="control-label col-md-4">Phone:</label>
+                                                    <div class="col-md-6">
+                                                        <input class="form-control input-sm" value="@((Model.MainPhone2 != null && Model.MainPhone2.Phone1 != null && Model.MainPhone2.Phone1 != "" )? string.Format("{0:(###) ###-####}", Convert.ToDecimal(Model.MainPhone2.Phone1.Trim().Replace(" ", "").Replace("-", "").Replace(")", "").Replace("(", ""))) :string.Empty)" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="select_stagestatus" class="control-label col-md-4">Email:</label>
+                                                    <div class="col-md-6">
+                                                        <input class="form-control input-sm" value="@(Model.MainEmail != null ?Model.MainEmail.EmailAddress:string.Empty)" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-actions" style="display:none;">
+                                                    <div class="row" id="contactinfo_action">
+                                                        <div class="col-md-4 pull-right">
+                                                            <button id="" type="button" class="btn green btn-block">Edit</button>
+                                                        </div>
+                                                        <div class="col-md-4 col-md-offset-4">
+                                                            <button id="" type="button" class="btn green btn-block">Cancel</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="divLoadStageStatus_customerinfo">
+                        @*@Html.Partial("_CustomerCancellationStageActivity")*@
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="tabcontent_contactinfo">
+
+                @Html.Partial("_CustomerComplainSteps")
+
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="row">
+                            <div class="col-md-12 portlet-align" id="right-content">
+                                <div class="portlet box div-right portlet-bottom" style="background-color: #a3a9ad;">
+                                    <div class="portlet-title compact">
+                                        <div class="caption">
+                                            Contract information
+                                        </div>
+                                    </div>
+                                    <div class="portlet-body">
+                                        <form action="#" id="form_summary" class="form-horizontal">
+                                            <div class="form-body">
+                                                <div class="form-group">
+                                                    <label for="select_stagestatus" class="control-label col-md-2">Account Type:</label>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control input-sm" value="@ViewBag.AccountType" />
+                                                    </div>
+                                                    <label for="select_stagestatus" class="control-label col-md-2" style="padding-right:2px !important;padding-left:5px !important;">Agreement Type:</label>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control input-sm" value="@ViewBag.AgreementType" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="select_stagestatus" class="control-label col-md-2">Contract Type:</label>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control input-sm" value="@ViewBag.ContractType" />
+                                                    </div>
+                                                    <label for="select_stagestatus" class="control-label col-md-2" style="padding-right:2px !important;padding-left:5px !important;">PO Number:</label>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control input-sm" value="@(Model.Contract != null ? Model.Contract.PurchaseOrderNo:string.Empty)" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="select_stagestatus" class="control-label col-md-2">Sign Date:</label>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control input-sm" value="@(Model.Contract != null ? Convert.ToDateTime(Model.Contract.SignDate).ToString("MM-dd-yyyy") :string.Empty)" />
+                                                    </div>
+                                                    <label for="select_stagestatus" class="control-label col-md-2" style="padding-right:2px !important;padding-left:5px !important;">Start Date:</label>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control input-sm" value="@(Model.Contract != null ? Convert.ToDateTime(Model.Contract.StartDate).ToString("MM-dd-yyyy") :string.Empty)" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="select_stagestatus" class="control-label col-md-2">Term Months:</label>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control input-sm" value="@(Model.Contract != null ? Model.Contract.ContractTermMonth.ToString() :string.Empty)" />
+                                                    </div>
+                                                    <label for="select_stagestatus" class="control-label col-md-2" style="padding-right:2px !important;padding-left:5px !important;">Auto Renew Date:</label>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control input-sm" value="@(Model.Contract != null ? Model.Contract.ExpirationDate != null ? Convert.ToDateTime(Model.Contract.ExpirationDate).ToString("MM-dd-yyyy") : string.Empty : string.Empty )" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="select_stagestatus" class="control-label col-md-2" style="padding-right:2px !important;padding-left:5px !important;">Contract Amount:</label>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control input-sm" value="@(Model.Contract != null ? string.Format("{0:c}", Model.Contract.Amount) :string.Empty)" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="portlet-title compact">
+                                        <div class="caption">
+                                            Contract Detail information
+                                        </div>
+                                    </div>
+                                    <div class="portlet-body">
+                                        <form action="#" id="form_summary" class="form-horizontal">
+                                            <div class="form-body">
+                                                <div class="form-group">
+                                                    <label for="select_stagestatus" class="control-label col-md-2">Service Type </label>
+                                                    <div class="col-md-6">
+                                                        <input class="form-control input-sm" value="@ViewBag.ServiceTypeName" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="select_stagestatus" class="control-label col-md-2" style="padding-right:2px !important;padding-left:5px !important;">Billing Frequency:</label>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control input-sm" value="@ViewBag.BillingFrequencyName" />
+                                                    </div>
+                                                    <label for="select_stagestatus" class="control-label col-md-2" style="padding-right:2px !important;padding-left:5px !important;">Square Footage:</label>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control input-sm" value="@(Model.ContractDetail != null ? Model.ContractDetail.SquareFootage :string.Empty)" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="select_stagestatus" class="control-label col-md-2">Start Time:</label>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control input-sm" value="@(Model.ContractDetail  != null ? Convert.ToDateTime(Model.ContractDetail.StartTime).ToString("hh:mm tt") :string.Empty)" />
+                                                    </div>
+                                                    <label for="select_stagestatus" class="control-label col-md-2" style="padding-right:2px !important;padding-left:5px !important;">End Time:</label>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control input-sm" value="@(Model.ContractDetail != null ? Convert.ToDateTime(Model.ContractDetail.EndTime).ToString("hh:mm tt") :string.Empty)" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="select_stagestatus" class="control-label col-md-2" style="padding-right:2px !important;padding-left:5px !important;">Contract Amount:</label>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control input-sm" value="@(Model.ContractDetail != null ? string.Format("{0:c}", Model.ContractDetail.Amount) :string.Empty)" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="select_stagestatus" class="control-label col-md-2">Clean Times:</label>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control input-sm" value="@(Model.ContractDetail != null ? Convert.ToString(Model.ContractDetail.CleanTimes) :string.Empty)" />
+                                                    </div>
+                                                    <label for="select_stagestatus" class="control-label col-md-2" style="padding-right:2px !important;padding-left:5px !important;">Clean Frequency:</label>
+                                                    <div class="col-md-4">
+                                                        <input class="form-control input-sm" value="@ViewBag.CleanFrequencyName" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-md-1"></div>
+                                                    <div class="col-md-1" style="width:10%;">
+                                                        <label class="mt-checkbox" style="margin-bottom: 0px;">
+                                                            <input type="checkbox" id="chkMon" class="search-field" @(Model.ContractDetail != null ? (Model.ContractDetail.Mon == true ? "checked=checked" : string.Empty) : string.Empty)>Mon
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-1" style="width:10%;">
+                                                        <label class="mt-checkbox" style="margin-bottom: 0px;">
+                                                            <input type="checkbox" id="chkTue" class="search-field" @(Model.ContractDetail != null ? (Model.ContractDetail.Tues == true ? "checked=checked" : string.Empty) : string.Empty)>Tue
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-1" style="width:10%;">
+                                                        <label class="mt-checkbox" style="margin-bottom: 0px;">
+                                                            <input type="checkbox" id="chkWed" class="search-field" @(Model.ContractDetail != null ? (Model.ContractDetail.Wed == true ? "checked=checked" : string.Empty) : string.Empty)>Wed
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-1" style="width:10%;">
+                                                        <label class="mt-checkbox" style="margin-bottom: 0px;">
+                                                            <input type="checkbox" id="chkThu" class="search-field" @(Model.ContractDetail != null ? (Model.ContractDetail.Thur == true ? "checked=checked" : string.Empty) : string.Empty)>Thu
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-1" style="width:10%;">
+                                                        <label class="mt-checkbox" style="margin-bottom: 0px;">
+                                                            <input type="checkbox" id="chkFri" class="search-field" @(Model.ContractDetail != null ? (Model.ContractDetail.Fri == true ? "checked=checked" : string.Empty) : string.Empty)>Fri
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-1" style="width:10%;">
+                                                        <label class="mt-checkbox" style="margin-bottom: 0px;">
+                                                            <input type="checkbox" id="chkSat" class="search-field" @(Model.ContractDetail != null ? (Model.ContractDetail.Sat == true ? "checked=checked" : string.Empty) : string.Empty)>Sat
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-1" style="width:10%;">
+                                                        <label class="mt-checkbox" style="margin-bottom: 0px;">
+                                                            <input type="checkbox" id="chkSun" class="search-field" @(Model.ContractDetail != null ? (Model.ContractDetail.Sun == true ? "checked=checked" : string.Empty) : string.Empty)>Sun
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="divLoadStageStatus_contractinfo">
+                        @*@Html.Partial("_CustomerCancellationStageActivity")*@
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="tabcontent_franchiseeinfo">
+
+                @Html.Partial("_CustomerComplainSteps")
+
+                <!--Customer Account Activity-->
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="row">
+
+                            <div class="dataTables_paginate paging_bootstrap_number" id="tbl_paginate" style="text-align:center;">
+                                <ul class="pagination" style="visibility: visible;margin:7px !important;">
+                                    @if (FranchiseeDistribution != null && FranchiseeDistribution.Count() > 1)
+                                    {
+                                        foreach (var item in FranchiseeDistribution)
+                                        {
+                                            <li id="pli_@item.RowNo" class="plglink @(item.RowNo == 1 ? "active":string.Empty) "><a javascript:void(0)="" onclick="onClickPageChange(@item.RowNo)">@item.RowNo</a></li>
+                                        }
+                                    }
+
+                                    @*<li class="prev disabled"><a href="JavaScript:Void(0)" title="Prev"><i class="fa fa-angle-left"></i></a></li>
+                                        <li class="active"><a javascript:void(0)="">1</a></li>
+                                        <li><a javascript:void(0)="">2</a></li>
+                                        <li class="next"><a href="JavaScript:Void(0)" title="Next"><i class="fa fa-angle-right"></i></a></li>*@
+                                </ul>
+                            </div>
+
+                            <div class="col-md-12 portlet-align" id="right-content">
+                                @if (FranchiseeDistribution != null && FranchiseeDistribution.Count() > 0)
+                                {
+                                    foreach (var item in FranchiseeDistribution)
+                                    {
+                                        <input type="hidden" id="hdnli_@item.RowNo" value="@item.RowNo" />
+                                        <div class="portlet box div-right portlet-bottom clsitmlist @(item.RowNo != 1 ? "divitemhide" :string.Empty)" style="background-color: #a3a9ad;" id="itmlist_@item.RowNo">
+                                            <div class="portlet-title compact">
+                                                <div class="caption">
+                                                    Franchisee Information
+                                                </div>
+                                            </div>
+                                            <div class="portlet-body">
+                                                <form action="#" id="form_summary" class="form-horizontal">
+                                                    <div class="form-body">
+                                                        <div class="form-group">
+                                                            <label for="select_stagestatus" class="control-label col-md-4">Franchisee No:</label>
+                                                            <div class="col-md-6">
+                                                                <input class="form-control input-sm" value="@item.FranchiseeNo" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="select_stagestatus" class="control-label col-md-4">Franchisee Name</label>
+                                                            <div class="col-md-6">
+                                                                <input class="form-control input-sm" value="@item.FranchiseeName" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="select_stagestatus" class="control-label col-md-4">Address:</label>
+                                                            <div class="col-md-6">
+                                                                <input class="form-control input-sm" value="@item.Main1Address1" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="select_stagestatus" class="control-label col-md-4">City/State/Zipcode:</label>
+                                                            <div class="col-md-3" style="padding-right:0px;">
+                                                                <input class="form-control input-sm" value="@item.Main1City" />
+                                                            </div>
+                                                            <div class="col-md-1" style="min-width:36px !important;">
+                                                                <input class="form-control input-sm" value="@item.Main1StateName" style="width:45px;" />
+                                                            </div>
+                                                            <div class="col-md-2" style="min-width:85px !important;">
+                                                                <input class="form-control input-sm" value="@item.Main1PostalCode" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="select_stagestatus" class="control-label col-md-4">Business Phone:</label>
+                                                            <div class="col-md-6">
+                                                                <input class="form-control input-sm" value="@((item.Phone1Phone != null && item.Phone1Phone != "")? string.Format("{0:(###) ###-####}", Convert.ToDecimal(item.Phone1Phone.Trim().Replace(" ", "").Replace("-", "").Replace(")", "").Replace("(", ""))) : string.Empty)" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="select_stagestatus" class="control-label col-md-4">Contact Name:</label>
+                                                            <div class="col-md-6">
+                                                                <input class="form-control input-sm" value="@item.ContactName" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="select_stagestatus" class="control-label col-md-4">Title:</label>
+                                                            <div class="col-md-6">
+                                                                <input class="form-control input-sm" value="@(item.ContactTitle != null ? item.ContactTitle.ToString() : string.Empty )" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="select_stagestatus" class="control-label col-md-4">Phone:</label>
+                                                            <div class="col-md-6">
+                                                                <input class="form-control input-sm" value="@((item.Phone2Phone != null && item.Phone2Phone != "")? string.Format("{0:(###) ###-####}", Convert.ToDecimal(item.Phone2Phone.Trim().Replace(" ", "").Replace("-", "").Replace(")", "").Replace("(", "") )) : string.Empty)" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="select_stagestatus" class="control-label col-md-4">Email:</label>
+                                                            <div class="col-md-6">
+                                                                <input class="form-control input-sm" value="@item.EmailAddress" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="portlet-title compact">
+                                                <div class="caption">
+                                                    Distribution
+                                                </div>
+                                            </div>
+                                            <div class="portlet-body">
+                                                <form action="#" id="form_summary" class="form-horizontal">
+                                                    <div class="form-body">
+                                                        <div class="form-group">
+                                                            <label for="select_stagestatus" class="control-label col-md-2">Start Date:</label>
+                                                            <div class="col-md-4">
+                                                                <input class="form-control input-sm" value="@(item.StartDate != null ? Convert.ToDateTime(item.StartDate).ToString("MM-dd-yyyy") :string.Empty)" />
+                                                            </div>
+                                                            <label for="select_stagestatus" class="control-label col-md-2" style="padding-right:2px !important;padding-left:5px !important;">Expriration Date:</label>
+                                                            <div class="col-md-4">
+                                                                <input class="form-control input-sm" value="@(item.EndDate != null ? Convert.ToDateTime(item.EndDate).ToString("MM-dd-yyyy") :string.Empty)" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="select_stagestatus" class="control-label col-md-2">Amount:</label>
+                                                            <div class="col-md-4">
+                                                                <input class="form-control input-sm" value="@string.Format("{0:c}", item.Amount) " />
+                                                            </div>
+                                                            <label for="select_stagestatus" class="control-label col-md-2" style="padding-right:2px !important;padding-left:5px !important;">Fees:</label>
+                                                            <div class="col-md-1">
+                                                                <a class="btn-custom btn btn-primary" onclick="ClickonViewFee(@item.DistributionId)">View</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="portlet box div-right portlet-bottom" style="background-color: #a3a9ad;">
+                                        <div class="portlet-title compact">
+                                            <div class="caption">
+                                                Franchisee Information
+                                            </div>
+                                        </div>
+                                        <div class="portlet-body">
+                                            <form action="#" id="form_summary" class="form-horizontal">
+                                                <div class="form-body">
+                                                    <div class="form-group">
+                                                        <label for="select_stagestatus" class="control-label col-md-4">Franchisee No:</label>
+                                                        <div class="col-md-6">
+                                                            <input class="form-control input-sm" value="701011" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="select_stagestatus" class="control-label col-md-4">Franchisee Name</label>
+                                                        <div class="col-md-6">
+                                                            <input class="form-control input-sm" value="KMBURNS, LLC" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="select_stagestatus" class="control-label col-md-4">Address:</label>
+                                                        <div class="col-md-6">
+                                                            <input class="form-control input-sm" value="Customer Address" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="select_stagestatus" class="control-label col-md-4">City/State/Zip Code:</label>
+                                                        <div class="col-md-3" style="padding-right:0px;">
+                                                            <input class="form-control input-sm" value="Buffalo" />
+                                                        </div>
+                                                        <div class="col-md-1" style="min-width:36px !important;">
+                                                            <input class="form-control input-sm" value="NY" style="width:45px;" />
+                                                        </div>
+                                                        <div class="col-md-2" style="min-width:85px !important;">
+                                                            <input class="form-control input-sm" value="14226" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="select_stagestatus" class="control-label col-md-4">Business Phone:</label>
+                                                        <div class="col-md-6">
+                                                            <input class="form-control input-sm" value="(716) 456-4789" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="select_stagestatus" class="control-label col-md-4">Contact Name:</label>
+                                                        <div class="col-md-6">
+                                                            <input class="form-control input-sm" value="Any name of customer" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="select_stagestatus" class="control-label col-md-4">Title:</label>
+                                                        <div class="col-md-6">
+                                                            <input class="form-control input-sm" value="Any name of title" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="select_stagestatus" class="control-label col-md-4">Phone:</label>
+                                                        <div class="col-md-6">
+                                                            <input class="form-control input-sm" value="(716) 145-4567" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="select_stagestatus" class="control-label col-md-4">Email:</label>
+                                                        <div class="col-md-6">
+                                                            <input class="form-control input-sm" value="someone@customer.com" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="portlet-title compact">
+                                            <div class="caption">
+                                                Distribution
+                                            </div>
+                                        </div>
+                                        <div class="portlet-body">
+                                            <form action="#" id="form_summary" class="form-horizontal">
+                                                <div class="form-body">
+                                                    <div class="form-group">
+                                                        <label for="select_stagestatus" class="control-label col-md-2">Start Time:</label>
+                                                        <div class="col-md-4">
+                                                            <input class="form-control input-sm" value="05/12/2012" />
+                                                        </div>
+                                                        <label for="select_stagestatus" class="control-label col-md-2" style="padding-right:2px !important;padding-left:5px !important;">Expriration Date:</label>
+                                                        <div class="col-md-4">
+                                                            <input class="form-control input-sm" value="05/12/2012" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="select_stagestatus" class="control-label col-md-2">Amount:</label>
+                                                        <div class="col-md-4">
+                                                            <input class="form-control input-sm" value="$5,500.00" />
+                                                        </div>
+                                                        <label for="select_stagestatus" class="control-label col-md-2" style="padding-right:2px !important;padding-left:5px !important;">Fees:</label>
+                                                        <div class="col-md-4">
+                                                            <input class="form-control input-sm" value="View" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div id="divLoadStageStatus_franchiseeinfo">
+                        @*@Html.Partial("_CustomerCancellationStageActivity")*@
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="tab-pane" id="tabcontent_documentsinfo">
+
+                @Html.Partial("_CustomerComplainSteps")
+
+                <!--Customer Account TO-DO-->
+                <div class="row">
+
+                    <div class="col-md-5">
+                        <div class="row">
+                            <div class="col-md-12 portlet-align">
+                                <div class="portlet box div-right portlet-bottom" style="background-color: #a3a9ad;">
+                                    <div class="portlet-title compact">
+                                        <div class="caption">
+                                            Documents
+                                        </div>
+                                    </div>
+                                    <div class="portlet-body">
+                                        <form action="#" id="form_todo" class="form-horizontal">
+                                            <div class="form-body">
+                                                <div class="scroller" style="height: 250px;" data-always-visible="1" data-rail-visible1="0" data-handle-color="#333">
+                                                    <div class="general-item-list">
+                                                        <div class="mt-comments">
+                                                            <div class="mt-comment" id="content_todo">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="divLoadStageStatus_documentsinfo">
+                        @*@Html.Partial("_CustomerCancellationStageActivity")*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade in" id="ModelCustomerUploadDocumentPopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:877px">
+        <div class="modal-content" style="border-radius: 8px;" id="RenderCustomerUploadDocumentPopup">
+        </div>
+    </div>
+</div>
+<div class="form-horizontal" action="" id="RenderActivityDetail"></div>
+
+<div class="modal fade in" id="ModelDistributionFeesPopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-sm" style="width: 400px;">
+        <div class="modal-content" style="border-radius: 8px;" id="RenderDistributionFeesPopup">
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+
+        var lastDivstagestatus = "divLoadStageStatus_customerinfo";
+        $(document).ready(function () {
+
+            $(".date-picker").datepicker();
+            $(".timepicker").timepicker();
+
+            lastDivstagestatus = "divLoadStageStatus_customerinfo";
+            BindFirstStagedata();
+            $('.potentialdetailtab').click(function (e) {
+
+                var tabClickId = $(this).attr("id");
+
+                if (tabClickId == "Potential_tbCustomerInfo") {
+                    $('#divLoadStageStatus_customerinfo').html('');
+                    $('#' + lastDivstagestatus).contents().appendTo('#divLoadStageStatus_customerinfo')
+                    $('#' + lastDivstagestatus).html('');
+                    lastDivstagestatus = "divLoadStageStatus_customerinfo";
+                }
+                else if (tabClickId == "Potential_tbContractInfo") {
+                    $('#divLoadStageStatus_contractinfo').html('');
+                    $('#' + lastDivstagestatus).contents().appendTo('#divLoadStageStatus_contractinfo')
+                    $('#' + lastDivstagestatus).html('');
+                    lastDivstagestatus = "divLoadStageStatus_contractinfo";
+                }
+                else if (tabClickId == "Potential_tbFranchiseeInfo") {
+                    $('#divLoadStageStatus_franchiseeinfo').html('');
+                    $('#' + lastDivstagestatus).contents().appendTo('#divLoadStageStatus_franchiseeinfo')
+                    $('#' + lastDivstagestatus).html('');
+                    lastDivstagestatus = "divLoadStageStatus_franchiseeinfo";
+                }
+                else if (tabClickId == "Potential_tbDocumentsInfo") {
+                    $('#divLoadStageStatus_documentsinfo').html('');
+                    $('#' + lastDivstagestatus).contents().appendTo('#divLoadStageStatus_documentsinfo')
+                    $('#' + lastDivstagestatus).html('');
+                    lastDivstagestatus = "divLoadStageStatus_documentsinfo";
+                }
+                //else if (tabClickId == "Potential_tbPersonalNote") {
+                //    $('#divLoadStageStatus_potentialpersonalnote').html('');
+                //    $('#' + lastDivstagestatus).contents().appendTo('#divLoadStageStatus_potentialpersonalnote')
+                //    $('#' + lastDivstagestatus).html('');
+                //    lastDivstagestatus = "divLoadStageStatus_potentialpersonalnote";
+                //} else if (tabClickId == "Potential_tbDocument") {
+                //    $('#divLoadStageStatus_potentialdocument').html('');
+                //    $('#' + lastDivstagestatus).contents().appendTo('#divLoadStageStatus_potentialdocument')
+                //    $('#' + lastDivstagestatus).html('');
+                //    lastDivstagestatus = "divLoadStageStatus_potentialdocument";
+                //} else if (tabClickId == "Potential_tbSchedule") {
+                //    $('#divLoadStageStatus_potentialschedule').html('');
+                //    $('#' + lastDivstagestatus).contents().appendTo('#divLoadStageStatus_potentialschedule')
+                //    $('#' + lastDivstagestatus).html('');
+                //    lastDivstagestatus = "divLoadStageStatus_potentialschedule";
+                //}
+                //setupForm();
+            });
+        })
+
+        function BindFirstStagedata() {
+            var CustomerId = $("#hdnServiceCallLogId").val();
+            var sURL = '@Url.Action("CustomerServiceFailedInspectionStageData", "CustomerService", new { area = "Portal" })?Id=' + CustomerId;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+
+                    if (data != null) {
+                        $('#' + lastDivstagestatus).html(data.Data);
+                        $("#hdnStageId").val(data.ActiveStageId);
+                        SetActiveStage(data.ActiveStageId);
+                    }
+                    //setupForm();
+                    //updateContactU(data1);
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+
+        function SetActiveStage(Id) {
+
+            if (Id == '@Convert.ToInt32(JKApi.Business.Enumeration.CustomerStatusList.FIComplaintLogged)') {
+                $(".stag_title").html('Complaint Logged');
+                $(".clsstag").removeClass("max-opp-stage-selected");
+                $(".notifythefranchiseeowner").addClass("max-opp-stage-selected");
+
+            }
+            else if (Id == '@Convert.ToInt32(JKApi.Business.Enumeration.CustomerStatusList.FIActionsFollowUp)') {
+                $(".stag_title").html('Actions FollowUp');
+                $(".clsstag").removeClass("max-opp-stage-selected");
+                $(".notifythefranchiseeowner").addClass("max-opp-stage-selected");
+                $(".contactthecustome").addClass("max-opp-stage-selected");
+            }
+            else if (Id == '@Convert.ToInt32(JKApi.Business.Enumeration.CustomerStatusList.FIFollowUp)') {
+                $(".stag_title").html('FollowUp');
+                $(".clsstag").removeClass("max-opp-stage-selected");
+                $(".notifythefranchiseeowner").addClass("max-opp-stage-selected");
+                $(".contactthecustome").addClass("max-opp-stage-selected");
+                $(".inspecttheaccount").addClass("max-opp-stage-selected");
+            }
+            else if (Id == '@Convert.ToInt32(JKApi.Business.Enumeration.CustomerStatusList.FICompletionClosed)') {
+                $(".stag_title").html('Completion Closed');
+                $(".clsstag").removeClass("max-opp-stage-selected");
+                $(".notifythefranchiseeowner").addClass("max-opp-stage-selected");
+                $(".contactthecustome").addClass("max-opp-stage-selected");
+                $(".inspecttheaccount").addClass("max-opp-stage-selected");
+                $(".defectnotifytofranchisee").addClass("max-opp-stage-selected");
+            }
+                @*else if (Id == '@Convert.ToInt32(JKApi.Business.Enumeration.CustomerStatusList.LetertotheCustomer)') {
+                $(".stag_title").html('Leter to the Custome');
+                $(".clsstag").removeClass("max-opp-stage-selected");
+                $(".notifythefranchiseeowner").addClass("max-opp-stage-selected");
+                $(".contactthecustome").addClass("max-opp-stage-selected");
+                $(".inspecttheaccount").addClass("max-opp-stage-selected");
+                $(".defectnotifytofranchisee").addClass("max-opp-stage-selected");
+                $(".letertothecustome").addClass("max-opp-stage-selected");
+            }
+            else if (Id == '@Convert.ToInt32(JKApi.Business.Enumeration.CustomerStatusList.ReInspecttherAccount)') {
+                $(".stag_title").html('Re-Inspect ther Account');
+                $(".clsstag").removeClass("max-opp-stage-selected");
+                $(".notifythefranchiseeowner").addClass("max-opp-stage-selected");
+                $(".contactthecustome").addClass("max-opp-stage-selected");
+                $(".inspecttheaccount").addClass("max-opp-stage-selected");
+                $(".defectnotifytofranchisee").addClass("max-opp-stage-selected");
+                $(".letertothecustome").addClass("max-opp-stage-selected");
+                $(".reinspecttheraccount").addClass("max-opp-stage-selected");
+            }
+            else if (Id == '@Convert.ToInt32(JKApi.Business.Enumeration.CustomerStatusList.FollowupBackontrack)') {
+                $(".stag_title").html('Follow-up (Back on track)');
+                $(".clsstag").removeClass("max-opp-stage-selected");
+                $(".notifythefranchiseeowner").addClass("max-opp-stage-selected");
+                $(".contactthecustome").addClass("max-opp-stage-selected");
+                $(".inspecttheaccount").addClass("max-opp-stage-selected");
+                $(".defectnotifytofranchisee").addClass("max-opp-stage-selected");
+                $(".letertothecustome").addClass("max-opp-stage-selected");
+                $(".reinspecttheraccount").addClass("max-opp-stage-selected");
+                $(".followupbackontrack").addClass("max-opp-stage-selected");
+            }*@
+            else {
+                //alert('error');
+            }
+        }
+        // stage 1
+        function SaveCSActivityComplaintLoggedData(flg) {
+
+            //var CustomerId = $("#hdnCustomerId").val();
+            var CustomerId = $("#hdnServiceCallLogId").val();
+            if (flg == "2") {
+
+                var isval = true;
+                //if ($('input[name=stage1StaticItem1]:checked').val() == undefined) {
+                //    if (isval == true) {
+                //        isval = false;
+                //    }
+                //}
+                //if ($('input[name=stage1StaticItem2]:checked').val() == undefined) {
+                //    if (isval == true) {
+                //        isval = false;
+                //    }
+                //}
+                //if ($('input[name=stage1StaticItem3]:checked').val() == undefined) {
+                //    if (isval == true) {
+                //        isval = false;
+                //    }
+                //}
+                //if ($('input[name=stage1StaticItem4]:checked').val() == undefined) {
+                //    if (isval == true) {
+                //        isval = false;
+                //    }
+                //}
+                //if ($('input[name=stage1StaticItem5]:checked').val() == undefined) {
+                //    if (isval == true) {
+                //        isval = false;
+                //    }
+                //}
+
+                $(".clsvalitem").each(function () {
+                    if (!$(this).is(":checked")) {
+                        if (isval == true) {
+                            isval = false;
+                        }
+                    }
+                });
+                if (isval == false) {
+                    $("#spnerrmsg").show();
+                    return false;
+                }
+                else {
+                    $("#spnerrmsg").hide();
+                }
+
+            }
+            if ($('#txtNote').val().trim() == '') {
+                $('#txtNote').css('border-color', 'red');
+                return false;
+            }
+            else { $('#txtNote').css('border-color', ''); }
+
+            var strIds = $('.clsvalitem:checked').map(function () {
+                return this.value;
+            }).get().join(',');
+
+            var _itemList = [];
+            $(".clsvalitem:checked").each(function () {
+                var _Id = $(this).val();
+                var _Note = $("#txtValidationItem_" + _Id).val();
+                var _temData = { ValidationId: _Id, ValidationNote: _Note }
+                _itemList.push(_temData);
+            });
+
+
+            $('#txtNote').css('border-color', '');
+            $("#spnerrmsg").hide();
+
+            var optitem1 = -1;
+            var optitem2 = -1;
+            var optitem3 = -1;
+            var optitem4 = -1;
+            var optitem5 = -1;
+
+            if ($('input[name=stage1StaticItem1]:checked').val() != undefined) {
+                optitem1 = $('input[name=stage1StaticItem1]:checked').val();
+            }
+            if ($('input[name=stage1StaticItem2]:checked').val() != undefined) {
+                optitem2 = $('input[name=stage1StaticItem2]:checked').val();
+            }
+            if ($('input[name=stage1StaticItem3]:checked').val() != undefined) {
+                optitem3 = $('input[name=stage1StaticItem3]:checked').val();
+            }
+            if ($('input[name=stage1StaticItem4]:checked').val() != undefined) {
+                optitem4 = $('input[name=stage1StaticItem4]:checked').val();
+            }
+
+            if ($('input[name=stage1StaticItem5]:checked').val() != undefined) {
+                optitem5 = $('input[name=stage1StaticItem5]:checked').val();
+            }
+
+
+            $.ajax({
+                url: '@Url.Action("SaveCSActivityFIComplaintLoggedData", "CustomerService", new { area = "Portal" })',
+                dataType: "json",
+                data: { CustomerId: CustomerId, StagId: $("#hdnStageId").val(), CSstageId: $("#hdnCSstageId").val(), Note: $("#txtNote").val(), valIds: strIds, optitem1: optitem1, optitem2: optitem2, optitem3: optitem3, optitem4: optitem4, optitem5: optitem5, strvalJsonList: JSON.stringify(_itemList) },
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+                        if (flg == "2") {
+                            BindFirstStagedata();
+                        }
+                        else {
+                            $("#hdnCSstageId").val(data.Data);
+                        }
+
+                    }
+                },
+                error: function () { }
+            });
+        }
+        //stage 2
+        function SaveCSActivityActionsFollowUpData(flg) {
+
+            var CustomerId = $("#hdnServiceCallLogId").val();
+            if (flg == "2") {
+                var isval = true;
+
+                //if ($('input[name=stage2StaticItem1]:checked').val() == undefined) {
+                //    if (isval == true) {
+                //        isval = false;
+                //    }
+                //}
+                //if ($('input[name=stage2StaticItem2]:checked').val() == undefined) {
+                //    if (isval == true) {
+                //        isval = false;
+                //    }
+                //}
+
+                //$('#chkStage2StaticItem3Date').css('border-color', '');
+                //$('#chkStage2StaticItem3Time').css('border-color', '');
+                //$('#chkStage2StaticItem3EndTime').css('border-color', '');
+
+                //if ($('#chkStage2StaticItem3Date').val() == "") {
+                //    if (isval == true) {
+                //        isval = false;
+                //    }
+                //    $('#chkStage2StaticItem3Date').css('border-color', 'red');
+                //}
+                //if ($('#chkStage2StaticItem3Time').val() == "") {
+                //    if (isval == true) {
+                //        isval = false;
+                //    }
+                //    $('#chkStage2StaticItem3Time').css('border-color', 'red');
+                //}
+                //if ($('#chkStage2StaticItem3EndTime').val() == "") {
+                //    if (isval == true) {
+                //        isval = false;
+                //    }
+                //    $('#chkStage2StaticItem3EndTime').css('border-color', 'red');
+                //}
+
+
+                $(".clsvalitem").each(function () {
+                    if (!$(this).is(":checked")) {
+                        if (isval == true) {
+                            isval = false;
+                        }
+                    }
+                });
+                if (isval == false) {
+                    $("#spnerrmsg").show();
+                    return false;
+                }
+                else {
+                    $("#spnerrmsg").hide();
+                }
+            }
+            if ($('#txtNote').val().trim() == '') {
+                $('#txtNote').css('border-color', 'red');
+                return false;
+            }
+            else { $('#txtNote').css('border-color', ''); }
+
+            var strIds = $('.clsvalitem:checked').map(function () {
+                return this.value;
+            }).get().join(',');
+
+            var _itemList = [];
+            $(".clsvalitem:checked").each(function () {
+                var _Id = $(this).val();
+                var _Note = $("#txtValidationItem_" + _Id).val();
+                var _temData = { ValidationId: _Id, ValidationNote: _Note }
+                _itemList.push(_temData);
+            });
+
+
+            $('#txtNote').css('border-color', '');
+            $("#spnerrmsg").hide();
+
+            var optitem1 = -1;
+            var optitem2 = -1;
+            var optitem3Date = $("#chkStage2StaticItem3Date").val();
+            var optitem3Time = $("#chkStage2StaticItem3Time").val();
+            var optitem3EndTime = $('#chkStage2StaticItem3EndTime').val();
+            var optitem4 = -1;
+
+            if ($('input[name=stage2StaticItem1]:checked').val() != undefined) {
+                optitem1 = $('input[name=stage2StaticItem1]:checked').val();
+            }
+            if ($('input[name=stage2StaticItem2]:checked').val() != undefined) {
+                optitem2 = $('input[name=stage2StaticItem2]:checked').val();
+            }
+            if ($('#chkstage2StaticItem4').is(":checked")) { optitem4 = 1; }
+            else { optitem4 = 0; }
+
+
+            $.ajax({
+                url: '@Url.Action("SaveCSActivityFIActionsFollowUpData", "CustomerService", new { area = "Portal" })',
+                dataType: "json",
+                data: { CustomerId: CustomerId, StagId: $("#hdnStageId").val(), CSstageId: $("#hdnCSstageId").val(), Note: $("#txtNote").val(), valIds: strIds, optitem1: optitem1, optitem2: optitem2, optitem3Date: optitem3Date, optitem3Time: optitem3Time, optitem4: optitem4, optitem3EndTime: optitem3EndTime, strvalJsonList: JSON.stringify(_itemList) },
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+                        if (flg == "2") {
+                            BindFirstStagedata();
+                        }
+                        else {
+                            $("#hdnCSstageId").val(data.Data);
+                        }
+
+                    }
+                },
+                error: function () { }
+            });
+        }
+
+        // stage 3
+        function SaveCSActivityFollowUpData(flg) {
+
+            var CustomerId = $("#hdnServiceCallLogId").val();
+            if (flg == "2") {
+                var isval = true;
+                //if ($('input[name=stage3StaticItem1]:checked').val() == undefined) {
+                //    if (isval == true) {
+                //        isval = false;
+                //    }
+                //}
+                //$('#txtstage3StaticItem2').css('border-color', '');
+                //if ($("#txtstage3StaticItem2").val() == "")
+                //{
+                //    if (isval == true) {
+                //        isval = false;
+                //    }
+                //    $('#txtstage3StaticItem2').css('border-color', 'red');
+                //}
+                //if ($('input[name=stage3StaticItem3]:checked').val() == undefined) {
+                //    if (isval == true) {
+                //        isval = false;
+                //    }
+                //}
+                $(".clsvalitem").each(function () {
+                    if (!$(this).is(":checked")) {
+                        if (isval == true) {
+                            isval = false;
+                        }
+                    }
+                });
+                if (isval == false) {
+                    $("#spnerrmsg").show();
+                    return false;
+                }
+                else {
+                    $("#spnerrmsg").hide();
+                }
+            }
+            if ($('#txtNote').val().trim() == '') {
+                $('#txtNote').css('border-color', 'red');
+                return false;
+            }
+            else { $('#txtNote').css('border-color', ''); }
+
+            var strIds = $('.clsvalitem:checked').map(function () {
+                return this.value;
+            }).get().join(',');
+
+            var _itemList = [];
+            $(".clsvalitem:checked").each(function () {
+                var _Id = $(this).val();
+                var _Note = $("#txtValidationItem_" + _Id).val();
+                var _temData = { ValidationId: _Id, ValidationNote: _Note }
+                _itemList.push(_temData);
+            });
+
+            $('#txtNote').css('border-color', '');
+            $("#spnerrmsg").hide();
+
+            var optitem1 = -1;
+            var optitem2 = '';
+            var optitem3 = -1;
+
+
+            if ($('input[name=stage3StaticItem1]:checked').val() != undefined) {
+                optitem1 = $('input[name=stage3StaticItem1]:checked').val();
+            }
+
+            optitem2 = $('#txtstage3StaticItem2').val();
+
+            if ($('input[name=stage3StaticItem3]:checked').val() != undefined) {
+                optitem3 = $('input[name=stage3StaticItem3]:checked').val();
+            }
+
+            $.ajax({
+                url: '@Url.Action("SaveCSActivityFIFollowUpData", "CustomerService", new { area = "Portal" })',
+                dataType: "json",
+                data: { CustomerId: CustomerId, StagId: $("#hdnStageId").val(), CSstageId: $("#hdnCSstageId").val(), Note: $("#txtNote").val(), valIds: strIds, optitem1: optitem1, optitem2: optitem2, optitem3: optitem3, strvalJsonList: JSON.stringify(_itemList) },
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+                        if (flg == "2") {
+                            BindFirstStagedata();
+                        }
+                        else {
+                            $("#hdnCSstageId").val(data.Data);
+                        }
+
+                    }
+                },
+                error: function () { }
+            });
+        }
+        //stage 4
+        function SaveCSActivityCompletionClosedData(flg) {
+
+            var CustomerId = $("#hdnServiceCallLogId").val();
+            if (flg == "2") {
+                var isval = true;
+                //if ($('input[name=stage4StaticItem1]:checked').val() == undefined) {
+                //    if (isval == true) {
+                //        isval = false;
+                //    }
+                //}
+                //if ($('input[name=stage4StaticItem2]:checked').val() == undefined) {
+                //    if (isval == true) {
+                //        isval = false;
+                //    }
+                //}
+                //if ($('input[name=stage4StaticItem3]:checked').val() == undefined) {
+                //    if (isval == true) {
+                //        isval = false;
+                //    }
+                //}
+
+                $(".clsvalitem").each(function () {
+                    if (!$(this).is(":checked")) {
+                        if (isval == true) {
+                            isval = false;
+                        }
+                    }
+                });
+                if (isval == false) {
+                    $("#spnerrmsg").show();
+                    return false;
+                }
+                else {
+                    $("#spnerrmsg").hide();
+                }
+            }
+
+            if ($('#txtNote').val().trim() == '') {
+                $('#txtNote').css('border-color', 'red');
+                return false;
+            }
+            else { $('#txtNote').css('border-color', ''); }
+
+            var strIds = $('.clsvalitem:checked').map(function () {
+                return this.value;
+            }).get().join(',');
+
+            var _itemList = [];
+            $(".clsvalitem:checked").each(function () {
+                var _Id = $(this).val();
+                var _Note = $("#txtValidationItem_" + _Id).val();
+                var _temData = { ValidationId: _Id, ValidationNote: _Note }
+                _itemList.push(_temData);
+            });
+
+            $('#txtNote').css('border-color', '');
+            $("#spnerrmsg").hide();
+
+            var optitem1 = -1;
+            var optitem2 = -1;
+            var optitem2Note = '';
+            var optitem3 = -1;
+
+
+            if ($('input[name=stage4StaticItem1]:checked').val() != undefined) {
+                optitem1 = $('input[name=stage4StaticItem1]:checked').val();
+            }
+
+            if ($('input[name=stage4StaticItem2]:checked').val() != undefined) {
+                optitem2 = $('input[name=stage4StaticItem2]:checked').val();
+            }
+            optitem2Note = $("#stage4StaticItem2Note").val();
+
+            if ($('input[name=stage4StaticItem3]:checked').val() != undefined) {
+                optitem3 = $('input[name=stage4StaticItem3]:checked').val();
+            }
+
+            $.ajax({
+                url: '@Url.Action("SaveCSActivityFICompletionClosedData", "CustomerService", new { area = "Portal" })',
+                dataType: "json",
+                data: { CustomerId: CustomerId, StagId: $("#hdnStageId").val(), CSstageId: $("#hdnCSstageId").val(), Note: $("#txtNote").val(), valIds: strIds, optitem1: optitem1, optitem2: optitem2, optitem2Note: optitem2Note, optitem3: optitem3, strvalJsonList: JSON.stringify(_itemList) },
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+                        if (flg == "2") {
+                            BindFirstStagedata();
+                        }
+                        else {
+                            $("#hdnCSstageId").val(data.Data);
+                        }
+
+                    }
+                },
+                error: function () { }
+            });
+        }
+
+        //stage 5
+        function SaveActivityLetertotheCustomerData(flg) {
+
+            var CustomerId = $("#hdnCustomerId").val();
+            if (flg == "2") {
+                var isval = true;
+
+                if ($('input[name=stage5StaticItem1]:checked').val() == undefined) {
+                    if (isval == true) {
+                        isval = false;
+                    }
+                }
+                if ($('input[name=stage5StaticItem2]:checked').val() == undefined) {
+                    if (isval == true) {
+                        isval = false;
+                    }
+                }
+                if ($('input[name=stage5StaticItem3]:checked').val() == undefined) {
+                    if (isval == true) {
+                        isval = false;
+                    }
+                }
+                $('#txtStage5StaticItem4Date').css('border-color', '');
+                if ($("#txtStage5StaticItem4Date").val() == "") {
+                    if (isval == true) {
+                        isval = false;
+                    }
+                    $('#txtStage5StaticItem4Date').css('border-color', 'red');
+                }
+                $('#txtStage5StaticItem4Time').css('border-color', '');
+                if ($("#txtStage5StaticItem4Time").val() == "") {
+                    if (isval == true) {
+                        isval = false;
+                    }
+                    $('#txtStage5StaticItem4Time').css('border-color', 'red');
+                }
+
+                $('#txtStage5StaticItem4EndTime').css('border-color', '');
+                if ($("#txtStage5StaticItem4EndTime").val() == "") {
+                    if (isval == true) {
+                        isval = false;
+                    }
+                    $('#txtStage5StaticItem4EndTime').css('border-color', 'red');
+                }
+
+                $(".clsvalitem").each(function () {
+                    if (!$(this).is(":checked")) {
+                        if (isval == true) {
+                            isval = false;
+                        }
+                    }
+                });
+                if (isval == false) {
+                    $("#spnerrmsg").show();
+                    return false;
+                }
+                else {
+                    $("#spnerrmsg").hide();
+                }
+            }
+            if ($('#txtNote').val().trim() == '') {
+                $('#txtNote').css('border-color', 'red');
+                return false;
+            }
+            else { $('#txtNote').css('border-color', ''); }
+
+            var strIds = $('.clsvalitem:checked').map(function () {
+                return this.value;
+            }).get().join(',');
+
+            $('#txtNote').css('border-color', '');
+            $("#spnerrmsg").hide();
+
+            var optitem1 = -1;
+            var optitem1note = '';
+            var optitem2 = -1;
+            var optitem3 = -1;
+            var optitem4Date = '';
+            var optitem4Time = '';
+            var optitem4endTime = '';
+
+            if ($('input[name=stage5StaticItem1]:checked').val() != undefined) {
+                optitem1 = $('input[name=stage5StaticItem1]:checked').val();
+            }
+            optitem1note = $("#txtstage5StaticItem1note").val();
+            if ($('input[name=stage5StaticItem2]:checked').val() != undefined) {
+                optitem2 = $('input[name=stage5StaticItem2]:checked').val();
+            }
+            if ($('input[name=stage5StaticItem3]:checked').val() != undefined) {
+                optitem3 = $('input[name=stage5StaticItem3]:checked').val();
+            }
+
+            optitem4Date = $("#txtStage5StaticItem4Date").val();
+
+            optitem4Time = $("#txtStage5StaticItem4Time").val();
+            optitem4endTime = $("#txtStage5StaticItem4EndTime").val();
+
+            $.ajax({
+                url: '@Url.Action("SaveCSActivityLetertotheCustomerData", "CustomerService", new { area = "Portal" })',
+                dataType: "json",
+                data: { CustomerId: CustomerId, StagId: $("#hdnStageId").val(), CSstageId: $("#hdnCSstageId").val(), Note: $("#txtNote").val(), valIds: strIds, optitem1: optitem1, optitem1note: optitem1note, optitem2: optitem2, optitem3: optitem3, optitem4Date: optitem4Date, optitem4Time: optitem4Time, optitem4endTime: optitem4endTime },
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+                        if (flg == "2") {
+                            BindFirstStagedata();
+                        }
+                        else {
+                            $("#hdnCSstageId").val(data.Data);
+                        }
+
+                    }
+                },
+                error: function () { }
+            });
+        }
+        //stage 6
+        function SaveActivityReInspecttherAccountData(flg) {
+
+            var CustomerId = $("#hdnCustomerId").val();
+            if (flg == "2") {
+                var isval = true;
+
+                if ($('input[name=stage6StaticItem1]:checked').val() == undefined) {
+                    if (isval == true) {
+                        isval = false;
+                    }
+                }
+                if ($('input[name=stage6StaticItem2]:checked').val() == undefined) {
+                    if (isval == true) {
+                        isval = false;
+                    }
+                }
+                if ($('input[name=stage6StaticItem3]:checked').val() == undefined) {
+                    if (isval == true) {
+                        isval = false;
+                    }
+                }
+                $(".clsvalitem").each(function () {
+                    if (!$(this).is(":checked")) {
+                        if (isval == true) {
+                            isval = false;
+                        }
+                    }
+                });
+                if (isval == false) {
+                    $("#spnerrmsg").show();
+                    return false;
+                }
+                else { $("#spnerrmsg").hide(); }
+            }
+            if ($('#txtNote').val().trim() == '') {
+                $('#txtNote').css('border-color', 'red');
+                return false;
+            }
+            else { $('#txtNote').css('border-color', ''); }
+
+            var strIds = $('.clsvalitem:checked').map(function () {
+                return this.value;
+            }).get().join(',');
+
+            $('#txtNote').css('border-color', '');
+            $("#spnerrmsg").hide();
+
+
+            var optitem1 = -1;
+            var optitem1Note = '';
+            var optitem2 = -1;
+            var optitem3 = -1;
+            var optitem3Note = '';
+
+
+            if ($('input[name=stage6StaticItem1]:checked').val() != undefined) {
+                optitem1 = $('input[name=stage6StaticItem1]:checked').val();
+            }
+            optitem1Note = $("#txtstage6StaticItem1Note").val();
+            if ($('input[name=stage6StaticItem2]:checked').val() != undefined) {
+                optitem2 = $('input[name=stage6StaticItem2]:checked').val();
+            }
+            if ($('input[name=stage6StaticItem3]:checked').val() != undefined) {
+                optitem3 = $('input[name=stage6StaticItem3]:checked').val();
+            }
+            optitem3Note = $("#txtstage6StaticItem3Note").val();
+
+
+            $.ajax({
+                url: '@Url.Action("SaveCSActivityReInspecttherAccountData", "CustomerService", new { area = "Portal" })',
+                dataType: "json",
+                data: { CustomerId: CustomerId, StagId: $("#hdnStageId").val(), CSstageId: $("#hdnCSstageId").val(), Note: $("#txtNote").val(), valIds: strIds, optitem1: optitem1, optitem1Note: optitem1Note, optitem2: optitem2, optitem3: optitem3, optitem3Note: optitem3Note },
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+                        if (flg == "2") {
+                            BindFirstStagedata();
+                        }
+                        else {
+                            $("#hdnCSstageId").val(data.Data);
+                        }
+
+                    }
+                },
+                error: function () { }
+            });
+        }
+        //stage 7
+        function SaveActivityFollowupBackontrackData(flg) {
+
+            var CustomerId = $("#hdnCustomerId").val();
+            if (flg == "2") {
+                var isval = true;
+                if ($('input[name=stage7StaticItem1]:checked').val() == undefined) {
+                    if (isval == true) {
+                        isval = false;
+                    }
+                }
+                if ($('input[name=stage7StaticItem2]:checked').val() == undefined) {
+                    if (isval == true) {
+                        isval = false;
+                    }
+                }
+                if ($('input[name=stage7StaticItem3]:checked').val() == undefined) {
+                    if (isval == true) {
+                        isval = false;
+                    }
+                }
+                $(".clsvalitem").each(function () {
+                    if (!$(this).is(":checked")) {
+                        if (isval == true) {
+                            isval = false;
+                        }
+                    }
+                });
+                if (isval == false) {
+                    $("#spnerrmsg").show();
+                    return false;
+                }
+                else {
+                    $("#spnerrmsg").hide();
+                }
+            }
+            if ($('#txtNote').val().trim() == '') {
+                $('#txtNote').css('border-color', 'red');
+                return false;
+            }
+            else { $('#txtNote').css('border-color', ''); }
+
+            var strIds = $('.clsvalitem:checked').map(function () {
+                return this.value;
+            }).get().join(',');
+
+            $('#txtNote').css('border-color', '');
+            $("#spnerrmsg").hide();
+
+
+            var optitem1 = 0;
+            var optitem2 = -1;
+            var optitem2Note = '';
+            var optitem3 = 0;
+
+            if ($('#chkStage7StaticItem1Yes').is(":checked")) {
+                optitem1 = 1
+            }
+            if ($('input[name=stage7StaticItem2]:checked').val() != undefined) {
+                optitem2 = $('input[name=stage7StaticItem2]:checked').val();
+            }
+            optitem2Note = $("#txtstage7StaticItem2note").val();
+
+            if ($('#chkStage7StaticItem3Yes').is(":checked")) {
+                optitem3 = 1
+            }
+
+            $.ajax({
+                url: '@Url.Action("SaveCSActivityFollowupBackontrackData", "CustomerService", new { area = "Portal" })',
+                dataType: "json",
+                data: { CustomerId: CustomerId, StagId: $("#hdnStageId").val(), CSstageId: $("#hdnCSstageId").val(), Note: $("#txtNote").val(), valIds: strIds, optitem1: optitem1, optitem2: optitem2, optitem2Note: optitem2Note, optitem3: optitem3 },
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+                        if (flg == "2") {
+                            BindFirstStagedata();
+                        }
+                        else {
+                            $("#hdnCSstageId").val(data.Data);
+                        }
+
+                    }
+                },
+                error: function () { }
+            });
+        }
+        function onClickStage4StaticItem2() {
+            if ($("#chkStage4StaticItem2No").is(":checked")) {
+                $("#stage4StaticItem2Note").show();
+            }
+            else {
+                $("#stage4StaticItem2Note").hide();
+            }
+        }
+        function onClickStage5StaticItem1() {
+            if ($("#chkStage5StaticItem1No").is(":checked")) {
+                $("#txtstage5StaticItem1note").show();
+            }
+            else {
+                $("#txtstage5StaticItem1note").hide();
+            }
+        }
+        function onClickStage6StaticItem1() {
+            if ($("#chkStage6StaticItem1No").is(":checked")) {
+                $("#txtstage6StaticItem1Note").show();
+            }
+            else {
+                $("#txtstage6StaticItem1Note").hide();
+            }
+        }
+
+        function onClickStage6StaticItem3() {
+            if ($("#chkStage6StaticItem3No").is(":checked")) {
+                $("#txtstage6StaticItem3Note").show();
+            }
+            else {
+                $("#txtstage6StaticItem3Note").hide();
+            }
+        }
+
+        function onClickStage7StaticItem2() {
+            if ($("#chkStage7StaticItem2No").is(":checked")) {
+                $("#txtstage7StaticItem2note").show();
+            }
+            else {
+                $("#txtstage7StaticItem2note").hide();
+            }
+        }
+
+        function ClickStage2Item4DocumentLink() {
+            if ($("#chkstage2StaticItem4").is(":checked")) {
+                $("#divDocuments").show();
+            }
+            else {
+                $("#divDocuments").hide();
+            }
+        }
+
+        function SaveNextActivityData() {
+
+            var CustomerId = $("#hdnCustomerId").val();
+
+            var isval = true;
+            $(".clsvalitem").each(function () {
+                if (!$(this).is(":checked")) {
+                    if (isval == true) {
+                        isval = false;
+                    }
+                }
+            });
+            if (isval == false) {
+                $("#spnerrmsg").show();
+                return false;
+            }
+            if ($('#txtNote').val().trim() == '') {
+                $('#txtNote').css('border-color', 'red');
+                return false;
+            }
+            var strIds = $('.clsvalitem:checked').map(function () {
+                return this.value;
+            }).get().join(',');
+
+
+            $('#txtNote').css('border-color', '');
+            $("#spnerrmsg").hide();
+            $.ajax({
+                url: '@Url.Action("SaveCSActivityData", "CustomerService", new { area = "Portal" })',
+                dataType: "json",
+                data: { CustomerId: CustomerId, StagId: $("#hdnStageId").val(), CSstageId: $("#hdnCSstageId").val(), Note: $("#txtNote").val(), valIds: strIds },
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    if (data != null) {
+                        BindFirstStagedata();
+                    }
+                },
+                error: function () { }
+            });
+
+        }
+        function OpenCustomerUploadDocumentPopup() {
+
+            var CustomerId = $("#hdnCustomerId").val();
+
+            var sURL = '@Url.Action("CustomerUploadDocumentPopup", "Customer", new { area = "Portal" })?id=' + CustomerId + '&isCRM=true';
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#RenderCustomerUploadDocumentPopup').html(data);
+                    $("#ModelCustomerUploadDocumentPopup").modal({ backdrop: 'static' });
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+        }
+        function showActivityPopup() {
+            var CustomerId = $("#hdnServiceCallLogId").val();
+            var sURL = '@Url.Action("ShowCustomerServiceFailedInspectionActivityDetail", "CustomerService", new { area = "Portal" })?Id=' + CustomerId;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    if (data != null) {
+                        $('#RenderActivityDetail').html(data.Data);
+                        $("#modal_ActivityDetail").modal({ backdrop: 'static' });
+                    }
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+        function onClickPageChange(no) {
+            $(".plglink").removeClass("active");
+            $("#pli_" + no).addClass("active");
+
+            $(".clsitmlist").addClass("divitemhide");
+            $("#itmlist_" + no).removeClass("divitemhide");
+        }
+
+        function ClickonViewFee(Id) {
+            var sURL = '@Url.Action("GetDistributionFeesDetail", "CustomerService", new { area = "Portal" })?Id=' + Id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    if (data != null) {
+                        $('#RenderDistributionFeesPopup').html(data.Data);
+                        $("#ModelDistributionFeesPopup").modal({ backdrop: 'static' });
+                    }
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+        }
+
+        function ChangeClickEvent(Id)
+        {
+            $("#txtValidationItem_" + Id).val('');
+            if ($("#chkValidationItem_" + Id).is(":checked")) {
+                $("#txtValidationItem_" + Id).removeAttr("disabled");
+            }
+            else {
+                $("#txtValidationItem_" + Id).attr("disabled", "disabled");
+            }
+        }
+    </script>
+}
+
+

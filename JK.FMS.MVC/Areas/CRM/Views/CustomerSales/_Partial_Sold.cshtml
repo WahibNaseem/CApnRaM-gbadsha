@@ -1,0 +1,267 @@
+﻿@using JK.Resources
+
+
+<style>
+    #sold_potential .mt-checkbox{
+            margin-right: 5px!important;
+    }
+</style>
+
+
+<div class="col-md-7  soldcontent" id="sold" style="margin-left:-30px;">
+    <div class="row">
+        <div class="col-md-12 portlet-align">
+            <div class="portlet box div-right portlet-bottom" style="background-color: #a3a9ad;">
+                <div class="portlet-title compact">
+                    <div class="caption">
+                        Sold Detail 
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="form-body">
+                        <form action="#" id="form_soldpotential_contractagreement" class="form-horizontal">
+                            @Html.Hidden("AccountDetailId", "", new { @id = "accountdetailid" })
+                            <div class="form-group" style="margin-top:5px;">
+                                <label for="select_providertype" id="lblCloseContractAgreement" class="control-label col-md-5">Does this contract require background check?<span class="required">*</span>:</label>
+                                <div class="col-md-7">
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px;">
+                                            <input type="radio" name="rdbCloseContractAgreement" value="1" class="i-checks sold_yes_contract" id="sold_yes_contract" />
+                                            <span>Yes</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px; margin-left:0px;">
+                                            <input type="radio" name="rdbCloseContractAgreement" value="0" class="i-checks sold_no_contract" id="sold_no_contract" />
+                                            <span>No</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <form action="#" id="form_close_signedagreement" class="form-horizontal">
+                            <div class="form-group" style="margin-top:5px;">
+                                <label for="select_providertype" id="lblCloseGetSignedAgreement" class="control-label col-md-5">Get Signed Agreement<span class="required">*</span>:</label>
+                                <div class="col-md-7">
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px;">
+                                            <input type="radio" name="rdbCloseGetSignedAgreement" value="1" class="i-checks sold_yes_signed" id="sold_yes_signed" />
+                                            <span>Yes</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px; margin-left:0px;">
+                                            <input type="radio" name="rdbCloseGetSignedAgreement" value="0" class="i-checks sold_no_signed" id="sold_no_signed" />
+                                            <span>No</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <form action="#" id="form_sold_documentsalescrm" class="form-horizontal">
+                            <div class="form-group" style="margin-top:5px;">
+                                <label for="select_providertype" id="lblCloseDocuments" class="control-label col-md-5">Required documents uploaded<span class="required">*</span>:</label>
+                                <div class="col-md-7">
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px;">
+                                            <input type="radio" name="rdbCloseDocuments" value="1" class="i-checks sold_yes_documentsalescrm" id="sold_yes_documentsalescrm" />
+                                            <span>Yes</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-3">
+
+                                        <label class="check-inline" style="margin-top: 6px; margin-left:0px;">
+                                            <input type="radio" name="rdbCloseDocuments" value="0" class="i-checks sold_no_documentsalescrm" id="sold_no_documentsalescrm" />
+                                            <span>No</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <button id="potential_sold_btnDocumentUpload" class="btn green btn-block sold_btnDocumentUpload">Upload/Edit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <form action="#" id="form_soldpotential_accountplacement" class="form-horizontal">
+                            <div class="form-group" style="margin-top:5px;">
+                                <label for="select_providertype" id="lblCloseNotifyOperations" class="control-label col-md-5">Notify Operations for account Placement<span class="required">*</span>:</label>
+                                <div class="col-md-7">
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px;">
+                                            <input type="radio" name="rdbCloseNotifyOperations" value="1" class="i-checks sold_yes_accountplacement" id="sold_yes_accountplacement" />
+                                            <span>Yes</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px; margin-left:0px;">
+                                            <input type="radio" name="rdbCloseNotifyOperations" value="0" class="i-checks sold_no_accountplacement" id="sold_no_accountplacement" />
+                                            <span>No</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="form-group errmsg" style="display:none; text-align:center" id="requiredDocumentsMsg">
+                            <span style="color:red;">You must upload the required documents.</span>
+                        </div>
+
+                        <form action="#" id="form_contactinfo_sold" class="form-horizontal">
+                            <div class="form-group" style="display:none; text-align:center" id="dateTooEarlyMsg">
+                                <span style="color:red;">Date must be more recent than previous meetings.</span>
+                            </div>
+
+                            <!--Prop Amount AND Proposed Initial Clean-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label for="select_providertype" class="control-label col-md-3">Prop. Amount<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                    <input type="text" class="form-control input-sm sold_propamount" id="sold_propamount" style="margin-left:-5px;width:180px;"/>
+                                </div>
+                                <label for="select_providertype" class="control-label col-md-3">Proposed Initial Clean<span class="required">*</span>:</label>
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control input-sm sold_initialamount" id="sold_initialamount" />
+                                </div>
+                            </div>
+                            <!--Contract Amount AND Initial Clean Amount-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label for="select_contractamount" class="control-label col-md-3">Contract Amount<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                    <input type="text" class="form-control input-sm sold_contractamount" id="sold_contractamount" style="margin-left:-5px;width:180px;"/>
+                                </div>
+                                <label for="select_initialcleanamount" class="control-label col-md-3">Initial Clean Amount<span class="required">*</span>:</label>
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control input-sm sold_initialcleanamount" id="sold_initialcleanamount" />
+                                </div>
+                            </div>
+                            <!--Sign Date AND Start Date-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label for="select_sign Date" class="control-label col-md-3">Sign Date<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                    <input type="text" class="form-control input-sm date date-picker RemovePeriodvalidation sold_signdate" data-date-format="mm/dd/yyyy" id="sold_signdate" style="margin-left:-5px;width:180px;"/>
+                                </div>
+                                <label for="select_startdate" class="control-label col-md-3">Start Date<span class="required">*</span>:</label>
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control  input-sm date date-picker RemovePeriodvalidation sold_startdate" data-date-format="mm/dd/yyyy" id="sold_startdate" />
+                                </div>
+                            </div>
+                            <!--Phone Number AND Contract Term-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label for="select_ponumber" class="control-label col-md-3">PO Number:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                    <input type="text" class="form-control input-sm sold_ponumber" id="sold_ponumber" style="margin-left:-5px;width:180px;"/>
+                                </div>
+                                <label for="select_contractterm" class="control-label col-md-3">Contract Term (Months)<span class="required">*</span>:</label>
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control input-sm sold_contractterm" id="sold_contractterm" />
+                                </div>
+                            </div>
+                            <!-- Service Type AND Billing Frequency-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label for="select_servicetype" class="control-label col-md-3">Service Type<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                    @Html.DropDownList("ServiceTypeListModel", (SelectList)ViewBag.ServiceTypeListModel, "Select", new { @class = "form-control input-sm sold_ServiceTypeListModel", @id = "sold_ServiceTypeListModel", style = "margin-left:-5px;width:180px;" })
+                                </div>
+                                <label for="select_billingfrequency" class="control-label col-md-3">Billing Frequency<span class="required">*</span>:</label>
+                                <div class="col-md-3">
+                                    @Html.DropDownList("FrequencyListModel", (SelectList)ViewBag.FrequencyListModel, "Select..", new { @class = "form-control input-sm sold_FrequencyListModel", required = "required", @id = "sold_FrequencyListModel" })
+                                </div>
+                            </div>
+                            <!--# of Days AND Clean Frequency-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label for="select_cleantime" class="control-label col-md-3"># of Days<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                    <input type="text" class="form-control input-sm sold_cleantime" id="sold_cleantime" style="margin-left:-5px;width:180px;"/>
+                                </div>
+                                <label for="select_cleanfrequency" class="control-label col-md-3">Clean Frequency<span class="required">*</span>:</label>
+                                <div class="col-md-3">
+                                    @Html.DropDownList("ContractDetail_CleanFrequency", (SelectList)ViewBag.CleanFrequencyListModel, null, new { @class = "form-control input-sm sold_ContractDetail_CleanFrequency", required = "required", @id = "sold_ContractDetail_CleanFrequency" })
+                                </div>
+                            </div>
+                        </form>
+                        <form action="#" id="form_sold_cleaningday" class="form-horizontal">
+                            <div class="form-group" style="margin-top:4px;" id="weekdays">
+                                <label for="select_cleanday" class="control-label col-md-3" style="padding-top: 12px;">Cleaning Day:</label>
+                                <div class="col-md-9 sold" id="sold_potential">
+                                    <div class="mt-checkbox-inline">
+                                        <label class="mt-checkbox" style="font-size:12px;">
+                                            <input type="checkbox" class="sold_mon" id="sold_mon" value="1"> Mon
+                                            <span></span>
+                                        </label>
+                                        <label class="mt-checkbox" style="font-size:12px;">
+                                            <input type="checkbox" class="sold_tue" id="sold_tue" value="2"> Tue
+                                            <span></span>
+                                        </label>
+                                        <label class="mt-checkbox" style="font-size:12px;">
+                                            <input type="checkbox" class="sold_wed" id="sold_wed" value="3"> Wed
+                                            <span></span>
+                                        </label>
+                                        <label class="mt-checkbox" style="font-size:12px;">
+                                            <input type="checkbox" class="sold_thu" id="sold_thu" value="4"> Thu
+                                            <span></span>
+                                        </label>
+                                        <label class="mt-checkbox" style="font-size:12px;">
+                                            <input type="checkbox" class="sold_fri" id="sold_fri" value="5"> Fri
+                                            <span></span>
+                                        </label>
+                                        <label class="mt-checkbox" style="font-size:12px;">
+                                            <input type="checkbox" class="sold_sat" id="sold_sat" value="6"> Sat
+                                            <span></span>
+                                        </label>
+                                        <label class="mt-checkbox" style="font-size:12px;">
+                                            <input type="checkbox" class="sold_sun" id="sold_sun" value="7"> Sun
+                                            <span></span>
+                                        </label>
+                                        <label class="mt-checkbox" style="font-size:12px;">
+                                            <input type="checkbox" class="sold_weekend" id="sold_weekend" value="8"> Weekend
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <h5 class="form-section sbold uppercase"><b>@JKCRMResource.note:</b></h5>
+                        <!-- Note -->
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                @Html.TextArea("note", "", new { @class = "form-control autosizeme textarea_soldnote", rows = "8", style = "font-size: 11px", @id = "potential_text_soldgeneralnote" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <div class="row" id="summary_action">
+                            <div class="col-md-3 pull-right" style="margin-top: 20px;">
+                                <button id="potential_savesoldsummary_button" type="button" class="btn green btn-block" onclick="validCloseDetail();">@CommonResource.btnSave</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        
+        var dates = $("#sold_signdate, #sold_startdate").datepicker({
+            //minDate: dateToday,
+            onSelect: function(selectedDate) {
+                var option = this.id == "sold_signdate" ? "minDate" : "maxDate",
+                    instance = $(this).data("datepicker"),
+                    date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat, selectedDate, instance.settings);
+                dates.not(this).datepicker("option", option, date);
+            }
+        });
+    })
+    //$("#sold_signdate").change(function () {
+    //    alert(1);
+    //    $("#sold_startdate").datepicker({ minDate: new Date($(this).val()) });
+    //});
+</script>

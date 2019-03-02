@@ -1,0 +1,347 @@
+﻿@model JKViewModels.Franchisee.EditFranchiseeMaintenanceViewModel
+
+@{
+    Layout = null;
+}
+
+@section styles{
+
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+}
+<style type="text/css">
+    #tblcontractdetailrows {
+    }
+
+    .theadRow tr {
+        font-size: 12px;
+    }
+
+    .theadRow td {
+        border: 1px solid #e8e8e8 !important;
+        padding: 0px 5px !important;
+        font-size: 12px;
+    }
+
+    .theadRowH td {
+        border-left: 1px solid #e8e8e8 !important;
+        border-right: 1px solid #e8e8e8 !important;
+        border-bottom: 1px solid #e8e8e8 !important;
+        padding: 5px 5px !important;
+        font-size: 12px;
+    }
+
+    .theadRowH.remove-padding td {
+        padding: 0px !important;
+        font-size: 12px;
+    }
+
+    .theadRow td > label, .theadRowH td > label {
+        float: left;
+        margin-top: 3px;
+        font-size: 12px;
+    }
+
+    .theadRow td input[type=checkbox], .theadRowH td input[type=checkbox] {
+        float: left;
+        margin-right: 5px;
+        margin-top: 6px;
+        font-size: 12px;
+    }
+
+    .theadRow td input[type=text], .theadRowH td input[type=text] {
+        margin-top: 0px !important;
+        border: 0;
+        border-radius: 0;
+        font-size: 12px;
+    }
+
+    .theadRow td .input-sm, .theadRowH td .input-sm {
+        margin-top: 0px !important;
+        border: 0;
+        border-radius: 0;
+        font-size: 12px;
+    }
+</style>
+
+
+<form class="form-horizontal" role="form" method="post" id="form_franchiseemaintenance">
+    @Html.HiddenFor(m => m.ClassId, new { id = "hdfMaintenanceFranchiseeId" })
+    <div class="row" style="margin-left:25px !important;">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Franchisee Info</label>
+                <label class="col-md-12">
+                    <b id="spnMaintenanceFranchiseeNumber">
+                    </b>
+                </label>
+                <label class="col-md-12" id="spnMaintenanceFranchiseeName"></label>
+                <label class="col-md-12" id="spnMaintenanceFranchiseeAddress"></label>
+                <label class="col-md-12" id="spnMaintenanceFranchiseeCityStatePincode"></label>
+            </div>
+        </div>
+        <div class="col-md-4 text-center" id="Maintencestatus"></div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;"></label>
+                <label class="col-md-12"><b></b></label>
+                <label class="col-md-12"></label>
+                <label class="col-md-12"></label>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="form-group">
+            <div class="control-label col-md-2">
+                Status <span class="required"> * </span>
+            </div>
+            <div class="col-md-4">
+                @Html.DropDownListFor(model => model.StatusListId, (SelectList)ViewBag.StatusList, "Select", new { @class = "form-control input-sm", @id = "ddlMaintenanceStatus" })
+            </div>
+            <div class="control-label col-md-2">
+                Effective Date<span class="required"> * </span>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group date" data-date-format="mm/dd/yyyy" style="width: 120px;">
+                    @Html.TextBoxFor(model => model.EffectiveDate, new { @class = "form-control input-sm date-picker", required = "required", @style="z-index: 99999" })
+                    <span class="input-group-btn">
+                        <button class="btn default" type="button" style="margin-top: 3px;">
+                            <i class="fa fa-calendar"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="Maintenancemanediv" style="display:none">
+
+        <div class="row" id="divMaintenanceresumedate">
+            <div class="form-group">
+                <div class="control-label col-md-2">
+                    Resume Date<label id="MaintenanceResumeDate-error" class="error" for="MaintenanceResumeDate"></label> <span class="required"> * </span>
+                </div>
+                <div class="col-md-3">
+                    <div class="input-group date" data-date-format="mm/dd/yyyy" style="width: 120px;">
+                        @Html.TextBoxFor(model => model.ResumeDate, new { @class = "form-control input-sm date-picker", @style = "z-index: 99999" })
+                        <span class="input-group-btn">
+                            <button class="btn default" type="button" style="margin-top: 3px;">
+                                <i class="fa fa-calendar"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="row" id="divMaintenancelastservicedate">
+            <div class="form-group">
+                <div class="control-label col-md-2">
+                    Last Service Date<span class="required"> * </span>
+                </div>
+                <div class="col-md-3">
+
+                    <div class="input-group date" data-date-format="mm/dd/yyyy" style="width: 120px;">
+                        @Html.TextBoxFor(model => model.LastServiceDate, new { @class = "form-control input-sm date-picker", @style = "z-index: 99999" })
+                        <span class="input-group-btn">
+                            <button class="btn default" type="button" style="margin-top: 3px;">
+                                <i class="fa fa-calendar"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="control-label col-md-2">
+                    Reason <span class="required"> * </span>
+                </div>
+                <div class="col-md-4">
+                    @Html.DropDownListFor(model => model.StatusReasonListId, (SelectList)ViewBag.StatusReasonList, "Select", new { @class = "form-control input-sm", @id = "ddlMaintenanceReason" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="control-label col-md-2">
+                    Comments  <span class="required"> * </span>
+                </div>
+                <div class="col-md-8">
+                    @Html.TextAreaFor(model => model.Comments, new { @class = "form-control input-sm" })
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="form-actions" style="height:50px">
+
+        <div class="col-md-12 CMList">
+            <button type="button" id="CMMaintenanceSubmitButton" name="SaveNew" value="SaveNew" class="btn btn-primary button-next pull-right SaveButton" style="padding: 5px; margin: 15px; display: none" onclick="saveFranchiseeMaintenance()">Submit</button>
+            @*<button type="button" id="CMMaintenanceSubmitButton" name="SaveNew" value="SaveNew" class="btn btn-primary button-next pull-right SaveButton" style="padding: 5px; margin: 15px; display: none" >Submit</button>*@
+            <button type="button" id="CMMaintenanceContinueCancellationCreditsButton" class="btn btn-primary button-next pull-right SaveButton" style="padding: 5px; margin: 15px; display: none">Continue</button>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+    <br />
+</form>
+
+
+
+@section pageplugins{
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+}
+@*@section scripts{*@
+<script>
+
+    var firstDateSet = true;
+
+
+    $(document).on('click', 'form button[type=submit]', function (e) {
+        var isValid = $('#form_customermaintenance').valid();
+        if (!isValid || parseInt($('#hdfCustomerId').val()) == 0) {
+            alert("Please Choose Customer.");
+            e.preventDefault(); //prevent the default action
+        }
+    });
+
+    function bindCustomerMaintenanceLoad(id) {
+        var value = id;
+        if (value == 9 || value == 12 || value == 0) {
+            $("#Maintenancemanediv").hide();
+
+            $("#MaintenanceResumeDate").prop('required', false);
+            $("#MaintenanceLastServiceDate").prop('required', false);
+            $("#ddlMaintenanceReason").prop('required', false);
+            $("#MaintenanceStatusNotes").prop('required', false);
+        }
+        else if (value == 10) {
+            $("#Maintenancemanediv").show();
+            //$("#divtable").hide();
+            $('#divMaintenancelastservicedate').hide();
+            $("#divMaintenanceresumedate").show();
+
+            $("#MaintenanceResumeDate").prop('required', true);
+            $("#MaintenanceLastServiceDate").prop('required', false);
+            $("#ddlMaintenanceReason").prop('required', true);
+            $("#MaintenanceStatusNotes").prop('required', true);
+        }
+        else if (value == 11 || value == 13 || value == 14 || value == 15 || value == 16 || value == 36 || value == 37 || value == 54) {
+            $("#Maintenancemanediv").show();
+            $("#divMaintenanceresumedate").hide();
+            $('#divMaintenancelastservicedate').show();
+            //$("#divtable").show();
+
+            $("#MaintenanceResumeDate").prop('required', false);
+            $("#MaintenanceLastServiceDate").prop('required', true);
+            $("#ddlMaintenanceReason").prop('required', true);
+            $("#MaintenanceStatusNotes").prop('required', true);
+        }
+    }
+
+    
+
+    $(document).ready(function () {
+        $("#CMMaintenanceSubmitButton").show();
+        var container = $('.bootstrap-iso form').length > 0 ? $('.bootstrap-iso form').parent() : "body";
+        var options = {
+            //dateFormat: 'mm/dd/yyyy',
+            container: container,
+            todayHighlight: true,
+            autoclose: true,
+            //setDate: new Date(),
+        };
+        $('#MaintenanceResumeDate').datepicker(options);
+        $('#MaintenanceResumeDate').datepicker("setDate", new Date());
+        $('#MaintenanceLastServiceDate').datepicker(options);
+        $('#MaintenanceLastServiceDate').datepicker("setDate", new Date());
+        $('#MaintenanceStatusDate').datepicker(options);
+        $('#MaintenanceStatusDate').datepicker("setDate", new Date());
+
+        //$('.findersfee-date').datepicker(options);
+        //$('.findersfee-date').datepicker("setDate", new Date());
+
+        $(".input-group-btn").click(function () {
+            $(this).prev().trigger("focus");
+            $(this).prev().trigger("focus");
+        });
+        $("#Maintenancemanediv").hide();
+        $("#divMaintenanceresumedate").hide();
+        $('#divMaintenancelastservicedate').hide();
+        //$("#divtable").hide();
+
+        $("#ddlMaintenanceStatus").prop('required', true);
+        $("#MaintenanceStatusDate").prop('required', true);
+
+        //$("#ddlStatus").prop('required', true);
+        //$("#StatusDate").prop('required', true);
+        //$('#StatusDate').datepicker("setDate", new Date());
+
+        if(@(Model.StatusListId ?? 0)>0){
+            bindCustomerMaintenanceLoad(@Model.StatusListId);
+        }
+        $("#ddlMaintenanceStatus").change(function () {
+            toggleSubmitButton();
+            //bindCustomerMaintenanceLoad(this.value)
+        });
+
+        $('#MaintenanceStatusDate').change(function () {
+            if (firstDateSet) {
+                $('#MaintenanceLastServiceDate').val($('#MaintenanceStatusDate').val());
+                firstDateSet = false;
+            }
+        });
+
+        $('#MaintenanceLastServiceDate').change(function () {
+            if (firstDateSet) {
+                $('#MaintenanceStatusDate').val($('#MaintenanceLastServiceDate').val());
+                firstDateSet = false;
+            }
+            getCancellationInvoiceData();
+        });
+
+        //$('#tblMaintance').dataTable({
+        //    "bProcessing": true,
+        //    "aLengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+        //    "pageLength": 200, // default records per page
+        //    "dom": "<'table-responsive't>"
+        //});
+    });
+
+    function toggleSubmitButton() {
+        var value = $("#ddlMaintenanceStatus").val();
+        $(".SaveButton").hide();
+
+        if (value != "") {
+            if (value == 11 || value == 13 || value == 14 || value == 15 || value == 16 || value == 36 || value == 37 || value == 54)
+                $("#CMMaintenanceSubmitButton").show();
+            else
+                $("#CMMaintenanceContinueCancellationCreditsButton").show();
+        }
+
+        bindCustomerMaintenanceLoad(value);
+    }
+
+    function bindcustomerdetail(customerid) {
+        if (customerid != '' && customerid != null) {
+            window.location.href = '@Url.Action("CustomerMaintenance", "customer", new { area = "Portal" })/' + customerid;
+        }
+    }
+
+</script>
+@*}*@
+
+
+<script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>

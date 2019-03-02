@@ -1,0 +1,230 @@
+﻿@model JKViewModels.Customer.CustomerStatementViewModel
+@{
+    Layout = "~/Areas/Portal/Views/Shared/_LayoutPortal.cshtml";
+    var request = HttpContext.Current.Request;
+    var _siteUrl = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Authority);
+
+    string imgpath = _siteUrl + "/Content/admin/assets/layouts/layout2/img/lg_jklogo.jpg";
+
+}
+
+@{
+    var balance = -Model.StartingBalance;
+    var newBalance = (-Model.StartingBalance - Model.Transactions.Where(t => t.AmountTypeListId == 1).Sum(t => t.Amount) + Model.Transactions.Where(t => t.AmountTypeListId == 2).Sum(t => t.Amount));
+}
+<style>
+    .t33 {
+        border: 0.01px solid gray;
+        border-spacing: 0px;
+    }
+
+    .t11 {
+        border: 0.01px solid #fff;
+        border-spacing: 0px;
+    }
+
+    .tabcoll {
+        border-collapse: collapse;
+    }
+
+    .t22 {
+        border-left: 0.01px solid gray;
+        border-right: 0.01px solid gray;
+        border-spacing: 0px;
+    }
+</style>
+
+@if (ViewBag.IsPrintView == true)
+{
+    <div class="print-container no-print">
+        <input type="button" class="print-button" value="Create PDF" onclick="createPDF()" />
+        <input type="button" class="print-button" value="Back to Portal" onclick="backToPortal()" />
+    </div>
+}
+<table style="width: 100%">
+    <tr style="vertical-align: top">
+        <td width="40%" >
+            <img src="@imgpath" style="height: 80px" />
+        </td>
+        <td width="25%"></td>
+        <td width="35%">
+            <table style="width:100%">
+                <tr>
+                    <td colspan="2" align="right" style="font-size:16px;"><b>Customer Statement</b></td>
+                </tr>
+            </table>
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:40%;font-size: 14px;">
+                        <span>Date:</span>
+                    </td>
+                    <td style="width:60%;font-size: 14px;" class="t33">
+                        <div style="padding:2px;"> @DateTime.Today.ToString("MMMM d, yyyy")</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:40%;font-size: 14px;">
+                        <span>Customer No:</span>
+                    </td>
+                    <td style="width:60%;font-size: 14px;" class="t33">
+                        <div style="padding:2px;">@Html.DisplayFor(one => one.CustomerDetail.CustomerNo)</div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<table style="width: 100%">
+    <tr>
+        <td width="40%">
+            <div style="width:100%;background-color:#67809F;color:white;padding:8px"><b>Bill To:</b></div>
+            @*<div style="padding:5px;font-size: 13px;">Customer No: @Html.DisplayFor(one => one.CustomerDetail.CustomerNo)</div>*@
+            <div style="padding:5px;font-size: 13px;">@Html.DisplayFor(one => one.CustomerDetail.CustomerName)</div>
+            <div style="padding:5px;font-size: 13px;">@Html.DisplayFor(one => one.CustomerDetail.Address)</div>
+            <div style="padding:5px;font-size: 13px;">@Html.DisplayFor(one => one.CustomerDetail.Address2)</div>
+            <div style="padding:5px;font-size: 13px;">@Html.DisplayFor(one => one.CustomerDetail.Phone)</div>
+            <br /><br /><br />
+        </td>
+        <td width="20%"></td>
+        <td width="40%">
+            <div style="width:100%;background-color:#67809F;color:white;padding:8px"><b>Account Summary</b></div>
+            <table style="width:100%">
+                <tr>
+                    <td width="50%"><div style="padding:5px;font-size: 13px;">Previous Balance</div></td>
+                    <td width="50%" style="text-align: right"><div style="padding:3px;">$@(string.Format("{0:N}", -Model.StartingBalance))</div></td>
+                </tr>
+                <tr>
+                    <td width="50%"><div style="padding:5px;font-size: 13px;">Credit/Payment</div></td>
+                    <td width="50%" style="text-align: right"><div style="padding:3px;">($@(string.Format("{0:N}", Model.Transactions.Where(t => t.AmountTypeListId == 1).Sum(t => t.Amount))))</div></td>
+                </tr>
+                <tr>
+                    <td width="50%"><div style="padding:5px;font-size: 13px;">New Invoices</div></td>
+                    <td width="50%" style="text-align: right"><div style="padding:3px;">$@(string.Format("{0:N}", Model.Transactions.Where(t => t.AmountTypeListId == 2).Sum(t => t.Amount)))</div></td>
+                </tr>
+                <tr>
+                    <td width="50%"><div style="padding:5px;font-size: 13px;"><b>Total Balance Due</b></div></td>
+                    <td width="50%" style="text-align: right"><div style="padding:3px;"><b>$@string.Format("{0:N}", newBalance)</b></div></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><hr /></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+<table style="width: 100%;" class="tabcoll t11 ">
+    <thead>
+        <tr>
+            <th style="text-align:center;width:64px;background-color: #67809F;color:white;border:0">
+                <div style="padding:6px;font-size: 12px;">Date</div>
+            </th>
+            <th style="width:88px;text-align:center;background-color: #67809F;color:white;border:0">
+                <div style="padding:6px;font-size: 12px;">Trx Type</div>
+            </th>
+            <th style="text-align:center;width:60px;background-color: #67809F;color:white;border:0">
+                <div style="padding:6px;font-size: 12px;">Invoice #</div>
+            </th>
+            <th style="text-align:left;width:170px;background-color: #67809F;color:white;border:0">
+                <div style="padding:6px;font-size: 12px;">Description</div>
+            </th>
+            <th style="text-align:center;width:58px;background-color: #67809F;color:white;border:0">
+                <div style="padding:6px;font-size: 12px;">Charges</div>
+            </th>
+            <th style="text-align:center;width:58px;background-color: #67809F;color:white;border:0">
+                <div style="padding:6px;font-size: 12px;">Credits</div>
+            </th>
+            <th style="text-align:center;width:69px;background-color: #67809F;color:white;border:0">
+                <div style="padding:6px;font-size: 12px;"> Line Total</div>
+            </th>
+        </tr>
+    </thead>
+</table>
+
+@{
+    <table style="width: 100%;" class="tabcoll">
+        <tr>
+            <td class="t22" style="text-align: center;width:64px;font-size: 11px;"><div style="padding:5px;font-size: 11px;">@Model.AsOfDate.ToString("MM/dd/yyyy")</div></td>
+            <td class="t22" style="text-align: center;width:88px;font-size: 11px;">&nbsp;</td>
+            <td class="t22" style="text-align: center;width:60px;font-size: 11px;">&nbsp;</td>
+            <td class="t22" style="text-align: left;width:170px;font-size: 11px;"><div style="padding:5px;font-size: 11px;">Previous Balance (as of @Model.AsOfDate.ToString("MM/dd/yyyy"))</div> </td>
+            <td class="t22" style="text-align: right;width:58px;font-size: 11px;">&nbsp;</td>
+            <td class="t22" style="text-align: right;width:58px;font-size: 11px;">&nbsp;</td>
+            <td class="t22" style="text-align: right;width:69px;font-size: 11px;"><div style="padding:2px;font-size: 11px;">@string.Format("{0:C}", balance)</div></td>
+        </tr>
+    </table>
+
+    for (var i = 0; i <= 27; i++)
+    {
+        JKViewModels.Customer.CustomerDetailTransactionViewModel t = null;
+        string displayBalance = null;
+
+        if (i < Model.Transactions.Count)
+        {
+            t = Model.Transactions[i];
+            balance += (t.AmountTypeListId == 1 ? -(decimal)t.Amount : (t.AmountTypeListId == 2 ? (decimal)t.Amount : 0));
+            displayBalance = string.Format("{0:C}", balance);
+        }
+        if (t != null)
+        {
+            <table style="width: 100%;" class="tabcoll">
+                <tr>
+                    <td class="t22" style="text-align: center;width:64px;">
+                        <div style="padding:5px;font-size: 12px;">
+                            @((t != null && t.TransactionDate != null) ? Convert.ToDateTime(t.TransactionDate).ToString("MM/dd/yyyy") : string.Empty)
+                        </div>
+                    </td>
+                    <td class="t22" style="text-align: left;width:88px;"><div style="padding:5px;font-size: 11px;">@(t?.TransactionTypeName)</div> </td>
+                    <td class="t22" style="text-align: center;width:60px;"><div style="padding:5px;font-size: 11px;"> @(t?.Number)</div> </td>
+                    <td class="t22" style="text-align: left;width:170px;"><div style="padding:5px;font-size: 11px;"> @(t?.Description)</div></td>
+                    <td class="t22" style="text-align: right;width:58px;"><div style="padding:5px;font-size: 11px;">@(t?.AmountTypeListId == 2 ? string.Format("{0:C}", t.Amount) : "")</div> </td>
+                    <td class="t22" style="text-align: right;width:58px;"><div style="padding:5px;font-size: 11px;">@(t?.AmountTypeListId == 1 ? string.Format("{0:C}", t.Amount) : "")</div> </td>
+                    <td class="t22" style="text-align: right;width:69px;"><div style="padding:2px;font-size: 11px;">@Html.Raw(displayBalance ?? "&nbsp;")</div></td>
+                </tr>
+            </table>
+        }
+        else
+        {
+            <table style="width: 100%;" class="tabcoll">
+                <tr>
+                    <td class="t22" style="text-align: center;width:64px;">
+                        <div style="padding:3px;font-size: 12px;">
+                            @((t != null && t.TransactionDate != null) ? Convert.ToDateTime(t.TransactionDate).ToString("MM/dd/yyyy") : string.Empty)
+                        </div>
+                    </td>
+                    <td class="t22" style="text-align: center;width:88px;"><div style="padding:5px;font-size: 11px;">@(t?.TransactionTypeName)</div> </td>
+                    <td class="t22" style="text-align: center;width:60px;"><div style="padding:5px;font-size: 11px;"> @(t?.Number)</div> </td>
+                    <td class="t22" style="text-align: left;width:170px;"><div style="padding:5px;font-size: 11px;"> @(t?.Description)</div></td>
+                    <td class="t22" style="text-align: right;width:58px;"><div style="padding:5px;font-size: 11px;">@(t?.AmountTypeListId == 2 ? string.Format("{0:C}", t.Amount) : "")</div> </td>
+                    <td class="t22" style="text-align: right;width:58px;"><div style="padding:5px;font-size: 11px;">@(t?.AmountTypeListId == 1 ? string.Format("{0:C}", t.Amount) : "")</div> </td>
+                    <td class="t22" style="text-align: right;width:69px;"><div style="padding:2px;font-size: 11px;">@Html.Raw(displayBalance ?? "&nbsp;")</div></td>
+                </tr>
+            </table>
+        }
+    }
+}
+<table style="width: 100%;" class="tabcoll t11 ">
+    <tr>
+        <td colspan="5" style="text-align: right; background-color: #67809F;color:white;width:475px;"><div style="padding:5px;font-size: 14px">Account Current Balance:</div></td>
+        <td style="text-align: right; background-color: #67809F;color:white;width:90px;"><div style="padding:5px;font-size: 14px">@string.Format("{0:C}", newBalance)</div></td>
+    </tr>
+</table>
+<div style="width:100%; text-align: center;font-size: 14px;padding-top:12px;">
+    Your account balance is @(string.Format("{0:C}", newBalance)). Please make your payment to cover the balance by the due date.
+</div>
+
+<div style="width:100%; text-align: center;font-size:16px;padding-top:10px;">
+    <b>Thank you for your business!</b>
+</div>
+
+<div style="width:100%; text-align: center;font-size:14px;padding-top:10px;">
+    Should you have any inquiries concerning this statement, please contact @(Model.RemitTo?.ContactName) at @(Model.RemitTo?.ContactPhone).
+</div>
+<hr />
+<div style="width:100%; text-align: center;font-size:14px;">
+    Make all checks payable to @(Model.RemitTo?.RegionName)
+</div>
+<div style="width:100%; text-align: center;font-size:14px;padding-top:5px;">
+    @(Model.RemitTo?.Address.FullAddress)
+</div>
+<div style="page-break-before:always">&nbsp;</div>

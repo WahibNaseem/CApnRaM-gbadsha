@@ -1,0 +1,158 @@
+﻿@model List<JKViewModels.Management.ObligationReportViewModel>
+@{
+
+    var Data = ViewBag.RemitTo;
+}
+
+<style>
+    .tblAccountHistory thead th,
+    .tblAccountHistory thead td {
+        padding: 3px 0px !important;
+        font-size: 12px !important;
+        /*background-color: #95A5A6 !important;
+        color: #fff;*/
+    }
+
+    .tblAccountHistory tbody td {
+        padding: 3px 0px !important;
+        font-size: 12px !important;
+    }
+
+    .tblAccountHistory thead th {
+        vertical-align: middle;
+        font-weight: bold;
+    }
+</style>
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+        <div class="col-md-12" style="text-align:center;">
+            <h4><b>Obligation Report</b></h4>
+            <b>
+                @if (Data != null)
+                {
+                    @Data.RegionName
+                }
+            </b>
+        </div>
+        <div class="col-md-12" style="text-align:center;padding-left: 0px;">
+        </div>
+    </div>    
+</div>
+<table cellspacing="0" style="width:100%;" class="tblAccountHistory">
+    <thead>
+        <tr>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"><b>Status</b></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;"><b>Customer No</b></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:100px !important;"><b>Offered Date</b></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:45px!important;"><b>Days Kept</b></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:185px!important;"><b>Customer Name</b></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:60px!important;"><b>Sales Rep</b></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:65px!important;"><b>Contract Amount</b></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"><b>Original Amount</b></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"><b>Legal Balance</b></th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"><b>Other Balance</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() != 0)
+        {
+            var unique_Franchisee_ids = Model.Select(s => s.FranchiseeId).Distinct().ToList();
+            foreach (var franchisee_id in unique_Franchisee_ids)
+            {
+                var entries = Model.Where(s => s.FranchiseeId == franchisee_id).ToList();
+
+                if (entries.Count() != 0)
+                {
+                    var first_item = entries.First();
+                    <tr>
+                        <td style="font-size:12px" colspan="10"><b>@Html.DisplayFor(modelItem => first_item.FranchiseeNo) </b>-<span> <b>@Html.DisplayFor(modelItem => first_item.FranchiseeName) </b></span> </td>
+                    </tr>
+
+                    foreach (var item in entries)
+                    {
+                        <tr relcusn="@Html.DisplayFor(modelItem => first_item.FranchiseeNo) @Html.DisplayFor(modelItem => first_item.FranchiseeName)">
+                            <td style="text-align:left;font-size:11px">@Html.DisplayFor(modelItem => item.Status)</td>
+                            <td style="text-align:center;font-size:11px">@Html.DisplayFor(modelItem => item.CustomerNo)</td>
+                            <td style="text-align:center;font-size:11px">@Html.DisplayFor(modelItem => item.OfferedDate)</td>
+                            <td style="text-align:center;font-size:11px">@Html.DisplayFor(modelItem => item.DaysKept)</td>
+                            <td style="text-align:left;font-size:11px">@Html.DisplayFor(modelItem => item.CustomerName)</td>
+                            <td style="text-align:center;font-size:11px">@Html.DisplayFor(modelItem => item.SalesRep)</td>
+                            <td style="text-align:right;font-size:11px">$@string.Format("{0:C}", Html.DisplayFor(modelItem => item.ContractAmount))</td>
+                            <td style="text-align:right;font-size:11px">$@string.Format("{0:C}", Html.DisplayFor(modelItem => item.OriginalContractAmount))</td>
+                            <td style="text-align:right;font-size:11px">$@string.Format("{0:C}", Html.DisplayFor(modelItem => item.LegalBalanceAmount))</td>
+                            <td style="text-align:right;font-size:11px">$@string.Format("{0:C}", Html.DisplayFor(modelItem => item.OtherBalanceAmount))</td>
+                        </tr>
+                    }
+                }
+            }
+        }
+        @*@if (Model.Count() != 0)
+            {
+                var unique_customer_ids = Model.Select(s => s.FranchiseeNo).Distinct().ToList();
+                foreach (var customer_id in unique_customer_ids)
+                {
+                    var entries = Model.Where(s => s.FranchiseeNo == customer_id).ToList();
+                    if (entries.Count() != 0)
+                    {
+                        var first_item = entries.First();
+                        <tr>
+                            <td style="text-align:left;" colspan="3"><b>@Html.DisplayFor(modelItem => first_item.FranchiseeNo) </b>- <b>@Html.DisplayFor(modelItem => first_item.FranchiseeName) </b></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        decimal CurrentTotal = 0;
+                        decimal PayableOnAmount = 0;
+                        decimal PaidAmount = 0;
+                        decimal BalanceAmount = 0;
+                        foreach (var item in entries)
+                        {
+                            <tr>
+                                <td style="text-align:left;">@Html.DisplayFor(modelItem => item.CustomerNo) </td>
+                                <td style="text-align:left;">@Html.DisplayFor(modelItem => item.Name)</td>
+                                <td style="text-align:center;">@Html.DisplayFor(modelItem => item.SequenceNum)</td>
+                                <td style="text-align:center;">
+                                    @if (item.FindersFeeType == "Single Ten.                                                                                                                  ")
+                                    {
+                                        <text>S</text>
+                                    }
+                                </td>
+                                <td style="text-align:right;">@string.Format("{0:C}", item.ContractBillingAmount)</td>
+                                <td style="text-align:center;">@Convert.ToDateTime(item.trxdate).ToString("MM/dd/yyyy")</td>
+                                <td style="text-align:center;">@Html.DisplayFor(modelItem => item.PaymentNumber)</td>
+                                <td style="text-align:right;">@string.Format("{0:C}", item.TotalAmount)  </td>
+                                <td style="text-align:right;">@string.Format("{0:C}", item.PayableOnAmount)  </td>
+                                <td style="text-align:right;">@string.Format("{0:C}", item.PaidAmount)  </td>
+                                <td style="text-align:right;">@string.Format("{0:C}", item.BalanceAmount)  </td>
+                            </tr>
+                            CurrentTotal += Convert.ToDecimal(item.TotalAmount);
+                            PayableOnAmount += Convert.ToDecimal(item.PayableOnAmount);
+                            PaidAmount += Convert.ToDecimal(item.PaidAmount);
+                            BalanceAmount += Convert.ToDecimal(item.BalanceAmount);
+                        }
+                        <tr>
+                            <td colspan="7" align="right">
+                                <b>Total:</b>
+                            </td>
+                            <td style="text-align:right;">
+                                <b>@string.Format("{0:C}", CurrentTotal)</b>
+                            </td>
+                            <td style="text-align:right;">
+                                <b>@string.Format("{0:C}", PayableOnAmount)</b>
+                            </td>
+                            <td style="text-align:right;">
+                                <b>@string.Format("{0:C}", PaidAmount)</b>
+                            </td>
+                            <td style="text-align:right;">
+                                <b>@string.Format("{0:C}", BalanceAmount)</b>
+                            </td>
+
+                        </tr>
+                    }
+                }
+            }*@
+    </tbody>
+</table>
+
+<div style="page-break-before:always"></div>

@@ -1,0 +1,313 @@
+﻿@using JKViewModels
+
+@{
+
+    ViewBag.Title = "Role Based Menu Access";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    //bool isWriteAccess = Convert.ToBoolean(Session["IsWriteAccess"]);
+}
+@model AssignARModel
+<link href="@Url.Content("~/Content/jquery.treeview.css")" rel="stylesheet" />
+
+
+@using (Ajax.BeginForm("AssignARMenu", "Administration", null, new AjaxOptions { OnBegin = "beginRequest", OnSuccess = "success", OnComplete = "endRequest" }, new { @id = "frmAssignMenu" }))
+{
+
+    <link href="~/Content/admin/assets/global/plugins/jstree/dist/themes/default/style.min.css" rel="stylesheet" type="text/css" />
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript"></script>
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script src="~/Content/admin/assets/global/plugins/jquery-multi-select/js/jquery.multi-select.js"></script>
+    <script src="~/Scripts/multiselect.min.js"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <!-- END PAGE LEVEL PLUGINS -->
+
+    <style>
+        .treeview label {
+            max-width: 230px;
+        }
+
+        .treeview-header {
+            max-width: 690px;
+            margin-left: 50px;
+            font-weight: 700;
+        }
+
+            .treeview-header .colLeft {
+                font-weight: 700;
+            }
+
+            .treeview-header .colMiddle, .treeview-header .colRight {
+                display: inline-block;
+                margin-left: 10px;
+            }
+
+            .treeview-header .colRight {
+                margin-right: 20px;
+            }
+
+        }
+    </style>
+
+
+    <div class="custom-form portlet light">
+
+        <div class="portlet-body form">
+            <div class="form-body">
+                <div class="form-group">
+                    <div class="row" style="background-color: #4b85cc;color: #fff;padding-top:8px;padding-bottom:8px">
+                        @*<div class="col-md-12">
+                                <div class="row" style="margin-top: -7px;">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-default btn-outline btn-circle" data-toggle="modal" href="#AddNewgroupModal"><i class="fa fa-plus"></i>Add New Role</a>
+                                                <a class="btn btn-default btn-outline btn-circle" data-toggle="modal"href="javascript:void(0);"style="width:132px;"><i class="fa fa-edit"></i>Rename Role</a>
+                                                <a class="btn btn-default btn-outline btn-circle" data-toggle="modal"href="javascript:void(0);"style="width:132px;"><i class="fa fa-trash"></i>Delete Role</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>*@
+                    </div>
+                    <div class="row" style="padding-top:8px;padding-bottom:8px">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group" style="padding-top:5px; padding-bottom:30px">
+
+                                        <div class="col-md-2 right" style="text-align:right;">
+                                            <span>Select Role</span>
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.DropDownListFor(m => m.RoleId, (ViewBag.RoleList != null ? (SelectList)ViewBag.RoleList : null), new { id = "ddlRole", @class = "form-control input-sm" })
+                                        </div>
+                                        <div class="col-md-8">
+                                            &nbsp;
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                @Html.Partial("_AssignARList", Model)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="abc-buttons text-center">
+                                <input id="btnSubmit" type="submit" style="display:none" class="btn btn-sm btn-primary" />
+                                <input id="btnSave" type="button" class="btn btn-primary" value="Save" />
+                                <input id="btnCancel" type="button" class="btn btn-sm btn-primary" value="Cancel">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+}
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/chosen.jquery.min.js"></script>
+    <script src="~/Scripts/jquery.cokie.min.js"></script>
+    <script src="@Url.Content("~/Scripts/jquery.treeview.js")"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#btnSave").click(function () {
+                saveassignmenus();
+
+            });
+
+        });
+
+
+        function saveassignmenus() {
+            var isValid = true;
+            if ($("#ddlRole").val() == "") {
+                isValid = false;
+                $("#lblValidmsgRole").show();
+            }
+            else {
+                $("#lblValidmsgRole").hide();
+            }
+
+            if (isValid) {
+                var menuIds = getcheckedchkBox();
+            }
+            if (isValid) {
+                $("#hdnRoleId").val($("#ddlRole").val());
+                $(".chkMenu").each(function () {
+                    var menuId = $(this).attr("data-menuid");
+                    $("#hdnIsApprove_" + menuId).val($("#chkIsAprove_" + menuId).is(":checked"));
+                    $("#hdnIsReject_" + menuId).val($("#chkIsReject_" + menuId).is(":checked"));
+
+                    $("#hdnIsApproveEmail_" + menuId).val($("#chkIsApproveEmail_" + menuId).is(":checked"));
+                    $("#hdnIsRejectEmail_" + menuId).val($("#chkIsRejectEmail_" + menuId).is(":checked"));
+                });
+
+                $("#btnSubmit").click();
+            }
+            else {
+                $('html,body').animate({
+                    scrollTop: 0
+                }, 700);
+            }
+        }
+
+    </script>
+    <script type="text/javascript" language="javascript">
+        $().ready(function () {
+            //beginRequest();
+            setTimeout(function () { $("#AssignMenuList").show(); GetRoleNameBasedMenu($("#ddlRole").val()); }, 500);
+            if ('@Model.Message' != "" && '@Model.MessageType' != "") {
+                showMessagePopup("divMessage", '@Model.MessageType', '@Model.Message');
+            }
+            $('#lstCategory').chosen();
+            $("#lstSubCategory").chosen();
+
+            $("#lstCategory option[value='0']").addClass("selectall");
+            $("#lstCategory option:not([value='0'])").addClass("category");
+
+            //$("select, input[type='checkbox'], input[type='radio']").uniform();
+
+            $("#treeView").treeview({
+                animated: "fast",
+                collapsed: true,
+                persist: "cookie",
+                prerendered: true,
+                persist: "location"
+            });
+            //$(".expandable-hitarea").click();
+            $("#ddlRole").change(function () {
+                var role;
+                if ($("#ddlRole").val() == "") {
+                    role = 0;
+                    $("#lblValidmsgRole").show();
+                }
+                else {
+                    role = $("#ddlRole").val();
+                    $("#lblValidmsgRole").hide();
+
+                }
+                GetRoleNameBasedMenu(role);
+            });
+
+
+            $("#btnCancel").click(function () {
+                cancel();
+            });
+
+            $("#ddlRole").focus();
+
+            $("#chkAllRead").change(function () {  //"select all" change 
+                $(".chkAllRead").prop('checked', $(this).prop("checked")); //change all ".checkbox" checked status
+            });
+
+            //".checkbox" change 
+            $('.chkAllRead').change(function () {
+                //uncheck "select all", if one of the listed checkbox item is unchecked
+                if (false == $(this).prop("checked")) { //if this item is unchecked
+                    $("#chkAllRead").prop('checked', false); //change "select all" checked status to false
+                }
+                //check "select all" if all checkbox items are checked
+                if ($('.chkAllRead:checked').length == $('.chkAllRead').length) {
+                    $("#chkAllRead").prop('checked', true);
+                }
+            });
+
+            $("#chkAllWrite").change(function () {  //"select all" change 
+                $(".chkAllWrite").prop('checked', $(this).prop("checked")); //change all ".checkbox" checked status
+            });
+
+            //".checkbox" change 
+            $('.chkAllWrite').change(function () {
+                //uncheck "select all", if one of the listed checkbox item is unchecked
+                if (false == $(this).prop("checked")) { //if this item is unchecked
+                    $("#chkAllWrite").prop('checked', false); //change "select all" checked status to false
+                }
+                //check "select all" if all checkbox items are checked
+                if ($('.chkAllWrite:checked').length == $('.chkAllWrite').length) {
+                    $("#chkAllWrite").prop('checked', true);
+                }
+            });
+        });
+
+        function GetRoleNameBasedMenu(value) {
+            //UncheckAll Nodes If you want check then call checkAll
+            // G('tree1').checkboxTree('uncheckAll');
+
+            if (value == "") return;
+            //beginRequest();
+            $.ajax({
+                async: false,
+                traditional: true,
+                cache: false,
+                type: "POST",
+                url: '@Url.Action("GetRoleBasedAssignedAR", "Administration")',
+                data: JSON.stringify({ roleid: value }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data != null && data.length > 0) {
+                        
+                        console.log(data);
+                        for (var i = 0; i < data.length; i++) {
+
+                            $("#chkIsAprove_" + data[i].ARPermissionId).prop('checked', data[i].IsApprove);
+                            $("#chkIsReject_" + data[i].ARPermissionId).prop('checked', data[i].IsReject);
+                            $("#chkIsApproveEmail_" + data[i].ARPermissionId).prop('checked', data[i].IsApproveEmail);
+                            $("#chkIsRejectEmail_" + data[i].ARPermissionId).prop('checked', data[i].IsRejectEmail);
+ 
+                            //$.uniform.update("input");
+                        }
+                    }
+                    
+                },
+                error: function (jqXHR, exception) {
+                    //endRequest();
+                    if (jqXHR.status != 403) {
+                        //alert(exception);
+                    }
+                }
+            });
+        }
+
+        function cancel() {
+            window.location.href = "/Home/Index";
+        }
+
+
+        function success(result) {
+
+            if (result != null && result.message != "") {
+                window.location.href = "/Administration/AssignMenu";
+                //endRequest();
+            }
+
+        }
+
+        function getcheckedchkBox() {
+            var values = "";
+
+            $("input[type='checkbox']").each(function () {
+                if (this.checked) values += this.value + ",";
+            });
+
+            if (values.length > 0) values = values.slice(0, -1);
+            return values;
+        }
+
+          
+
+    </script>
+}

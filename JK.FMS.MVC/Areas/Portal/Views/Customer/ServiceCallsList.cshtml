@@ -1,0 +1,2371 @@
+﻿@*@model List<JKViewModels.Customer.ServiceCallLogModel*@
+@model JKViewModels.Customer.ServiceCallLogModel
+
+@{
+    ViewBag.Title = "ServiceCallList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")' rel="stylesheet" type="text/css" />
+    <link href='@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")' rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" type="text/css" />
+
+    <style>
+
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .page-size {
+            padding-left: 0;
+            padding-right: 0;
+            width: 62px;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        #CustomerList th {
+            vertical-align: middle;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .no-margin {
+            margin: 0;
+        }
+
+        .padding-tb1 {
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        .margin-tb1 {
+            margin-top: 1px;
+            margin-bottom: 1px;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .contract {
+            text-align: right;
+        }
+
+        .tablebox .table-responsive {
+            min-height: 600px;
+        }
+
+        .CMList {
+            margin-top: -12px;
+        }
+    </style>
+    <style type="text/css">
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        #ui-datepicker-div {
+            z-index: 99999 !important;
+        }
+    </style>
+
+}
+
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    @if (Convert.ToInt32(ViewBag.IsCallBack) == 0)
+                    {
+                        <text> CUSTOMER SERVICE CALL LIST</text>
+                    }
+                    else
+                    {
+                        <text> CUSTOMER SERVICE CALLBACK LIST</text>
+                    }
+                </div>
+                <div class="col-md-4" style="padding-right:5px;">
+                    <div class="col-md-7 pull-right no-padding">
+                        <div style="display:table-cell;padding-right: 5px;">
+                            Region
+                        </div>
+                        <div style="display:table-cell;width:100%;">
+                            @if (ViewBag.regionlist != null)
+                            {
+                                <select class="form-control input-sm" id="regionlist" multiple="multiple" style="display:none;">
+                                    @foreach (var item in (SelectList)ViewBag.regionlist)
+                                    {
+                                        <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="headerbox" style="margin-top:5px;">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-1" style="text-align:right;">
+                    <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                        <option value="-1">All</option>
+                        <option value="100" selected>100</option>
+                        <option value="50">50</option>
+                        <option value="25">25</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <div class="input-icon">
+                        <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                        <input id="csearch-box" type="text" required name="customernumber" autocomplete="off" placeholder="Search...." value="" class="form-control input-sm typeahead" />
+                    </div>
+                </div>
+                <div class="col-md-4 topheader">
+
+                </div>
+                <div class="col-md-4 pull-right no-padding" style="padding-right:5px;">
+                    <div class="col-md-6 no-padding" style="margin-left:30px;">
+                        <select id="select_timeduration" class="form-control input-sm">
+                            <option value="1">This Week</option>
+                            <option value="2">This Week-to-date</option>
+                            <option value="3" selected="selected">This Month</option>
+                            <option value="4">This Month-to-date</option>
+                            <option value="5">This Quarter</option>
+                            <option value="6">This Quarter-to-date</option>
+                            <option value="7">This Fiscal Year</option>
+                            <option value="8">This Fiscal Year-to-date</option>
+                            <option value="9">Today</option>
+                            <option value="10">Yesterday</option>
+                            <option value="11">Last Week</option>
+                            <option value="12">Last Month</option>
+                            <option value="13">Last Quarter</option>
+                            <option value="14">Last Year</option>
+                            <option value="15">Custom Date</option>
+                        </select>
+                    </div>
+                    <div class="col-md-5 divspandate no-padding" style="margin-top: 3px; margin-left: 0px; display: block; float: right;" id="divspandate">
+                        <span id="spnStartDate"></span> - <span id="spnEndtDate"></span>
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divSD">
+                        <input type="text" name="txtStartDate" id="dtpfrom" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                    </div>
+                    <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divED">
+                        <input type="text" name="txtEndtDate" id="dtpto" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="headerbox" style="margin-top:5px;">
+    <div class="row" style="background-color: #3598DC;color: #fff;">
+        <div class="col-md-12 no-padding">
+            <div class="col-md-1" style="text-align: right;width: 93px;padding-top: 3px;">
+                Initiated By
+            </div>
+            <div class="col-md-2">
+
+                <div style="width:100%;">
+                    @if (ViewBag.InitiatedBy != null)
+                    {
+                        <select class="form-control input-sm" id="msInitiatedBylist">
+                            <option selected value="0">All</option>
+                            @foreach (var item in new SelectList(ViewBag.InitiatedBy, "Value", "Key"))
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                    }
+                </div>
+            </div>
+            <div class="col-md-1" style="padding: 0px;text-align: right;width: 30px;padding-top: 3px;">
+                Type
+            </div>
+            <div class="col-md-2">
+                <div style="width:100%;">
+                    @if (ViewBag.ServiceCallLogTypeList != null)
+                    {
+                        <select class="form-control input-sm" id="msTypelist" multiple="multiple">
+                            @foreach (var item in (SelectList)ViewBag.ServiceCallLogTypeList)
+                            {
+                                <option @(item.Value == "0" ? "selected" : "") value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                    }
+
+                </div>
+            </div>
+            <div class="col-md-1" style="padding: 0px;text-align: right;width: 30px;padding-top: 3px;">
+                Status
+            </div>
+            <div class="col-md-2">
+                <div style="width:100%;">
+                    @if (ViewBag.StatusResultList != null)
+                    {
+                        <select class="form-control input-sm" id="msStatuslist" multiple="multiple">
+                            @foreach (var item in (SelectList)ViewBag.StatusResultList)
+                            {
+                                <option @(item.Value == "0" ? "selected" : "") value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                    }
+                </div>
+            </div>
+            <div class="col-md-1" style="padding: 0px;text-align: right;width: 80px;padding-top: 3px;">
+                User Name
+            </div>
+            <div class="col-md-2">
+                <div style="width:100%;">
+                    @Html.DropDownList("ddlUserName", (IEnumerable<SelectListItem>)ViewBag.AllLoginUserList, new { @class = "form-control input-sm", @id = "ddlUserName" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="custom-form portlet light">
+    <div class="portlet-body form">
+        <div class="row">
+            <div class="col-md-12" style="padding-left:8px;padding-right:8px">
+                <input type="hidden" id="hdnIsCallBack" name="hdnIsCallBack" value="@ViewBag.IsCallBack" />
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="tblServiceCall">
+                        <thead>
+                            <tr>
+                                <th style="width:30px;text-align:center;" class="dtable_Region">
+                                   Region
+                                </th>
+                                <th style="width:30px;text-align:center;" class="dtable_TransDateTime">
+                                    Date/Time
+                                </th>
+                                <th style="text-align:center;width:30px;" class="dtable_Type">
+                                    Type
+                                </th>
+                                <th style="width:30px;text-align:center;" class="dtable_CustomerNo">
+                                    Customer No
+                                </th>
+                                <th style="text-align:center;width:30px;" class="dtable_CustomerName">
+                                    Customer Name
+                                </th>
+                                <th style="text-align:center;width:30px;" class="dtable_InitiatedBy">
+                                    Initiated By
+                                </th>
+                                <th style="text-align:center;width:30px;" class="dtable_Status">
+                                    Status
+                                </th>
+                                <th style="text-align:center;width:30px;" class="dtable_SpokeWith">
+                                    Spoke With
+                                </th>
+                                <th style="text-align:center;width:30px;" class="dtable_Action">
+                                    Action
+                                </th>
+                                <th style="text-align:center;width:1px;" class="dtable_CallBack">
+                                    Call Back
+                                </th>
+                                <th style="text-align:center;width:1px;" class="dtable_FollowUpBy">
+                                    Follow-Up By
+                                </th>                                
+                                <th style="text-align:center;width:300px;" class="dtable_Comment">
+                                    Comment
+                                </th>
+                                <th style="text-align:center;width:60px;" class="dtable_CreatedByName">
+                                    User Name
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section pageplugins{
+
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    @*<script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>*@
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js")" type="text/javascript"></script>
+}
+
+
+@section scripts{
+
+
+    <script>
+
+        $(document).ready(function () {
+
+            //Credit Transaction Date Change
+            $("#select_dateRangeCT").change(function () {
+                var value = this.value;
+                setCTSearchTime(value);
+                // refreshCreditTransaction($("#CTMC").val());
+            });
+
+            $("#regionlist").multiselect({
+                includeSelectAllOption: false,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2,
+                onChange: refreshTable,
+                onSelectAll: refreshTable,
+                onDeselectAll: refreshTable
+            });
+
+            $("#msStatuslist").multiselect({
+                includeSelectAllOption: false,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2,
+                onChange: refreshTable,
+                onSelectAll: refreshTable,
+                onDeselectAll: refreshTable
+            });
+            $("#msTypelist").multiselect({
+                includeSelectAllOption: false,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2,
+                onChange: refreshTable,
+                onSelectAll: refreshTable,
+                onDeselectAll: refreshTable
+            });
+
+
+            @*function GetDataByRegion() {
+                var customerList = $('#CustomerList').DataTable();
+
+                $.ajax({
+                    url: getCurrentUrl(), success: function (result) {
+
+
+                        for (var i = 0; i < result.aadata.length; i++) {
+
+                            customerList.row.add({
+                                "RegionName": result.aadata[i].RegionName,
+                                "CustomerNo": result.aadata[i].CustomerNo,
+                                "CustomerName": result.aadata[i].CustomerName,
+                                "Address": result.aadata[i].Address,
+                                "City": result.aadata[i].City,
+                                "StateName": result.aadata[i].StateName,
+                                "Phone": result.aadata[i].Phone,
+                                "PostalCode": result.aadata[i].PostalCode,
+                                "AcTypeListName": result.aadata[i].AcTypeListName,
+                                "StatusName": result.aadata[i].StatusName,
+                                "Amount": result.aadata[i].Amount,
+                                "CustomerId": result.aadata[i].CustomerId
+                            }).draw();
+                        }
+                    }
+                });
+            }
+            $.fn.dataTableExt.afnFiltering.push(function (oSettings, aData, iDataIndex) {
+                //var checked = $('#chkActive').is(':checked');
+                //var Inchecked = $('#chkInActive').is(':checked');
+
+                //if (checked && aData[3] == "Active") {
+                //    return true;
+                //}
+                //else if (Inchecked && aData[3] == "X") {
+                //    return true;
+                //}
+                //else if (Inchecked && checked) {
+                //    return true;
+                //}
+                // return false;
+                return true;
+            });
+
+            $(document).on('init.dt', function (e, settings) {
+                var api = new $.fn.dataTable.Api(settings);
+                if ($(api.table().node()).attr('id') == 'CustomerList') {
+                    setPaging();
+                }
+            });
+            function initTable() {
+
+                var ps = $('#pageSize').val();
+                var dtable = $('#CustomerList').dataTable({
+                    "bAutoWidth": false,
+                     cache: true,
+                    "iDisplayLength": ps == '-1' ? 25 : ps,
+                    "bDestroy": true,
+                    "aLengthMenu": [[5, 7, 10, 25, 50, -1], [5, 7, 10, 25, 50, "All"]],
+                    //"dom": "<'headerbox list'<'row'<'col-md-1'l><'col-md-4'f><'#divrightckbox.col-md-5 pull-right text-center'>>><'table-responsive't><'bottom'ip><'clear'>",
+                    "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                    "aaSorting": [[0, "desc"]],
+                    "sAjaxSource": getCurrentUrl(),
+                    "sAjaxDataProp": "aadata",  // Internationalisation. For more info refer to http://datatables.net/manual/i18n
+                    "rowCallback": function (nRow, data) {
+                    },
+                    "aoColumns": [
+                        {
+                            "sName": "RegionName",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+                                return '<span>' + full.RegionName + '</span>';
+                            }
+                        },
+                        {
+                            "sName": "CustomerNo",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+                                return '<span>' + full.CustomerNo + '</span>';
+                            }
+                        },
+                        {
+                            "sName": "CustomerName",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+                                return "<a href='@Url.Action("CustomerDetail", "Customer", new { @area = "Portal" })?id=" + full.CustomerId + "'  style='color:#0c9cff' id=" + full.CustomerId + ">" + full.CustomerName + "</a>";
+                            }
+                        },
+                        {
+                            "sName": "Address",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+                                var add = '<span>' + full.Address + ',&nbsp;</span><span>' + full.City + ',&nbsp;</span><span>' + full.StateName + '&nbsp;</span>' +
+                                    '<span>' + full.PostalCode + '</span>';
+                                return add;
+                            }
+                        },
+                        {
+                            "sName": "Phone",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+                                return full.Phone;
+                            }
+                        },
+                        {
+                            "sName": "AcTypeListName",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+                                return full.AcTypeListName;
+                            }
+                        },
+                        {
+                            "sName": "StatusName",
+                            "bSortable": true,
+                            "mRender": function (data, type, full) {
+                                return full.StatusName;
+                            }
+                        },
+                        {
+                            "sName": "Amount",
+                            "bSortable": true,
+                            "sClass": "right contract",
+                            "mRender": function (data, type, full) {
+                                //return full.DistributionAmount;
+                                return "<a onclick='OpenCustomerDistributionPopup(" + full.CustomerId + ")' target='_blank' style='color:#0c9cff' id=" + full.CustomerId + ">" + full.Amount + "</a>";
+                            }
+                        },
+                        {
+                            "sName": "Action",
+                            "bSortable": true,
+                            "sClass": "personlink alignCenter",
+                            "mRender": function (data, type, full) {
+                                var action = "<div class='btn-group dropdown'>";
+                                action += "<a target='_blank'  dropdown-toggle' data-toggle='dropdown'>";
+                                action += "<i class='fa fa-hand-o-right' aria-hidden='true'></i>";
+                                action += "</a>";
+                                action += "<ul class='dropdown-menu pull-right'>";
+                                action += "<li><a href='#' onclick='showManualPayment(" + full.CustomerId + ")'><i class='fa fa-plus'></i> Manual Payment </a></li>";
+                                action += "<li><a href='#' onclick='showServiceLog(" + full.CustomerId + ")'><i class='fa fa-plus'></i> Customer Service log </a></li>";
+                                action += "<li><a href='#' onclick='showCollectionLog(" + full.CustomerId + ")'><i class='fa fa-plus'></i> Collection Call Log </a></li>";
+                                action += "<li><a href='#' onclick='showManualInvoice(" + full.CustomerId + ")'><i class='fa fa-external-link-square'></i> Manual Invoice </a></li>";
+                                action += "<li><a href='#' onclick='showCreditTransaction(" + full.CustomerId + ")'><i class='fa fa-external-link-square'></i> Credit Transaction </a></li>";
+                                action += "<li><a href='#' onclick='showFeeFinderList(" + full.CustomerId + ")'><i class='fa fa-plus'></i> Finder Fees </a></li>";
+                                action += "<li><a href='#' onclick='showCustomerMaintenance(" + full.CustomerId + ")'><i class='fa fa-plus'></i> Maintenance </a></li>";
+                                action += "</ul></div>";
+                                return action;
+                            }
+                        }
+                    ]
+                });
+            }
+            $("#input_Search").keyup(function () {
+                var table = $("#CustomerList").DataTable();
+                table.search($(this).val()).draw();
+            });
+
+            $("#pageSize").change(function () {
+                setPaging();
+            })
+
+            $("#regionlist").change(function () {
+                // initTable();
+                //var customerList = $('#CustomerList').DataTable();
+                //customerList.draw();
+            })
+
+            //$('#chkActive').on("click", function (e) {
+            //    console.log('click');
+            //    oTable.draw();
+            //});
+            //$('#chkInActive').on("click", function (e) {
+            //    console.log('click');
+            //    oTable.draw();
+            //});
+
+
+            if ('@ViewBag.selectedRegionId' > 0) {
+
+                $("#regionlist option[value='" + '@ViewBag.selectedRegionId' + "']").attr("selected", 1);
+                $("#regionlist").multiselect("refresh");
+            }
+            initTable();
+
+
+            $('.modal-dialog').draggable();
+            $('#CustomerList').show();
+            $('#divcustomerList').show();*@
+        });
+
+
+        //jQuery(document).ready(function () {
+        //    var dtable = $('#tblServiceCall').dataTable({
+        //        "bAutoWidth": false,
+        //        cache: false,
+        //        "bSort": false,
+        //        "order": false,
+        //        "iDisplayLength": 25,
+        //        "aLengthMenu": [[5, 7, 10, 25, 50, -1], [5, 7, 10, 25, 50, "All"]],
+        //        "dom": '<"top">rt<"bottom"lp><"clear">',
+        //        "aaSorting": false,
+
+        //    });
+
+        //    $("#input_Search").keyup(function () {
+        //        var table = $("#tblServiceCall").DataTable();
+        //        table.search($(this).val()).draw();
+        //        // var CutmID = $("#tblServiceCall tbody tr input").first().val();
+
+        //    });
+        //})
+        jQuery(document).ready(function () {
+            $("#pageSize").change(function () {
+                setPaging();
+            });
+            $('.date-picker').datepicker({ autoclose: true, dateFormat: 'mm/dd/yy' });
+            $('.date-picker').attr("placeholder", "mm/dd/yyyy");
+            $('.timepicker').timepicker();
+
+            var dtable = $('#tblinvoice').dataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                     'excel', 'print'
+                ],
+                "bAutoWidth": false,
+                cache: false,
+                "bSort": false,
+                "order": false,
+                "iDisplayLength": 25,
+                "aLengthMenu": [[5, 7, 10, 25, 50, -1], [5, 7, 10, 25, 50, "All"]],
+                "dom": '<"top">rt<"bottom"lp><"clear">',
+                "aaSorting": false,
+
+            });
+            $("#CallBack").datepicker({ numberOfMonths: 1, });
+        })
+
+        $(document).ready(function () {
+            @*$("#csearch-box").keyup(function () {
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("Customerdata", "AccountReceivable", new { area = "Portal" })',
+                    data: 'keyword=' + $(this).val(),
+                    success: function (data) {
+                        var typeaheadSource = [];
+                        $.each(data, function (key, value) {
+                            typeaheadSource.push({ id: value.CustomerId, name: value.CustomerNo + ' ' + $.trim(value.Name) })
+                        });
+
+                        $('#csearch-box').typeahead({
+                            source: typeaheadSource,
+                            updater: function (item) {
+                                console.log(item);
+                                redirect(item.id);
+                                return item;
+                            }
+                        }).focus();
+                    }
+                });
+            });*@
+            //applyAutoSeacrh();
+        });
+        @*function applyAutoSeacrh() {
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetAllCustomer", "Customer", new { area = "Portal" })',
+                data: {},
+                success: function (data) {
+
+                    var typeaheadSource = [];
+                    $.each(data, function (key, value) {
+                        typeaheadSource.push({ id: value.CustomerId, name: value.CustomerNo + ' ' + $.trim(value.Name) })
+                    });
+                    var box = $('#csearch-box').data('typeahead');
+                    if (box != null) {
+
+                        console.log('csearch source change');
+                        box.source = typeaheadSource;
+                    }
+                    else {
+                        console.log('csearch initiated');
+                        $('#csearch-box').typeahead({
+                            source: typeaheadSource,
+                            updater: function (item) {
+                                console.log(item);
+                                redirect(item.id);
+                                return item;
+                            },
+                            minLength: 1
+                        }).focus();
+                    }
+                }
+            });
+        }*@
+        //function redirect(id) {
+        //    var url = '/Portal/Customer/ServiceCallList/-1';
+        //    var path = url.replace("-1", id);
+        //    location.href = path;
+        //}
+        //function redirect_list() {
+        //    location.href = '/Portal/Customer/ServiceCallList/';
+        //}
+    </script>
+
+    <script>
+        var dtable;
+        function getTableURL() {
+            var _regionVal = $('#regionlist').val();
+            //var _fromDateVal = $('#dtpfrom').val();
+            //var _toDateVal = $('#dtpto').val();
+
+            var _fromDateVal = $('#spnStartDate').html();
+            var _toDateVal = $('#spnEndtDate').html();
+
+            var _searchStatusVal = $('#msStatuslist').val();
+            var _searchTypeVal = $('#msTypelist').val();
+            var _searchInitiatedByVal = $('#msInitiatedBylist').val();
+            var _usr = $('#ddlUserName').val();
+            var _isCallBack = 0;
+            if ($("#hdnIsCallBack").val() != null && $("#hdnIsCallBack").val() != "") {
+                _isCallBack = $("#hdnIsCallBack").val();
+            }
+            var sURL = '@Url.Action("ServiceCallListResultData", "Customer", new { area = "Portal" })?regionId=' + _regionVal + '&fd=' + _fromDateVal + '&td=' + _toDateVal + '&st=' + _searchStatusVal + '&tp=' + _searchTypeVal + '&ib=' + _searchInitiatedByVal + '&usr=' + _usr + "&iscallback=" + _isCallBack;
+            return sURL;
+        }
+        function refreshTable() {
+
+            var surl = getTableURL();
+            dtable.ajax.url(surl).load();
+
+        }
+
+        function btncloseFranchiseecall() {
+            $("#modal_FranchiseeCall").modal('hide');
+        }
+
+        function btnlogcallClose() {
+            $("#modal_LogCall").modal('hide');
+        }
+
+        function setPaging() {
+            var z = $("#pageSize").val();
+            var table = $("#tblServiceCall").DataTable();
+            if (z > 0) {
+                table.page.len(z).draw();
+            }
+            else if (z == -1) {
+                table.page.len(table.rows().count()).draw();
+            }
+            else {
+                table.page.page.len(25).draw();
+            }
+        }
+
+        jQuery(document).ready(function () {
+
+            $('#divspandate').show();
+            $('#divSD').hide();
+            $('#divED').hide();
+            //firstDay = moment().subtract(0, 'month').startOf('month').toString();
+            //lastDay = moment().subtract(0, 'month').endOf('month').toString();
+            firstDay = moment().subtract(0, 'month').startOf('month').toString();
+            lastDay = moment().subtract(0, 'month').endOf('month').toString();
+            $('#dtpfrom').val(moment(firstDay).format('L'));
+            $('#dtpto').val(moment(lastDay).format('L'));
+            $('#spnStartDate').html(moment(firstDay).format('L'));
+            $('#spnEndtDate').html(moment(lastDay).format('L'));
+
+            //$('#txtStartDate').inputmask("mm/dd/yyyy", {});
+            //$('#txtEndtDate').inputmask("mm/dd/yyyy", {});
+
+            //setSearchTime(3);
+            var sURL = getTableURL();
+            var ps = $('#pageSize').val();
+            dtable = $('#tblServiceCall').DataTable({
+                "bServerSide": false,
+                "sAjaxSource": sURL,
+                "iDisplayLength": ps == '-1' ? 25 : ps,
+                "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                "aaSorting": [[0, "desc"]],
+                columnDefs: [
+                     {
+                         targets: "dtable_Region",
+                         data: "RegionName",
+                         sClass: "clstext-align",
+                         render: function (data, type, row, meta) {
+                             return row.RegionName
+                         }
+                     },
+                    {
+                        targets: "dtable_TransDateTime",
+                        data: "",
+                        render: function (data, type, row, meta) {
+                            return moment(new Date(parseInt(row.CallDate.substr(6)))).format("MM/DD/YYYY") + '<br />' + tConvert(row.CallTime);
+                        }
+                    },
+                     {
+                         targets: "dtable_Type",
+                         data: "ServiceLogTypeListName",
+                         sClass: "clstext-align",
+                         render: function (data, type, row, meta) {
+                             return row.ServiceLogTypeListName
+                         }
+                     },
+                    {
+                        targets: "dtable_CustomerNo",
+                        data: "",
+                        render: function (data, type, row, meta) {
+                            //return row.CustomerNo;
+                            var cutserurl = '@Url.Action("CustomerServiceCallList", "Customer", new { area = "Portal" })' + "?id=" + row.CustomerId + "&flt=" + $("#select_timeduration").val();
+                            return "<a href=" + cutserurl + ">" + row.CustomerNo + "</a>"
+                        }
+                    },
+                    {
+                        targets: "dtable_CustomerName",
+                        data: "",
+                        render: function (data, type, row, meta) {
+                            return row.CustomerName;
+                        }
+                    },
+                     {
+                         targets: "dtable_InitiatedBy",
+                         data: "InitiatedBy",
+                         sClass: "clstext-align",
+                         render: function (data, type, row, meta) {
+                             var strInitiatedBy = "";
+                             if (row.InitiatedBy == '0') {
+                                 strInitiatedBy = "JK";
+                             }
+                             else if (row.InitiatedBy == '1') {
+                                 strInitiatedBy = "Customer";
+                             }
+                             else if (row.InitiatedBy == '2') {
+                                 strInitiatedBy = "Franachisee";
+                             }
+                             return strInitiatedBy;
+                         }
+                     },
+                    { targets: "dtable_Status", data: "Status", sClass: "clstext-align" },
+                    { targets: "dtable_SpokeWith", data: "SpokeWith", sClass: "clstext-align" },
+                    { targets: "dtable_Action", data: "Action", sClass: "clstext-align" },
+                    {
+                        targets: "dtable_CallBack",
+                        data: "",
+                        sClass: "alignCenter clstext-align",
+                        render: function (data, type, row, meta) {
+                            if (row.CallBack != null && row.CallBack != "") {
+                                return moment(new Date(parseInt(row.CallBack.substr(6)))).format("MM/DD/YYYY");
+                            }
+                            return "";
+                        }
+                    },
+                    { targets: "dtable_FollowUpBy", data: "FollowUpBy", sClass: "clstext-align" },
+                    //{
+                    //    targets: "dtable_Completed",
+                    //    data: "",
+                    //    sClass: "clstext-align",
+                    //    render: function (data, type, row, meta) { return "" }
+                    //},
+                    { targets: "dtable_Comment", data: "Comments" },
+                    //{
+                    //    targets: "dtable_ActionHistory", data: "",
+                    //    render: function (data, type, row, meta) { return "" }
+                    //},
+                    { targets: "dtable_CreatedByName", data: "CreatedByName", sClass: "clstext-align" },
+                ]
+
+            });
+            //$("#input_Search").keyup(function () {
+            //    var table = $("#tblServiceCall").DataTable();
+            //    table.search($(this).val()).draw();
+            //});
+        })
+
+        var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+        var firstDay;
+        var lastDay;
+        Date.prototype.getWeek = function (start) {
+            //Calcing the starting point
+            start = start || 0;
+            var today = new Date(this.setHours(0, 0, 0, 0));
+            var day = today.getDay() - start;
+            var date = today.getDate() - day;
+
+            // Grabbing Start/End Dates
+            var StartDate = new Date(today.setDate(date));
+            var EndDate = new Date(today.setDate(date + 6));
+            return [StartDate, EndDate];
+        }
+
+        //$('#txtStartDate').change(function () {
+        //    $('#spnStartDate').html($(this).val());
+        //});
+        //$('#txtEndtDate').change(function () {
+        //    $('#spnEndtDate').html($(this).val());
+        //});
+
+        $('#msInitiatedBylist').change(function () {
+                refreshTable();
+        });
+
+        $('#dtpfrom').change(function () {
+            $('#spnStartDate').html($(this).val());
+            if ($('#dtpfrom').val() != '' && $('#dtpto').val() != '')
+                refreshTable();
+        });
+        $('#dtpto').change(function () {
+            $('#spnEndtDate').html($(this).val());
+            if ($('#dtpfrom').val() != '' && $('#dtpto').val() != '')
+                refreshTable();
+        });
+
+        $(".search-date-field").on('changeDate', function (e) {
+            refreshTable();
+        });
+
+        $("#pageSize").change(function () {
+            setPaging();
+        });
+        $("#csearch-box").keyup(function () {
+            var table = $("#tblServiceCall").DataTable();
+            table.search($(this).val()).draw();
+        });
+
+
+        $('#select_timeduration').change(function () {
+
+            //alert($(this).val());
+            $('#spnStartDate').html('');
+            $('#spnEndtDate').html('');
+            $('#divspandate').show();
+            $('#divSD').hide();
+            $('#divED').hide();
+            switch (parseInt($(this).val())) {
+                case 1:
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = moment().endOf('isoWeek').toString();
+                    break;
+                case 2:
+                    //code block
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 3:
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                    break;
+                case 4:
+                    //code block
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 5:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = moment().endOf('quarter').toString();
+                    break;
+                case 6:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 7:
+                    //code block
+                    firstDay = moment().startOf('year').toString();;
+                    lastDay = moment().endOf('year').toString();
+                    break;
+                case 8:
+                    //code block
+                    firstDay = moment().startOf('year').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 9:
+                    //code block
+                    firstDay = moment().toString();
+                    lastDay = moment().toString();
+                    break;
+                case 10:
+                    //code block
+                    firstDay = moment().add(-1, 'days').toString();
+                    lastDay = moment().add(-1, 'days').toString();
+                    break;
+                case 11:
+                    //code block
+                    firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                    lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                    break;
+                case 12:
+                    //code block
+                    firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                    break;
+                case 13:
+                    //code block
+                    firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                    lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                    break;
+                case 14:
+                    //code block
+                    firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                    lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                    break;
+                case 15:
+                    //code block
+                    $('#divspandate').hide();
+                    $('#divSD').show();
+                    $('#divED').show();
+                    $('#txtStartDate').val('');
+                    $('#txtEndtDate').val('')
+                    break;
+                default:
+                    //code block
+            }
+            $('#spnStartDate').html(moment(firstDay).format('L'));
+            $('#spnEndtDate').html(moment(lastDay).format('L'));
+
+            //Set Values becuase due to Filter Is not working
+            $('#dtpfrom').val(moment(firstDay).format('L'));
+            $('#dtpto').val(moment(lastDay).format('L'));
+
+            refreshTable();
+            // _bindTrasaction($('#select_transactionstype').val(), moment(firstDay).format('L'), moment(lastDay).format('L'));
+        });
+
+        $('#ddlUserName').change(function () {
+            refreshTable();
+        });
+    </script>
+
+    <script type="text/javascript">
+        function showServiceCallLog() {
+
+            var CustomerID = $("#CutmID").val();
+            if (CustomerID != "" && CustomerID != 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Customer/GetCustomerDataByID",
+                    data: JSON.stringify({ "CustomerID": CustomerID }),
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        $("#CustomerNos").empty();
+                        $("#ContactNames").empty();
+                        $("#CustomerNames").empty();
+                        $("#Phones").empty();
+                        $("#CustomerNos").append(data.CustomerNo);
+                        $("#ContactNames").append(data.ContactName);
+                        $("#CustomerNames").append(data.CustomerName);
+                        $("#Phones").append(data.Phone);
+                        $("#ClassId").val(data.CustomerId);
+                        $("#RegionId").val(data.RegionId);
+                        $("#modal_ServiceCallLog").modal({ backdrop: 'static' });
+                    },
+                    error: function () {
+                        alert("Error occured!!")
+                    }
+                });
+            }
+            else {
+                swal({
+                    title: "Oops",
+                    text: "Plese Select the Customer First",
+                    allowOutsideClick: false,
+                    html: true
+                });
+            }
+        }
+        function CustomerInfo() {
+            $("#modal_Billingsetting").modal({ backdrop: 'static' });
+        }
+        function CustomerInvoice() {
+            $("#modal_CustomerInvoice").modal({ backdrop: 'static' });
+        }
+        function EditContactfunction1() {
+            $(".editmain1").removeAttr("disabled").removeAttr("readonly");
+            $("#btnContactSave1").removeAttr("disabled");
+            $("#btnContactCancel1").removeAttr("disabled");
+
+            $(".EditBtn").show();
+            $(".SaveBtn").hide();
+            $(".CancelBtn").hide();
+
+            $("#EditContact1").hide();
+            $("#btnContactSave1").show();
+            $("#btnContactCancel1").show();
+
+
+            $(".editmain").attr("disabled", "disabled");
+            $(".editmain").attr("readonly", "readonly");
+
+            $(".edit").attr("disabled", "disabled");
+            $(".edit").attr("readonly", "readonly");
+
+            $(".editbill1").attr("disabled", "disabled");
+            $(".editbill1").attr("readonly", "readonly");
+
+            $(".editbill").attr("disabled", "disabled");
+            $(".editbill").attr("readonly", "readonly");
+        }
+
+        function ShowFranchiseeCall() {
+            var sURL = '@Url.Action("GetFranchiseeCall", "Customer", new { area = "Portal" })';
+            var CustomerID = $("#CutmID").val();
+            if (CustomerID != "" && CustomerID != 0) {
+                $.ajax({
+                    type: "GET",
+                    url: sURL,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (data) {
+                        $('#form_FranchiseeCall').html(data);
+                        $("#modal_FranchiseeCall").modal({ backdrop: 'static' });
+                    },
+                    error: function () {
+                        alert("Error occured!!")
+                    }
+                });
+            }
+            else {
+                swal({
+                    title: "Oops",
+                    text: "Plese Select the Customer First",
+                    allowOutsideClick: false,
+                    html: true
+                });
+            }
+        }
+
+
+        function ShowLogCall() {
+            var sURL = '@Url.Action("GetLogCall", "Customer", new { area = "Portal" })';
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_LogCall').html(data);
+                    $("#modal_LogCall").modal({ backdrop: 'static' });
+                },
+                error: function () {
+                    alert("Error occured!!")
+                }
+            });
+        }
+    </script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $.validator.messages.required = '';
+
+
+            $('#chkbillingsameas').click(function () {
+                var checked = $('#chkbillingsameas').is(':checked');
+
+                var MainAddress_Name = $('#BillingContact_Name'),
+                    MainAddress_Address1 = $('#BillingAddress_Address1'),
+                    MainAddress_City = $('#BillingAddress_City'),
+                    MainAddress_State = $('#BillingStatesList'),
+                    MainAddress_PostalCode = $('#BillingAddress_PostalCode');
+
+                if (checked) {
+                    MainAddress_Name.val($('#CustomerViewModel_Name').val());
+                    MainAddress_Address1.val($('#MainAddress_Address1').val());
+                    MainAddress_City.val($('#MainAddress_City').val());
+                    MainAddress_State.val($('#MainStatesList').val());
+                    MainAddress_PostalCode.val($('#MainAddress_PostalCode').val());
+
+                    MainAddress_Name.attr("readonly", "readonly");
+                    MainAddress_Address1.attr("readonly", "readonly");
+                    MainAddress_City.attr("readonly", "readonly");
+                    MainAddress_State.attr("readonly", "readonly");
+                    MainAddress_PostalCode.attr("readonly", "readonly");
+
+                }
+                else {
+                    MainAddress_Name.val('');
+                    MainAddress_Address1.val('');
+                    MainAddress_City.val('');
+                    MainAddress_State.val('');
+                    MainAddress_PostalCode.val('');
+
+                    MainAddress_Name.removeAttr("readonly");
+                    MainAddress_Address1.removeAttr("readonly");
+                    MainAddress_City.removeAttr("readonly");
+                    MainAddress_State.removeAttr("readonly");
+                    MainAddress_PostalCode.removeAttr("readonly");
+                }
+            });
+            $('#chkbillingcontactsameas').click(function () {
+                var MainContactAddress_FName = $('#BillingContactInformation2_Name'),
+                    //MainContactAddress_LastName = $('#BillingContact_LastName'),
+                    MainContactAddress_Title = $('#BillingContactInformation2_Title'),
+                    MainContactAddress_Phone = $('#BillingPhone_Phone1'),
+                    MainContactAddress_PhoneExt = $('#BillingPhone_PhoneExt'),
+                    MainContactAddress_Cell = $('#BillingPhone_Cell'),
+                    MainContactAddress_Fax = $('#BillingPhone_Fax'),
+                    MainContactAddress_Email = $('#BillingEmail_EmailAddress');
+                if ($(this).prop('checked')) {
+                    MainContactAddress_FName.val($('#MainContact_Name').val());
+                    // MainContactAddress_LastName.val($('#ContactInformation_LastName').val());
+                    MainContactAddress_Title.val($('#MainContact_Title').val());
+                    MainContactAddress_Phone.val($('#MainPhone2_Phone1').val());
+                    MainContactAddress_PhoneExt.val($('#MainPhone2_PhoneExt').val());
+                    MainContactAddress_Cell.val($('#MainPhone2_Cell').val());
+                    MainContactAddress_Fax.val($('#MainPhone2_Fax').val());
+                    MainContactAddress_Email.val($('#MainEmail_EmailAddress').val());
+
+                    MainContactAddress_FName.attr("readonly", "readonly");
+                    //MainContactAddress_LastName.attr("readonly", "readonly");
+                    MainContactAddress_Title.attr("readonly", "readonly");
+                    MainContactAddress_Phone.attr("readonly", "readonly");
+                    MainContactAddress_PhoneExt.attr("readonly", "readonly");
+                    MainContactAddress_Cell.attr("readonly", "readonly");
+                    MainContactAddress_Fax.attr("readonly", "readonly");
+                    MainContactAddress_Email.attr("readonly", "readonly");
+                }
+                else {
+                    MainContactAddress_FName.val('');
+                    //MainContactAddress_LastName.val('');
+                    MainContactAddress_Title.val('');
+                    MainContactAddress_Phone.val('');
+                    MainContactAddress_PhoneExt.val('');
+                    MainContactAddress_Cell.val('');
+                    MainContactAddress_Fax.val('');
+                    MainContactAddress_Email.val('');
+
+                    MainContactAddress_FName.removeAttr("readonly");
+                    //MainContactAddress_LastName.removeAttr("readonly");
+                    MainContactAddress_Title.removeAttr("readonly");
+                    MainContactAddress_Phone.removeAttr("readonly");
+                    MainContactAddress_PhoneExt.removeAttr("readonly");
+                    MainContactAddress_Cell.removeAttr("readonly");
+                    MainContactAddress_Fax.removeAttr("readonly");
+                    MainContactAddress_Email.removeAttr("readonly");
+                }
+            });
+
+            // _bindTrasaction($('#select_transactionstype').val(), $('#spnStartDate').text(), $('#spnEndtDate').text());
+
+            $('.modal-dialog').draggable();
+
+
+        });
+    </script>
+    <script>
+        $("#btnSave").click(function () {
+            var isvalid = true;
+
+            if ($('#BillSetting_EffectiveDate').val().trim() == '') { $('#BillSetting_EffectiveDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillSetting_EffectiveDate').css('border-color', ''); }
+
+            if (isvalid == true) {
+
+                var BillSettingsId = 0;
+                var EBill = 0;
+                //var PrintInvoice = 0;
+                var PrintPastDue = 0;
+                var TaxExcempt = 0;
+                var ConsolidatedInvoice = 0;
+
+
+                if ($("#BillSetting_BillSettingsId").val() != undefined && $("#BillSetting_BillSettingsId").val() != "") {
+                    BillSettingsId = $("#BillSetting_BillSettingsId").val();
+                }
+                if ($("#BillSetting_EBill").is(':checked')) {
+                    EBill = 1;
+
+                }
+                //if ($("#BillSetting_PrintInvoice").is(':checked')) {
+                //    PrintInvoice = 1;
+                //}
+                if ($("#BillSetting_PrintPastDue").is(':checked')) {
+                    PrintPastDue = 1;
+                }
+                if ($("#BillSetting_TaxExcempt").is(':checked')) {
+                    TaxExcempt = 1;
+                }
+                if ($("#BillSetting_ConsolidatedInvoice").is(':checked')) {
+                    ConsolidatedInvoice = 1;
+                }
+
+                var CustBillSettings = { CustomerId: $("#CustomerViewModel_CustomerId").val(), BillSettingsId: BillSettingsId, ArStatus: $(".ddlArStatus").val(), EffectiveDate: $("#BillSetting_EffectiveDate").val(), InvoiceDateListId: $(".ddlInvoiceDate").val(), InvoiceTermListId: $(".ddlTermDate").val(), EBill: EBill, PrintPastDue: PrintPastDue, TaxExcempt: TaxExcempt, ConsolidatedInvoice: ConsolidatedInvoice, Note: $("#BillSetting_Notes").val(), EBillEmails: $("#hdfEBill_Emails").val() };
+
+                $.ajax({
+                    url: '@Url.Action("SaveBillSettings", "Customer")',
+                    dataType: "json",
+                    data: CustBillSettings,
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+                    success: function () { alert('Success'); },
+                    error: function () { }
+                });
+                window.location.href = window.location.href;
+            }
+
+        });
+
+        $('#btnCancel').click(function () {
+
+            $(".edit").attr("disabled", "disabled");
+            $(".edit").attr("readonly", "readonly");
+            $("#btnSave").prop("disabled", "false");
+            $("#btnSave").prop("readonly", "true");
+
+            $("#btnCancel").prop("disabled", "false");
+            $("#btnCancel").prop("readonly", "true");
+
+            $("#EditBSetting").show();
+            $("#btnSave").hide();
+            $("#btnCancel").hide();
+
+            //$('#modal_Billingsetting').hide();
+            //$("#modal_Billingsetting").close();
+            //$('.modal-backdrop').remove();
+            // $('#modal_Billingsetting').dismiss('Cancel');
+
+        });
+
+        $('#btnContactSave1').click(function () {
+
+            var isvalid = true;
+
+            //if ($('#MainContact_FirstName').val().trim() == '') { $('#MainContact_FirstName').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainContact_FirstName').css('border-color', ''); }
+            if ($('#MainAddress_Address1').val().trim() == '') { $('#MainAddress_Address1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainAddress_Address1').css('border-color', ''); }
+            if ($('#MainAddress_City').val().trim() == '') { $('#MainAddress_City').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainAddress_City').css('border-color', ''); }
+            if ($('#MainStatesList').val().trim() == '') { $('#MainStatesList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainStatesList').css('border-color', ''); }
+            if ($('#MainAddress_PostalCode').val().trim() == '') { $('#MainAddress_PostalCode').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainAddress_PostalCode').css('border-color', ''); }
+
+            if ($('#MainPhone_Phone1').val().trim() == '' || $('#MainPhone_Phone1').val() == NaN || parseInt($("#MainPhone_Phone1").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+                $('#MainPhone_Phone1').css('border-color', 'red');
+                if (isvalid == true) {
+                    isvalid = false;
+                }
+            }
+            else {
+                $('#MainPhone_Phone1').css('border-color', '');
+            }
+
+            if (isvalid == true) {
+
+                var AddressId = 0;
+                var PhoneId = 0;
+
+                if ($("#MainAddress_AddressId").val() != undefined && $("#MainAddress_AddressId").val() != "") {
+                    AddressId = $("#MainAddress_AddressId").val();
+                }
+                if ($("#MainPhone_PhoneId").val() != undefined && $("#MainPhone_PhoneId").val() != "") {
+                    PhoneId = $("#MainPhone_PhoneId").val();
+                }
+
+                var EditCustM1data = { CustomerId: $("#CustomerViewModel_CustomerId").val(), AddressId: AddressId, Address1: $("#MainAddress_Address1").val(), Address2: $("#MainAddress_Address2").val(), City: $("#MainAddress_City").val(), StateId: $("#MainStatesList").val(), PostalCode: $("#MainAddress_PostalCode").val(), PhoneId: PhoneId, Phone1: $("#MainPhone_Phone1").val(), Fax: $("#MainPhone_Fax").val() };
+
+                $.ajax({
+                    url: '@Url.Action("EditCustomerPopupMainContactTab1", "Customer")',
+                    dataType: "json",
+                    data: EditCustM1data,
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+
+                    success: function () { alert('Success'); },
+                    error: function () { }
+                });
+                window.location.href = window.location.href;
+            }
+        });
+
+        $('#btnContactCancel1').click(function () {
+            $(".editmain1").attr("disabled", "disabled");
+            $(".editmain1").attr("readonly", "readonly");
+
+            $("#btnContactSave1").prop("disabled", "false");
+            $("#btnContactSave1").prop("readonly", "true");
+
+            $("#btnContactCancel1").prop("disabled", "false");
+            $("#btnContactCancel1").prop("readonly", "true");
+
+            $(".EditBtn").show();
+            $(".SaveBtn").hide();
+            $(".CancelBtn").hide();
+        });
+
+        $('#btnContactSave').click(function () {
+
+            var isvalid = true;
+
+            if ($('#MainContact_Name').val().trim() == '') { $('#MainContact_Name').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#MainContact_Name').css('border-color', ''); }
+            if ($('#MainPhone2_Phone1').val().trim() == '' || $('#MainPhone2_Phone1').val() == NaN || parseInt($("#MainPhone2_Phone1").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+                $('#MainPhone2_Phone1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; }
+            } else { $('#MainPhone2_Phone1').css('border-color', ''); }
+
+            if ($('#MainEmail_EmailAddress').val().trim() != '') {
+                if (!ValidateEmail($('#MainEmail_EmailAddress').val())) {
+                    if (isvalid == true) { isvalid = false; }
+                    $('#MainEmail_EmailAddress').css('border-color', 'red');
+                } else { $('#MainEmail_EmailAddress').css('border-color', ''); }
+            }
+            if ($('#MainPhone2_Cell').val().trim() != '') {
+                if (parseInt($("#MainPhone2_Cell").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+                    $('#MainPhone2_Cell').css('border-color', 'red'); if (isvalid == true) { isvalid = false; }
+                    $('#MainPhone2_Cell').css('border-color', 'red');
+                } else { $('#MainPhone2_Cell').css('border-color', ''); }
+            }
+
+
+            if (isvalid == true) {
+
+                var ContactId = 0;
+                var PhoneId = 0;
+                var EmailId = 0;
+
+                if ($("#MainContact_ContactId").val() != undefined && $("#MainContact_ContactId").val() != "") {
+                    ContactId = $("#MainContact_ContactId").val();
+                }
+                if ($("#MainPhone2_PhoneId").val() != undefined && $("#MainPhone2_PhoneId").val() != "") {
+                    PhoneId = $("#MainPhone2_PhoneId").val();
+                }
+                if ($("#MainEmail_EmailId").val() != undefined && $("#MainEmail_EmailId").val() != "") {
+                    EmailId = $("#MainEmail_EmailId").val();
+                }
+
+                var EditCustM2data = { CustomerId: $("#CustomerViewModel_CustomerId").val(), ContactId: ContactId, Name: $("#MainContact_Name").val(), Title: $("#MainContact_Title").val(), PhoneId: PhoneId, Phone1: $("#MainPhone2_Phone1").val(), PhoneExt: $("#MainPhone2_PhoneExt").val(), Cell: $("#MainPhone2_Cell").val(), Fax: $("#MainPhone2_Fax").val(), EmailId: EmailId, EmailAddress: $("#MainEmail_EmailAddress").val() };
+
+                $.ajax({
+                    url: '@Url.Action("EditCustomerPopupMainContactTab2", "Customer")',
+                    dataType: "json",
+                    data: EditCustM2data,
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+
+                    success: function () { alert('Success'); },
+                    error: function () { }
+                });
+                window.location.href = window.location.href;
+            }
+
+
+        });
+        $('#btnContactCancel').click(function () {
+            $(".editmain").attr("disabled", "disabled");
+            $(".editmain").attr("readonly", "readonly");
+
+            $("#btnContactSave").prop("disabled", "false");
+            $("#btnContactSave").prop("readonly", "true");
+
+            $("#btnContactCancel").prop("disabled", "false");
+            $("#btnContactCancel").prop("readonly", "true");
+
+
+            $(".EditBtn").show();
+            $(".SaveBtn").hide();
+            $(".CancelBtn").hide();
+        });
+
+        $('#btnBContactSave1').click(function () {
+
+            var isvalid = true;
+            if ($('#BillingContact_Name').val().trim() == '') { $('#BillingContact_Name').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingContact_Name').css('border-color', ''); }
+            if ($('#BillingAddress_Address1').val().trim() == '') { $('#BillingAddress_Address1').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingAddress_Address1').css('border-color', ''); }
+            if ($('#BillingAddress_City').val().trim() == '') { $('#BillingAddress_City').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingAddress_City').css('border-color', ''); }
+            if ($('#BillingStatesList').val().trim() == '') { $('#BillingStatesList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingStatesList').css('border-color', ''); }
+            if ($('#BillingAddress_PostalCode').val().trim() == '') { $('#BillingAddress_PostalCode').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingAddress_PostalCode').css('border-color', ''); }
+
+            if (isvalid == true) {
+
+                var ContactId = 0;
+                var BAddressId = 0;
+
+                if ($("#BillingContact_ContactId").val() != undefined && $("#BillingContact_ContactId").val() != "") {
+                    ContactId = $("#BillingContact_ContactId").val();
+                }
+                if ($("#BillingAddress_AddressId").val() != undefined && $("#BillingAddress_AddressId").val() != "") {
+                    BAddressId = $("#BillingAddress_AddressId").val();
+                }
+
+                var EditCustB1data = { CustomerId: $("#CustomerViewModel_CustomerId").val(), ContactId: ContactId, Name: $("#BillingContact_Name").val(), Attention: $("#BillingContact_Attention").val(), AddressId: BAddressId, Address1: $("#BillingAddress_Address1").val(), Address2: $("#BillingAddress_Address2").val(), City: $("#BillingAddress_City").val(), StateId: $("#BillingStatesList").val(), PostalCode: $("#BillingAddress_PostalCode").val() };
+
+                $.ajax({
+                    url: '@Url.Action("EditCustomerPopupBillingTab1", "Customer")',
+                    dataType: "json",
+                    data: EditCustB1data,
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+
+                    success: function () { alert('Success'); },
+                    error: function () { }
+                });
+                window.location.href = window.location.href;
+            }
+        });
+        $('#btnBContactCancel1').click(function () {
+            $(".editbill1").attr("disabled", "disabled");
+            $(".editbill1").attr("readonly", "readonly");
+
+            $("#btnBContactSave1").prop("disabled", "false");
+            $("#btnBContactSave1").prop("readonly", "true");
+
+            $("#btnBContactCancel1").prop("disabled", "false");
+            $("#btnBContactCancel1").prop("readonly", "true");
+
+            $(".EditBtn").show();
+            $(".SaveBtn").hide();
+            $(".CancelBtn").hide();
+
+        });
+
+        $('#btnBContactSave').click(function () {
+
+            //var data = $("form").serialize();
+            //alert(data);
+
+            var isvalid = true;
+
+            if ($('#BillingContactInformation2_Name').val().trim() == '') { $('#BillingContactInformation2_Name').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#BillingContactInformation2_Name').css('border-color', ''); }
+            if ($('#BillingPhone_Phone1').val().trim() == '' || $('#BillingPhone_Phone1').val() == NaN || parseInt($("#BillingPhone_Phone1").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+                $('#BillingPhone_Phone1').css('border-color', 'red');
+                if (isvalid == true) { isvalid = false; }
+            }
+            else {
+                $('#BillingPhone_Phone1').css('border-color', '');
+            }
+            if ($('#BillingEmail_EmailAddress').val().trim() != '') {
+                if (!ValidateEmail($('#BillingEmail_EmailAddress').val())) {
+                    if (isvalid == true) { isvalid = false; }
+                    $('#BillingEmail_EmailAddress').css('border-color', 'red');
+                } else { $('#BillingEmail_EmailAddress').css('border-color', ''); }
+            }
+            if ($('#BillingPhone_Cell').val().trim() != '') {
+                if (parseInt($("#BillingPhone_Cell").val().replace(/[^0-9\.]/g, ''), 10).toString().length < 10) {
+                    $('#BillingPhone_Cell').css('border-color', 'red'); if (isvalid == true) { isvalid = false; }
+                    $('#BillingPhone_Cell').css('border-color', 'red');
+                } else { $('#BillingPhone_Cell').css('border-color', ''); }
+            }
+
+            if (isvalid == true) {
+
+                var ContactId = 0;
+                var BPhoneId = 0;
+                var BEmailId = 0;
+
+                if ($("#BillingContactInformation2_ContactId").val() != undefined && $("#BillingContactInformation2_ContactId").val() != "") {
+                    ContactId = $("#BillingContactInformation2_ContactId").val();
+                }
+                if ($("#BillingPhone_PhoneId").val() != undefined && $("#BillingPhone_PhoneId").val() != "") {
+                    BPhoneId = $("#BillingPhone_PhoneId").val();
+                }
+                if ($("#BillingEmail_EmailId").val() != undefined && $("#BillingEmail_EmailId").val() != "") {
+                    BEmailId = $("#BillingEmail_EmailId").val();
+                }
+
+                var EditCustB2data = { CustomerId: $("#CustomerViewModel_CustomerId").val(), ContactId: ContactId, Name: $("#BillingContactInformation2_Name").val(), Title: $("#BillingContactInformation2_Title").val(), PhoneId: BPhoneId, Phone1: $("#BillingPhone_Phone1").val(), PhoneExt: $("#BillingPhone_PhoneExt").val(), Cell: $("#BillingPhone_Cell").val(), Fax: $("#BillingPhone_Fax").val(), EmailId: BEmailId, EmailAddress: $("#BillingEmail_EmailAddress").val() };
+
+                $.ajax({
+                    url: '@Url.Action("EditCustomerPopupBillingTab2", "Customer")',
+                    dataType: "json",
+                    data: EditCustB2data,
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+                    success: function () { alert('Success'); },
+                    error: function () { }
+                });
+                window.location.href = window.location.href;
+
+            }
+        });
+        $('#btnBContactCancel').click(function () {
+            $(".editbill").attr("disabled", "disabled");
+            $(".editbill").attr("readonly", "readonly");
+
+            $("#btnBContactSave").prop("disabled", "false");
+            $("#btnBContactSave").prop("readonly", "true");
+
+            $("#btnBContactCancel").prop("disabled", "false");
+            $("#btnBContactCancel").prop("readonly", "true");
+
+            $("#EditBContact").show();
+            $("#btnBContactSave").hide();
+            $("#btnBContactCancel").hide();
+        });
+
+
+        $("#btnEditDistribution").click(function () {
+
+            $(".editvalue").addClass("editvaluetext");
+            $(".editvalue").removeClass("editmode");
+            //$("#btnSaveDistribution").show();
+            //$("#btnEditDistribution").hide();
+            $(".editvalue").removeAttr("disabled").removeAttr("readonly");
+            $(".editcheck").removeAttr("disabled").removeAttr("readonly");
+        });
+
+        $("#btnSaveDistribution").click(function () {
+
+            if (tempFRowLineNo > 0) {
+                alert('save')
+            }
+            $(".editvalue").removeClass("editvaluetext");
+            $(".editvalue").addClass("editmode");
+            //$("#btnSaveDistribution").hide();
+            //$("#btnEditDistribution").show();
+            $(".editvalue").attr("readonly", "readonly");
+            $(".editcheck").attr("disabled", "disabled");
+            $(".editcheck").attr("readonly", "readonly");
+        });
+
+        function onlyDecimal(id) {
+            $(id).keydown(function (event) {
+                if (event.shiftKey == true) { event.preventDefault(); }
+                if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105) || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 190 || event.keyCode == 110) { }
+                else { event.preventDefault(); }
+                if ($(this).val().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110)) event.preventDefault();
+            });
+        }
+        function OnlyNumber(id) {
+            $(id).keydown(function (event) {
+                if (event.shiftKey == true) { event.preventDefault(); }
+                if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105) || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46) { }
+                else { event.preventDefault(); }
+            });
+        }
+        function applyMaskCurrency(id) {
+            $(id).inputmask("currency", {
+                alias: 'currency',
+                prefix: '$ ',
+                digits: 2,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                unmaskAsNumber: true,
+                allowPlus: false,
+                allowMinus: false,
+                autoGroup: true,
+                groupSeparator: ",",
+            });
+        }
+        function OnClickContractDetailCancel() {
+            $('#modal_CustomerContractPopup').modal("hide");
+        }
+        function ValidateEmail(email) {
+            // Validate email format
+            var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+            return expr.test(email);
+        };
+    </script>
+    <script>
+        function showCustomerMaintenance(id) {
+            var sURL = '@Url.Action("CustomerMaintenancePartial", "customer", new { area = "Portal" })?id=' + id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_customermaintenancem').html(data);
+
+                    $('#form_customermaintenance').validate({ // initialize the plugin
+                        // your rules and options,
+                        errorPlacement: function () {
+                            return false;  // suppresses error message text
+                        }
+                    });
+                    $("#manediv").hide();
+                    $("#divresumedate").hide();
+                    $('#divlastservicedate').hide();
+                    $("#divtable").hide();
+
+                    $("#ddlStatus").prop('required', true);
+                    $("#StatusDate").prop('required', true);
+
+                    if ($("#ddlStatus").val() > 0) {
+                        bindCustomerMaintenanceLoad_popup($("#ddlStatus").val());
+                    }
+                    $("#ddlStatus").change(function () {
+                        var value = this.value;
+                        bindCustomerMaintenanceLoad_popup(value);
+                    });
+                    $(".date-picker").datepicker();
+
+                    $('#tblMaintance').dataTable({
+                        "bProcessing": true,
+                        "aLengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                        "pageLength": 200, // default records per page
+                        "dom": "<'table-responsive't>"
+                    });
+                    $("#modal_customermaintenanceDetail").modal({ backdrop: 'static' });
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+
+        function bindCustomerMaintenanceLoad_popup(id) {
+            var value = id;
+            if (value == 1 || value == 4 || value == 0) {
+                $("#manediv").hide();
+
+                $("#ResumeDate").prop('required', false);
+                $("#LastServiceDate").prop('required', false);
+                $("#ddlReason").prop('required', false);
+                $("#StatusNotes").prop('required', false);
+            }
+            else if (value == 3) {
+                $("#manediv").show();
+                $("#divtable").hide();
+                $('#divlastservicedate').hide();
+                $("#divresumedate").show();
+
+                $("#ResumeDate").prop('required', true);
+                $("#LastServiceDate").prop('required', false);
+                $("#ddlReason").prop('required', true);
+                $("#StatusNotes").prop('required', true);
+            }
+            else if (value == 2) {
+                $("#manediv").show();
+                $("#divresumedate").hide();
+                $('#divlastservicedate').show();
+                $("#divtable").show();
+
+                $("#ResumeDate").prop('required', false);
+                $("#LastServiceDate").prop('required', true);
+                $("#ddlReason").prop('required', true);
+                $("#StatusNotes").prop('required', true);
+            }
+        }
+
+
+        function saveCustomerMaintenance() {
+            var isValid = $('#form_customermaintenance').valid();
+            if (!isValid || parseInt($('#hdfCustomerId').val()) == 0) {
+                e.preventDefault(); //prevent the default action
+            }
+            else {
+                $.ajax({
+                    url: '@Url.Action("CustomerMaintenancePartial", "Customer",new { area = "Portal" })',
+                    type: "POST",
+                    data: $('#form_customermaintenance').serialize(),
+                    success: function (res) {
+                        $('#modal_customermaintenanceDetail').modal('hide');
+                    },
+                    error: function () { }
+                });
+            }
+
+        };
+
+
+
+        function ValidateEmail(email) {
+            var expr = /^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/;
+            return expr.test(email);
+        };
+        $('#BillSetting_EBill').click(function () {
+            var checkvalue = $('#BillSetting_EBill').prop('checked')
+            if (checkvalue) {
+                $('#btnshowbillingcontactemail').show();
+            }
+            else {
+                $('#btnshowbillingcontactemail').hide();
+            }
+
+        });
+        $('#btnshowbillingcontactemail').click(function () {
+
+            bindEBillEmails();
+            $('#divEBill_Emails').html('');
+            $('#txtemailaddress_ebill').val('')
+            var strEmail = '';
+            $.each(ebill_email, function (index, value) {
+                $('#divEBill_Emails').append('<span style="padding:3px;float:left;width:100%">' + value + '</span><br />');
+                strEmail += (strEmail != "" ? "," : "") + value;
+            });
+            $('#mdlAppendemail').modal({ backdrop: 'static' });
+
+        });
+
+        $('#btnaddemailaddress_ebill').click(function () {
+
+            if (!ValidateEmail($("#txtemailaddress_ebill").val())) {
+                alert("Invalid email address.");
+            }
+            else {
+                var strEmail = $('#hdfEBill_Emails').val();
+                ebill_email.push($('#txtemailaddress_ebill').val());
+                $('#divEBill_Emails').append('<span style="padding:3px;float:left;width:100%">' + $('#txtemailaddress_ebill').val() + '</span><br />');
+                strEmail += (strEmail != "" ? "," : "") + $('#txtemailaddress_ebill').val();
+                $('#hdfEBill_Emails').val(strEmail);
+                $('#txtemailaddress_ebill').val('')
+            }
+        });
+
+
+        function bindEBillEmails() {
+            ebill_email = [];
+            var strEma = $('#hdfEBill_Emails').val();
+            $('#divEBill_Emails').html('');
+            if (strEma.length > 0) {
+                $.each(strEma.split(','), function (index, value) {
+                    console.log(value);
+                    ebill_email.push(value);
+                });
+            }
+            else {
+                if ($('#BillingEmail_EmailAddress').val() != '') {
+                    $('#divEBill_Emails').append('<span style="padding:3px;float:left;width:100%">' + $('#BillingEmail_EmailAddress').val() + '</span><br />');
+                    ebill_email.push($('#txtemailaddress_ebill').val());
+                }
+            }
+        }
+        function btnInvoiceWinClose() {
+            $("#modal_invoicedetail").modal('hide');
+        }
+
+    </script>
+    <script type="text/javascript">
+        $("#btnSaveSubmitForm").click(function () {
+
+            var isvalid = true;
+            if ($('#InitiatedBy').val() == '') { $('#InitiatedBy').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#InitiatedBy').css('border-color', ''); }
+            if ($('#ServiceLogAreaListId').val() == '0') { $('#ServiceLogAreaListId').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ServiceLogAreaListId').css('border-color', ''); }
+            if ($('#ServiceLogTypeListId').val() == '0') { $('#ServiceLogTypeListId').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ServiceLogTypeListId').css('border-color', ''); }
+            if ($('#SpokeWith').val() == '') { $('#SpokeWith').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#SpokeWith').css('border-color', ''); }
+            if ($('#StatusResultListId').val() == '0') { $('#StatusResultListId').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#StatusResultListId').css('border-color', ''); }
+            //if ($('#CallBack').val() == '0') { $('#CallBack').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#CallBack').css('border-color', ''); }
+
+            $("#CallBack").val($("#txtCallBack").val() + " " + $("#CallTime").val());
+
+
+            if (isvalid == true) {
+                $("#frmServiceCallLog").submit();
+            }
+        });
+        function AccountOffringModel() {
+            $("#modal_AccountOffring").modal("show");
+        }
+
+        function SearchAccountOffer() {
+            $("#modal_AccountOffringResult").modal("show");
+        }
+
+        function Editfunction() {
+            $(".edit").removeAttr("disabled").removeAttr("readonly");
+            $("#btnSave").removeAttr("disabled");
+            $("#btnCancel").removeAttr("disabled");
+
+            $(".EditBtn").show();
+            $(".SaveBtn").hide();
+            $(".CancelBtn").hide();
+
+            $("#EditBSetting").hide();
+            $("#btnSave").show();
+            $("#btnCancel").show();
+
+
+            $(".editmain1").attr("disabled", "disabled");
+            $(".editmain1").attr("readonly", "readonly");
+
+            $(".editmain").attr("disabled", "disabled");
+            $(".editmain").attr("readonly", "readonly");
+
+            $(".editbill").attr("disabled", "disabled");
+            $(".editbill").attr("readonly", "readonly");
+
+        }
+
+        function EditContactfunction1() {
+            $(".editmain1").removeAttr("disabled").removeAttr("readonly");
+            $("#btnContactSave1").removeAttr("disabled");
+            $("#btnContactCancel1").removeAttr("disabled");
+
+            $(".EditBtn").show();
+            $(".SaveBtn").hide();
+            $(".CancelBtn").hide();
+
+            $("#EditContact1").hide();
+            $("#btnContactSave1").show();
+            $("#btnContactCancel1").show();
+
+
+            $(".editmain").attr("disabled", "disabled");
+            $(".editmain").attr("readonly", "readonly");
+
+            $(".edit").attr("disabled", "disabled");
+            $(".edit").attr("readonly", "readonly");
+
+            $(".editbill1").attr("disabled", "disabled");
+            $(".editbill1").attr("readonly", "readonly");
+
+            $(".editbill").attr("disabled", "disabled");
+            $(".editbill").attr("readonly", "readonly");
+        }
+
+        function EditContactfunction() {
+
+            $(".editmain").removeAttr("disabled").removeAttr("readonly");
+            $("#btnContactSave").removeAttr("disabled");
+            $("#btnContactCancel").removeAttr("disabled");
+            //$(".edit").removeAttr("disabled").removeAttr("readonly");
+
+            $(".EditBtn").show();
+            $(".SaveBtn").hide();
+            $(".CancelBtn").hide();
+
+            $("#EditContact").hide(); btnContactSave1
+            $("#btnContactSave").show();
+            $("#btnContactCancel").show();
+
+            $(".editmain1").attr("disabled", "disabled");
+            $(".editmain1").attr("readonly", "readonly");
+
+            $(".edit").attr("disabled", "disabled");
+            $(".edit").attr("readonly", "readonly");
+
+            $(".editbill1").attr("disabled", "disabled");
+            $(".editbill1").attr("readonly", "readonly");
+
+            $(".editbill").attr("disabled", "disabled");
+            $(".editbill").attr("readonly", "readonly");
+        }
+
+        function EditBContactfunction1() {
+            $(".editbill1").removeAttr("disabled").removeAttr("readonly");
+            $("#btnBContactSave1").removeAttr("disabled");
+            $("#btnBContactCancel1").removeAttr("disabled");
+            //$(".edit").removeAttr("disabled").removeAttr("readonly");
+
+            $(".EditBtn").show();
+            $(".SaveBtn").hide();
+            $(".CancelBtn").hide();
+
+            $("#EditBContact1").hide();
+            $("#btnBContactSave1").show();
+            $("#btnBContactCancel1").show();
+
+
+            $(".editbill").attr("disabled", "disabled");
+            $(".editbill").attr("readonly", "readonly");
+
+            $(".edit").attr("disabled", "disabled");
+            $(".edit").attr("readonly", "readonly");
+
+            $(".editmain1").attr("disabled", "disabled");
+            $(".editmain1").attr("readonly", "readonly");
+
+            $(".editmain").attr("disabled", "disabled");
+            $(".editmain").attr("readonly", "readonly");
+        }
+        function EditBContactfunction() {
+            $(".editbill").removeAttr("disabled").removeAttr("readonly");
+            $("#btnBContactSave").removeAttr("disabled");
+            $("#btnBContactCancel").removeAttr("disabled");
+            // $(".edit").removeAttr("disabled").removeAttr("readonly");
+
+            $(".EditBtn").show();
+            $(".SaveBtn").hide();
+            $(".CancelBtn").hide();
+
+            $("#EditBContact").hide();
+            $("#btnBContactSave").show();
+            $("#btnBContactCancel").show();
+
+
+            $(".editbill1").attr("disabled", "disabled");
+            $(".editbill1").attr("readonly", "readonly");
+
+            $(".edit").attr("disabled", "disabled");
+            $(".edit").attr("readonly", "readonly");
+
+            $(".editmain1").attr("disabled", "disabled");
+            $(".editmain1").attr("readonly", "readonly");
+
+            $(".editmain").attr("disabled", "disabled");
+            $(".editmain").attr("readonly", "readonly");
+        }
+
+    </script>
+    <script type="text/javascript">
+        function formatJSONDate(jsonDate) {
+            if (jsonDate != "") {
+                var dateString = jsonDate.substr(6);
+                var currentTime = new Date(parseInt(dateString));
+                var month = currentTime.getMonth() + 1;
+                var day = currentTime.getDate();
+                var year = currentTime.getFullYear();
+                var date = month + "/" + day + "/" + year;
+                return date;
+            }
+            else
+                return '';
+        }
+
+        function formatJSONTime(jsonTime) {
+            if (jsonTime != "") {
+                var dateString = jsonTime.substr(6);
+                var currentTime = new Date(parseInt(dateString));
+                var hour = currentTime.getHours();
+                var min = currentTime.getMinutes();
+                var sec = currentTime.getSeconds();
+                var time = hour + ":" + min + ":" + sec;
+                return time;
+            }
+            else
+                return '';
+        }
+        var typeaheadSource = [];
+        function bindcustomerDetailDisLoad(customerid) {
+
+        }
+        function bindfrenchiseelistbox(lineno) {
+
+            $("#fsearch-box_" + lineno).autocomplete({
+                source: typeaheadSource,
+                appendTo: $("#tblFranchiseeDistributionList"),
+                select: function (event, ui) {
+                    event.preventDefault();
+                    tempFRowLineNo++;
+                    tempRowDistribution = "";
+                    tempRowDistribution += '<tr><td style="width:20px;text-align:center;">'
+                    tempRowDistribution += '<input type="hidden" id="FranchiseeDistributionFranchiseeId_' + lineno + '_' + tempFRowLineNo + '" name="FranchiseeDistributionFranchiseeId_' + lineno + '_' + tempFRowLineNo + '" value="' + ui.item.value + '" />';
+                    tempRowDistribution += '<input type="hidden" id="FranchiseeDistributionContractDetailId_' + lineno + '_' + tempFRowLineNo + '" name="FranchiseeDistributionContractDetailId_' + lineno + '_' + tempFRowLineNo + '" value="' + $("#ContractDetailId_" + lineno).val() + '" />';
+                    tempRowDistribution += '<input type="hidden" id="FranchiseeDistributionDetailId_' + lineno + '_' + tempFRowLineNo + '" name="FranchiseeDistributionDetailId_' + lineno + '_' + tempFRowLineNo + '" value="' + ui.item.value + '" /><span>' + ui.item.label.split(' ')[0] + '</span></td>';
+                    tempRowDistribution += '<td style="text-align:center;width:242px;">' + ui.item.label.replace(ui.item.label.split(' ')[0], "").trim() + '</td>';
+                    tempRowDistribution += '<td style="text-align:center;width:30px;"><input type="text" rel="ContractDetailAmount_' + lineno + '" value="' + $("#ContractDetailAmount_" + lineno).val() + '" class="form-control input-sm editvalue" id="FranchiseeDistributionAmountId_' + lineno + '_' + tempFRowLineNo + '" name="FranchiseeDistributionAmountId_' + lineno + '_' + tempFRowLineNo + '" style="margin-top:-6px;margin-bottom: -6px;" /></td>';
+                    tempRowDistribution += '</tr>'
+                    onlyDecimal('#FranchiseeDistributionAmountId_' + tempRowLineNo + '_' + tempFRowLineNo);
+                    $("#fsearch-box").val("");
+                    console.log(ui.item.label);
+                    console.log(ui.item.value);
+
+                    $("#hdffrenchiseedetail_linecount").val(tempFRowLineNo);
+                }
+            });
+
+
+        }
+        var editFranchiseeDistribution = function () {
+
+            $(".editvalue").addClass("editvaluetext");
+            $(".editvalue").removeClass("editmode");
+            //$("#btnSaveDistribution").show();
+            //$("#btnEditDistribution").hide();
+            $(".editvalue").removeAttr("disabled").removeAttr("readonly");
+            $(".editcheck").removeAttr("disabled").removeAttr("readonly");
+        };
+
+        function FranchiseeDistribution() {
+            var id = $("#CutmID").val();
+            var sURL = '@Url.Action("CustomerDetailFranchiseeDistribution", "Customer", new { area = "Portal" })?Id=' + id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_FranchiseeDistribution').html(data);
+
+                    $(".editvalue").removeClass("editvaluetext");
+                    $(".editvalue").addClass("editmode");
+                    $(".editvalue").attr("readonly", "readonly");
+                    //$("#btnSaveDistribution").hide();
+                    //$("#btnEditDistribution").show();
+                    $(".editcheck").attr("disabled", "disabled");
+                    $(".editcheck").attr("readonly", "readonly");
+
+                    FranchiseeDistributionData(id);
+                    bindcustomerDetailDisLoad(id);
+                    $('.modal-dialog').draggable();
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+
+        var FDistributionFinal = [];
+
+        var tempRowDistribution = "";
+        var tempRowLineNo = 0;
+        var tempFRowLineNo = 0;
+
+        function FranchiseeDistributionData(id) {
+            $('#hdffrenchiseedetail_customerid').val(id);
+            var sURL = '@Url.Action("GetCustomerFranchiseeDistributionData", "Customer", new { area = "Portal" })?Id=' + id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+
+                    $('#hdfdistributioncustomerid').val(data.CustomerId);
+                    $('#spnCustomerName').html(data.CustomerName);
+                    $('#spnCustomerNo').html(data.CustomerNo);
+                    $('#tblFranchiseeDistributionList>tbody').html('');
+                    tempRow = "";
+                    tempRow += '<tr><td style="width:20px;text-align:center;">' + data.PurchaseOrderNo + '</td>';
+                    tempRow += '<td style="text-align:left;width:140px;">' + data.AccountTypeName + '</td>';
+                    tempRow += '<td style="text-align:center;width:30px;">' + data.Term + '</td>';
+                    tempRow += '<td style="text-align:center;width:50px;">' + formatJSONDate(data.StartDate) + '</td>';
+                    tempRow += '<td style="text-align:center;width:50px;">' + formatJSONDate(data.ExpirationDate) + '</td>';
+                    tempRow += '<td style="text-align:right;width:30px;">$<span>' + data.TotalAmount + '</span></td>';
+                    tempRow += '<td style="text-align:center;width:30px;">' + data.Status + '</td>';
+
+                    tempRow += '<tr><td colspan="7" style="padding:5px;"><div class="table-responsive">';
+                    tempRow += '<table class="table table-striped table-bordered table-hover order-column" id="FranchiseeDistributionDetailList">';
+                    tempRow += '<thead>';
+                    tempRow += '<tr><th style="width:150px;text-align:center;">Contract Detail Line</th>';
+                    tempRow += '<th style="text-align:center;"> Service Description</th>';
+                    tempRow += '<th style="width:120px;text-align:center;">Amount</th>';
+                    tempRow += '<th style="width:100px;text-align:center;">Frequency</th>';
+                    tempRow += '<th style="width:50px;text-align:center;">Schedule</th>';
+                    tempRow += '</tr></thead><tbody></tbody></table></div></td></tr>';
+
+
+                    $('#tblFranchiseeDistributionList>tbody').append(tempRow);
+                    $('#ddldetaillinenumber').html('');
+                    var lineitems = []; lineitems.push("<option value='0'>Select</option>");
+
+                    $.each(data.listContractDetail, function (index, value) {
+                        tempRowLineNo = value.LineNumber;
+                        tempRowDistribution = "";
+                        tempRowDistribution += '<tr>'
+                        tempRowDistribution += '<td style="text-align:center;"><input type="hidden" relcdamt="cd_relcdamt" id="cd_relcdamt' + tempRowLineNo + '" value="' + value.Amount + '" />'
+                        tempRowDistribution += value.LineNumber + '</td>';
+                        tempRowDistribution += '<td style="text-align:center;">' + value.ServiceTypeName + '</td>';
+                        tempRowDistribution += '<td style="text-align:right;"><input type="text" value="' + value.Amount + '" class="form-control input-sm editvalue" style="text-align:right;" readonly="readonly"/></td>';
+                        tempRowDistribution += '<td style="text-align:center;">' + value.BillingFrequencyListName + '</td>';
+                        tempRowDistribution += '<td style="text-align:center;"><a href="javascript:void(0);" onclick="Franchiseeservice(' + value.Mon + ',' + value.Tues + ',' + value.Wed + ',' + value.Thur + ',' + value.Fri + ',' + value.Sat + ',' + value.Sun + ')">View</a></td>'
+                        tempRowDistribution += '</tr>'
+
+                        $('#FranchiseeDistributionDetailList>tbody').append(tempRowDistribution);
+
+                        lineitems.push("<option value=" + value.ContractDetailId + ">" + value.LineNumber + "</option>");
+
+                        $('#frdestributionTable>tbody').html('');
+                        var flineNo = 0;
+                        $.each(data.listFranchiseeDistribution, function (index, value) {
+                            AppendDistribution(value.DetailLineNumber, value.FranchiseeId, value.FranchiseeNo, value.FranchiseeName, value.Amount, value.ContractDetailId, value.DistributionId);
+                        }),
+                        bindfrenchiseelistbox(tempRowLineNo);
+
+
+                    });
+
+                    $('#ddldetaillinenumber').html(lineitems.join(' '));
+
+                    $("#hdfcontractdetail_linecount").val(tempRowLineNo);
+                    $("#hdffrenchiseedetail_linecount").val(tempFRowLineNo);
+
+                    $("#modal_FranchiseeDistribution").modal({ backdrop: 'static' });
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+
+        }
+        function showEditCustomerInfo() {
+
+            var Id = $("#hdnCustId").val();
+            if (Id != "" && Id != "0") {
+                var sURL = '@Url.Action("PendingApprovalListEditCustomerPopup", "Customer", new { area = "Portal" })?id=' + Id;
+                $.ajax({
+                    type: "GET",
+                    url: sURL,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (data) {
+                        $('#form_Billingsetting').html(data);
+                        $("#ModalEditCustomerInfo").modal({ backdrop: 'static' });
+                        $(".input-group-btn").click(function () {
+                            $(this).prev().trigger("focus");
+                            $(this).prev().trigger("focus");
+                        });
+                        $(".date-picker").datepicker();
+                        $(".edit").attr("disabled", "disabled");
+                        $(".edit").attr("readonly", "readonly");
+
+                        $("#btnSave").prop("disabled", "false");
+                        $("#btnSave").prop("readonly", "true");
+                        $("#btnCancel").prop("disabled", "false");
+                        $("#btnCancel").prop("readonly", "true");
+                        $("#btnSave").hide();
+                        $("#btnCancel").hide();
+
+                        $(".editmain1").attr("disabled", "disabled");
+                        $(".editmain1").attr("readonly", "readonly");
+                        $(".editmain").attr("disabled", "disabled");
+                        $(".editmain").attr("readonly", "readonly");
+
+                        $(".editbill1").attr("disabled", "disabled");
+                        $(".editbill1").attr("readonly", "readonly");
+                        $(".editbill").attr("disabled", "disabled");
+                        $(".editbill").attr("readonly", "readonly");
+
+                        $(".EditBtn").show();
+                        $(".SaveBtn").hide();
+                        $(".CancelBtn").hide();
+
+                    },
+                    error: function () {
+                        alert("Content load failed.");
+                    }
+                });
+            }
+        }
+        function OpenCustomerContractPopup() {
+
+            var Id = $("#hdnCustId").val();
+            if (Id != "" && Id != "0") {
+
+                var sURL = '@Url.Action("RenderCustomerContractDetails", "Customer", new { area = "Portal" })?id=' + Id;
+                $.ajax({
+                    type: "GET",
+                    url: sURL,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (data) {
+                        $('#RenderCustomerContractDetails').html(data);
+                        $(".date-picker").datepicker();
+                        $(".input-group-btn").click(function () {
+                            $(this).prev().trigger("focus");
+                            $(this).prev().trigger("focus");
+                        });
+                        contractDetailPopupInIt();
+                        $("#modal_CustomerContractPopup").modal({ backdrop: 'static' });
+                    },
+                    error: function () {
+                        alert("Content load failed.");
+                    }
+                });
+            }
+            //$("#modal_CustomerContractPopup").modal({ backdrop: 'static' });
+        }
+        // Franchisee Customer Distribution new code
+        function BindFranchiseeCustomerDistribution(cid, fid) {
+
+            $("#ModalFranchiseDistribution_CustomerPopup").modal("hide");
+
+            //var sURL = '@Url.Action("RenderFranchiseCustomerDistributionPopup", "Customer", new { area = "Portal" })?cid=' + cid + '&fid=' + fid + '&callfrom=' + $('#hdfCustomerDetailCallFrom').val();
+            var sURL = '@Url.Action("RenderFranchiseCustomerOnlyDistributionPopup", "Customer", new { area = "Portal" })?cid=' + cid + '&fid=' + fid + '&callfrom=CD';
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+
+                    $('#form_FranchiseCustomersDistributionPopup').html(data);
+                    $("#CustomerDetail_EffectiveDate").datepicker("setDate", new Date());
+                    //$("#modal_CIDFranchiseeDistribution").modal({ backdrop: 'static' });
+                    //$("#FD_modal_FranchiseeDistribution").modal({ backdrop: 'static' });
+
+
+
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+        function ShowCustomerSuggetionBox() {
+
+            $('#fcsearch-box').val('');
+            $('#hdfsearch_franchiseeid').val('');
+            var box = $('#fcsearch-box').data('typeahead');
+            if (box != null) {
+                box.source = c_typeaheadSource;
+            }
+            else {
+                $('#fcsearch-box').typeahead({
+                    source: c_typeaheadSource,
+                    updater: function (item) {
+                        $('#hdfsearch_franchiseeid').val(item.id);
+                        BindFranchiseeCustomerDistribution('@(Model.CustomerDetail != null? Model.CustomerDetail.CustomerId:"0")', $('#hdfsearch_franchiseeid').val());
+                        return item;
+                    },
+                    minLength: 1
+                }).focus();
+            }
+
+            $("#ModalFranchiseDistribution_CustomerPopup").modal({ backdrop: 'static' });
+        }
+
+
+
+        function bindcustomerDetailDisLoad(customerid) {
+
+        }
+
+
+        function tConvert(time) {
+            var timeString = time;
+            var H = +timeString.substr(0, 2);
+            var h = (H % 12) || 12;
+            var ampm = H < 12 ? " AM" : " PM";
+            timeString = h + timeString.substr(2, 3) + ampm;
+            return timeString;
+        }
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#tblServiceCall > tbody > tr").click(function () {
+                window.location = '/Portal/Customer/ServiceCallList/' + $(this).find("[id=tdClassId]").val();
+            })
+        })
+    </script>
+}
+
+

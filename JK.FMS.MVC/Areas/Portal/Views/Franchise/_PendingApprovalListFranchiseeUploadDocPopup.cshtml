@@ -1,0 +1,1083 @@
+﻿@model  IEnumerable<JKViewModels.Customer.CustomerUploadDocumentViewModel>
+@{
+    var request = HttpContext.Current.Request;
+    var address = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Authority);
+}
+@section styles{
+    <style type="text/css">
+        .smallform {
+            width: 1000px !important;
+            margin-left: 190px;
+        }
+    </style>
+
+}
+
+<div class="col-md-12 page-custom-header"><h5>Franchise Maintenance</h5></div>
+
+<div class="custom-form portlet light smallform" id="" style="margin-top:0px !important;">
+    <div class="headerbox">
+        Upload Required Document
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 5px !important;margin-right: 12px !important;"></button>
+    </div>
+    <div class="portlet-body">
+        <div class="tab-pane" style="padding: 0px 15px 15px 15px;">
+            @using (Html.BeginForm("SavePendingApprovalListFranchiseUploadDocument", "Franchise", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <input type="hidden" id="ButtonType" name="ButtonType" />
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <label class="control-label" style="font-weight:600;">
+                                Franchise No.
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="control-label col-md-4" style="width:auto;">
+                                @Html.Raw(ViewBag.FranchiseeNo)
+                                @*@Html.DisplayFor(one => one.CustomerViewModel.CustomerNo)*@
+                            </label>
+                        </div>
+                        <div class="col-md-1 col-md-offset-1">
+                            <label class="control-label" style="font-weight:600;">
+                                Address:
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="control-label" style="width:auto;">
+                                @Html.Raw(ViewBag.FranchiseeName)
+                                @*@Html.DisplayFor(one => one.CustomerViewModel.Name)*@
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <label class="control-label" style="font-weight:600;">
+                                Franchise Name:
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="control-label col-md-4" style="width:auto;">
+                                @Html.Raw(ViewBag.FranchiseeName)
+
+
+                                @*@Html.DisplayFor(one => one.CustomerViewModel.Name)*@
+                            </label>
+                        </div>
+                        <div class="col-md-1 col-md-offset-1">
+                            <label class="control-label" style="font-weight:600;">
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="control-label" style="width:auto;">
+                                @Html.Raw(ViewBag.Address)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="control-label col-md-2" style="font-weight:600;">
+
+                        </label>
+                        <div class="col-md-4">
+                            <label class="control-label col-md-4" style="width:auto;">
+
+                            </label>
+                        </div>
+                        <div class="col-md-1 col-md-offset-1">
+                            <label class="control-label" style="font-weight:600;">
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="control-label" style="width:auto;">
+                                @Html.Raw(ViewBag.Address2)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <hr style="margin-top: 2px;margin-bottom: 1px;" />
+                    </div>
+                </div>
+
+
+                <input type="hidden" name="hdfFranchiseId" id="hdfFranchiseId" value="@ViewBag.Id" />
+                <table class="table table-striped table-bordered table-hover order-column dataTable no-footertable table-striped table-bordered table-hover order-column">
+                    <thead>
+                        <tr>
+                            <td style="width:200px;">Doc Type</td>
+                            <td style="width:200px;">Document Name</td>
+                            <td style="width:200px;">Browse</td>
+                            <td style="width:120px;">Upload Date/Time</td>
+                            <td style="width:50px;">File Size</td>
+                            <td style="width:40px;">View</td>
+                            @*<td style="width:40px;">Delete</td>*@
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+                        @{
+                            var IsOdd = "";
+                        }
+
+                        @foreach (var item in Model)
+                        {
+                            IsOdd += item.FiletypeListId + ",";
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FiletypeListName)
+                                    @if (item.IsFranchiseeRequired == true)
+                                    {
+                                        <span style="color:red">*</span>
+                                    }
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FileName)
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(one => item.FiletypeListId, new { @id = "FiletypeListId" + @item.FiletypeListId, name = ("FiletypeListId" + @item.FiletypeListId) })
+                                 
+                                    @if (item.IsFranchiseeRequired == true)
+                                    {
+                                        @Html.TextBox("file", "", new { type = "file", @id = "file" + @item.FiletypeListId, name = ("file" + @item.FiletypeListId), @required = "required" })
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBox("file", "", new { type = "file", @id = "file" + @item.FiletypeListId, name = ("file" + @item.FiletypeListId) })
+                                    }
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CreatedOn)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FileSize)
+                                </td>
+                                <td>
+                                    @if (item.FilePath != null && item.FilePath != "")
+                                    {
+                                        <a target="_blank" href="@address@item.FilePath.Replace("~","").Trim()">View</a>
+                                    }
+                                </td>
+                                @*<td>
+                                        @(item.UploadDocumentId != null ? "Delete" : "")
+                                    </td>*@
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+                <input type="hidden" name="hdfFiletypeListIds" value="@IsOdd" />
+                <div class="form-actions">
+                    <div class="col-md-12" style="padding-right: 28px;padding-bottom:10px;">
+                        <button type="button" data-dismiss="modal" class="btn btn-primary button-next  pull-right" id="btncancel" style="margin-left: 10px;">
+                            Cancel
+                            <i class="fa fa-angle-right"></i>
+                        </button>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="submit" class="btn btn-primary pull-right" id="btnSave" style="margin-left: 10px;">
+                            Submit
+                            <i class="fa fa-check"></i>
+                        </button>
+                        <br />
+                    </div>
+                </div>
+                            }
+        </div>
+        <div style="clear:both"></div>
+    </div>
+</div>
+
+
+@section pageplugins{
+
+
+
+}
+@section scripts{
+
+    @*<script>
+
+            //else
+            //          {
+            //              $('#modalData').modal();
+            //      $('#modalData').modal("show");
+            //  }
+            //       }
+
+            //});
+            var MaintenanceFormWizard = function () {
+
+
+                return {
+                    //main function to initiate the module
+                    init: function () {
+                        if (!jQuery().bootstrapWizard) {
+                        }
+
+                        function format(state) {
+                            if (!state.id) return state.text; // optgroup
+                            return "<img class='flag' src='../../assets/global/img/flags/" + state.id.toLowerCase() + ".png'/>&nbsp;&nbsp;" + state.text;
+                        }
+
+
+                        var form = $('#submit_form');
+                        var error = $('.alert-danger', form);
+                        var success = $('.alert-success', form);
+
+                        form.validate({
+                            doNotHideMessage: true, //this option enables to show the error/success messages on tab switch.
+                            errorElement: 'span', //default input error message container
+                            errorClass: 'help-block help-block-error', // default input error message class
+                            focusInvalid: false, // do not focus the last invalid input
+                            rules: {},
+                            messages: { // custom messages for radio buttons and checkboxes
+                                'payment[]': {
+                                    required: "Please select at least one option",
+                                    minlength: jQuery.validator.format("Please select at least one option")
+                                }
+                            },
+
+                            errorPlacement: function (error, element) { // render error placement for each input type
+                            },
+
+                            invalidHandler: function (event, validator) { //display error alert on form submit
+                                success.hide();
+                                error.show();
+                                App.scrollTo(error, -200);
+                            },
+
+                            highlight: function (element) { // hightlight error inputs
+                                $(element)
+                                    .closest('.form-group').removeClass('has-success').addClass('has-error'); // set error class to the control group
+                            },
+
+                            unhighlight: function (element) { // revert the change done by hightlight
+                                $(element)
+                                    .closest('.form-group').removeClass('has-error'); // set error class to the control group
+                            },
+
+                            success: function (label) {
+                                if (label.attr("for") == "gender" || label.attr("for") == "payment[]") { // for checkboxes and radio buttons, no need to show OK icon
+                                    label
+                                        .closest('.form-group').removeClass('has-error').addClass('has-success');
+                                    label.remove(); // remove error label here
+                                } else { // display success icon for other inputs
+                                    label
+                                        .addClass('valid') // mark the current input as valid and display OK icon
+                                    .closest('.form-group').removeClass('has-error').addClass('has-success'); // set success class to the control group
+                                }
+                            },
+
+                            submitHandler: function (form) {
+                                success.show();
+                                error.hide();
+                                form[0].submit();
+                                //add here some ajax code to submit your form or just call form.submit() if you want to submit the form without ajax
+                            }
+
+                        });
+
+
+
+                        $('#divachsubsection').hide();
+
+
+                        function saveFranchiseeData(inputData) {
+
+                            var sURL = '@Url.Action("Maintenance", "Franchise", new { area = "Portal" })'
+                            var dataString = new FormData(formData);
+                            $.ajax({
+                                type: "POST",
+                                url: sURL,
+                                data: $("form").serialize(),
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: function (data, status) {
+                                    alert(data);
+                                },
+                                error: function (e) {
+                                    alert(e);
+                                }
+                            });
+                        }
+
+
+
+                    }
+
+                };
+
+            }();
+            jQuery(document).ready(function () {
+                MaintenanceFormWizard.init();
+                //  MaintenanceFormWizardOwner.init();
+                $('.date-picker').datepicker({autoclose: true});
+                $('#Contract_StartDate').inputmask("mm/dd/yyyy", {});
+                $('#Contract_StartDate').inputmask("mm/dd/yyyy", {});
+                $('#Contract_SignDate').inputmask("mm/dd/yyyy", {});
+                $('#Contract_StatusDate').inputmask("mm/dd/yyyy", {});
+                $('#Contract_ExpirationDate').inputmask("mm/dd/yyyy", {});
+                $('#Contract_ResumeDate').inputmask("mm/dd/yyyy", {});
+
+
+                $("#btnSubmit").click(function (e) {
+                    var ContractId = $('#Contract_ContractId').val();
+                    if (ContractId == "")
+                        window.location.href = '@Url.Content("~/Portal/Customer/SearchList/")';
+                    else
+                        window.location.href = '@Url.Content("~/Portal/Customer/CustomerDetail/"+ViewBag.Id)';
+                });
+
+                $('#Contract_StartDate').datepicker({
+                    timepicker: false,
+                    format: 'mm/dd/yyyy'
+                })
+                    .on("changeDate", function (e) {
+
+                        $('#Contract_StatusDate').attr('value', e.format());
+                    });
+
+
+                //$("#Contract_ContractTermListId").change(function () {
+                //    var yearadd = $("#Contract_ContractTermListId").val();
+                //    var monthadd = $("#Contract_ContractTermMonth").val();
+                //    var startdate = new Date($("#Contract_StartDate").val());
+                //    if (yearadd == "")
+                //        yearadd = 0;
+                //    var year = startdate.getFullYear() + parseInt(yearadd);
+                //    if (monthadd == "")
+                //        monthadd = 0;
+                //    var month = startdate.getMonth() + 1 + parseInt(monthadd);
+                //    var day = startdate.getDate();
+                //    var c = new Date(month + '/' + day + '/' + year);
+                //    year = year.toString().substr();
+                //    c = month + "/" + day + "/" + year;
+                //    $("#Contract_ExpirationDate").val(c);
+                //});
+
+
+                $("#Contract_ContractTermMonth").change(function () {
+
+                    var monthadd = $("#Contract_ContractTermMonth").val();
+                    var startdate = $("#Contract_StartDate").val();
+                    var contractstartdate = new Date(startdate);
+
+                    if (monthadd == "")
+                        monthadd = 0;
+
+                    contractstartdate.setMonth(contractstartdate.getMonth() + parseInt(monthadd));
+                    var c = (contractstartdate.getMonth() + 1) + '/' + contractstartdate.getDate() + '/' + contractstartdate.getFullYear()
+
+                    $("#Contract_ExpirationDate").val(c);
+                });
+
+
+                $("#Contract_Amount").inputmask("numeric", {
+                    decimal: ".",
+                    negative: false,
+                    scale: 2,
+                    groupSeparator: ",",
+                    digits: 2,
+                    autoGroup: true,
+                    prefix: "$",
+                    rightAlign: false,
+                    autoUnmask: true,
+                    removeMaskOnSubmit: true,
+                });
+
+                $("#Contract_AmountSubjectToFee").inputmask("numeric", {
+                    decimal: ".",
+                    negative: false,
+                    scale: 2,
+                    groupSeparator: ",",
+                    digits: 2,
+                    autoGroup: true,
+                    prefix: "$",
+                    rightAlign: false,
+                    autoUnmask: true,
+                    removeMaskOnSubmit: true,
+                });
+
+                $('#generalCustomerList').DataTable({
+                    "paging": true,
+                    "ordering": false,
+                    "info": false,
+                    "bProcessing": true,
+                    "pageLength": 25,
+                    "dom": "<'table-responsive't><'bottom'ip><'clear'>"
+                });
+
+            });
+
+            // Prevent the form to be submitted on ENTER
+            $('#form_wizard_1').submit(function (e) {
+                e.preventDefault();
+                //  validateOnSubmit();
+            });
+
+            // Controll data
+            $('#btnContinue').click(function () {
+
+                var btnCount = @Convert.ToInt32(JKApi.Business.Enumeration.ButtonType.Continue)
+                $("#ButtonType").val(btnCount);
+                checkMandatoryFields(btnCount);
+            });
+
+            // Controll data
+            $('#btnSave').click(function () {
+
+                var btnCount = @Convert.ToInt32(JKApi.Business.Enumeration.ButtonType.Save)
+
+                $("#ButtonType").val(btnCount);
+                checkMandatoryFields(btnCount);
+            });
+
+            // Controll data
+            $('#btnBack').click(function () {
+
+                var btnCount = @Convert.ToInt32(JKApi.Business.Enumeration.ButtonType.Back)
+
+                $("#ButtonType").val(btnCount);
+                checkMandatoryFields(btnCount);
+            });
+
+
+            function Reset() {
+                $("#AccountTypeList").val("");
+                $("#FrequencyTypeList").val("");
+                $("#ContractDetail_CleanTimes").val("");
+                $("#ContractDetail_Amount").val("");
+                $("#ContractDetail_SquareFootage").val("");
+            }
+
+
+            // Check mandatory fields before subitting:
+            function checkMandatoryFields(count) {
+                var form = $('#form_wizard_1');
+                var error = $('.alert-danger', form);
+                var success = $('.alert-success', form);
+                form.validate({
+                    doNotHideMessage: true, //this option enables to show the error/success messages on tab switch.
+                    errorElement: 'span', //default input error message container
+                    errorClass: 'help-block help-block-error', // default input error message class
+                    focusInvalid: false, // do not focus the last invalid input
+                    rules: {},
+                    messages: { // custom messages for radio buttons and checkboxes
+                        'payment[]': {
+                            required: "Please select at least one option",
+                            minlength: jQuery.validator.format("Please select at least one option")
+                        }
+                    },
+
+                    errorPlacement: function (error, element) { // render error placement for each input type
+                    },
+
+                    invalidHandler: function (event, validator) { //display error alert on form submit
+                        success.hide();
+                        error.show();
+                        App.scrollTo(error, -200);
+                    },
+
+                    highlight: function (element) { // hightlight error inputs
+                        $(element)
+                            .closest('.form-group').removeClass('has-success').addClass('has-error'); // set error class to the control group
+                    },
+
+                    unhighlight: function (element) { // revert the change done by hightlight
+                        $(element)
+                            .closest('.form-group').removeClass('has-error'); // set error class to the control group
+                    },
+
+                    success: function (label) {
+                        if (label.attr("for") == "gender" || label.attr("for") == "payment[]") { // for checkboxes and radio buttons, no need to show OK icon
+                            label
+                                .closest('.form-group').removeClass('has-error').addClass('has-success');
+                            label.remove(); // remove error label here
+                        } else { // display success icon for other inputs
+                            label
+                                .addClass('valid') // mark the current input as valid and display OK icon
+                            .closest('.form-group').removeClass('has-error').addClass('has-success'); // set success class to the control group
+                        }
+                    },
+
+                    submitHandler: function (form) {
+                        success.show();
+                        error.hide();
+                        // form[0].submit();
+                        if (count > 0) {
+                            $('#form_wizard_1')[0].submit();
+                            //$('#form_wizard_1').submit();
+                        }
+                        //add here some ajax code to submit your form or just call form.submit() if you want to submit the form without ajax
+                    }
+
+                });
+            }
+
+
+            function RemoveContractDetail(ContractDetailId, ContractId) {
+                $.blockUI({
+                    baseZ: 99999,
+                    message: '<center><img height: src="/Images/loading_icon.gif" /><h3> <b>Processing....</br> Please wait! and do not refresh page.</b></h3></center>',
+                    css: { backgroundColor: 'rgb{0,0,0}', border: '0', color: '#fff', "z-index": 99999 }
+                });
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("RemoveContractDetail", "Customer")",
+                    ajaxasync: true,
+                    data: { ContractDetailId: ContractDetailId, ContarctId: ContractId },
+                    success: function (response) {
+                        loadOwners(response.id);
+
+                        $.unblockUI();
+                    },
+                    error: function (data) {
+                        $.unblockUI();
+                    }
+                })
+                $.unblockUI();
+            }
+
+            function loadOwners(id) {
+                $.blockUI({
+                    baseZ: 99999,
+                    message: '<center><img height: src="/Images/loading_icon.gif" /><h3> <b>Processing....</br> Please wait! and do not refresh page.</b></h3></center>',
+                    css: { backgroundColor: 'rgb{0,0,0}', border: '0', color: '#fff', "z-index": 99999 }
+                });
+
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("GetContractDetail", "Customer", new { @area = "Portal" })?id=' + id,
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        $('#tblContractDescriptionData').html(response);
+                        $.unblockUI();
+                    },
+                    error: function (xhr, textStatus, error) {
+                        if (typeof console == "object") {
+
+                            $('#tblContractDescriptionData').html(xhr.responseText);
+                            console.log(xhr.status + "," + xhr.responseText + "," + textStatus + "," + error);
+                        }
+                        $.unblockUI();
+                    }
+                });
+
+                $.unblockUI();
+            }
+        </script>
+        <script>
+            $(function () {
+                // AddContractDetailDescription = function (ContractId, ContractDetailId) {
+                window.AddContractDetailDescription = function (ContractDetailId) {
+                    $.blockUI({
+                        //baseZ: 99999,
+                        //message: '<center><img height: src="/Images/loading_icon.gif" /><h3> <b>Processing....</br> Please wait! and do not refresh page.</b></h3></center>',
+                        //css: { backgroundColor: 'rgb{0,0,0}', border: '0', color: '#fff', "z-index": 99999 }
+                    });
+                    var ContractId = 0;
+                    if ($('#ContractDetail_ContractId').val() != "") {
+                        ContractId = $('#ContractDetail_ContractId').val();
+                    }
+                    if ($('#Contract_ContractId').val() != 0) {
+                        ContractId = $('#Contract_ContractId').val();
+                    }
+                    else {
+                        swal(
+                            'Oops...',
+                            'Save Customer Contract First, Before add Contract Detail!',
+                            'warning'
+                        )
+                    }
+
+                    if (ContractId > 0 && ContractDetailId > 0) {
+                        var url = '/Portal/Customer/AddEditContractDetail/?ContractId=' + ContractId + '&ContractDetailId=' + ContractDetailId
+
+                        $.get(url, function (data) {
+                            $('#modalData').html(data);
+                            $('#modalData').modal();
+
+                        })
+                    }
+                    else if (ContractId > 0) {
+                        var url = '/Portal/Customer/AddEditContractDetail/?ContractId=' + ContractId + '&ContractDetailId=' + ContractDetailId
+                        $.get(url, function (data) {
+                            $('#modalData').html(data);
+                            $('#modalData').modal();
+                        })
+                        //Reset();
+                    }
+                    $.unblockUI();
+                }
+            });
+
+
+
+            $(document).ready(function () {
+
+            });
+
+        </script>*@
+    <script>
+
+        //else
+        //          {
+        //              $('#modalData').modal();
+        //      $('#modalData').modal("show");
+        //  }
+        //       }
+
+        //});
+        var MaintenanceFormWizard = function () {
+
+
+            return {
+                //main function to initiate the module
+                init: function () {
+                    if (!jQuery().bootstrapWizard) {
+                    }
+
+                    function format(state) {
+                        if (!state.id) return state.text; // optgroup
+                        return "<img class='flag' src='../../assets/global/img/flags/" + state.id.toLowerCase() + ".png'/>&nbsp;&nbsp;" + state.text;
+                    }
+
+
+                    var form = $('#submit_form');
+                    var error = $('.alert-danger', form);
+                    var success = $('.alert-success', form);
+
+                    form.validate({
+                        doNotHideMessage: true, //this option enables to show the error/success messages on tab switch.
+                        errorElement: 'span', //default input error message container
+                        errorClass: 'help-block help-block-error', // default input error message class
+                        focusInvalid: false, // do not focus the last invalid input
+                        rules: {},
+                        messages: { // custom messages for radio buttons and checkboxes
+                            'payment[]': {
+                                required: "Please select at least one option",
+                                minlength: jQuery.validator.format("Please select at least one option")
+                            }
+                        },
+
+                        errorPlacement: function (error, element) { // render error placement for each input type
+                        },
+
+                        invalidHandler: function (event, validator) { //display error alert on form submit
+                            success.hide();
+                            error.show();
+                            App.scrollTo(error, -200);
+                        },
+
+                        highlight: function (element) { // hightlight error inputs
+                            $(element)
+                                .closest('.form-group').removeClass('has-success').addClass('has-error'); // set error class to the control group
+                        },
+
+                        unhighlight: function (element) { // revert the change done by hightlight
+                            $(element)
+                                .closest('.form-group').removeClass('has-error'); // set error class to the control group
+                        },
+
+                        success: function (label) {
+                            if (label.attr("for") == "gender" || label.attr("for") == "payment[]") { // for checkboxes and radio buttons, no need to show OK icon
+                                label
+                                    .closest('.form-group').removeClass('has-error').addClass('has-success');
+                                label.remove(); // remove error label here
+                            } else { // display success icon for other inputs
+                                label
+                                    .addClass('valid') // mark the current input as valid and display OK icon
+                                .closest('.form-group').removeClass('has-error').addClass('has-success'); // set success class to the control group
+                            }
+                        },
+
+                        submitHandler: function (form) {
+                            success.show();
+                            error.hide();
+                            form[0].submit();
+                            //add here some ajax code to submit your form or just call form.submit() if you want to submit the form without ajax
+                        }
+
+                    });
+
+
+
+                    $('#divachsubsection').hide();
+
+
+                    function saveFranchiseeData(inputData) {
+
+                        var sURL = '@Url.Action("Maintenance", "Franchise", new { area = "Portal" })'
+                        var dataString = new FormData(formData);
+                        $.ajax({
+                            type: "POST",
+                            url: sURL,
+                            data: $("form").serialize(),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (data, status) {
+                                alert(data);
+                            },
+                            error: function (e) {
+                                alert(e);
+                            }
+                        });
+                    }
+
+
+
+                }
+
+            };
+
+        }();
+        jQuery(document).ready(function () {
+            MaintenanceFormWizard.init();
+            //  MaintenanceFormWizardOwner.init();
+            $('.date-picker').datepicker({ autoclose: true, dateFormat: 'mm/dd/yy' });
+            $('.date-picker').attr("placeholder", "mm/dd/yyyy");
+            //$('#Contract_StartDate').inputmask("mm/dd/yyyy", {});
+            //$('#Contract_StartDate').inputmask("mm/dd/yyyy", {});
+            //$('#Contract_SignDate').inputmask("mm/dd/yyyy", {});
+            //$('#Contract_StatusDate').inputmask("mm/dd/yyyy", {});
+            //$('#Contract_ExpirationDate').inputmask("mm/dd/yyyy", {});
+            //$('#Contract_ResumeDate').inputmask("mm/dd/yyyy", {});
+
+
+            $("#btnSubmit").click(function (e) {
+                var ContractId = $('#Contract_ContractId').val();
+                if (ContractId == "")
+                    window.location.href = '@Url.Content("~/Portal/Customer/SearchList/")';
+                else
+                    window.location.href = '@Url.Content("~/Portal/Customer/CustomerDetail/"+ViewBag.Id)';
+            });
+
+            $('#Contract_StartDate').datepicker({
+                timepicker: false,
+                format: 'mm/dd/yyyy'
+            })
+                .on("changeDate", function (e) {
+
+                    $('#Contract_StatusDate').attr('value', e.format());
+                });
+
+
+            //$("#Contract_ContractTermListId").change(function () {
+            //    var yearadd = $("#Contract_ContractTermListId").val();
+            //    var monthadd = $("#Contract_ContractTermMonth").val();
+            //    var startdate = new Date($("#Contract_StartDate").val());
+            //    if (yearadd == "")
+            //        yearadd = 0;
+            //    var year = startdate.getFullYear() + parseInt(yearadd);
+            //    if (monthadd == "")
+            //        monthadd = 0;
+            //    var month = startdate.getMonth() + 1 + parseInt(monthadd);
+            //    var day = startdate.getDate();
+            //    var c = new Date(month + '/' + day + '/' + year);
+            //    year = year.toString().substr();
+            //    c = month + "/" + day + "/" + year;
+            //    $("#Contract_ExpirationDate").val(c);
+            //});
+
+
+            $("#Contract_ContractTermMonth").change(function () {
+
+                var monthadd = $("#Contract_ContractTermMonth").val();
+                var startdate = $("#Contract_StartDate").val();
+                var contractstartdate = new Date(startdate);
+
+                if (monthadd == "")
+                    monthadd = 0;
+
+                contractstartdate.setMonth(contractstartdate.getMonth() + parseInt(monthadd));
+                var c = (contractstartdate.getMonth() + 1) + '/' + contractstartdate.getDate() + '/' + contractstartdate.getFullYear()
+
+                $("#Contract_ExpirationDate").val(c);
+            });
+
+
+            $("#Contract_Amount").inputmask("numeric", {
+                decimal: ".",
+                negative: false,
+                scale: 2,
+                groupSeparator: ",",
+                digits: 2,
+                autoGroup: true,
+                prefix: "$",
+                rightAlign: false,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+            });
+
+            $("#Contract_AmountSubjectToFee").inputmask("numeric", {
+                decimal: ".",
+                negative: false,
+                scale: 2,
+                groupSeparator: ",",
+                digits: 2,
+                autoGroup: true,
+                prefix: "$",
+                rightAlign: false,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+            });
+
+            $('#generalCustomerList').DataTable({
+                "paging": true,
+                "ordering": false,
+                "info": false,
+                "bProcessing": true,
+                "pageLength": 25,
+                "dom": "<'table-responsive't><'bottom'ip><'clear'>"
+            });
+
+        });
+
+        // Controll data
+        $('#btnSave').click(function () {
+
+            var btnCount = @Convert.ToInt32(JKApi.Business.Enumeration.ButtonType.Save)
+
+            $("#ButtonType").val(btnCount);
+
+        });
+        // Controll data
+        $('#btnDocBack').click(function () {
+
+            var btnCount = @Convert.ToInt32(JKApi.Business.Enumeration.ButtonType.Back)
+
+            $("#ButtonType").val(btnCount);
+
+        });
+
+
+        // Controll data
+        $('#btnBack').click(function () {
+
+            var btnCount = @Convert.ToInt32(JKApi.Business.Enumeration.ButtonType.Back)
+
+            $("#ButtonType").val(btnCount);
+            checkMandatoryFields(btnCount);
+        });
+
+
+        // Prevent the form to be submitted on ENTER
+        $('#form_wizard_1').submit(function (e) {
+            e.preventDefault();
+            //  validateOnSubmit();
+        });
+
+        // Controll data
+        $('#btnContinue').click(function () {
+
+            var btnCount = @Convert.ToInt32(JKApi.Business.Enumeration.ButtonType.Continue)
+            $("#ButtonType").val(btnCount);
+            checkMandatoryFields(btnCount);
+        });
+
+        // Controll data
+        $('#btnSave').click(function () {
+
+            var btnCount = @Convert.ToInt32(JKApi.Business.Enumeration.ButtonType.Save)
+
+            $("#ButtonType").val(btnCount);
+            checkMandatoryFields(btnCount);
+        });
+
+        // Controll data
+        $('#btnBack').click(function () {
+
+            var btnCount = @Convert.ToInt32(JKApi.Business.Enumeration.ButtonType.Back)
+
+            $("#ButtonType").val(btnCount);
+            checkMandatoryFields(btnCount);
+        });
+
+
+        function Reset() {
+            $("#AccountTypeList").val("");
+            $("#FrequencyTypeList").val("");
+            $("#ContractDetail_CleanTimes").val("");
+            $("#ContractDetail_Amount").val("");
+            $("#ContractDetail_SquareFootage").val("");
+        }
+
+
+        // Check mandatory fields before subitting:
+        function checkMandatoryFields(count) {
+            var form = $('#form_wizard_1');
+            var error = $('.alert-danger', form);
+            var success = $('.alert-success', form);
+            form.validate({
+                doNotHideMessage: true, //this option enables to show the error/success messages on tab switch.
+                errorElement: 'span', //default input error message container
+                errorClass: 'help-block help-block-error', // default input error message class
+                focusInvalid: false, // do not focus the last invalid input
+                rules: {},
+                messages: { // custom messages for radio buttons and checkboxes
+                    'payment[]': {
+                        required: "Please select at least one option",
+                        minlength: jQuery.validator.format("Please select at least one option")
+                    }
+                },
+
+                errorPlacement: function (error, element) { // render error placement for each input type
+                },
+
+                invalidHandler: function (event, validator) { //display error alert on form submit
+                    success.hide();
+                    error.show();
+                    App.scrollTo(error, -200);
+                },
+
+                highlight: function (element) { // hightlight error inputs
+                    $(element)
+                        .closest('.form-group').removeClass('has-success').addClass('has-error'); // set error class to the control group
+                },
+
+                unhighlight: function (element) { // revert the change done by hightlight
+                    $(element)
+                        .closest('.form-group').removeClass('has-error'); // set error class to the control group
+                },
+
+                success: function (label) {
+                    if (label.attr("for") == "gender" || label.attr("for") == "payment[]") { // for checkboxes and radio buttons, no need to show OK icon
+                        label
+                            .closest('.form-group').removeClass('has-error').addClass('has-success');
+                        label.remove(); // remove error label here
+                    } else { // display success icon for other inputs
+                        label
+                            .addClass('valid') // mark the current input as valid and display OK icon
+                        .closest('.form-group').removeClass('has-error').addClass('has-success'); // set success class to the control group
+                    }
+                },
+
+                submitHandler: function (form) {
+                    success.show();
+                    error.hide();
+                    // form[0].submit();
+                    if (count > 0) {
+                        $('#form_wizard_1')[0].submit();
+                        //$('#form_wizard_1').submit();
+                    }
+                    //add here some ajax code to submit your form or just call form.submit() if you want to submit the form without ajax
+                }
+
+            });
+        }
+
+
+        function RemoveContractDetail(ContractDetailId, ContractId) {
+            $.blockUI({
+                baseZ: 99999,
+                message: '<center><img height: src="/Images/loading_icon.gif" /><h3> <b>Processing....</br> Please wait! and do not refresh page.</b></h3></center>',
+                css: { backgroundColor: 'rgb{0,0,0}', border: '0', color: '#fff', "z-index": 99999 }
+            });
+            $.ajax({
+                type: "post",
+                url: "@Url.Action("RemoveContractDetail", "Customer")",
+                ajaxasync: true,
+                data: { ContractDetailId: ContractDetailId, ContarctId: ContractId },
+                success: function (response) {
+                    loadOwners(response.id);
+
+                    $.unblockUI();
+                },
+                error: function (data) {
+                    $.unblockUI();
+                }
+            })
+            $.unblockUI();
+        }
+
+        function loadOwners(id) {
+            $.blockUI({
+                baseZ: 99999,
+                message: '<center><img height: src="/Images/loading_icon.gif" /><h3> <b>Processing....</br> Please wait! and do not refresh page.</b></h3></center>',
+                css: { backgroundColor: 'rgb{0,0,0}', border: '0', color: '#fff', "z-index": 99999 }
+            });
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetContractDetail", "Customer", new { @area = "Portal" })?id=' + id,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    $('#tblContractDescriptionData').html(response);
+                    $.unblockUI();
+                },
+                error: function (xhr, textStatus, error) {
+                    if (typeof console == "object") {
+
+                        $('#tblContractDescriptionData').html(xhr.responseText);
+                        console.log(xhr.status + "," + xhr.responseText + "," + textStatus + "," + error);
+                    }
+                    $.unblockUI();
+                }
+            });
+
+            $.unblockUI();
+        }
+    </script>
+    <script>
+        $(function () {
+            // AddContractDetailDescription = function (ContractId, ContractDetailId) {
+            window.AddContractDetailDescription = function (ContractDetailId) {
+                $.blockUI({
+                    //baseZ: 99999,
+                    //message: '<center><img height: src="/Images/loading_icon.gif" /><h3> <b>Processing....</br> Please wait! and do not refresh page.</b></h3></center>',
+                    //css: { backgroundColor: 'rgb{0,0,0}', border: '0', color: '#fff', "z-index": 99999 }
+                });
+                var ContractId = 0;
+                if ($('#ContractDetail_ContractId').val() != "") {
+                    ContractId = $('#ContractDetail_ContractId').val();
+                }
+                if ($('#Contract_ContractId').val() != 0) {
+                    ContractId = $('#Contract_ContractId').val();
+                }
+                else {
+                    swal(
+                        'Oops...',
+                        'Save Customer Contract First, Before add Contract Detail!',
+                        'warning'
+                    )
+                }
+
+                if (ContractId > 0 && ContractDetailId > 0) {
+                    var url = '/Portal/Customer/AddEditContractDetail/?ContractId=' + ContractId + '&ContractDetailId=' + ContractDetailId
+
+                    $.get(url, function (data) {
+                        $('#modalData').html(data);
+                        $('#modalData').modal();
+
+                    })
+                }
+                else if (ContractId > 0) {
+                    var url = '/Portal/Customer/AddEditContractDetail/?ContractId=' + ContractId + '&ContractDetailId=' + ContractDetailId
+                    $.get(url, function (data) {
+                        $('#modalData').html(data);
+                        $('#modalData').modal();
+                    })
+                    //Reset();
+                }
+                $.unblockUI();
+            }
+        });
+
+
+
+        $(document).ready(function () {
+
+        });
+
+    </script>
+
+}
+
+

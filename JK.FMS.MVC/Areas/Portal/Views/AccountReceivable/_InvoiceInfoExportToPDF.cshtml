@@ -1,0 +1,457 @@
+﻿@model JKApi.Service.AccountReceivable.InvoiceDetailViewModel
+@{
+    var request = HttpContext.Current.Request;
+    var _siteUrl = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Authority);
+
+    string imgpath  = _siteUrl + "/Content/admin/assets/layouts/layout2/img/lg_jklogo.jpg";
+    string lineimgpath = _siteUrl + "/Content/admin/assets/layouts/layout2/img/dotline.jpg";
+}
+<!DOCTYPE html>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+    <title></title>
+</head>
+<body>
+
+    <table style="font-size:10px;" class="table">
+        <tr>
+            <td valign="top" class="t1col1">
+                <img src="@imgpath" alt="logo" width="90" height="60">
+            </td>
+            <td align="left" valign="top" class="t1col2">
+                <strong>Remit To:</strong><br />
+                @Html.DisplayFor(one => one.InvoiceRegion.Displayname)<br />
+                @Html.DisplayFor(one => one.InvoiceRegion.Address)<br />
+                @Html.DisplayFor(one => one.InvoiceRegion.City), @Html.DisplayFor(one => one.InvoiceRegion.State) @Html.DisplayFor(one => one.InvoiceRegion.PostalCode)<br />
+                @*@Html.DisplayFor(one => one.InvoiceRegion.phone)*@
+                @if (Model.InvoiceRegion.Phone != null)
+                {
+                    string phoneFormat = Model.InvoiceRegion.Phone.Trim();
+                    if (Model.InvoiceRegion.Phone != null)
+                    {
+                        if (phoneFormat.Length == 10)
+                        {
+                            @Html.Label("(" + phoneFormat.Substring(0, 3) + ")" + " " + phoneFormat.Substring(3, 3) + "-" + phoneFormat.Substring(6, 4));
+                        }
+                        else
+                        {
+                            @Html.Label(phoneFormat);
+                        }
+                    }
+                }
+
+            </td>
+
+            <td width="10" class="t1col3"></td>
+
+            <td class="t1col4">
+                <table width="180" style="font-size:9px;" class="tabborder">
+                    <tr>
+                        <td colspan="2" align="center">Invoice</td>
+                    </tr>
+                    <tr>
+                        <td align="center"><b>Date</b><br /> @Convert.ToDateTime(Model.InvoiceDetail.InvoiceDate).ToString("MM/dd/yyyy") </td>
+                        <td align="center"><b>Number</b><br /> @Html.DisplayFor(one => one.InvoiceDetail.InvoiceNo) </td>
+                    </tr>
+                    <tr>
+                        <td align="center"><b>Due Date</b><br /> @Convert.ToDateTime(Model.InvoiceDetail.DueDate).ToString("MM/dd/yyyy")</td>
+                        <td align="center"><b>Customer No</b><br /> @Html.DisplayFor(one => one.InvoiceDetail.CustomerNo)</td>
+                    </tr>
+                    <tr>
+                        <td align="center"><b>Invoice Amount</b><br /> @string.Format("{0:c}", Model.InvoiceDetailItems.Select(s => s.Total).Sum()) </td>
+                        <td align="center" valign="top"><b>Amount Remitted</b><br /></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="4">
+                <table>
+                    <tr>                     
+                        <td>
+                            <strong>Bill To:</strong><br />
+                            @Html.DisplayFor(one => one.InvoiceDetail.B_Name) <br />
+                            @Html.DisplayFor(one => one.InvoiceDetail.B_Attention)
+                            @Html.DisplayFor(one => one.InvoiceDetail.B_Address1),@Html.DisplayFor(one => one.InvoiceDetail.B_Address2) <br />
+                            @Html.DisplayFor(one => one.InvoiceDetail.B_City), @Html.DisplayFor(one => one.InvoiceDetail.B_State) @Html.DisplayFor(one => one.InvoiceDetail.B_PostalCode)
+                        </td>
+                        <td>&nbsp;</td> 
+                        <td>
+                            <strong>Sold To:  </strong><br />
+                            @*@Html.DisplayFor(one => one.InvoiceDetail.CustomerNo)<br />*@
+                            @Html.DisplayFor(one => one.InvoiceDetail.Customer) <br />
+                            @Html.DisplayFor(one => one.InvoiceDetail.Address1),@Html.DisplayFor(one => one.InvoiceDetail.Address2) <br />
+                            @Html.DisplayFor(one => one.InvoiceDetail.City), @Html.DisplayFor(one => one.InvoiceDetail.State) @Html.DisplayFor(one => one.InvoiceDetail.PostalCode) <br />
+                            @*@Html.DisplayFor(one => one.InvoiceRegion.phone)*@
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="4">
+                <p><br /></p>
+                <p style="text-align:center;"> Make All Checks Payable to: @Html.DisplayFor(one => one.InvoiceRegion.Displayname)</p>
+                <p style="text-align:center;border-bottom:1px solid black;">RETURN THIS PORTION WITH YOUR PAYMENT</p> 
+                
+                @*<table border="1">
+                        <tr>
+                            <td></td>
+                        </tr>
+                    </table>*@
+            </td>
+            <td colspan="4"><p><img src="@lineimgpath" width="546"><br /></p></td>
+        </tr>
+
+        <tr>
+            <td colspan="4">
+                <table>
+                    <tr>
+                        <td class="t3col1"></td>
+                        <td class="t3col2">
+                            <div style="text-align:center;">
+                                @Html.DisplayFor(one => one.InvoiceRegion.Displayname)<br />
+                                <b>Commercial Cleaning Services</b><br />
+                                @*@Html.DisplayFor(one => one.InvoiceRegion.address)<br />
+                                    @Html.DisplayFor(one => one.InvoiceRegion.city), @Html.DisplayFor(one => one.InvoiceRegion.state) @Html.DisplayFor(one => one.InvoiceRegion.postalcode)<br />
+                                    @Html.DisplayFor(one => one.InvoiceRegion.phone)*@
+                                @if (Model.InvoiceRegion.Phone != null)
+                                {
+                                    string phoneFormat = Model.InvoiceRegion.Phone.Trim();
+                                    if (Model.InvoiceRegion.Phone != null)
+                                    {
+                                        if (phoneFormat.Length == 10)
+                                        {
+                                            @Html.Label("(" + phoneFormat.Substring(0, 3) + ")" + " " + phoneFormat.Substring(3, 3) + "-" + phoneFormat.Substring(6, 4));
+                                        }
+                                        else
+                                        {
+                                            @Html.Label(phoneFormat);
+                                        }
+                                    }
+                                }
+                            </div>
+                        </td>
+                        <td class="t3col3" align="right">
+                            <img src="@imgpath" alt="logo" class="logo-default" width="65" height="45">
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+
+        <tr>
+            <td colspan="4">
+                <table>
+                    <tr>
+                        <td>
+                            <strong>Sold To:</strong><br />
+                            @*@Html.DisplayFor(one => one.InvoiceDetail.CustomerNo)<br />*@
+                            @Html.DisplayFor(one => one.InvoiceDetail.Customer) <br />
+                            @Html.DisplayFor(one => one.InvoiceDetail.Address1),@Html.DisplayFor(one => one.InvoiceDetail.Address2) <br />
+                            @Html.DisplayFor(one => one.InvoiceDetail.City), @Html.DisplayFor(one => one.InvoiceDetail.State) @Html.DisplayFor(one => one.InvoiceDetail.PostalCode) <br />
+                            @*@Html.DisplayFor(one => one.InvoiceRegion.phone)*@
+                        </td>
+                        <td>&nbsp;</td>       
+                        <td>
+                            <strong>For:</strong><br />
+                            @Html.DisplayFor(one => one.InvoiceDetail.B_Name)<br />
+                            @Html.DisplayFor(one => one.InvoiceDetail.B_Attention)
+                            @Html.DisplayFor(one => one.InvoiceDetail.B_Address1),@Html.DisplayFor(one => one.InvoiceDetail.B_Address2)<br />
+                            @Html.DisplayFor(one => one.InvoiceDetail.B_City), @Html.DisplayFor(one => one.InvoiceDetail.B_State) @Html.DisplayFor(one => one.InvoiceDetail.B_PostalCode)
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    @{
+        bool extspace = true;
+        bool Ismulpages = false;
+        int rowcount = 0;
+    }
+
+    <table cellpadding="5" style="font-size:8.5px" class="tabborder">
+        <tr>
+            <th align="center" valign="top" class="t22col1"><b>Date</b></th>
+            <th align="center" valign="top" class="col2"><b>Invoice No</b></th>
+            <th align="center" valign="top" class="col3"><b>Customer No.</b></th>
+            <th align="center" valign="top" class="col4"><b>Description</b></th>
+            <th align="center" valign="top" class="t2col6"><b>Due Date</b></th>
+            <th align="center" valign="top" class="t2col6" width="46"><b>PO Number</b> </th>
+        </tr>
+        <tr>
+            <td align="center" valign="top">@Convert.ToDateTime(Model.InvoiceDetail.InvoiceDate).ToString("MM/dd/yyyy")</td>
+            <td align="center" valign="top">@Html.DisplayFor(one => one.InvoiceDetail.InvoiceNo)</td>
+            <td align="center" valign="top">@Html.DisplayFor(one => one.InvoiceDetail.CustomerNo)</td>
+            <td align="left" valign="top">
+                @Html.Raw((Model.InvoiceDetail.Message != null ? Model.InvoiceDetail.Message.Replace("\r\n", "<br />") : ""))
+
+                @if (Model.InvoiceDetail.Message != null)
+                {
+                    if (Model.InvoiceDetail.Message.Length > 400)
+                    {
+                        if (extspace == true) { extspace = false; }
+                    }
+                }
+            </td>
+            <td align="center" valign="top">@Convert.ToDateTime(Model.InvoiceDetail.DueDate).ToString("MM/dd/yyyy")</td>
+            <td align="center" valign="top">@Html.DisplayFor(one => one.InvoiceDetail.PurchaseOrderNo)</td>
+        </tr>
+    </table>
+
+    <table cellpadding="5" style="font-size:8.5px" class="tabborder">
+        <tr>
+            <td align="center" class="t2col1" width="36.5"><b>QTY</b></td>
+            <td align="center" class="t2col2" width="140"><b>Detail</b></td>
+            <td align="center" class="t2col6" width="42"><b>Unit Price</b></td>
+            <td align="center" class="t2col6" width="42"><b>Ext. Price</b></td>
+            <td align="center" class="t2col6" width="47"><b>Tax</b></td>
+            <td align="center" class="t2col6" width="48"><b>Total</b></td>
+        </tr>
+
+        @foreach (var item in Model.InvoiceDetailItems)
+        {
+            rowcount += 1;
+        <tr>
+            <td align="center" valign="top">
+                @item.Quantity
+            </td>
+            <td align="left" valign="top">
+
+                @if (item.Description != null)
+                    {
+                        if (item.Description.Length > 1062)
+                        {
+                    @Html.Raw((item.Description != null ? item.Description.Replace("\r\n", "<br />").Substring(0, 1062) : ""))
+                            if (Ismulpages == false) { Ismulpages = true; }
+                        }
+                        else
+                        {
+                    @Html.Raw((item.Description != null ? item.Description.Replace("\r\n", "<br />") : ""))
+                        }
+
+                        if (item.Description.Length > 400)
+                        {
+                            if (extspace == true) { extspace = false; }
+                        }
+                    }
+
+                @if (extspace == true && Model.InvoiceDetailItems.Count() == rowcount && Model.InvoiceDetailItems.Count() < 3)
+                    {
+                    <table bordercolor="#FFF" border="0">
+                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                        @*<tr><td><p>&nbsp;<br /></p></td></tr>
+                            <tr><td><p>&nbsp;<br /></p></td></tr>
+                            <tr><td><p>&nbsp;<br /></p></td></tr>*@
+                    </table>
+                    }
+            </td>
+            <td align="right" valign="top">
+                @string.Format("{0:c}", item.UnitPrice)
+            </td>
+            <td align="right" valign="top">
+                @string.Format("{0:c}", item.ExtendedPrice)
+            </td>
+            <td align="right" valign="top">
+                @string.Format("{0:c}", item.TAXAmount)
+            </td>
+            <td align="right" valign="top">
+                @string.Format("{0:c}", item.Total)
+            </td>
+        </tr>
+            if (Ismulpages == true)
+                        {
+        <tr bordercolor="#FFF" border="0">
+            <td colspan="6">
+                <table style="font-size:10px;" border="0">
+                    <tr>
+                        <td class="t3col1"></td>
+                        <td class="t3col2">
+                            <div style="text-align:center;">
+                                @Html.DisplayFor(one => one.InvoiceRegion.Displayname)<br />
+                                <b>Commercial Cleaning Services</b><br />
+                                @*@Html.DisplayFor(one => one.InvoiceRegion.address)<br />
+                                     @Html.DisplayFor(one => one.InvoiceRegion.city), @Html.DisplayFor(one => one.InvoiceRegion.state) @Html.DisplayFor(one => one.InvoiceRegion.postalcode)<br />
+                                    @Html.DisplayFor(one => one.InvoiceRegion.phone)*@
+                                @if (Model.InvoiceRegion.Phone != null)
+                                        {
+                                            string phoneFormat = Model.InvoiceRegion.Phone.Trim();
+                                            if (Model.InvoiceRegion.Phone != null)
+                                            {
+                                                if (phoneFormat.Length == 10)
+                                                {
+                                        @Html.Label("(" + phoneFormat.Substring(0, 3) + ")" + " " + phoneFormat.Substring(3, 3) + "-" + phoneFormat.Substring(6, 4));
+                                                }
+                                                else
+                                                {
+                                        @Html.Label(phoneFormat);
+                                                }
+                                            }
+                                        }
+                            </div>
+                        </td>
+                        <td class="t3col3" align="right">
+                            <img src="@imgpath" alt="logo" class="logo-default" width="65" height="45">
+                        </td>
+                    </tr>
+                </table>
+
+                <table style="font-size:10px;" border="0">
+                    <tr>
+                        <td>
+                            <strong>Sold To:</strong><br />
+                            @*@Html.DisplayFor(one => one.InvoiceDetail.CustomerNo)<br />*@
+                            @Html.DisplayFor(one => one.InvoiceDetail.Customer) <br />
+                            @Html.DisplayFor(one => one.InvoiceDetail.Address1),@Html.DisplayFor(one => one.InvoiceDetail.Address2) <br />
+                            @Html.DisplayFor(one => one.InvoiceDetail.City), @Html.DisplayFor(one => one.InvoiceDetail.State) @Html.DisplayFor(one => one.InvoiceDetail.PostalCode) <br />
+                            @*@Html.DisplayFor(one => one.InvoiceRegion.phone)*@
+                        </td>
+                        <td>&nbsp;</td>     
+                        <td>
+                            <strong>For:</strong><br />
+                            @Html.DisplayFor(one => one.InvoiceDetail.B_Name)<br />
+                            Attn: @Html.DisplayFor(one => one.InvoiceDetail.B_Attention)
+                            @Html.DisplayFor(one => one.InvoiceDetail.B_Address1),@Html.DisplayFor(one => one.InvoiceDetail.B_Address2)<br />
+                            @Html.DisplayFor(one => one.InvoiceDetail.B_City), @Html.DisplayFor(one => one.InvoiceDetail.B_State) @Html.DisplayFor(one => one.InvoiceDetail.B_PostalCode)
+                        </td>
+                    </tr>
+                </table>
+                <table cellpadding="5" style="font-size:8.5px" class="tabborder">
+                    <tr>
+                        <th align="center" valign="top" width="35.5"><b>Date</b></th>
+                        <th align="center" valign="top" class="col2"><b>Invoice No</b></th>
+                        <th align="center" valign="top" class="col3"><b>Customer No.</b></th>
+                        <th align="center" valign="top" width="127"><b>Description</b></th>
+                        <th align="center" valign="top" width="35.5"><b>Due Date</b></th>
+                        <th align="center" valign="top" class="col6"><b>PO Number</b> </th>
+                    </tr>
+                    <tr>
+                        <td align="center" valign="top">@Convert.ToDateTime(Model.InvoiceDetail.InvoiceDate).ToString("MM/dd/yyyy")</td>
+                        <td align="center" valign="top">@Html.DisplayFor(one => one.InvoiceDetail.InvoiceNo)</td>
+                        <td align="center" valign="top">@Html.DisplayFor(one => one.InvoiceDetail.CustomerNo)</td>
+                        <td align="left" valign="top">
+
+                            @Html.Raw((Model.InvoiceDetail.Message != null ? Model.InvoiceDetail.Message.Replace("\r\n", "<br />") : ""))
+
+                        </td>
+                        <td align="center" valign="top">@Convert.ToDateTime(Model.InvoiceDetail.DueDate).ToString("MM/dd/yyyy")</td>
+                        <td align="center" valign="top">@Html.DisplayFor(one => one.InvoiceDetail.PurchaseOrderNo)</td>
+                    </tr>
+                </table>
+                <table cellpadding="5" style="font-size:8.5px" class="tabborder">
+                    <tr>
+                        <td align="center" class="t2col1"><b>QTY</b></td>
+                        <td align="center" class="t2col2"><b>Detail</b></td>
+                        <td align="center" class="t2col3"><b>Unit Price</b></td>
+                        <td align="center" class="t2col4"><b>Ext. Price</b></td>
+                        <td align="center" class="t2col5"><b>Tax</b></td>
+                        <td align="center" class="t2col6"><b>Total</b></td>
+                    </tr>
+                    <tr>
+                        <td align="center" valign="top"></td>
+                        <td align="left" valign="top">
+                            @if (item.Description != null)
+                                    {
+                                        if (item.Description.Length > 1062)
+                                        {
+                                    @Html.Raw((item.Description != null ? item.Description.Replace("\r\n", "<br />").Substring(1062, item.Description.Length - 1063) : ""))
+                                        }
+                                    }
+                            @if (Model.InvoiceDetailItems.Count() == rowcount && Model.InvoiceDetailItems.Count() < 3)
+                                    {
+                                    <table bordercolor="#FFF" border="0">
+                                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                                        <tr><td><p>&nbsp;<br /></p></td></tr>
+                                    </table>
+                                    }
+                        </td>
+                        <td align="right" valign="top"></td>
+                        <td align="right" valign="top"></td>
+                        <td align="right" valign="top"></td>
+                        <td align="right" valign="top"></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+            }
+        }
+        @*<tr>
+                <td align="center" valign="top">
+                    @if (extspace == true && Model.InvoiceDetailItems.Count() < 3)
+                    {
+                        <table bordercolor="#FFF" border="0">
+                            <tr><td><p>&nbsp;<br /></p></td></tr>
+                            <tr><td><p>&nbsp;<br /></p></td></tr>
+                            <tr><td><p>&nbsp;<br /></p></td></tr>
+                            <tr><td><p>&nbsp;<br /></p></td></tr>
+                            <tr><td><p>&nbsp;<br /></p></td></tr>
+                            <tr><td><p>&nbsp;<br /></p></td></tr>
+                            <tr><td><p>&nbsp;<br /></p></td></tr>
+                            <tr><td><p>&nbsp;<br /></p></td></tr>
+                            <tr><td><p>&nbsp;<br /></p></td></tr>
+                            <tr><td><p>&nbsp;<br /></p></td></tr>
+                        </table>
+                    }
+                </td>
+                <td align="center" valign="top"></td>
+                <td align="right" valign="top"></td>
+                <td align="right" valign="top"></td>
+                <td align="right" valign="top"></td>
+                <td align="right" valign="top"></td>
+            </tr>*@
+        @*</table>
+            <table style="font-size:9.5px" class="tabborder">*@
+        @*<tr>
+                <td colspan="3"><b>Invoice Total</b></td>
+                <td align="right">@string.Format("{0:c}",Model.InvoiceDetailItems.Select(s => s.UnitPrice).Sum())</td>
+                <td align="right">@string.Format("{0:c}", Model.InvoiceDetailItems.Select(s => s.ExtendedPrice).Sum())</td>
+                <td align="right">@string.Format("{0:c}", Model.InvoiceDetailItems.Select(s => s.TAXAmount).Sum()) </td>
+                <td align="right">@string.Format("{0:c}", Model.InvoiceDetailItems.Select(s => s.Total).Sum()) </td>
+            </tr>*@
+    </table>
+
+    <table cellpadding="0" style="font-size:8.5px">
+        <tr>
+            <td width="49.60%"></td>
+            <td width="50.40%">
+                <table cellpadding="5" style="font-size:8.5px" class="tabborder" width="275">
+                    <tr>
+                        <td align="right" width="755">Total Ext. Price :</td>
+                        <td align="right" >@string.Format("{0:c}", Model.InvoiceDetailItems.Select(s => s.ExtendedPrice).Sum())</td>
+                    </tr>
+                    <tr>
+                        <td align="right" width="755" >Total Tax:</td>
+                        <td align="right"  >@string.Format("{0:c}", Model.InvoiceDetailItems.Select(s => s.TAXAmount).Sum())</td>
+                    </tr>
+                    <tr>
+                        <td align="right" width="755"><b>Invoice Total Amount to pay:</b></td>
+                        <td align="right" ><b>@string.Format("{0:c}", Model.InvoiceDetailItems.Select(s => s.Total).Sum())</b></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

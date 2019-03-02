@@ -1,0 +1,372 @@
+﻿
+@{
+    ViewBag.Title = "OfficePerformance";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form class="form-horizontal" role="form" id="form_CustomerReport" action="" method="post">
+    <div class="custom-form portlet light">
+        <div class="headerbox">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    Office Performance Results
+                </div>
+            </div>
+        </div>
+        <div class="portlet-body form">
+            <div class="form-body">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-4 pnd5 control-label" style="padding-top:5px;">
+                                Date Range:
+                            </div>
+                            <div class="col-md-3" style="padding-bottom: 5px;">
+                                <select id="select_timeduration" class="form-control input-sm">
+                                    <option value="1">This Week</option>
+                                    <option value="2">This Week-to-date</option>
+                                    <option value="3">This Month</option>
+                                    <option value="4">This Month-to-date</option>
+                                    <option value="5">This Quarter</option>
+                                    <option value="6">This Quarter-to-date</option>
+                                    <option value="7" selected="selected">This Fiscal Year</option>
+                                    <option value="8">This Fiscal Year-to-date</option>
+                                    <option value="9">Today</option>
+                                    <option value="10">Yesterday</option>
+                                    <option value="11">Last Week</option>
+                                    <option value="12">Last Month</option>
+                                    <option value="13">Last Quarter</option>
+                                    <option value="14">Last Year</option>
+                                    <option value="15">Custom Date</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 pnd5" style="padding-top: 5px;padding-left: 0px;padding-right: 0px;" id="divspandate">
+                                <span id="spnStartDate">08/01/2017</span> - <span id="spnEndtDate">08/31/2017</span>
+                            </div>
+                            <div class="col-md-1 pnd5" style="padding-top: 7px;display:none;" id="divSD">
+                                <input type="text" name="txtStartDate" id="txtStartDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                            </div>
+                            <div class="col-md-1 pnd5" style="padding-top: 7px;display:none;" id="divED">
+                                <input type="text" name="txtEndtDate" id="txtEndtDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-4 pnd5 control-label" style="padding-top:5px;">
+                                Report Based On:
+                            </div>
+                            <div class="col-md-3" style="padding-bottom: 5px;">
+                                <select class="form-control input-sm">
+                                    <option value="1" selected="selected">Sign Date</option>
+                                    <option value="2">Start Date</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-2"></div>
+                            <div class="col-xs-3">
+                                <select name="from" id="multi_d" class="form-control" size="8" multiple="multiple">
+                                    <option value="1">STAGING-Buffalo</option>
+                                    <option value="2">STAGING-Hartford</option>
+                                    <option value="3">STAGING-Las Vagas</option>
+                                    <option value="4">STAGING-Miami</option>
+                                    <option value="5">STAGING-New Jersey</option>
+                                    <option value="6">STAGING-New Mexico</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-1">
+                                <button type="button" id="multi_d_rightAll" class="btn btn-block"><i class="glyphicon glyphicon-forward"></i></button>
+                                <button type="button" id="multi_d_rightSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
+                                <button type="button" id="multi_d_leftSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
+                                <button type="button" id="multi_d_leftAll" class="btn btn-block"><i class="glyphicon glyphicon-backward"></i></button>
+                            </div>
+                            <div class="col-xs-3">
+                                <select name="to" id="multi_d_to" class="form-control" size="8" multiple="multiple"></select>
+                            </div>
+                            <div class="col-md-2"></div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <div class="col-md-12 text-right" style="padding-right: 0px;">
+                        <div class="col-md-1 col-md-offset-9" style="padding-left: 0px;">
+                            <a class="btn btn-primary button-next col-md-11" onclick="location.href='@Url.Action("OfficePerformanceReport", "CRMReport", new { area = "CRM" })'">Submit</a>
+                        </div>
+                        <div class="col-md-1" style="padding-left: 0px;">
+                            <input type="submit" class="btn btn-primary button-next col-md-11" value="Reset" id="btnReset" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@section pageplugins{
+    <script src="~/Content/admin/assets/global/plugins/jquery-multi-select/js/jquery.multi-select.js"></script>
+    <script src="~/Scripts/multiselect.min.js"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+}
+@section scripts{
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            $('#divSD').hide();
+            $('#divED').hide();
+
+            firstDay = moment().subtract(0, 'month').startOf('month').toString();
+            lastDay = moment().subtract(0, 'month').endOf('month').toString();
+
+            $('#spnStartDate').html(moment(firstDay).format('L'));
+            $('#spnEndtDate').html(moment(lastDay).format('L'));
+
+            settimeduration_select(7);
+
+
+            $('#select_timeduration').change(function () {
+                $('#spnStartDate').html('');
+                $('#spnEndtDate').html('');
+                $('#divspandate').show();
+                $('#divSD').hide();
+                $('#divED').hide();
+                switch (parseInt($(this).val())) {
+                    case 1:
+                        firstDay = moment().startOf('isoWeek').toString();
+                        lastDay = moment().endOf('isoWeek').toString();
+                        break;
+                    case 2:
+                        //code block
+                        firstDay = moment().startOf('isoWeek').toString();
+                        lastDay = new Date().toString();
+                        break;
+                    case 3:
+                        firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                        lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                        break;
+                    case 4:
+                        //code block
+                        firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                        lastDay = new Date().toString();
+                        break;
+                    case 5:
+                        //code block
+                        firstDay = moment().startOf('quarter').toString();
+                        lastDay = moment().endOf('quarter').toString();
+                        break;
+                    case 6:
+                        //code block
+                        firstDay = moment().startOf('quarter').toString();
+                        lastDay = new Date().toString();
+                        break;
+                    case 7:
+                        //code block
+                        firstDay = moment().startOf('year').toString();;
+                        lastDay = moment().endOf('year').toString();
+                        break;
+                    case 8:
+                        //code block
+                        firstDay = moment().startOf('year').toString();
+                        lastDay = new Date().toString();
+                        break;
+                    case 9:
+                        //code block
+                        firstDay = moment().toString();
+                        lastDay = moment().toString();
+                        break;
+                    case 10:
+                        //code block
+                        firstDay = moment().add(-1, 'days').toString();
+                        lastDay = moment().add(-1, 'days').toString();
+                        break;
+                    case 11:
+                        //code block
+                        firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                        lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                        break;
+                    case 12:
+                        //code block
+                        firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                        lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                        break;
+                    case 13:
+                        //code block
+                        firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                        lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                        break;
+                    case 14:
+                        //code block
+                        firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                        lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                        break;
+                    case 15:
+                        //code block
+                        $('#divspandate').hide();
+                        $('#divSD').show();
+                        $('#divED').show();
+                        $('#txtStartDate').val('');
+                        $('#txtEndtDate').val('')
+                        break;
+                    default:
+                }
+                $('#spnStartDate').html(moment(firstDay).format('L'));
+                $('#spnEndtDate').html(moment(lastDay).format('L'));
+            });
+
+            $('#txtStartDate').inputmask("mm/dd/yyyy", {});
+            $('#txtEndtDate').inputmask("mm/dd/yyyy", {});
+
+            $("#txtFrom").val(moment(firstDay).format('L'));
+            $("#txtTo").val(moment(lastDay).format('L'));
+            $("#txtFrom").prop("disabled", true);
+            $("#txtTo").prop("disabled", true);
+
+
+
+            $('#multi_d').multiselect({
+                right: '#multi_d_to',
+                rightSelected: '#multi_d_rightSelected',
+                leftSelected: '#multi_d_leftSelected',
+                rightAll: '#multi_d_rightAll',
+                leftAll: '#multi_d_leftAll',
+
+
+                moveToRight: function (Multiselect, $options, event, silent, skipStack) {
+                    var button = $(event.currentTarget).attr('id');
+
+                    if (button == 'multi_d_rightSelected') {
+                        var $left_options = Multiselect.$left.find('> option:selected');
+                        Multiselect.$right.eq(0).append($left_options);
+
+                        if (typeof Multiselect.callbacks.sort == 'function' && !silent) {
+                            Multiselect.$right.eq(0).find('> option').sort(Multiselect.callbacks.sort).appendTo(Multiselect.$right.eq(0));
+                        }
+                    } else if (button == 'multi_d_rightAll') {
+                        var $left_options = Multiselect.$left.children(':visible');
+                        Multiselect.$right.eq(0).append($left_options);
+
+                        if (typeof Multiselect.callbacks.sort == 'function' && !silent) {
+                            Multiselect.$right.eq(0).find('> option').sort(Multiselect.callbacks.sort).appendTo(Multiselect.$right.eq(0));
+                        }
+                    }
+                },
+
+                moveToLeft: function (Multiselect, $options, event, silent, skipStack) {
+                    var button = $(event.currentTarget).attr('id');
+
+                    if (button == 'multi_d_leftSelected') {
+                        var $right_options = Multiselect.$right.eq(0).find('> option:selected');
+                        Multiselect.$left.append($right_options);
+
+                        if (typeof Multiselect.callbacks.sort == 'function' && !silent) {
+                            Multiselect.$left.find('> option').sort(Multiselect.callbacks.sort).appendTo(Multiselect.$left);
+                        }
+                    } else if (button == 'multi_d_leftAll') {
+                        var $right_options = Multiselect.$right.eq(0).children(':visible');
+                        Multiselect.$left.append($right_options);
+
+                        if (typeof Multiselect.callbacks.sort == 'function' && !silent) {
+                            Multiselect.$left.find('> option').sort(Multiselect.callbacks.sort).appendTo(Multiselect.$left);
+                        }
+                    }
+                }
+            });
+        })
+
+        function settimeduration_select(id) {
+            $('#select_timeduration').val(id)
+            $('#spnStartDate').html('');
+            $('#spnEndtDate').html('');
+            $('#divspandate').show();
+            $('#divSD').hide();
+            $('#divED').hide();
+            switch (parseInt(id)) {
+                case 1:
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = moment().endOf('isoWeek').toString();
+                    break;
+                case 2:
+                    //code block
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 3:
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                    break;
+                case 4:
+                    //code block
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 5:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = moment().endOf('quarter').toString();
+                    break;
+                case 6:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 7:
+                    //code block
+                    firstDay = moment().startOf('year').toString();;
+                    lastDay = moment().endOf('year').toString();
+                    break;
+                case 8:
+                    //code block
+                    firstDay = moment().startOf('year').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 9:
+                    //code block
+                    firstDay = moment().toString();
+                    lastDay = moment().toString();
+                    break;
+                case 10:
+                    //code block
+                    firstDay = moment().add(-1, 'days').toString();
+                    lastDay = moment().add(-1, 'days').toString();
+                    break;
+                case 11:
+                    //code block
+                    firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                    lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                    break;
+                case 12:
+                    //code block
+                    firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                    break;
+                case 13:
+                    //code block
+                    firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                    lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                    break;
+                case 14:
+                    //code block
+                    firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                    lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                    break;
+                case 15:
+                    //code block
+                    $('#divspandate').hide();
+                    $('#divSD').show();
+                    $('#divED').show();
+                    $('#txtStartDate').val('');
+                    $('#txtEndtDate').val('')
+                    break;
+                default:
+                //code block
+            }
+            $('#spnStartDate').html(moment(firstDay).format('L'));
+            $('#spnEndtDate').html(moment(lastDay).format('L'));
+        }
+    </script>
+}

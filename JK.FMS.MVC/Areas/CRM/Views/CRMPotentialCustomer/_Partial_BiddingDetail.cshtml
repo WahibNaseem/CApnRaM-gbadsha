@@ -1,0 +1,212 @@
+﻿@using JK.Resources
+<div class="col-md-7  biddingcontent" id="bidding">
+    <div class="row">
+        <div class="col-md-12 portlet-align">
+            <div class="portlet box div-right portlet-bottom" style="background-color: #a3a9ad;">
+                <div class="portlet-title compact">
+                    <div class="caption">
+                        Bidding Detail
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <form action="#" id="form_bidstagedetail" class="form-horizontal">
+                        <div class="form-body">
+                            @Html.Hidden("AccountDetailId", "", new { @id = "accountdetailid" })
+
+                            <!--Bidding Documents upload-->
+                            <div class="form-group" style="display:none;">
+                                <label for="select_documentupload" class="control-label col-md-4">Bidding Documents upload</label>
+                                <div class="col-md-4">
+                                    <form action="" enctype="multipart/form-data">
+                                        <div class="fileinput fileinput-new" data-provides="fileinput">
+                                            <div class="input-group input-large">
+                                                <div class="form-control uneditable-input input-fixed input-medium" data-trigger="fileinput">
+                                                    <i class="fa fa-file fileinput-exists"></i>&nbsp;
+                                                    <span class="fileinput-filename"></span>
+                                                </div>
+                                                <span class="input-group-addon btn default btn-file">
+                                                    <span class="fileinput-new" id="btnSelect"> Select file </span>
+                                                    <span class="contact_removeDiv fileinput-exists"> Change </span>
+                                                    <input type="hidden" value="" name="..."><input type="file" id="contact_bidfileDocument" name="files[]" multiple="" />
+                                                </span>
+                                                @*<a href="javascript:;" class="input-group-addon btn red fileinput-exists contact_removeDiv" data-dismiss="fileinput"> Remove </a>*@
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <!--Upload Button-->
+                            <div class="form-group">
+                                <div class="col-md-9 col-md-offset-1">
+                                    <div id="contact_listDiv" class="CRMDocumentDisplay">
+                                    </div>
+                                </div>
+                                @*<div class="col-md-2">
+                                        <button class="btn green" id="contact_upload">Upload</button>
+                                    </div>*@
+                                <div class="col-md-2">
+                                    @*<a style="font-size:16px;color:#d26464;" class="clseditlnk" onclick="OpenCRMUploadDocumentPopup()">Edit</a>*@
+                                    <a class="btn green clruploadedit" id="contact_crm_UploadDocument1" onclick="OpenCRMUploadDocumentPopup()" style="margin-left:-7px;">Upload/Edit</a>
+                                </div>
+                            </div>
+
+                            <!-- Lead Status -->
+                            <div class="form-group">
+                                <input type="checkbox" name="service" class="i - checks control-label col-md-1 aawork checkboxcontactinfo_accountworkbook" id="checkboxcontactinfo_accountworkbook" />
+                                <div class="col-md-2" style="padding-left:0px;padding-right:0px;">
+                                    <label for="select_accountanalysisbook" class="">Account Analysis</label>
+                                </div>
+                                <input type="checkbox" name="service" class="i - checks control-label col-md-1 aawork checkboxcontactinfo_BidSheetbook" id="checkboxcontactinfo_BidSheetbook" />
+                                <div class="col-md-1" style="padding-left: 0px;padding-right: 0px;">
+                                    <label for="select_BidSheetbook" class="">Bid Sheet</label>
+                                </div>
+                                <input type="checkbox" name="service" class="i - checks control-label col-md-1 aawork checkboxcontactinfo_Cleaningbook" id="checkboxcontactinfo_Cleaningbook" />
+                                <div class="col-md-2" style="padding-left:0px;padding-right:0px;">
+                                    <label for="select_Cleaningbook" class="">Cleaning Schedule</label>
+                                </div>
+                            </div>
+
+                            <h5 class="form-section sbold uppercase"><b>PD Appointment:</b></h5>
+
+                            <!--Meeting Person-->
+                            <div class="form-group">
+                                <label for="input_meetwith" class="control-label col-md-4">Meeting Person<span class="required">*</span>:</label>
+                                <div class="col-md-4">
+                                    <input id="input_bidding_meetwith" name="name" type="text" data-required="1" class="form-control input-sm clsbiddingconper" placeholder="" />
+                                </div>
+                                <div class="col-md-2" style="padding-left:0px;width:130px;">
+                                    <input type="checkbox" id="chkbiddingmeetingper1" class="clssamebiddingmeetingper" /> Same as Contact
+                                </div>
+                            </div>
+
+                            <!--Contact Phone-->
+                            <div class="form-group">
+                                <label for="input_contactphone" class="control-label col-md-4">Contact Phone<span class="required">*</span>:</label>
+                                <div class="col-md-4">
+                                    <input id="input_bidding_contactphone" name="name" type="text" data-required="1" class="form-control input-sm clsbiddingconphone" placeholder="" />
+                                </div>
+                            </div>
+
+                            <!--Contact Email-->
+                            <div class="form-group">
+                                <label for="input_contactemail" class="control-label col-md-4">Contact Email<span class="required">*</span>:</label>
+                                <div class="col-md-4">
+                                    <input id="input_bidding_contactemail" name="email" type="text" data-required="1" class="form-control input-sm clsbiddingconemail" placeholder="" />
+                                </div>
+                            </div>
+
+                            <!--Start Date/Time-->
+                            <div class="form-group">
+                                <label for="schedule_start" class="control-label col-md-4">Start Date/Time<span class="required">*</span>:</label>
+                                <div class="col-md-6">
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control input-group input-group-sm input-sm date date-picker input_bid_startdate" data-date-format="mm/dd/yyyy" id="input_bidding_schedulestartdate" style="margin-left:-12px;" />
+                                    </div>
+                                    <!--Start Time-->
+                                    <div class="col-md-6" style="margin-left:-26px;">
+                                        <div class="input-icon">
+                                            <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                                            <input type="text" class="form-control input-group input-group-sm input-sm  timepicker input_bid_starttime" id="input_bidding_schedulestarttime">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--End Date/Time-->
+                            <div class="form-group">
+                                <label for="schedule_start" class="control-label col-md-4">End Date/Time<span class="required">*</span>:</label>
+                                <div class="col-md-6">
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control input-group input-group-sm input-sm date date-picker input_bid_enddate"  data-date-format="mm/dd/yyyy" id="input_bidding_scheduleenddate" style="margin-left:-12px;" />
+                                    </div>
+                                    <!--End Time-->
+                                    <div class="col-md-6" style="margin-left:-26px;">
+                                        <div class="input-icon">
+                                            <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                                            <input type="text" class="form-control input-group input-group-sm input-sm  timepicker input_bid_endtime" id="input_bidding_scheduleendtime" value="" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="callback_purpose" class="control-label col-md-4">Purpose:</label>
+                                <div class="col-md-4">
+                                    <select id="select_Biddingcontactinfo_Biddingpurpose" class="form-control input-sm select_bid_purpose">
+                                        <option value="">Select</option>
+                                        <option value="1">Call Back</option>
+                                        <option value="2">Proposal Delivery</option>
+                                        <option value="3">Proposal Follow-Up</option>
+                                        <option value="4">Contract Sign</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <!-- Monthly Price -->
+                            <div class="form-group">
+                                <label for="input_monthlyprice" class="control-label col-md-4">Monthly Price<span class="required">*</span>:</label>
+                                <div class="col-md-4">
+                                    <input id="input_monthlyprice" onKeyUp="ContactValueKeyPress()"  type="text" data-required="1" class="form-control input-sm input_monthlyprice" placeholder="" />
+                                </div>
+                            </div>
+
+                            <!--Bid Price over 10K ?-->
+                            @*<div class="form-group" style="margin-top:5px;">
+                                    <label for="select_providertype" class="control-label col-md-4">Bid Price over 10K ?<span class="required">*</span>:</label>
+                                    <div class="col-md-8">
+                                        <div class="col-md-2">
+                                            <label class="check-inline" style="margin-top: 6px;">
+                                                <input type="radio" name="membership" value="1" class="i-checks" id="contactinfo_yes_bidover" />
+                                                <span>Yes</span>
+                                            </label>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <label class="check-inline" style="margin-top: 6px; margin-left:0px;">
+                                                <input type="radio" name="membership" value="0" class="i-checks" id="contactinfo_no_bidover" />
+                                                <span>No</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>*@
+
+                            <!-- Price Approved -->
+                            <div class="form-group">
+                                <label for="select_priceapproved" class="control-label col-md-4">Price Approved<span class="required">*</span>:</label>
+                                <div class="col-md-4">
+                                    <select id="select_priceapproved" class="form-control input-sm select_priceapproved" >
+                                        <option value="">Select</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Include IC/EW Price -->
+                            <div class="form-group">
+                                <label for="input_icprice" class="control-label col-md-4">Include IC/EW Price<span class="required">*</span>:</label>
+                                <div class="col-md-4">
+                                    <input id="input_icewprice"  type="text" data-required="1" class="form-control input-sm input_includeicprice" placeholder="" />
+                                </div>
+                            </div>
+
+                            <h5 class="form-section sbold uppercase"><b>@JKCRMResource.note:</b></h5>
+                            <!-- Note -->
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    @Html.TextArea("note", "", new { @class = "form-control autosizeme textarea_bidnote", rows = "10", style = "font-size: 11px", @id = "text_bidgeneralnote" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <div class="row" id="bid_summary_action">
+                                <div class="col-md-3 pull-right">
+                                    <button  type="button" class="btn green btn-block" onclick="validBiddingDetail();">@CommonResource.btnSave</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,787 @@
+﻿@model JKApi.Service.AccountReceivable.InvoiceDetailViewModel
+
+
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+    </style>
+}
+
+@{
+    if (Model.InvoiceDetail == null)
+    {
+        Model.InvoiceDetail = new JKApi.Service.AccountReceivable.vw_InvoiceDetailViewModel();
+    }
+}
+<div class="modal fade custom-model custom-form-design" id="modal_invoicedetail" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:800px">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;" data-dismiss="modal"></button>
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Invoice Detail
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px 20px 15px 20px;">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="col-md-2">Invoice:</div>
+                        <div class="col-md-3" style="padding:5px;background-color:#e8e8e8;font-weight:bold;text-align:center;">@Html.DisplayFor(one => one.InvoiceDetail.InvoiceNo)</div>
+                    </div>
+                    @*<div class="col-md-4"><h4><b>Customer: @Html.DisplayFor(one => one.InvoiceDetail.Customer)</b></h4></div>*@
+                    <div class="col-md-6 text-right" style="padding-top: 4px;">
+                        <div class="col-md-3 pull-right text-left" style="padding:5px;background-color:#e8e8e8;font-weight:bold;text-align:center;">@Convert.ToDateTime(Model.InvoiceDetail.InvoiceDate).ToString("MM/dd/yyyy")</div>
+                        <div class="col-md-3 pull-right" style="padding:5px;">Invoice Date:</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="custom-form portlet light" style="max-width:400px;margin: 0px auto;min-height: 100px;">
+                            <div class="headerbox">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        &nbsp;&nbsp;&nbsp;&nbsp; Customer #: @Html.DisplayFor(one => one.InvoiceDetail.CustomerNo)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="portlet-body form" style="border:1px solid #e7ecf1;">
+                                <div class="form-body">
+                                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.InvoiceDetail.Customer)</div>
+                                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.InvoiceDetail.Address1),@Html.DisplayFor(one => one.InvoiceDetail.Address2)</div>
+                                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.InvoiceDetail.City), @Html.DisplayFor(one => one.InvoiceDetail.State) @Html.DisplayFor(one => one.InvoiceDetail.PostalCode)</div>
+                                    <div class="row" style="padding: 3px;margin: 0;">@(Model.InvoiceDetail.Phone != null && Model.InvoiceDetail.Phone != "" ? String.Format("{0: (###) ###-####}", long.Parse(Model.InvoiceDetail.Phone)) : "")</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        <div class="custom-form portlet light" style="max-width:400px;margin: 0px auto;min-height: 100px;">
+                            <div class="headerbox">
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        &nbsp;&nbsp;&nbsp;&nbsp; Bill To
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="portlet-body form" style="border:1px solid #e7ecf1;">
+                                <div class="form-body">
+
+                                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.InvoiceDetail.B_Name)</div>
+                                    @*<div class="row" style="padding: 0;margin: 0;">Attn: @Html.DisplayFor(one => one.InvoiceDetail.B_Attention)</div>*@
+                                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.InvoiceDetail.B_Address1),@Html.DisplayFor(one => one.InvoiceDetail.B_Address2)</div>
+                                    <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.InvoiceDetail.B_City), @Html.DisplayFor(one => one.InvoiceDetail.B_State) @Html.DisplayFor(one => one.InvoiceDetail.B_PostalCode)</div>
+                                    @*<div class="row" style="padding: 0;margin: 0;">@(Model.InvoiceDetail.B_Phone != null ? String.Format("{0: (###) ###-####}", long.Parse(Model.InvoiceDetail.B_Phone)) : "")</div>*@
+                                    <div class="row" style="padding: 0;margin: 0;">
+                                        @(Model.InvoiceRegion.Phone != null ? String.Format("{0: (###) ###-####}", long.Parse(Model.InvoiceRegion.Phone.ToString().Trim())) : "")
+                                    </div>
+
+                                    @*<div class="row" style="padding: 0;margin: 0;">@Html.DisplayFor(one => one.InvoiceRegion.Displayname)</div>
+                                        <div class="row" style="padding: 0;margin: 0;">@Html.DisplayFor(one => one.InvoiceRegion.Address)</div>
+                                        <div class="row" style="padding: 0;margin: 0;">@Html.DisplayFor(one => one.InvoiceRegion.City), @Html.DisplayFor(one => one.InvoiceRegion.State) @Html.DisplayFor(one => one.InvoiceRegion.PostalCode)</div>
+                                        <div class="row" style="padding: 0;margin: 0;">
+                                            @(Model.InvoiceRegion.Phone != null ? String.Format("{0: (###) ###-####}", long.Parse(Model.InvoiceRegion.Phone.ToString().Trim())) : "")
+                                        </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                        <tr>
+                            <th style="width:100px;text-align:center;">Invoice Date</th>
+                            <th style="width:100px;text-align:center;">Due Date</th>
+                            <th style="text-align:center;">Description</th>
+                            <th style="width:100px;text-align:center;">PO Number</th>
+                            <th style="width:130px;text-align:center;">Franchisee Bill</th>
+                        </tr>
+                        <tr>
+                            <td style="text-align:center;">@Convert.ToDateTime(Model.InvoiceDetail.InvoiceDate).ToString("MM/dd/yyyy")</td>
+                            <td style="text-align:center;">@(Model.InvoiceDetail.DueDate != null ? Convert.ToDateTime(Model.InvoiceDetail.DueDate).ToString("MM/dd/yyyy") : "")</td>
+
+                            <td style="white-space:pre-line;text-align:center;">@Html.DisplayFor(one => one.InvoiceDetail.Message)</td>
+                            <td style="text-align:center;">@Html.DisplayFor(one => one.InvoiceDetail.PurchaseOrderNo)</td>
+                            <td style="text-align:center;">
+                                <a onclick="btnFranchiseeBillingDetailPopup(@Model.BillingPayId)">@Model.FranchiseeBill</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="row">
+                    <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                        <tr>
+
+                            <th style="width:50px;text-align:center">QTY</th>
+                            <th style="text-align:center;">Detail</th>
+                            <th style="width:100px;text-align:center">Unit Price</th>
+                            <th style="width:120px;text-align:center">Extended Price</th>
+                            <th style="width:100px;text-align:center">Tax</th>
+                            <th style="width:100px;text-align:center">Total</th>
+                        </tr>
+                        @foreach (var item in Model.InvoiceDetailItems)
+                        {
+                            <tr>
+                                <td style="text-align:center">@item.Quantity</td>
+                                <td style="white-space:pre-line">@item.Description</td>
+                                <td style="text-align:right">@string.Format("{0:N}", item.UnitPrice)</td>
+                                <td style="text-align:right">@string.Format("{0:N}", item.ExtendedPrice)</td>
+                                <td style="text-align:right">@string.Format("{0:N}", item.TAXAmount) </td>
+                                <td style="text-align:right">@string.Format("{0:N}", item.Total) </td>
+                            </tr>
+                        }
+
+                        <tr>
+                            <td style="text-align:right" colspan="2"> </td>
+                            <td style="text-align:right"> <b>TOTAL </b></td>
+                            <td style="text-align:right"><b>@string.Format("{0:c}", Model.InvoiceDetailItems.Select(s => s.ExtendedPrice).Sum())</b></td>
+                            <td style="text-align:right"><b>@string.Format("{0:c}", Model.InvoiceDetailItems.Select(s => s.TAXAmount).Sum())</b> </td>
+                            <td style="text-align:right"><b>@string.Format("{0:c}", Model.InvoiceDetailItems.Select(s => s.Total).Sum()) </b></td>
+                        </tr>
+                    </table>
+                </div>
+                @if (!String.IsNullOrEmpty(Model.InvoiceDetail.InvoiceMessage))
+                {
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="row" style="padding: 3px;margin: 0;"><b>CPI Message: &nbsp;@Html.DisplayFor(one => one.InvoiceDetail.InvoiceMessage) </b></div>
+                            <div class="row" style="padding: 3px;margin: 0;"></div>
+                            <div class="row" style="padding: 3px;margin: 0;"></div>
+                        </div>
+                        <div class="col-md-4">
+                        </div>
+                        <div class="col-md-4">
+                        </div>
+
+                    </div>
+                }
+                @*<div class="row">
+                        <div class="col-md-4" style="border:1px solid #e7ecf1;">
+                            <div class="row" style="padding: 3px;margin: 0;"><b>REMIT TO: &nbsp;@Html.DisplayFor(one => one.InvoiceRegion.Displayname) </b></div>
+                            <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.InvoiceRegion.Address)</div>
+                            <div class="row" style="padding: 3px;margin: 0;">@Html.DisplayFor(one => one.InvoiceRegion.City), @Html.DisplayFor(one => one.InvoiceRegion.State) @Html.DisplayFor(one => one.InvoiceRegion.PostalCode)</div>
+                        </div>
+                        <div class="col-md-4">
+                        </div>
+                        <div class="col-md-4">
+                        </div>
+
+                    </div>*@
+                @{
+                    decimal Balance = 0;// (decimal)Model.InvoiceDetailItems.Select(s => s.Total).Sum();
+                    decimal BalanceF = 0;// (decimal)Model.InvoiceDetailItems.Select(s => s.Total).Sum();
+                }
+
+                <br />
+                <div class="row" style="display:@(Model.MasterTrxTypeListId!=5?"none":"block")">
+                    <div class="col-md-7">
+                    </div>
+                    <div class="col-md-3"></div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-primary pull-right" onclick="onClickRevertInvoice(@Model.InvoiceDetail.InvoiceId)">
+                            Revert Invoice
+                        </button>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                        <tr>
+                            <th colspan="8" style="text-align:center;background: #3598dc;color: #FFF !important;">CUSTOMER TRANSACTION HISTORY</th>
+                        </tr>
+                        <tr>
+                            <th style="width:62px;text-align:center">Date</th>
+                            <th style="text-align:center;width:80px;">TRX Type</th>
+                            <th style="width:80px;text-align:center">Customer No</th>
+                            <th style="text-align:center;width:100px;">Customer Name</th>
+                            <th style="width:100px;text-align:center">TRX Number</th>
+                            <th style="width:120px;text-align:center">Description</th>
+                            <th style="width:70px;text-align:center">Amount</th>
+                            <th style="width:100px;text-align:center">Invoice Balance</th>
+                        </tr>
+
+
+                        @foreach (var item in Model.lstInvoiceTransactionHistory.Where(o => o.TypeListId == 1).ToList().OrderBy(G => G.TransactionDate).ThenBy(F => F.MasterTrxTypeListId))
+
+                        {
+                            //if (item.MasterTrxTypeListId == 1 || item.MasterTrxTypeListId == 5)
+                            //{
+                            //    Balance = item.Amount;
+                            //}
+                            //else
+                            //{
+                            //    Balance = Balance + item.Amount;
+                            //}
+                            if (item.AmountTypeListId == 1)
+                            {
+                                Balance = Balance - item.Amount;
+                            }
+                            else
+                            {
+                                Balance = Balance + (item.Amount);
+                            }
+
+                            //if (item.TransactionTypeId == 1 || item.TransactionTypeId == 5)
+                            //{
+                            //    Balance = item.Amount;
+                            //}
+                            //else
+                            //{
+                            //    Balance = Balance + item.Amount;
+                            //}
+
+                            <tr>
+                                <td style="text-align:center">@Convert.ToDateTime(item.TransactionDate).ToString("MM/dd/yyyy")</td>
+                                <td style="white-space:pre-line">@item.MasterTrxTypeListName</td>
+                                <td style="white-space:pre-line">@item.CustomerNo</td>
+                                <td style="white-space:pre-line">@item.CustomerName</td>
+                                <td style="text-align:center">
+                                    @if (item.MasterTrxTypeListId == (int)JKApi.Business.Enumeration.MasterTrxTypeList.CustomerPayment)
+                                    {
+                                        <a onclick="btnOpenPaymentDetail(@item.RefId)" data-dismiss="modal">@item.TransactionNumber</a>
+                                    }
+                                    else if (item.MasterTrxTypeListId == (int)JKApi.Business.Enumeration.MasterTrxTypeList.CustomerCredit)
+                                    {
+                                        <a onclick="btnOpenCusCreditDetail(@item.RefId)" data-dismiss="modal">@item.TransactionNumber</a>
+                                    }
+                                    else
+                                    {
+                                        @item.TransactionNumber
+                                    }
+                                </td>
+                                <td style="text-align:left">@item.Description</td>
+                                <td style="text-align:right">
+
+                                    @if (item.AmountTypeListId == 1)
+                                    {
+                                        <span style="color:red">($@string.Format("{0:N}", Math.Abs(item.Amount)))</span>
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            @string.Format("{0:c}", Math.Abs(item.Amount))
+                                        </span>
+                                    }
+
+                                </td>
+                                <td style="text-align:right">
+                                    @if (Balance < 0)
+                                    {
+                                        <span style="color:red">($@string.Format("{0:N}", Math.Abs(Balance)))</span>
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            $@string.Format("{0:N}", Balance)
+                                        </span>
+                                        @*@string.Format("{0:N}", Balance)*@
+                                    }
+
+                                </td>
+                            </tr>
+
+                        }
+
+                    </table>
+                </div>
+                <hr />
+                <div class="row" id="divFranchiseeTrxHistory" style="display:none;">
+                    <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                        <tr>
+                            <th colspan="9" style="text-align:center;background: #3598dc;color: #FFF !important;">FRANCHISEE TRANSACTION HISTORY</th>
+                        </tr>
+
+                        @foreach (var itemF in Model.FranchiseeBillingDetails.ToList())
+                        {
+                            <tr>
+                                <th style="width:75px;text-align:center">Franchisee No</th>
+                                <th colspan="4" style="text-align:center;width:100px;">Franchisee Name</th>
+                                <th style="width:90px;text-align:center">Contract Amount</th>
+                                <th style="width:80px;text-align:center">Contract Date</th>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">@itemF.FranchiseeNo</td>
+                                <td colspan="4" style="text-align:left">@itemF.FranchiseeName</td>
+                                <td style="text-align:right">$@string.Format("{0:N}", itemF.ContractAmount)</td>
+                                <td style="text-align:center">@Convert.ToDateTime(itemF.ContractDate).ToString("MM/dd/yyyy")</td>
+                            </tr>
+                            <tr>
+                                <th style="width:75px;text-align:center">Date</th>
+                                <th style="text-align:center;width:100px;">TRX Type</th>
+                                <th style="width:90px;text-align:center">TRX Number</th>
+                                <th style="width:120px;text-align:center">Description</th>
+                                <th style="width:90px;text-align:center">Extended Amount</th>
+                                <th style="width:90px;text-align:center">Total Fee</th>
+                                <th style="width:90px;text-align:center">Amount</th>
+                            </tr>
+                            foreach (var item in Model.lstInvoiceTransactionHistory.Where(o => o.TypeListId == 2 && o.ClassId == itemF.FranchiseeId).ToList())
+                            {
+                                if (item.AmountTypeListId == 2)
+                                {
+                                    item.Amount = item.Amount * -1;
+                                }
+
+                                if (item.MasterTrxTypeListId == 4 || item.MasterTrxTypeListId == 6)
+                                {
+                                    BalanceF = item.Amount;
+                                }
+                                else
+                                {
+                                    BalanceF = BalanceF + item.Amount;
+                                }
+
+                                <tr>
+                                    <td style="text-align:center">@Convert.ToDateTime(item.TransactionDate).ToString("MM/dd/yyyy")</td>
+                                    <td style="white-space:pre-line">@item.MasterTrxTypeListName</td>
+                                    <td style="text-align:center">
+                                        @if (item.MasterTrxTypeListId == (int)JKApi.Business.Enumeration.MasterTrxTypeList.CustomerPayment)
+                                        {
+                                            <a onclick="btnOpenPaymentDetail(@item.RefId)" data-dismiss="modal">@item.TransactionNumber</a>
+                                        }
+                                        else if (item.MasterTrxTypeListId == (int)JKApi.Business.Enumeration.MasterTrxTypeList.CustomerCredit)
+                                        {
+                                            <a onclick="btnOpenCusCreditDetail(@item.RefId)" data-dismiss="modal">@item.TransactionNumber</a>
+                                        }
+                                        else
+                                        {
+                                            @item.TransactionNumber
+                                        }
+                                    </td>
+                                    <td style="text-align:left">@item.Description</td>
+                                    <td style="text-align:right">
+
+                                        @*@if (item.AmountTypeListId == 2)
+                                            {
+                                                <span style="color:red">($@string.Format("{0:N}", Math.Abs(item.ExtendedPrice)))</span>
+                                            }
+                                            else
+                                            {*@
+                                        <span>
+                                            @string.Format("{0:c}", Math.Abs(item.ExtendedPrice))
+                                        </span>
+                                        @*}*@
+
+                                    </td>
+                                    <td style="text-align:right">
+                                        <span style="color:red">($@string.Format("{0:N}", Math.Abs(item.TotalTax)))</span>
+                                    </td>
+                                    <td style="text-align:right">
+                                        @*@if (BalanceF < 0)
+                                            {
+                                                <span style="color:red">($@string.Format("{0:N}", BalanceF))</span>
+                                            }
+                                            else
+                                            {*@
+                                        <span>
+                                            $@string.Format("{0:N}", Math.Abs(item.Amount))
+                                        </span>
+                                        @*@string.Format("{0:N}", Balance)*@
+                                        @*}*@
+
+                                    </td>
+                                </tr>
+
+                            }
+
+
+
+
+
+
+                        }
+
+
+
+
+
+
+
+                    </table>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-7">
+                    </div>
+                    <div class="col-md-3"></div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-primary pull-right" onclick="onClickFranchiseeTRX()">
+                            Franchisee TRX History
+                        </button>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-5">
+                        <button type="button" class="btn btn-primary button-next" style="margin-right:10px;" onclick="DetailInvoiceListPrint()">Print <i class="fa fa-print"></i></button>
+                        <button type="submit" class="btn btn-primary button-next" style="margin-right:10px;" onclick="DetailInvoiceListExportPDF()">Export <i class="fa fa-download"></i></button>
+                        <button type="button" class="btn btn-primary button-next" style="margin-right:10px;" onclick="DetailInvoiceListSendEmail()">Email <i class="fa fa-envelope"></i></button>
+
+                        @*<button type="button" class="btn btn-primary button-next" id="btnPrintModel" onclick="ExportPDFForm()">
+                                Print
+                                <i class="fa fa-print"></i>
+                            </button>*@
+                    </div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-2 col-md-offset-5">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">
+                            Close
+                            <i class="fa fa-close"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="modal fade custom-model custom-form-design" id="modal_invoicedetailEmail" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:600px">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Email
+                </h4>
+            </div>
+
+
+            <div class="modal-body" style="padding: 0px 30px 15px 30px;">
+                <div class="row">
+                    <label class="control-label col-md-2">From</label>
+                    <div class="col-md-10">
+                        <input type="text" id="invdetail_txtfromemail" name="invdetail_txtfromemail" class="form-control input-sm" value="" />
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="control-label col-md-2">To</label>
+                    <div class="col-md-10">
+                        <input type="text" id="invdetail_txttoemail" name="invdetail_txttoemail" class="form-control input-sm" value="@(ViewBag.CustBillingEmail != null ? ViewBag.CustBillingEmail :string.Empty )" />
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="control-label col-md-2">CC</label>
+                    <div class="col-md-10">
+                        <input type="text" id="invdetail_txtccemail" name="invdetail_txtccemail" class="form-control input-sm" value="" />
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="control-label col-md-2">Subject</label>
+                    <div class="col-md-10">
+                        <input type="text" id="invdetail_txtsubjectemail" name="invdetail_txtsubjectemail" class="form-control input-sm" value="Invoice #: @Html.DisplayFor(one => one.InvoiceDetail.InvoiceNo)" />
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="control-label col-md-2">Email Body</label>
+                    <div class="col-md-10">
+                        <textarea rows="5" id="invdetail_txtemailbodyemail" name="invdetail_txtemailbodyemail" class="form-control input-sm"></textarea>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <label class="control-label col-md-2">Email Body</label>
+                    <div class="col-md-10">
+                        <span>
+                            To open the attached pdf, You need the free Adobe Reader software which can be here <a javascript:void(0);>Adobe</a>
+                        </span>
+                        <hr />
+                        <p>
+                            This email is intended for the party listed in the 'Sold To' field of the attached invoice. Delivery of this email to anyone other than the party to which is was intended is unintentional. In the event this email was misdirected to a party other that the intended party, please notify the sender destroy this email.
+                        </p>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-7"></div>
+                    <div class="col-md-5">
+                        <button type="button" id="invdetail_btnsendemail" class="btn btn-primary button-next pull-right" onclick="invdetail_sendemail()">Send&nbsp;<i class="fa fa-floppy-o"></i></button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="form-horizontal" id="form_paymentlist"></div>
+<div class="form-horizontal" id="form_CusCreditDetails"></div>
+<div class="form-horizontal" id="form_FranchiseeBillingDetailpopup"></div>
+
+@section scripts{
+    <script>
+        $(document).on('click', '#btnClosemodel', function () {
+            $("#modal_invoicedetail").modal('hide');
+        });
+
+    </script>
+}
+    <script type="text/javascript">
+
+    function onClickFranchiseeTRX() {
+        $("#divFranchiseeTrxHistory").toggle();
+    }
+
+        function onClickRevertInvoice(invId) {
+
+            swal({
+                title: "Are you sure?",
+                text: "This function will delete the invoice, do you want to delete this invoice?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Yes",
+                cancelButtonText: "No",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        var sURL = '@Url.Action("InvoiceRevertStatus", "AccountReceivable", new { area = "Portal" })?id=' +invId;
+                        $.ajax({
+                            type: "GET",
+                            url: sURL,
+                            contentType: "application/json; charset=utf-8",
+                            datatype: "json",
+                            success: function (data) {
+                                if (data.status == 'Success') {
+                                    swal("Deleted!", "The selected invoice had deleted.", "success");
+                                    location.reload();
+                                    window.location.href = "/Portal/AccountReceivable/GenerateInvoice";
+                                } else {
+                                    swal("", "The Credit/Payment TRX has associated with selected invoice and cannot be deleted. Please contact system admin.", "warning");
+                                }
+                            },
+                            error: function () {
+                                alert("Content load failed.");
+                            }
+                        });
+
+                    } else {
+                        swal("Cancelled", "Your invoice is safe :)", "error");
+                    }
+                });
+
+    }
+
+
+    function invdetail_sendemail() {
+
+        var txFromEmail = $("#invdetail_txtfromemail").val();
+        var txToEmail = $("#invdetail_txttoemail").val();
+        var txCCEmail = $("#invdetail_txtccemail").val();
+        var txSubjectEmail = $("#invdetail_txtsubjectemail").val();
+        var txBodyEmail = $("#invdetail_txtemailbodyemail").val();
+        var txInvoiceId = @Model.InvoiceDetail.InvoiceId;
+        var sURL = '@Url.Action("InvoiceListSendEmailPopup", "AccountReceivable", new { area = "Portal" })?InvoiceId=' + @Model.InvoiceDetail.InvoiceId+'&FromEmail=' + txFromEmail+'&ToEmail=' + txToEmail+'&CCEmail=' + txCCEmail+'&SubjectEmail=' + txSubjectEmail+'&BodyEmail=' + txBodyEmail;
+        $.ajax({
+            type: "GET",
+            url: encodeURI(sURL),
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                console.log(data);
+                $("#modal_invoicedetailEmail").modal('hide');
+            },
+            error: function () {
+                alert("Content load failed.");
+            }
+        });
+
+        $("#invdetail_txtfromemail").val('');
+        $("#invdetail_txttoemail").val('');
+        $("#invdetail_txtccemail").val('');
+        $("#invdetail_txtsubjectemail").val('');
+        $("#invdetail_txtemailbodyemail").val('');
+        $("#modal_invoicedetailEmail").modal('hide');
+    }
+
+    function DetailInvoiceListExportPDF() {
+        window.location.href = '@Url.Action("InvoiceListExportPDF")' + "?InvoiceIds=" + @Model.InvoiceDetail.InvoiceId;
+    }
+
+    function DetailInvoiceListSendEmail() {
+        var sURL = '@Url.Action("GetEmailsforSendEmail", "AccountReceivable", new { area = "Portal" })?CustomerId=' + @Model.InvoiceDetail.CustomerId;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                var obj = $.parseJSON(data);
+                console.log(obj);
+                $("#invdetail_txtfromemail").val(obj.FromEmail);
+                $("#invdetail_txtccemail").val(obj.CCEmail);
+                $("#modal_invoicedetailEmail").modal('show');
+            },
+            error: function () {
+                alert("Content load failed.");
+            }
+        });
+    }
+
+
+    function DetailInvoiceListPrint() {
+
+        var _cINVID = @(!string.IsNullOrEmpty(Model.InvoiceDetail.ConsolidatedInvoiceId.ToString()) ? Model.InvoiceDetail.ConsolidatedInvoiceId:0);
+        if (_cINVID > 0) {
+            var sURL = '@Url.Action("ConsolidatedInvoiceListPrint", "AccountReceivable", new { area = "Portal" })?ConsolidatedInvoiceIds=' + @(!string.IsNullOrEmpty(Model.InvoiceDetail.ConsolidatedInvoiceId.ToString()) ? Model.InvoiceDetail.ConsolidatedInvoiceId:0);
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    var tUrl = data;
+                    printJS({ printable: document.location.origin + tUrl, type: 'pdf', showModal: false });
+
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        } else {
+            var sURL = '@Url.Action("InvoiceListPrint", "AccountReceivable", new { area = "Portal" })?InvoiceIds=' + @Model.InvoiceDetail.InvoiceId;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    var tUrl = data;
+                    printJS({ printable: document.location.origin + tUrl, type: 'pdf', showModal: false });
+
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+
+    }
+    function btnOpenPaymentDetail(strNo) {
+
+        $.blockUI();
+
+        var sURL = '@Url.Action("PaymentDetailPopup", "AccountReceivable", new { area = "Portal" })?paymentId=' + strNo;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#form_paymentlist').html(data);
+                $("#modal_paymentdetail").modal({ backdrop: 'static' });
+                $('.modal-dialog').draggable();
+                $.unblockUI();
+            },
+            error: function () {
+                $.unblockUI();
+                alert("Content load failed.");
+            }
+        });
+
+        //if (id == 2) {
+        //    $("#modal_invoicedetailconsolidated").modal({ backdrop: 'static' });
+        //}
+        //else {
+        //    $("#modal_invoicedetail").modal({ backdrop: 'static' });
+        //}
+    }
+    function btnOpenCusCreditDetail(id) {
+
+        var sURL = '@Url.Action("CustomerCreditDetailPopup", "AccountReceivable", new { area = "Portal" })?Id=' + id;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#form_CusCreditDetails').html(data);
+                $("#modal_CusCreditDetail").modal({ backdrop: 'static' });
+                $('.modal-dialog').draggable();
+            },
+            error: function () {
+                alert("Content load failed.");
+            }
+        });
+
+
+    }
+    function btnFranchiseeBillingDetailPopup(id) {
+
+        var sURL = '@Url.Action("FranchiseeBillingDetailPopup", "AccountsPayable", new { area = "Portal" })?Id=' + id;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#form_FranchiseeBillingDetailpopup').html(data);
+                $("#modal_FranchiseeBillingDetail").modal({ backdrop: 'static' });
+                $("#modal_FranchiseeBillingDetail").draggable();
+            },
+            error: function () {
+                alert("Content load failed.");
+            }
+        });
+    };
+
+    </script>

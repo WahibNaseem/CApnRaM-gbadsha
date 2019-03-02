@@ -1,0 +1,198 @@
+﻿@model JKViewModels.Franchisee.LeaseBillDetailViewModel
+
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+    </style>
+}
+<div class="modal fade custom-model custom-form-design" id="modal_LeaseBillReportDetail" tabindex="-1" role="basic" aria-hidden="true" style="display: none;" draggable>
+    <div class="modal-dialog" style="width:800px">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;" onclick="btnLeaseDetailPopupClose()"></button>
+                <h4 class="modal-title" style="text-align:center;margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    LEASE MONTHLY BILL DETAIL
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px 10px 15px 10px;">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="custom-form portlet light" style="max-width:400px;margin: 0px auto;padding:0;min-height: 100px;">
+                            <div class="headerbox">
+                                <div class="row" style="text-align:center;">
+                                    FRANCHISEE
+                                </div>
+                            </div>
+                            <div class="portlet-body form" style="border:1px solid #e7ecf1;">
+                                <div class="form-body">
+                                    <div class="row" style="padding: 3px;margin: 0;">Number : @Html.DisplayFor(one => one.FranchiseeNo)</div>
+                                    <div class="row" style="padding: 3px;margin: 0;">Name: @Html.DisplayFor(one => one.FranchiseeName)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <td class="text-right">Transaction No.</td>
+                                    <td class="text-center"><span>@Html.DisplayFor(one => one.TransactionNumber)</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">Billing Date</td>
+                                    <td class="text-center"><span>@Html.DisplayFor(one => one.Dateformat)</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">Status</td>
+                                    <td class="text-center"><span>@Html.DisplayFor(one => one.TransactionStatus)</span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-8">
+
+                        <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                            <tr>
+                                <th style="width:110px;text-align:center;">Make</th>
+                                <th style="width:100px;text-align:center;">Model</th>
+                                <th style="text-align:center;">Lease Description</th>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center;">@Html.DisplayFor(one => one.Make)</td>
+                                <td style="text-align:center;">@Html.DisplayFor(one => one.Model)</td>
+                                <td style="white-space:pre-line;text-align:center;">@Html.DisplayFor(one => one.Description)</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                        <tr>
+
+                            <th style="width:110px;text-align:center">Lease Contract #</th>
+                            <th style="width:50px;text-align:center;">Date</th>
+                            <th style="width:80px;text-align:center">Payment #</th>
+                            <th style="width:120px;text-align:center">Description</th>
+                            <th style="width:70px;text-align:center">Amount</th>
+                            <th style="width:50px;text-align:center">Tax</th>
+                            <th style="width:100px;text-align:center">Total Amount</th>
+                        </tr>
+                        <tr>
+                            <td style="text-align:center">@Html.DisplayFor(one => one.LeaseNumber)</td>
+                            <td style="text-align:center">@Html.DisplayFor(one => one.Dateformat)</td>
+                            <td style="text-align:center">@Html.DisplayFor(one => one.PaymentNumber)</td>
+                            <td style="text-align:center">@Html.DisplayFor(one => one.DetailDescription)</td>
+                            <td style="text-align:right">$@Html.DisplayFor(one => one.PaymentAmount)</td>
+                            <td style="text-align:right">$@Html.DisplayFor(one => one.TaxAmount)</td>
+                            <td style="text-align:right">$@Html.DisplayFor(one => one.Total)</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 text-right">
+                        NOTE:
+                    </div>
+                    <div class="col-md-9 text-right">
+                        <textarea class = "form-control input-sm", rows = "3"></textarea>
+                        @*@Html.TextArea("", new { @class = "form-control input-sm", rows = "3" })*@
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-5">
+                        <button type="button" class="btn btn-primary button-next" style="margin-right:10px;" onclick="LeaseDetailPrint('+ @Model.TransactionNumber +')">Print <i class="fa fa-print"></i></button>
+                        @*<button type="submit" class="btn btn-primary button-next" style="margin-right:10px;" onclick="">Export <i class="fa fa-download"></i></button>
+                        <button type="button" class="btn btn-primary button-next" style="margin-right:10px;" onclick="">Email <i class="fa fa-envelope"></i></button>*@
+                    </div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-5">
+                        <button type="button" class="btn btn-primary button-next  pull-right" onclick="btnLeaseDetailPopupClose()">
+                            Close
+                            <i class="fa fa-close"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function LeaseDetailPrint(TrNo) {
+        console.log(TrNo);
+       
+        var sURL = '@Url.Action("LeaseBillReportDetailPrint", "Franchise", new { area = "Portal" })?TrNo=' + encodeURI(TrNo);
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                var tUrl = data;
+                printJS({ printable: document.location.origin + tUrl, type: 'pdf', showModal: false });                
+            },
+            error: function () {
+                alert("Content load failed.");
+            }
+        });
+
+    }
+</script>

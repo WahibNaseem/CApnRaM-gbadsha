@@ -1,0 +1,319 @@
+﻿@{
+    ViewBag.Title = "Payment Group";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    /*list-style: none;
+    padding: 5px;
+    border-bottom: 1px solid #e8e8e8;*/
+</style>
+@using (Html.BeginForm("PaymentGroup", "Administration", FormMethod.Post, new { @id = "form_PaymentGroup", @role = "form", @class = "form form-horizontal" }))
+{
+    <div class="custom-form portlet light">
+        <div class="headerbox">
+            <div class="row">
+                <div class="col-md-4">
+                    Payment Group
+                </div>
+            </div>
+        </div>
+        <div class="portlet-body form">
+            <div class="form-body">
+                <div class="form-group">
+                    <div class="col-md-2 col-md-offset-2" style="text-align:right;">
+                        <label>Payment Group Name:<span class="required">*</span></label>
+                    </div>
+                    <div class="col-md-4">
+                        <input name="txtPaymentGroupName" id="txtPaymentGroupName" type="text" required autocomplete="off" value="" class="form-control input-sm" />
+                    </div>
+                    <div class="col-md-2"></div>
+                </div>
+                 
+                <div class="form-group" id="divCustomerChildSelected">
+                    <div class="col-md-2 col-md-offset-2" style="text-align:right;">
+                        <label>Selected Customer:<span class="required">*</span></label>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" id="tblCustomerChildSelected">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align:center;width: 30px;"></th>
+                                        <th style="text-align:center;width: 100px;">Customer No</th>
+                                        <th style="text-align:center;">Customer Name</th>
+                                        @*<th style="text-align:center;width: 120px;">Status</th>
+                                        <th style="text-align:center;width: 150px;">Consolidated Invoice</th>*@
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-2"></div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-1 col-md-offset-7" style="text-align:right;">
+                        <input type="button" class="btn btn-primary button-next" value="Submit" id="btnSave" onclick="saveCustomerParentChildSetting()" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-4 col-md-offset-4">
+                        <div class="input-icon">
+                            <i class="icon-magnifier icon-align-right" style="margin-top: 7px;"></i>
+                            <input name="txtSearchCustomer" id="txtSearchCustomer" type="text" required autocomplete="off" placeholder="Search by Customer Name or Number" value="" class="form-control input-sm" />
+                        </div>
+                    </div>                    
+                </div>
+                <div class="form-group">
+                    <div class="col-md-4 col-md-offset-4">
+                            <table class="table table-striped table-bordered table-hover order-column" id="lstCustomer">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align:center;width: 10px;"></th>
+                                        <th style="text-align:center;width: 100px;">Customer No</th>
+                                        <th style="text-align:center;">Customer Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+    </div>
+
+}
+@section pageplugins{
+
+    @*<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js")" type="text/javascript"></script>*@
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+    <script src="~/Scripts/jquery-ui.js" type="text/javascript"></script>
+    <script src="~/Content/admin/assets/Card/dist/jquery.card.js"></script>
+    @if (Request.IsSecureConnection)
+    {
+        <script src="https://maps.google.com/maps/api/js?key=AIzaSyCrw533WZZijl0sItzXs-DjfyHMN5g4xD8" async defer></script>
+    }
+    else
+    {
+        <script src="http://maps.google.com/maps/api/js?key=AIzaSyCrw533WZZijl0sItzXs-DjfyHMN5g4xD8" async defer></script>
+    }
+
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/wow-alert-master/js/wow-alert.js")"></script>
+}
+@section scripts{
+    <script type="text/javascript">
+
+        var dtable =
+        $(document).ready(function () {
+            $('#select_Phone').inputmask("mask", {
+                "mask": "(999) 999-9999", removeMaskOnSubmit: true,
+            });
+                applyAutoSeacrh();
+
+
+
+
+            //$("#txtSearchCustomer").keyup(function () {
+            //    var table = $('#lstCustomer').dataTable();
+            //    table.search($(this).val()).draw();
+
+
+
+            //});
+
+            });
+        var selectedCustomer = [];
+        function checkCustomer(item) {
+            if ($(item).is(":checked")) {
+                selectedCustomer.push({ CustomerId: $(item).val()})
+            } else {
+                selectedCustomer = jQuery.grep(selectedCustomer, function (value) {
+                    return value.CustomerId != $(item).val();
+                });
+            }
+        }
+        function checkCustomer(item) {
+            if ($(item).is(":checked")) {
+
+                var value = {}
+
+                var CustomerId = $(item).val();
+                var Name = $('#hdfCustName_' + $(item).val()).val();
+                var CustomerNo = $('#hdfCustCustomerNo_' + $(item).val()).val();
+                //var StatusName = $('#hdfCustStatusName_' + $(item).val()).val();
+                //var StatusListId = $('#hdfCustStatusListId_' + $(item).val()).val();
+                //var ConsolidatedInvoice = $('#hdfCustConsolidatedInvoice_' + $(item).val()).val();
+
+                selectedCustomer.push({ CustomerId: CustomerId })
+
+                var _lstCustOS = $('#tblCustomerChildSelected tbody');
+                var _rowCUST = '<tr><td><input type="checkbox" checked relchkCustSelected="true" onchange="checkCustomer(this)" value="' + CustomerId + '" id="chkCustSelected_' + CustomerId + '" /></td><td style="text-align:center">' + $.trim(CustomerNo) + '</td><td>' + $.trim(Name) + '</td>'
+                // _rowCUST += '<td>' + $.trim(StatusName) + '</td><td style="text-align:center;">';
+                //_rowCUST += '<input type="checkbox" relConsolidated="true" value="' + CustomerId + '" id="chkCustSelectedConsolidated_' + CustomerId + '" ' + (ConsolidatedInvoice == 'true' ? "checked" : "") + ' /></td></tr>';
+                _rowCUST += '</td></tr>';
+                _lstCustOS.append(_rowCUST);
+
+            } else {
+
+                selectedCustomer = jQuery.grep(selectedCustomer, function (value) {
+                    return value.CustomerId != $(item).val();
+                });
+
+                var table = $("#lstCustomer").DataTable();
+                // Get all rows with search applied
+                var rows = table.rows().nodes();
+                $('#chkCust_' + $(item).val(), rows).prop('checked', false);
+                //var rowChild = $('#chkCust_' + $(item).val()).closest('tr');
+                $('#chkCustSelected_' + $(item).val()).closest('tr').remove();
+                $('#chkCust_' + $(item).val()).prop('checked', false);
+            }
+        }
+
+
+        function saveCustomerParentChildSetting() {
+
+            if (selectedCustomer.length >= 1 && $('#txtPaymentGroupName').val() != "") {
+                var _cIds = ''
+                selectedCustomer.forEach(function (item) {
+                    if (_cIds == '') {
+                        _cIds = item.CustomerId;
+                    } else {
+                        _cIds = _cIds + ',' + item.CustomerId;
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("PaymentGroup", "Administration", new { area = "Portal" })',
+                    data: { txtPaymentGroupName: $('#txtPaymentGroupName').val(), cCustomerId: _cIds },
+                    success: function (data) {
+                        //swal('Thanks')
+                        //swal("Payment group has been successfully created.");
+                        swal({
+                            title: "Success",
+                            text: "Payment group has been successfully created.",
+                            type: "success"
+                        },
+                        function() {
+                            window.location = '@Url.Action("PaymentGroup", "Administration", new { area = "Portal" })';
+                        });
+                        @*).then(function () {
+                            window.location = '@Url.Action("PaymentGroup", "Administration", new { area = "Portal" })';
+                        });
+                        location.reload();*@
+                    }
+                });
+
+            } else {
+                swal("Please enter Payment Group Name and customers.")
+            }
+
+        }
+
+        function applyAutoSeacrh() {
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetAllCustomerForSetting", "Administration", new { area = "Portal" })?isThirdParty=' + true + '&isAll=1',
+                data: {},
+                success: function (data) {
+
+                    //var typeaheadSource = [];
+                    //$.each(data.ParentCustomer, function (key, value) {
+                    //    typeaheadSource.push({ id: value.CustomerId, name: value.CustomerNo + ' ' + $.trim(value.Name) })
+                    //});
+
+
+
+                    var _lstCust = $('#lstCustomer tbody');
+                    _lstCust.html('');
+                    $.each(data.aadata, function (key, value) {
+                        //var _rowCUST = '<tr><td style="text-align:center;"><input type="checkbox" onchange="checkCustomer(this)" value="' + value.CustomerId + '" id="chkCust_' + value.CustomerId + '" /></td><td style="text-align:center">' + $.trim(value.CustomerNo) + '</td><td>' + $.trim(value.Name) + '</td></tr>';
+                        //_lstCust.append(_rowCUST)
+
+                        var _rowCUST = '<tr><td style="text-align:center;"><input type="checkbox" onchange="checkCustomer(this)" value="' + value.CustomerId + '" id="chkCust_' + value.CustomerId + '" /><input type="hidden" value="' + value.Name + '" id="hdfCustName_' + value.CustomerId + '" /><input type="hidden" value="' + value.CustomerNo + '" id="hdfCustCustomerNo_' + value.CustomerId + '" /> </td><td style="text-align:center">' + $.trim(value.CustomerNo) + '</td><td>' + $.trim(value.Name) + '</td></tr>';
+                        _lstCust.append(_rowCUST)
+
+                    });
+
+                    $('#lstCustomer').dataTable({
+                        "ordering": true,
+                        "bAutoWidth": false,
+                        "iDisplayLength": 100,
+                        "bDestroy": true,
+                        "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                        "aaSorting": [[1, "asc"]]
+                    });
+                    $("#txtSearchCustomer").on('keyup', function () {
+                        $('#lstCustomer').dataTable().fnFilter(this.value);
+                    });
+
+
+
+
+                    //var box = $('#txtParentCustomer').data('typeahead');
+                    //if (box != null) {
+                    //    //console.log('csearch source change');
+                    //    box.source = typeaheadSource;
+                    //}
+                    //else {
+                    //    console.log('csearch initiated');
+                    //    $('#txtParentCustomer').typeahead({
+                    //        source: typeaheadSource,
+                    //        updater: function (item) {
+                    //            //console.log(item);
+                    //            //redirect(item.id);
+                    //            $('#hdfParentCustomer').val(item.id)
+                    //            return item;
+                    //        },
+                    //        minLength: 1
+                    //    }).focus();
+                    //}
+
+                    //var boxC = $('#txtAddChildCustomer').data('typeahead');
+                    //if (boxC != null) {
+
+                    //    //console.log('csearch source change');
+                    //    boxC.source = typeaheadSourceC;
+                    //}
+                    //else {
+                    //    //console.log('csearch initiated');
+                    //    $('#txtAddChildCustomer').typeahead({
+                    //        source: typeaheadSourceC,
+                    //        updater: function (item) {
+                    //            //console.log(item);
+                    //            //redirect(item.id);
+                    //            $('#hdfAddChildCustomer').val(item.id)
+                    //            return item;
+                    //        },
+                    //        minLength: 1
+                    //    }).focus();
+                //    }
+                }
+            });
+        }
+
+        $("#txtAmount").inputmask("numeric", {
+            decimal: ".",
+            negative: false,
+            scale: 2,
+            groupSeparator: ",",
+            digits: 2,
+            autoGroup: true,
+            prefix: "$",
+            rightAlign: false,
+            autoUnmask: true,
+            removeMaskOnSubmit: true,
+        });
+    </script>
+}

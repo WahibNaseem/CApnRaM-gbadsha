@@ -1,0 +1,189 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/admin/assets/global/plugins/jstree/dist/themes/default/style.min.css" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript"></script>
+<link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script src="~/Content/admin/assets/global/plugins/jquery-multi-select/js/jquery.multi-select.js"></script>
+<script src="~/Scripts/multiselect.min.js"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+<div class="portlet box">
+    <div class="portlet-title text-center" style="background: #3da8c6;">
+        <div class="caption">
+            <b>Lead Re-Assign</b>
+        </div>
+        <div class="tools">
+            <a id="portlettoplist" href="javascript:;" class="collapse" data-original-title="" title=""> </a>
+        </div>
+    </div>
+    <div class="portlet-body" style="display: block;padding-left: 0px;padding-right: 0px;">
+        <div class="form-group">
+            <label for="select_servicetype" class="control-label col-md-2">Sales Person:</label>
+            <div class="col-md-4">
+                @Html.DropDownList("UserList", (SelectList)ViewBag.UserList, "Select Sales Person", new { @class = "form-control col-md-4 input-sm user-dropdown", @id = "ddlReAssignLeadUsers" })
+            </div>
+            <label for="select_billingfrequency" class="control-label col-md-2">Select Territory:</label>
+            <div class="col-md-4">
+                @Html.DropDownList("ddlTerritory", new SelectList(""), "Select Territory", new { @class = "form-control col-md-4 input-sm", @id = "ddlTerritory" })
+                @*<select id="ddlTerritory">
+                        <option value="Select">Select</option>
+                    </select>*@
+            </div>
+            <br />
+
+        </div>
+        <div class="form-group">
+            <div id="divLeadList">
+
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="submit" id="btnSave" class="btn green" style="display:none;">Save</button>
+        </div>
+    </div>
+</div>
+
+
+@section pageplugins{
+    @if (Request.IsSecureConnection)
+    {
+        <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    }
+    else
+    {
+        <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    }
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/chosen.css")" />
+    <script src="@Url.Content("~/Scripts/chosen.jquery.min.js")" type="text/javascript"></script>
+    <script src="~/Scripts/jquery.uniform.min.js"></script>
+
+}
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $(".chosen-select").chosen({ no_results_text: "Oops, nothing found!" });
+        $('#ddlReAssignLeadUsers').chosen({ width: '80px' });
+        $('#ddlTerritory').chosen({ width: '80px' });
+
+        function AjaxCall(url, data, type) {
+            return $.ajax({
+                url: url,
+                type: type ? type : 'GET',
+                data: data,
+                contentType: 'application/json'
+            });
+        }
+        function bindReAssignLeads() {
+
+            _userId = $('#ddlReAssignLeadUsers').val();
+            _territoryId = $('#ddlTerritory').val();
+            var obj = { UserId: _userId, TerritoryId: _territoryId };
+            AjaxCall('@Url.Action("ReAssignLeadsList", "CRMLeadCustomer")', obj, 'GET').done(function (response) {
+                if (response) {
+                    $('#divLeadList').html(response);
+                    if (response = "") {
+                        $("#btnSave").hide();
+                    } else
+                        $("#btnSave").show();
+
+                }
+            }).fail(function (error) {
+                $('#divLeadList').html('');
+                alert(error.StatusText);
+            });
+        }
+        $('#ddlReAssignLeadUsers').on("change", function () {
+            var UserId = $('#ddlReAssignLeadUsers').val();
+            var obj = { UserId: UserId };
+            AjaxCall('@Url.Action("GetTerritoriesByUser", "CRMLeadCustomer")', obj, 'GET').done(function (response) {
+                if (response) {
+                    $('#divLeadList').html('');
+                    if (response.length > 0) {
+                        $('#ddlTerritory').html('');
+                        var options = '';
+                        for (var i = 0; i < response.length; i++) {
+                            options += '<option value="' + response[i].CRM_TerritoryId + '">' + response[i].Name + '</option>';
+                        }
+                        $('#ddlTerritory').append(options).trigger("chosen:updated");
+                        bindReAssignLeads();
+                    } else {
+                        $("#btnSave").hide();
+                    }
+                } else {
+                    $("#btnSave").hide();
+                }
+            }).fail(function (error) {
+                $('#divLeadList').html('');
+                $('#ddlTerritory').html('');
+                $("#btnSave").hide();
+                alert(error.StatusText);
+            });
+        });
+
+        $('#ddlTerritory').on("change", function () {
+            bindReAssignLeads();
+        });
+        $('#btnSave').on('click', function () {
+            var lstlead = [];
+            var isSalesGroup = false;
+            var salesgroupId = '';
+            $("#tblcall tr.item").each(function () {
+                var obj = {};
+
+                var salesperson = $(this).find("select.user-dropdown").val(),
+                    comments = $(this).find("textarea.comments").val(),
+                    salespersongroup = $(this).find("select.user-dropdowngroup").val(),
+                    leadId = $(this).find(".leadvalue").text();
+
+                if (isSalesGroup) {
+                    obj = { "AssigneeId": salesgroupId, "Comments": comments, "LeadId": leadId };
+                    lstlead.push(obj);
+                    return;
+                }
+
+                if (salespersongroup != "" && salespersongroup != null && salespersongroup != undefined) {
+                    obj = { "AssigneeId": salespersongroup, "Comments": comments, "LeadId": leadId };
+                    lstlead.push(obj);
+                    isSalesGroup = true;
+                    salesgroupId = salespersongroup;
+                } else if (salesperson != "" && salesperson != null && salesperson != undefined) {
+                    obj = { "AssigneeId": salesperson, "Comments": comments, "LeadId": leadId };
+                    lstlead.push(obj);
+                } else if (comments != "" && comments != null && comments != undefined) {
+                    obj = { "AssigneeId": salesperson, "Comments": comments, "LeadId": leadId };
+                    lstlead.push(obj);
+                }
+            });
+            console.log(lstlead);
+            if (lstlead.length > 0) {
+                $.ajax({
+                    url: '@Url.Action("LeadReAssign_Save", "CRMLeadCustomer")',
+                    type: 'POST',
+                    data: JSON.stringify(lstlead),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data == 'sucess') {
+                            alert("Lead Assigned Successfull");
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>

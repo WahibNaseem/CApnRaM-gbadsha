@@ -1,0 +1,210 @@
+﻿@model JKViewModels.UserLoginViewModel
+
+@{
+    ViewBag.Title = @JK.Resources.JKHomeResource.titleLginPage;
+    Layout = "~/Areas/JKControl/Views/Shared/_LayoutLogin.cshtml";
+}
+<style>
+    /* .wrapper { */
+    /*     padding-left: 15px; */
+    /*     padding-right: 15px; */
+    /* } */
+</style>
+
+@using (Html.BeginForm("Login", "User", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "login-form", @id = "frmLogin" }))
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-lg-12">
+                <div class="ccol-md-4 col-lg-2 col-lg-offset-5 col-md-offset-4 col-sm-7 col-sm-offset-2">
+                        <img src="@Url.Content("~/Content/admin/assets/layouts/layout2/img/jani-king-logo-sm.png")"class="img-responsive jklogo" />
+                </div>
+                <div class="col-md-4 col-lg-5 col-sm-4"></div>
+            </div>
+        </div>        
+        <div class="custom-form">
+            <div class="form-body">
+                <div class="form-group">                    
+                </div>
+            @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+            {
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4">
+                            <span style="color: red">@Model.ErrorMessage</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            }
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-lg-12">
+                    <div class="col-lg-2 col-md-4 col-sm-5 col-lg-offset-5 col-md-offset-4 col-sm-offset-3">
+                        @Html.TextBoxFor(m => m.Username, new {@id = "txtLogin", @class = "form-control input-sm", @autocomplete = "off", @placeholder = @JK.Resources.JKHomeResource.lblUsername, @name = "username"})
+                        @*<input type="text" class="form-control input-sm" placeholder="User Name" />*@
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-lg-12">
+                    <div class="col-md-4 col-lg-2 col-lg-offset-5 col-md-offset-4 col-sm-5 col-sm-offset-3">@Html.PasswordFor(m => m.Password, new {@id = "txtPassword", @maxlength = "20", @class = "form-control input-sm", @autocomplete = "off", @placeholder = @JK.Resources.JKHomeResource.lblPassword, @name = "password"})</div>
+                </div>
+                </div>
+             </div>            
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-lg-12">
+                        <div class="col-md-4 col-lg-2 col-lg-offset-5 col-md-offset-4 col-sm-5 col-sm-offset-3">@Html.CheckBoxFor(m => m.RememberMe) Remember Me <span class="pull-right"> <a href="javascript:;" id="forgetpassword"  onclick="ForgetPassword()" data-toggle="modal"><small><u>Forgot Password?</u></small></a></span></div>
+            </div>
+            </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-4"></div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 text-center"><input type="submit" value="Login" class="btn btn-circle btn-primary btn-lg" id="btnlogin"/></div>
+                    <div class="col-lg-4 col-md-4 col-sm-4"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-lg-4 col-md-4"></div>
+                    <div class="col-lg-4 col-md-4 small text-center"><span>*By logging in you agree to all terms and conditions.</span></div>
+                    <div class="col-lg-4 col-md-4"></div>
+                </div>
+            </div>
+                <hr>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-lg-4 col-md-4"></div>
+                    <div class="col-lg-4 col-md-4 small text-center copyright_label_login"><span>Copyright © 2017-@DateTime.Today.Year Jani-King International, Inc. <br>All rights reserved.<br />FMS Version @ViewContext.Controller.GetType().Assembly.GetName().Version<br/><br/></span></div>
+                    <div class="col-lg-4 col-md-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @* <div class="row" style="background: #3598dc;color: white;"> *@
+    @*     <div class="col-md-2"></div> *@
+    @*     <div class="col-md-8"> *@
+    @*         <div class="row"> *@
+    @*             <div class="col-md-12 small text-center " style="padding:0px;padding-top:15px;padding-bottom:15px;"> *@
+    @*             Copyright © 2017-@DateTime.Today.Year Jani-King International, Inc. <br>All rights reserved.<br />FMS Version @ViewContext.Controller.GetType().Assembly.GetName().Version<br/><br/> *@
+    @*             </div> *@
+    @*             <div class="col-md-2"></div> *@
+    @*         </div> *@
+    @*     </div> *@
+    @*     <div class="col-md-4"></div> *@
+    @* </div> *@
+    </div>
+    
+    
+}
+
+<div id="ForgetModal" class="modal fade custom-model  in" role="dialog" aria-hidden="true" style="padding-top:90px;">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title" style="margin-top: 0px;margin-bottom: 4px;padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Forgot Password
+                </h4>
+            </div>
+            <div class="modal-body" id="modalresetRegBody">
+                <div class="row">
+                    <div class="form-horizontal">
+                        <form id="regresetForm" method="post">
+                            <div class="form-body-outer">
+                                <div class="form-group col-lg-12">
+                                    <label class="control-label col-sm-4 font-sm"><span style="white-space:nowrap;">User:</span></label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control font-sm input-sm" id="txtResetuser" name="txtResetFranchiseNo" placeholder="Enter User Name" required>
+                                    </div>
+                                </div>
+                                <div class="form-group col-lg-12">
+                                    <label class="col-sm-4 control-label font-sm">Region:</label>
+                                    <div class="col-sm-7">
+                                        @if (ViewBag.regionlist != null)
+                                        {
+                                            <select class="form-control input-sm" id="ddResetRegionList">
+                                                @foreach (var item in (SelectList)ViewBag.regionlist)
+                                                {
+                                                    <option value="@item.Value">@item.Text</option>
+                                                }
+                                            </select>
+                                        }
+
+                                    </div>
+                                </div>
+                                <div class="form-group col-lg-12">
+                                    <label class="control-label col-sm-4 font-sm"><span style="white-space:nowrap;">Email:</span></label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control input-sm" placeholder="Email" id="txtResetEmail" />
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-11 text-right">
+                    <button type="button" class="btn green" id="btnPassReset">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        function ForgetPassword() {
+            $('#ForgetModal').modal('show');
+        }
+
+        $('#btnPassReset').click(function () {
+            var btnCount = 1;
+            $("#btnPassReset").val(btnCount);
+            VerfyUserForReset(btnCount);
+        });
+
+        function VerfyUserForReset(count) {
+            var form = $('#regresetForm');
+            var error = $('.alert-danger', form);
+            var success = $('.alert-success', form);
+            var errCount = 0;
+            if ($('#txtResetuser').val() == '') { $('#txtResetuser').css('border-color', 'red'); errCount += 1; } else { $('#txtResetuser').css('border-color', ''); }
+            if ($('#ddResetRegionList').val() == '') { $('#ddResetRegionList').css('border-color', 'red'); errCount += 1; } else { $('#ddResetRegionList').css('border-color', ''); }
+            if ($('#txtResetEmail').val() == '') { $('#txtResetEmail').css('border-color', 'red'); errCount += 1; } else { $('#txtResetEmail').css('border-color', ''); }
+            if (errCount == 0) {
+                CheckUserInfo();
+            }
+        }
+
+        function CheckUserInfo() {
+            var user = $('#txtResetuser').val(),
+                rid = $('#ddResetRegionList').val(),
+                email = $('#txtResetEmail').val();
+            $.ajax({
+                url: "/JKControl/User/ResetUserInfo?user=" + user + ";" + rid + ";" + email,
+                type: "GET",
+                dataType: "json",
+                cache: false,
+                success: function (response) {
+                    $('#ForgetModal').modal('hide');
+                    $('#txtResetuser').val('');
+                    $('#txtResetEmail').val('');
+                    if (response == -1) {
+                        swal("error", "Please try again.", "error")
+                    }
+                    else if (response == 1) {
+                        swal("Success", "Forget Password Request send successfully.", "success")
+                    }
+                }
+            })
+        }
+    </script>
+    }

@@ -1,0 +1,81 @@
+﻿@{
+    ViewBag.Title = "Contract Detail Description";
+    Layout = null;
+    decimal AmountTot = 0;
+}
+
+
+@model List<JKViewModels.Customer.ContractDetailViewModel>
+
+<!-- BEGIN SAMPLE TABLE PORTLET-->
+<div class="portlet box">
+
+    <button type="button" class="btn red dropdown-toggle pull-right subsectionBtn" onclick="AddContractDetailDescription(0)" >
+        <i class="fa fa-plus"></i>&nbsp;<span class="hidden-sm hidden-xs">Add Contract Detail</span>
+    </button>
+    <div class="portlet-body flip-scroll">
+        <table class="table table-bordered table-striped table-condensed flip-content" id="generalCustomerList">
+            <thead class="flip-content">
+                <tr>
+                    <th width="10%;" style="text-align:center;">Line No </th>
+                    <th width="25%" style="text-align:center;">Type</th>
+                    <th width="20%" style="text-align:center;">Description</th>
+                    <th width="10%" style="text-align:center;">Amount</th>
+                    @*<th width="10%">Fee</th>*@
+                    <th width="10%" style="text-align:center;">CPI</th>
+                    <th width="10%" style="text-align:center;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Count() > 0)
+                {
+                    foreach (var item in Model)
+                    {
+                        AmountTot = AmountTot + (item.Amount.HasValue ? item.Amount.Value : 0);
+                        <tr>
+                            <td style="text-align:center;">@item.LineNumber</td>
+                            <td>@item.ServiceTypeName</td>
+                            <td>@item.Description</td>
+                            <td class="clsamt" style="text-align:right;">@string.Format("{0:c}", item.Amount)</td>
+                            @*<td>@item.SubjectToFees </td>*@
+                            <td style="text-align:center;">
+                                @if(item.CPIIncrease == true)
+                            {
+                                <text>Yes</text>
+                            }
+                            else
+                            { <text>No</text>}
+                        </td>
+                        <td class="numeric">
+                            <a class="clsedtitm" javascript:void(0);><i onclick="AddContractDetailDescription(@item.ContractDetailId)" class="fa fa-2x fa-edit"></i></a>
+                            <a class="clsdelitem"><i onclick="RemoveContractDetail(@item.ContractDetailId,@item.ContractId)" class="fa fa-2x fa-remove"></i></a>
+                        </td>
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <input type="hidden" id="hdnContractCount" value="@Model.Count()" />
+        <input type="hidden" id="hdnTotAmount" value="@AmountTot" />
+    </div>
+</div>
+<!-- END SAMPLE TABLE PORTLET-->
+<script> 
+
+    jQuery(document).ready(function () {
+        //if ($("#hdncallfrom") != null && $("#hdncallfrom").val() != "0" && ($("#hdncallfrom").val() =="1" || $("#hdncallfrom").val() == "38" )) {
+        //    $(".subsectionBtn").hide();            
+        //    $(".clsdelitem").hide();
+        //    $(".clsedtitm").hide();
+        //    //$(".clsedtitm").css("pointer-events", "none");
+        //}
+        if($("#hdncallfrom").val() != "-1")
+        {
+            $(".subsectionBtn").hide();            
+            $(".clsdelitem").hide();
+            $(".clsedtitm").hide();
+            //$(".clsedtitm").css("pointer-events", "none");
+        }
+
+    });
+</script>

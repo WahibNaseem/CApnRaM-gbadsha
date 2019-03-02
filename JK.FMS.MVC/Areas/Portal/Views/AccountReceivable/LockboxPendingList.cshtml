@@ -1,0 +1,284 @@
+﻿@model IEnumerable<JKViewModels.AccountReceivable.LockboxPendingViewModel>
+
+@{
+    ViewBag.Title = "Account Receivable Invoice List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+
+    <style type="text/css">
+        table.dataTable thead .sorting {
+            background-image: none;
+        }
+
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+            display: table-cell;
+            min-width: 105px;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+            display: table-cell;
+            min-width: 90px;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+            display: table-cell;
+            min-width: 100px;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+            display: table-cell;
+            min-width: 96px;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .page-size {
+            padding-left: 0;
+            padding-right: 0;
+            width: 62px;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        #invoiceList th {
+            vertical-align: middle;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .no-margin {
+            margin: 0;
+        }
+
+        .padding-tb1 {
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        .margin-tb1 {
+            margin-top: 1px;
+            margin-bottom: 1px;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        #divfranchiseList .headerbox {
+            text-transform: none;
+            font-weight: normal;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        #modal_RegionModel .modal-content {
+            width: 55% !important;
+            margin-left: 30% !important;
+        }
+
+
+        #invoiceList thead th{
+            font-size: 11px !important;
+            text-transform: uppercase;
+            padding: 5px !important;
+        }
+
+        #invoiceList tbody td {
+            font-size: 11px !important;
+            text-transform: uppercase;
+            padding: 5px !important;
+        }
+    </style>
+}
+<div class="headerbox">
+    <div class="row" style="background-color: #3598DC;color: #fff; margin: 0;">
+        <div class="col-md-12 no-padding">
+            <div class="alignCenter">
+                <div class="col-md-4" style="text-align:right;">
+                </div>
+                <div class="col-md-4 topheader">
+                    Lockbox In-Process List
+                </div>
+                <div class="col-md-2 pull-right" style="padding-right:5px;">
+                    <div style="display:table-cell;padding-right: 5px;">
+
+                    </div>
+                    <div style="display:table-cell;width:100%;">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="tablebox">
+    <div class="row padding-tb1">
+        <div class="row no-padding">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" id="invoiceList" style="margin-top:0 !important;">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center;width:80px;">
+                                Region
+                            </th>
+                            <th style="text-align:center;width:80px;">
+                                Lockbox Number
+                            </th>                           
+                            <th style="text-align:center;width:80px;">
+                                Lockbox Date
+                            </th>
+                            <th style="text-align:center;">
+                                Lockbox File Name
+                            </th>
+                            <th style="text-align:center;width:120px;">
+                                Matched Amount
+                            </th>
+                            <th style="text-align:center;width:130px;">
+                                Unmatched Amount
+                            </th>
+                            <th style="text-align:center;width:120px;">
+                                Lockbox Amount
+                            </th>
+                            <th style="text-align:center;width:80px;">
+                                Upload Date
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @item.RegionName
+                                </td>
+                                <td style="text-align:center;">
+                                    <a href="@Url.Action("LockboxDetail","AccountReceivable",new { area="portal"})?id=@item.LockboxId" >@item.LockboxNumber</a>
+                                </td>
+                               
+                                <td>
+                                    @item.YYMMDD.Substring(2, 2)/@item.YYMMDD.Substring(4, 2)/@(20+ item.YYMMDD.Substring(0, 2))
+                                </td>
+                                <td>
+                                    @item.LockboxFileName
+                                </td>
+                                <td style="text-align:right;">
+                                   @string.Format("{0:c}", item.MatchedAmount)
+                                </td>
+                                <td style="text-align:right;">
+                                    @string.Format("{0:c}", item.UnmatchedAmount)
+                                </td>
+                                <td style="text-align:right;">
+                                    @string.Format("{0:c}", item.LockboxAmount)
+                                </td>
+                                <td>
+                                    @item.LockboxDate.ToString("MM/dd/yyyy")
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+        });
+
+    </script>
+}

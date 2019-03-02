@@ -1,0 +1,956 @@
+﻿
+@{
+    ViewBag.Title = "FranchiseeManualTransactionsList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+    <style>
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .row {
+            margin: 0;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+            padding-right: 10px;
+            padding-left: 40px;
+        }
+    </style>
+
+
+}
+<div class="form-horizontal">
+    <div class="custom-form portlet light">
+        <div class="headerbox">
+            <div class="row" style="background-color: #3598DC;color: #fff;">
+                <div class="col-md-12 no-padding">
+                    <div class="alignCenter">
+                        <div class="col-md-2" style="text-align:right;">
+                            <select id="select_all_transaction" class="form-control input-sm">
+                                <option value="1">All Transactions</option>
+                                <option value="2">Option 1</option>
+                                <option value="2">Option 2</option>
+                                <option value="2">Option 3</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2" style="text-align:right;"></div>
+                        <div class="col-md-4 topheader">
+                            Franchisee Manual Transactions List
+                        </div>
+                        <div class="col-md-4" style="padding-right:5px;">
+                            <div class="col-md-7 pull-right no-padding">
+                                <div style="display:table-cell;padding-right: 5px;text-transform:none">
+                                    Region
+                                </div>
+                                <div style="display:table-cell;width:100%;">
+                                    @if (ViewBag.RegionList != null)
+                                    {
+                                        <select class="form-control input-sm" id="regionlist" multiple="multiple" style="display:none;">
+                                            @foreach (var item in (SelectList)ViewBag.RegionList)
+                                            {
+                                                <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                            }
+                                        </select>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="portlet-body form">
+            <div class="row no-padding" style="background:#3598dc;margin-left:0px;margin-right:0px;padding-top: 5px;padding-bottom: 5px;margin-top: 2px;">
+                <div class="col-sm-1 page-size">
+                    <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                        <option value="-1">All</option>
+                        <option value="100" selected>100</option>
+                        <option value="50">50</option>
+                        <option value="25">25</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <div class="input-icon">
+                        <i class="icon-magnifier icon-align-right" style="margin-top: 7px;"></i>
+                        <input type="text" placeholder="Search..." class="form-control input-sm search-field col-md-4" id="input_Search" />
+                    </div>
+                    <div id="container">
+                    </div>
+                </div>
+                <div class="col-md-5 pull-right no-padding">
+                    <div class="col-md-8 pull-right no-padding" style="text-align:center;">
+                        <div class="col-md-6 no-padding" style="margin-left:0px;">
+                            <select id="select_timeduration" class="form-control input-sm">
+                                <option value="1">This Week</option>
+                                <option value="2">This Week-to-date</option>
+                                <option value="3" selected="selected">This Month</option>
+                                <option value="4">This Month-to-date</option>
+                                <option value="5">This Quarter</option>
+                                <option value="6">This Quarter-to-date</option>
+                                <option value="7">This Fiscal Year</option>
+                                <option value="8">This Fiscal Year-to-date</option>
+                                <option value="9">Today</option>
+                                <option value="10">Yesterday</option>
+                                <option value="11">Last Week</option>
+                                <option value="12">Last Month</option>
+                                <option value="13">Last Quarter</option>
+                                <option value="14">Last Year</option>
+                                <option value="15">Custom Date</option>
+                                <option value="16">Period</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 no-padding" style="margin-top: 3px; margin-left: 0px; display: block; float: right;color: white;" id="divspandate">
+                            <span id="spnStartDate">08/01/2017</span> - <span id="spnEndtDate">08/31/2017</span>
+                        </div>
+                        <div class="col-md-3 no-padding" style="display:none;" id="divSD">
+                            <input type="text" name="txtStartDate" id="txtStartDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                        </div>
+                        <div class="col-md-3 no-padding" style="display:none;" id="divED">
+                            <input type="text" name="txtEndtDate" id="txtEndtDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                        </div>
+                        <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divmonth">
+                            <select id="monthlist" class="form-control input-sm">
+                                <option value=""></option>
+                                <option value="1">Jan</option>
+                                <option value="2">Feb</option>
+                                <option value="3">Mar</option>
+                                <option value="4">Apr</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">Aug</option>
+                                <option value="9">Sep</option>
+                                <option value="10">Oct</option>
+                                <option value="11">Nov</option>
+                                <option value="12">Dec</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 no-padding" style="margin-left: 3px; width: 70px; display: none;" id="divyear">
+                            <select class="form-control input-sm" id="yearlist" style="padding-left: 2px;">
+                                <option value=""></option>
+                                <option value="2018">2018</option>
+                                <option value="2017">2017</option>
+                                <option value="2016">2016</option>
+                                <option value="2015">2015</option>
+                                <option value="2014">2014</option>
+                                <option value="2013">2013</option>
+                                <option value="2012">2012</option>
+                                <option value="2011">2011</option>
+                                <option value="2010">2010</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+
+                    <hr style="margin-top: 1px;margin-bottom: 8px;" />
+
+                    <div class="row" style="margin-top: -15px;">
+                        <div class="col-md-12" style="padding-left:0px;padding-right:0px;">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover order-column" id="tblFranchiseeManualTransaction">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:20px;text-align:center;">
+                                                Region
+                                            </th>
+                                            @*<th style="text-align:center;width:100px;">
+                                                    Franchise No
+                                                </th>
+                                                <th style="text-align:left;width:260px;">
+                                                    Franchise Name
+                                                </th>*@
+                                            <th style="width:50px;text-align:center;">
+                                                TRX Type
+                                            </th>
+                                            <th style="width:70px;text-align:center;">
+                                                TRX Date
+                                            </th>
+                                            <th style="width:70px;text-align:center;">
+                                                Number
+                                            </th>
+                                            <th style="width:240px;text-align:left;">
+                                                Description
+                                            </th>
+                                            <th style="text-align:center;width:40px;">
+                                                Amount
+                                            </th>
+                                            <th style="text-align:center;width:30px;">
+                                                Tax
+                                            </th>
+                                            <th style="text-align:center;width:50px;">
+                                                Fees
+                                            </th>
+                                            <th style="text-align:center;width:50px;">
+                                                Total TRX Amount
+                                            </th>
+                                            <th style="text-align:center;width:30px;">
+                                                Status
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                    @*<tfoot>
+                                            <tr>
+                                                <td colspan="7" class="text-right" style="background: #1182a4;color: white;font-size: 12px;">Totals</td>
+                                                <td class="text-right" style="background: #1182a4;color: white;font-size: 12px;"><span id="spnTotalAmountTA"></span></td>
+                                                <td class="text-right" style="background: #1182a4;color: white;font-size: 12px;"></td>
+                                                <td class="text-right" style="background: #1182a4;color: white;font-size: 12px;"><span id="spnTotalFee"></span></td>
+                                                <td class="text-right" style="background: #1182a4;color: white;font-size: 12px;"><span id="spnTotalTrx"></span></td>
+                                                <td style="background: #1182a4;color: white;font-size: 12px;"></td>
+                                            </tr>
+                                        </tfoot>*@
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-horizontal" id="form_FMTDetail"></div>
+<div class="modal fade in" id="modal_EditManualTransaction" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <input type="hidden" name="modal_EditManualTransaction_CallForm" id="modal_EditManualTransaction_CallForm" value="FMTL" />
+    <div class="modal-dialog modal-lg" id="Render_EditManualTransaction" style="width: 1168px;">
+    </div>
+</div>
+@section pageplugins{
+
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    @*<script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>*@
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+}
+@section scripts{
+    <script>
+
+        runWhenReady();
+        var table;
+        var _monthVal = $('#monthlist').val();
+        var _yearVal = $('#yearlist').val();
+        function runWhenReady() {
+            if (window.$)
+                onReady();
+            else
+                setTimeout(runWhenReady, 100);
+        }
+        function onReady() {
+
+            $('#select_timeduration').change(function () {
+                applyDurationFilter(parseInt($(this).val()));
+            });
+
+
+        }
+
+
+        jQuery(document).ready(function () {
+            //initTable();
+
+            applyDurationFilter(3);
+            $("#btnRegion").click(function () {
+                if ($("#selectregionlist").val() != "") {
+                    $("#regionlist option[value='" + $("#selectregionlist").val() + "']").attr("selected", 1);
+                    $("#regionlist").multiselect("refresh");
+                    //initTable();
+                    initTableload();
+                    $(".close").click();
+                }
+            });
+
+            $("#regionlist").multiselect({
+                includeSelectAllOption: true,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2,
+                onChange: initTable,
+                onSelectAll: initTable,
+                onDeselectAll: initTable
+            });
+
+            $('#txtStartDate').change(function () {
+                $("#spnStartDate").text($(this).val())
+                var spnStartDate = $("#spnStartDate").text();
+                var spnEndDate = $("#spnEndtDate").text();
+                if (spnStartDate && spnEndDate) {
+                    //initTable();
+                    initTableload();
+                }
+            });
+            $('#txtEndtDate').change(function () {
+                $("#spnEndtDate").text($(this).val())
+                var spnStartDate = $("#spnStartDate").text();
+                var spnEndDate = $("#spnEndtDate").text();
+                if (spnStartDate && spnEndDate) {
+                    //initTable();
+                    initTableload();
+                }
+            });
+
+            $("#input_Search").keyup(function () {
+                if ($(this).val() != '') {
+                    $("#tblFranchiseeManualTransaction tbody>tr").hide()
+                    $("#tblFranchiseeManualTransaction tbody>tr[relcusn*='" + $(this).val().toUpperCase() + "']").show()
+                } else {
+                    $("#tblFranchiseeManualTransaction tbody>tr").show()
+                }
+
+            });
+
+            $('#monthlist').change(function () {
+                //$('#spnStartDate').html('');
+                if ($('#monthlist').val() != '' && $('#yearlist').val() != '')
+                    initTableload();
+            });
+            $('#yearlist').change(function () {
+                //$('#spnEndtDate').html('');
+                if ($('#monthlist').val() != '' && $('#yearlist').val() != '')
+                    initTableload();
+            });
+            var _monthVal = "0";
+            var _yearVal = "0";
+            initTableload();
+        });
+
+
+        var leasereportList;
+
+
+
+        function getFinderFeeLink() {
+            var _monthVal = $('#monthlist').val();
+            var _yearVal = $('#yearlist').val();
+            var _searchtext = $("#input_Search").val();
+            var _startDate = $('#spnStartDate').text();
+            var _endDate = $('#spnEndtDate').text();
+            var r = $('#regionlist').val();
+            return '@Url.Action("FranchiseeManualTransactionsListDataWithSearch", "Franchise", new { area = "Portal" })?&searchtext=' + _searchtext + '&startDate=' + _startDate + '&endDate=' + _endDate + '&RegionIds=' + (r == null ? '' : r) + '&month=' + _monthVal + '&year=' + _yearVal;
+        }
+
+
+        function initTable() {
+            //var ps = $('#pageSize').val();
+            //table = $('#tblFranchiseeManualTransaction').DataTable({
+            //    "bAutoWidth": false,
+            //    cache: false,
+            //    //"order": true,
+            //    "iDisplayLength": ps == '-1' ? 25 : ps,
+            //    "bDestroy": true,
+            //    "iDisplayLength": $('#pageSize').val() == -1 ? 25 : $('#pageSize').val(),
+            //    "bLengthChange": false,
+            //    "aLengthMenu": [[5, 7, 10, 25, 50, -1], [5, 7, 10, 25, 50, "All"]],
+            //    "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+            //    "aaSorting": [[0, "desc"]],
+            //    "sAjaxSource": getFinderFeeLink(),
+            //    "sAjaxDataProp": "FranisessData",
+            //    "rowCallback": function (nRow, data) { },
+            //    "aoColumns": [
+            //      {
+            //            "sName": "Region",
+            //            "bSortable": true,
+            //            "sClass": "alignCenter",
+            //            "mRender": function (data, type, full) {
+            //                return full.Region;
+            //            }
+            //        },
+            //        {
+            //            "sName": "FranchiseeNo",
+            //            "bSortable": true,
+            //            "sClass": "alignCenter",
+            //            "mRender": function (data, type, full) {
+            //                return full.FranchiseeNo;
+            //            }
+            //        },
+            //        {
+            //            "sName": "FranchiseeName",
+            //            "bSortable": true,
+            //            "sClass": "alignCenter",
+            //            "mRender": function (data, type, full) {
+            //                return full.Name;
+            //            }
+            //        },
+            //        {
+            //            "sName": "TrxType",
+            //            "bSortable": true,
+            //            "sClass": "alignCenter",
+            //            "mRender": function (data, type, full) {
+            //                return full.TrxType;
+            //            }
+            //        },
+            //        {
+            //            "sName": "TrxDate",
+            //            "bSortable": true,
+            //            "sClass": "alignCenter",
+            //            "mRender": function (data, type, full) {
+            //                return full.TrxDate;
+            //            }
+            //        },
+            //        {
+            //            "sName": "Number",
+            //            "bSortable": true,
+            //            "sClass": "alignCenter",
+            //            "mRender": function (data, type, full) {
+            //                //return full.Number;
+            //                return '<a onclick="showFMTDetail(\'' + full.Number + '\')">' + full.Number + '</a>'
+            //            }
+            //        },
+            //        {
+            //            "sName": "Description",
+            //            "bSortable": true,
+            //            "sClass": "alignCenter",
+            //            "mRender": function (data, type, full) {
+            //                return full.Description;
+            //            }
+            //        },
+            //        {
+            //            "sName": "ExtendedPrice",
+            //            "bSortable": true,
+            //            "sClass": "alignRight",
+            //            "mRender": function (data, type, full) {
+            //                return '<span style="float: right;" class="clsExtendedAmount">$' + full.ExtendedPrice + '</span>';
+            //            }
+            //        },
+            //        {
+            //            "sName": "Tax",
+            //            "bSortable": true,
+            //            "sClass": "alignRight",
+            //            "mRender": function (data, type, full) {
+            //                return '$'+full.Tax;
+            //            }
+            //        },
+            //        {
+            //            "sName": "Fees",
+            //            "bSortable": true,
+            //            "sClass": "alignRight",
+            //            "mRender": function (data, type, full) {
+            //                return '<span style="float: right;" class="clsFeesAmount">$' + full.Fees + '</span>';
+            //            }
+            //        },
+            //        {
+            //            "sName": "TotalTrxAmount",
+            //            "bSortable": true,
+            //            "sClass": "alignRight",
+            //            "mRender": function (data, type, full) {
+            //                return '<span style="float: right;" class="clsTrxAmount">$' + full.TotalTrxAmount + '</span>';
+            //            }
+            //        },
+            //        {
+            //            "sName": "Status",
+            //            "bSortable": true,
+            //            "sClass": "alignCenter",
+            //            "mRender": function (data, type, full) {
+            //                return full.Status;
+            //            }
+            //        }
+            //    ]
+            //});
+            //$("#input_Search").keyup(function () {
+            //    var table = $("#tblFranchiseeManualTransaction").DataTable();
+            //    table.search($(this).val()).draw();
+            //    calculateTotals();
+            //});
+
+            //$(".search-field").change(function () {
+            //    refreshTable();
+            //});
+
+            //$('#tblFranchiseeManualTransaction').on('draw.dt', function () {
+            //    calculateTotals();
+            //})
+
+            //$('#tblFranchiseeManualTransaction').show();
+        }
+
+        function initTableload()
+        {
+
+            $('#tblFranchiseeManualTransaction').DataTable({
+                "bAutoWidth": false,
+                cache: false,
+                "order": true,
+                "iDisplayLength": 25,
+                "bDestroy": true,
+                "iDisplayLength": $('#pageSize').val() == -1 ? 25 : $('#pageSize').val(),
+                "bLengthChange": false,
+                "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                //"aLengthMenu": [[5, 7, 10, 25, 50, -1], [5, 7, 10, 25, 50, "All"]],
+                //"dom": '<"top">rt<"bottom"lp><"clear">',
+                //"dom": "<'table-responsive't><'bottom'ip><'clear'>",
+
+
+            });
+
+            $.blockUI();
+
+            $('#tblFranchiseeManualTransaction tbody').html('');
+
+            $.ajax({
+                type: "GET",
+                url: getFinderFeeLink(),
+                success: function (data) {
+                    var frId = 0;
+                    var sec_frid = 0;
+
+                    var ExtendedPrice = 0;
+                    var TaxTotal = 0;
+                    var FeesTotal = 0;
+                    var TotalTrxAmount = 0;
+
+                    for (var i = 0; i <= data.FranisessData.length; i++) {
+                        var lengthdata = data.FranisessData.length;
+                        //data.forEach(function (item) {
+                        if (data.FranisessData[i] != null) {
+                            frId = data.FranisessData[i].FranchiseeNo;
+                            trInvoicelist = "";
+                            if (sec_frid != frId) {
+                                if (sec_frid != 0 && sec_frid != frId) {
+                                    trInvoicelist += '<tr relcusn="' + sec_frNo + ' ' + sec_frName + '">';
+                                    trInvoicelist += '<td style="text-align:center;"colspan="4"></td>';
+                                    trInvoicelist += '<td style="text-align:center;background: #bbf7f7;"><b>Total</b></td>';
+                                    trInvoicelist += '<td style="text-align:right;background: #bbf7f7;"><b>' + formatCurrency(parseFloat(ExtendedPrice), true) + '</b></td>';
+                                    trInvoicelist += '<td style="text-align:right;background: #bbf7f7;"><b>' + formatCurrency(parseFloat(TaxTotal), true) + '</b></td>';
+                                    trInvoicelist += '<td style="text-align:right;background: #bbf7f7;"><b>' + formatCurrency(parseFloat(FeesTotal), true) + '</b></td>';
+                                    trInvoicelist += '<td style="text-align:right;background: #bbf7f7;"><b>' + formatCurrency(parseFloat(TotalTrxAmount), true) + '</b></td>';
+                                    trInvoicelist += '<td style="text-align:center;background: #bbf7f7;"></td></tr>';
+                                    ExtendedPrice = 0;
+                                    TaxTotal = 0;
+                                    FeesTotal = 0;
+                                    TotalTrxAmount = 0;
+                                }
+                                trInvoicelist += '<tr relcusn="' + data.FranisessData[i].FranchiseeNo + ' ' + data.FranisessData[i].Name + '">';
+                                trInvoicelist += '<td style="font-size:12px" colspan="10"><b>' + data.FranisessData[i].FranchiseeNo + '</b>-<span style="color: blue;"> <b>' + data.FranisessData[i].Name + '</b></span></td></tr>';
+                                sec_frid = data.FranisessData[i].FranchiseeNo;
+                                sec_frNo = data.FranisessData[i].FranchiseeNo;
+                                sec_frName = data.FranisessData[i].Name;
+                            }
+                            trInvoicelist += '<tr relcusn="' + data.FranisessData[i].FranchiseeNo + ' ' + data.FranisessData[i].Name + '">';
+
+                            trInvoicelist += '<td style="text-align:center;">' + data.FranisessData[i].Region + '</td>';
+                            trInvoicelist += '<td style="text-align:center;">' + data.FranisessData[i].TrxType + '</td>';
+                            trInvoicelist += '<td style="text-align:center;">' + data.FranisessData[i].TrxDate + '</td>';
+                            //if (data.FranisessData[i].Number == null) {
+                            //    data.FranisessData[i].Number = "";
+                            //}
+                            trInvoicelist += '<td style="text-align:center;"> <a onclick="showFMTDetail(\'' + data.FranisessData[i].Number + '\')">' + data.FranisessData[i].Number + '</a></td>';
+                            trInvoicelist += '<td style="text-align:left;">' + data.FranisessData[i].Description + '</td>';
+                            if (data.FranisessData[i].MasterTrxTypeListId == 20 && data.FranisessData[i].AmountTypelistId == 1)
+                            {
+                                trInvoicelist += '<td style="text-align:right;color: red;">' + formatCurrency(parseFloat(data.FranisessData[i].ExtendedPrice), true) + '</td>';
+                            }
+                            else {
+                                trInvoicelist += '<td style="text-align:right;">' + formatCurrency(parseFloat(data.FranisessData[i].ExtendedPrice), true) + '</td>';
+                            }
+                            if (data.FranisessData[i].MasterTrxTypeListId == 20 && data.FranisessData[i].AmountTypelistId == 1) {
+                                trInvoicelist += '<td style="text-align:right;color: red;">' + formatCurrency(parseFloat(data.FranisessData[i].Tax), true) + '</td>';
+                            }
+                            else {
+                                trInvoicelist += '<td style="text-align:right;">' + formatCurrency(parseFloat(data.FranisessData[i].Tax), true) + '</td>';
+                            }
+                            if (data.FranisessData[i].MasterTrxTypeListId == 20 && data.FranisessData[i].AmountTypelistId == 1) {
+                                trInvoicelist += '<td style="text-align:right;color: red;">' + formatCurrency(parseFloat(data.FranisessData[i].Fees), true) + '</td>';
+                            }
+                            else {
+                                trInvoicelist += '<td style="text-align:right;">' + formatCurrency(parseFloat(data.FranisessData[i].Fees), true) + '</td>';
+                            }
+                            if (data.FranisessData[i].MasterTrxTypeListId == 20 && data.FranisessData[i].AmountTypelistId == 1) {
+                                trInvoicelist += '<td style="text-align:right;color: red;">' + formatCurrency(parseFloat(data.FranisessData[i].TotalTrxAmount), true) + '</td>';
+                            }
+                            else {
+                                trInvoicelist += '<td style="text-align:right;">' + formatCurrency(parseFloat(data.FranisessData[i].TotalTrxAmount), true) + '</td>';
+                            }
+                            trInvoicelist += '<td style="text-align:right;">' + data.FranisessData[i].Status + '</td>';
+                            trInvoicelist += '</tr>';
+                            if (sec_frid == frId) {
+                                if (data.FranisessData[i].MasterTrxTypeListId == 20 && data.FranisessData[i].AmountTypelistId == 1) {
+                                    ExtendedPrice -= data.FranisessData[i].ExtendedPrice;
+                                }
+                                else {
+                                    ExtendedPrice += data.FranisessData[i].ExtendedPrice;
+                                }
+                                if (data.FranisessData[i].MasterTrxTypeListId == 20 && data.FranisessData[i].AmountTypelistId == 1) {
+                                    TaxTotal -= data.FranisessData[i].Tax;
+                                }
+                                else {
+                                    TaxTotal += data.FranisessData[i].Tax;
+                                }
+                                if (data.FranisessData[i].MasterTrxTypeListId == 20 && data.FranisessData[i].AmountTypelistId == 1) {
+                                    FeesTotal -= data.FranisessData[i].Fees;
+                                }
+                                else {
+                                    FeesTotal += data.FranisessData[i].Fees;
+                                }
+                                if (data.FranisessData[i].MasterTrxTypeListId == 20 && data.FranisessData[i].AmountTypelistId == 1) {
+                                    TotalTrxAmount -= data.FranisessData[i].TotalTrxAmount;
+                                }
+                                else {
+                                    TotalTrxAmount += data.FranisessData[i].TotalTrxAmount;
+                                }
+                            }
+                            if (i == lengthdata - 1) {
+                                trInvoicelist += '<tr relcusn="' + data.FranisessData[i].FranchiseeNo + ' ' + data.FranisessData[i].Name + '">';
+                                trInvoicelist += '<td style="text-align:center;"colspan="4"></td>';
+                                trInvoicelist += '<td style="text-align:center;background: #bbf7f7;"><b>Total</b></td>';
+                                trInvoicelist += '<td style="text-align:right;background: #bbf7f7;"><b>' + formatCurrency(parseFloat(ExtendedPrice)) + '</b></td>';
+                                trInvoicelist += '<td style="text-align:right;background: #bbf7f7;"><b>' + formatCurrency(parseFloat(TaxTotal)) + '</b></td>';
+                                trInvoicelist += '<td style="text-align:right;background: #bbf7f7;"><b>' + formatCurrency(parseFloat(FeesTotal)) + '</b></td>';
+                                trInvoicelist += '<td style="text-align:right;background: #bbf7f7;"><b>' + formatCurrency(parseFloat(TotalTrxAmount)) + '</b></td>';
+                                trInvoicelist += '<td style="text-align:center;background: #bbf7f7;"></td></tr>';
+                            }
+                            $('#tblFranchiseeManualTransaction tbody').append(trInvoicelist);
+                        }
+                    }
+                    $.unblockUI();
+                },
+                error: function () {
+                    $.unblockUI();
+                    alert("Content load failed");
+                }
+            });
+        }
+
+        function calculateTotals() {
+            var totalExtendedAmount = 0;
+            $(".clsExtendedAmount").each(function (index) {
+                totalExtendedAmount = parseFloat(totalExtendedAmount) + parseFloat($(this).text().replace('$', '').replace(',', ''));
+            });
+            $('#spnTotalAmountTA').html(formatCurrency(totalExtendedAmount));
+
+            var totalFeesAmount = 0;
+            $(".clsFeesAmount").each(function (index) {
+                totalFeesAmount = parseFloat(totalFeesAmount) + parseFloat($(this).text().replace('$', '').replace(',', ''));
+            });
+            $('#spnTotalFee').html(formatCurrency(totalFeesAmount));
+
+            var totalTrxAmount = 0;
+            $(".clsTrxAmount").each(function (index) {
+                totalTrxAmount = parseFloat(totalTrxAmount) + parseFloat($(this).text().replace('$', '').replace(',', ''));
+            });
+            $('#spnTotalTrx').html(formatCurrency(totalTrxAmount));
+
+        }
+        //Pagging
+        $("#pageSize").change(function () {
+            setPaging();
+        });
+
+        function setPaging() {
+            //var z = $("#pageSize").val();
+            //var table = $("#tblFranchiseeManualTransaction").DataTable();
+            //if (z > 0) {
+            //    table.page.len(z).draw();
+            //}
+            //else if (z == -1) {
+            //    table.page.len(table.rows().count()).draw();
+            //}
+            //else {
+            //    table.page.page.len(25).draw();
+            //}
+        }
+        function refreshTable() {
+            //var url = getFinderFeeLink();
+            //$.blockUI();
+            //$('#tblFranchiseeManualTransaction').DataTable().ajax.url(url).load(function ()
+            //{
+            //    calculateTotals();
+            //    $.unblockUI();
+            //});
+
+            initTableload();
+        }
+
+
+        function applyDurationFilter(v) {
+            $('#spnStartDate').html('');
+            $('#spnEndtDate').html('');
+            $('#divspandate').show();
+            $('#divSD').hide();
+            $('#divED').hide();
+            $('#divmonth').hide();
+            $('#divyear').hide();
+            $('#spnStartDate').html('');
+            $('#spnEndtDate').html('');
+            $('#BillMonth').val('');
+            $('#BillYear').val('');
+            $('#monthlist').val('');
+            $('#yearlist').val('');
+            switch (v) {
+                case 1:
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = moment().endOf('isoWeek').toString();
+                    break;
+                case 2:
+                    //code block
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 3:
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                    break;
+                case 4:
+                    //code block
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 5:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = moment().endOf('quarter').toString();
+                    break;
+                case 6:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 7:
+                    //code block
+                    firstDay = moment().startOf('year').toString();;
+                    lastDay = moment().endOf('year').toString();
+                    break;
+                case 8:
+                    //code block
+                    firstDay = moment().startOf('year').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 9:
+                    //code block
+                    firstDay = moment().toString();
+                    lastDay = moment().toString();
+                    break;
+                case 10:
+                    //code block
+                    firstDay = moment().add(-1, 'days').toString();
+                    lastDay = moment().add(-1, 'days').toString();
+                    break;
+                case 11:
+                    //code block
+                    firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                    lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                    break;
+                case 12:
+                    //code block
+                    firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                    break;
+                case 13:
+                    //code block
+                    firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                    lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                    break;
+                case 14:
+                    //code block
+                    firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                    lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                    break;
+
+                case 15:
+                    //code block
+                    $('#divspandate').hide();
+                    $('#divSD').show();
+                    $('#divED').show();
+                    $('#txtStartDate').val('');
+                    $('#txtEndtDate').val('')
+                    break;
+                case 16:
+                    $('#divspandate').hide();
+                    $('#divSD').hide();
+                    $('#divED').hide();
+                    $('#divmonth').show();
+                    $('#divyear').show();
+                    break
+                default:
+                    //code block
+            }
+
+            $('#spnStartDate').html(moment(firstDay).format('L'));
+            $('#spnEndtDate').html(moment(lastDay).format('L'));
+
+            refreshTable();
+        };
+
+        function formatCurrency(total) {
+            var neg = false;
+            if (total < 0) {
+                neg = true;
+                total = Math.abs(total);
+            }
+            return (neg ? "-$" : '$') + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        }
+
+        //function CleanformatCurrency(total) {
+
+        //    return parseFloat(total.toString().replace('$', '').replace(',', ''));
+        //}
+        function formatCurrency(total, dollar) {
+            dollar = (dollar == true ? true : false);
+            var neg = false;
+            if (total < 0) {
+                neg = true;
+                total = Math.abs(total);
+            }
+            return (neg ? "-" : '') + (dollar ? "$" : "") + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+        };
+
+
+        function showFMTDetail(TxNo) {
+            //$('#modal_BillDetail').modal('show');
+            $.blockUI();
+            var FranchiseeId = $("#hdnFranchiseeId").val();
+            var sURL = '@Url.Action("FMTDetail", "Franchise", new { area = "Portal" })?TrNo=' + TxNo.toString();
+            console.log(sURL);
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_FMTDetail').html(data);
+                    $.unblockUI();
+                    $("#modal_FMTDetail").modal({ backdrop: 'static' });
+                },
+                error: function () {
+                    $.unblockUI();
+                    alert("Content load failed.");
+                }
+            });
+        }
+        function btnFranchiseeManualPopupClose() {
+            $("#modal_FMTDetail").modal('hide');
+        }
+        function formatJSONDate(jsonDate) {
+            if (jsonDate != null) {
+                //var dateString = jsonDate.substr(6);
+                var dtstr = jsonDate.substr(6);
+                var dateString = dtstr.substring(0, dtstr.length - 2);
+                var currentTime = new Date(parseInt(dateString)).toUTCString();
+                var date = moment(currentTime).format("MM/DD/YYYY")
+                return date;
+            }
+            return null;
+        }
+
+        function btnFranchiseeManualEditPopup(transactionNumber, Dateformat) {
+            var _Date = new Date(Dateformat);
+            var _month = _Date.getMonth() + 1;
+
+            var periodcloseid = $("#ddlPeriodId").val();
+            var sURL = '@Url.Action("CheckPeriod", "Franchise", new { area = "Portal" })?PeriodClsId=' + periodcloseid;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    if (data == _month) {
+                        var sURL = '@Url.Action("EditManualTrasaction", "Franchise", new { area = "Portal" })?TrxNo=' + transactionNumber;
+                        $.ajax({
+                            type: "GET",
+                            url: sURL,
+                            contentType: "application/json; charset=utf-8",
+                            datatype: "json",
+                            success: function (data) {
+                                $('#Render_EditManualTransaction').html(data);
+                                $("#modal_EditManualTransaction").modal({ backdrop: 'static' });
+                            },
+                            error: function () {
+                                alert("Content load failed.");
+                            }
+                        });
+                    }
+                    else {
+                        swal(
+                            'Transaction Record edit allow only selected Period Month!',
+                            '',
+                            'error'
+                        )
+                    }
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+        function btnFranchiseeManualEditPopupSucess() {
+            $("#modal_FMTDetail").modal('hide');
+            refreshTable();
+        }
+
+    </script>
+}

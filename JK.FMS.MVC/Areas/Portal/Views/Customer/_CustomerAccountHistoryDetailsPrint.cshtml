@@ -1,0 +1,205 @@
+﻿@model JKViewModels.Customer.CustomerAccountHistoryViewModel
+@{
+    var Cusmodel = ViewBag.CustomerData;
+}
+@foreach (var franchisee in Model.Franchisees)
+{
+
+    <table width="100%">
+        <tr>
+            <td>
+                <table width="100%" style="font-size:14px !important;">
+                    <tbody>
+                        <tr>
+                            <td width="100%" style="text-align:center;">
+                                <p>
+                                    <b>@Cusmodel.CustomerName</b><br />
+                                    <b>No. @Cusmodel.CustomerNumber)</b><br />
+                                    @Cusmodel.Address.Address1, @Cusmodel.Address.City, @Cusmodel.Address.State @Cusmodel.Address.ZipCode<br />
+                                    @Cusmodel.PrimaryContactPhone
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <hr style="margin-top:10px;margin-bottom:10px;" />
+    <table width="100%">
+        <tr>
+            <td>
+                <table width="100%" style="font-size:12px !important;">
+                    <tbody>
+                        <tr>
+                            <td width="100%" style="text-align:center;">
+                                <p>
+                                    <b style="font-size:12px;">Account History Report </b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="100%" style="text-align:left;">
+                                <p>
+                                    <b>Franchisee:</b>  @franchisee.FranchiseeNo - @franchisee.FranchiseeName
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <hr style="margin-top:10px;margin-bottom:10px;" />
+    foreach (var invoice in franchisee.Invoices)
+    {
+
+        <table width="100%" style="font-size: 9px;">
+            <tr>
+                <td>
+                    <table width="100%" style="font-size:12px !important;">
+                        <tbody>
+                            <tr>
+                                <td width="15%" style="text-align:center;">
+                                    <p><b>Invoice No</b></p><span>@(invoice.Invoice?.TrxNumber)</span>
+                                </td>
+                                <td width="20%" style="text-align:center;">
+                                    <p><b>Due Date</b></p><span>@(invoice.Invoice?.Date.ToString("MM/dd/yyyy"))</span>
+                                </td>
+                                <td width="20%" style="text-align:center;">
+                                    <p><b>Invoice Amount</b></p><span>@(invoice.Invoice?.Amount.ToString("C"))</span>
+                                </td>
+                                <td width="45%" style="text-align:left;">
+                                    <p><b>Description</b></p><span>@(invoice.Invoice?.Description)</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        if (invoice.Payments != null && invoice.Payments.Count > 0)
+        {
+            <br />
+            <table width="100%" style="font-size: 9px;">
+                <tr>
+                    <td>
+                        <table width="100%" style="font-size:12px !important;">
+                            <tbody>
+                                <tr>
+                                    <td width="15%" style="text-align:center;">
+                                        <p><b></b></p><span></span>
+                                    </td>
+                                    <td width="20%" style="text-align:center;padding-top:5px;padding-bottom:5px;">                                         
+                                        <p><b>Check Date</b></p>
+                                        @foreach (var trx in invoice.Payments)
+                                        {
+                                            <span>@trx.Date.ToString("MM/dd/yyyy")</span><br />
+                                        }
+                                    </td>
+                                    <td width="20%" style="text-align:center;padding-top:5px;padding-bottom:5px;">                                        
+                                        <p><b>Check Amount</b></p>
+                                        @foreach (var trx in invoice.Payments)
+                                        {
+                                            <span>@trx.Amount.ToString("C")</span><br />
+                                        }
+                                    </td>
+                                    <td width="45%" style="text-align:left;padding-top:5px;padding-bottom:5px;">                                         
+                                        <p><b>Check No</b></p>
+                                        @foreach (var trx in invoice.Payments)
+                                        {
+                                            <span>@trx.Description</span><br />
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        }
+        if (invoice.Credits != null && invoice.Credits.Count > 0)
+        {
+            <br />
+            <table width="100%" style="font-size: 9px;">
+                <tr>
+                    <td>
+                        <table width="100%" style="font-size:12px !important;">
+                            <tbody>
+                                <tr>
+                                    <td width="15%" style="text-align:center;">
+                                        <p><b></b></p><span></span>
+                                    </td>
+                                    <td width="20%" style="text-align:center;padding-top:5px;padding-bottom:5px;">                                        
+                                        <p><b>Credit Date</b></p>
+                                        @foreach (var trx in invoice.Credits)
+                                        {
+                                            <span>@trx.Date.ToString("MM/dd/yyyy")</span><br />
+                                        }
+                                    </td>
+                                    <td width="20%" style="text-align:center;padding-top:5px;padding-bottom:5px;">                                        
+                                        <p><b>Credit Amount</b></p>
+                                        @foreach (var trx in invoice.Credits)
+                                        {
+                                            <span>@trx.Amount.ToString("C")</span><br />
+                                        }
+                                    </td>
+                                    <td width="45%" style="text-align:left;padding-top:5px;padding-bottom:50px;">                                         
+                                        <p><b>Reason</b></p>
+                                        @foreach (var trx in invoice.Credits)
+                                        {
+                                            <span>@trx.Description</span><br />
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        }
+
+        <table width="100%" style="font-size: 9px;">
+            <tr>
+                <td>
+                    <table width="100%" style="font-size:12px !important;">
+                        <tbody>
+                            <tr>
+                                <td width="15%" style="text-align:center;">
+                                    <p><b></b></p><span></span>
+                                </td>
+                                <td width="20%" style="text-align:center;">
+                                    <p><b></b></p><span></span>
+                                </td>
+                                <td width="20%" style="text-align:center;">
+                                    <p><b></b></p><span></span>
+                                </td>
+                                <td width="45%" style="text-align:left;padding-top:5px">                                     
+                                    <p><b>Balance</b>@invoice.Balance.ToString("C")</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <hr style="margin-top:10px;margin-bottom:10px;" />
+    }
+}
+<table width="100%" style="font-size:12px !important;">
+    <tr>
+        <td width="25%" style="text-align:center;">
+            <p><b>Invoice Totals:</b>@Model.InvoiceTotal.ToString("C")</p>
+        </td>
+        <td width="25%" style="text-align:center;">
+            <p><b>Payment Totals:</b>@Model.OtherTrxTotal.ToString("C")</p>
+        </td>
+        <td width="25%" style="text-align:center;">
+            <p><b>Tax Totals:</b>@Model.TaxTotal.ToString("C")</p>
+
+        </td>
+        <td width="25%" style="text-align:center;">
+            <p><b>Amount Due:</b>@Model.AmountDue.ToString("C")</p>
+        </td>
+    </tr>
+</table>

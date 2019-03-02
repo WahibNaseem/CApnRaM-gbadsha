@@ -1,0 +1,1848 @@
+﻿@model JKViewModels.Franchise.CommonFranchiseeCustomerViewModel
+@{
+    if (Model.CustomerDetail == null)
+    {
+        Model.CustomerDetail = new JKViewModels.Franchise.FCDetailViewModel();
+    }
+}
+<style type="text/css">
+    .input-sm.pp {
+        margin-top: 0;
+        margin-bottom: 0;
+        text-align: right;
+        padding: 3px;
+        border-radius: 0;
+    }
+
+    .has-error {
+        border-color: red;
+    }
+
+    a.has-error {
+        color: red;
+    }
+
+    #frdestributionTable table > thead > tr > td, table > tbody > tr > td {
+        padding: 0px !important;
+    }
+</style>
+
+@using (Html.BeginForm("RenderFranchiseFindersFeePP", "Franchise", FormMethod.Post,
+                new { @id = "frmsubmitfc_onclick", @role = "form", @class = "form form-horizontal toppadding", @style = "margin: 0px;" }))
+{
+
+    @Html.HiddenFor(o => o.CustomerDetail.CustomerId)
+    @Html.HiddenFor(o => o.CustomerDetail.FranchiseeId)
+    @Html.HiddenFor(o => o.CustomerDetail.TotalAmount)
+    @Html.HiddenFor(o => o.CustomerDetail.ContractId)
+    @Html.HiddenFor(o => o.CustomerDetail.FranchiseeName)
+    @Html.HiddenFor(o => o.CustomerDetail.FranchiseeNo)
+
+    <input type="hidden" value="@ViewBag.CallFrom" id="hdfCustomerDetailCallFrom" name="hdfCustomerDetailCallFrom" />
+    <input type="hidden" value="@ViewBag.SelectedFranchiseeId" id="hdfSelectedFranchiseId" name="hdfSelectedFranchiseId" />
+    
+
+    <input id="CustomerIncreaseDecreaseDetail_FindersFeeAdjustmentCount" name="CustomerIncreaseDecreaseDetail_FindersFeeAdjustmentCount" type="hidden" value="0" />
+
+    <input id="CustomerDistributionDetail_FeeString" name="CustomerDistributionDetail_FeeString" type="hidden" value="" />
+    <input id="FranchiseeDistributionDetail_String" name="FranchiseeDistributionDetail_String" type="hidden" value="" />
+
+
+    <div class="modal fade in" id="modal_FeeFinderdetailResult" tabindex="-1" role="basic" aria-hidden="true" style="padding-right: 17px;">
+        <div class="modal-dialog modal-lg" style="width: 1000px;">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" onclick="disabledFields();" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                        FINDERS FEE
+                        @Html.HiddenFor(one => one.FindersFee.FindersFeeId)
+                        @Html.HiddenFor(one => one.FindersFee.FranchiseeId)
+                        @Html.HiddenFor(one => one.FindersFee.CustomerId)
+                    </h4>
+                </div>
+                <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                    <div class="form-body" style="padding-top: 0px;">
+                        <div class="form-group">
+                            <div class="row" style="padding-bottom: 0px;">
+                                <div class="col-md-12">
+                                    <div class="col-md-3 control-label" style="padding-top: 0px;">
+                                        <span><b>Franchisee No<span style="color:#000000;">&nbsp;:</span></b></span>
+                                    </div>
+                                    <div class="col-md-2" style="padding-left:0px;">
+                                        <span><b>@Model.CustomerDetail.FranchiseeNo</b></span>
+                                    </div>
+                                    <div class="col-md-2">
+                                    </div>
+                                    <div class="col-md-2 control-label" style="padding-top: 0px;">
+                                        <span><b>Customer No<span style="color:#000000;">&nbsp;:</span></b></span>
+                                    </div>
+                                    <div class="col-md-3" style="padding-left:0px;">
+                                        <span><b>@Model.CustomerDetail.CustomerNo</b></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="padding-top: 0px;padding-bottom: 0px;">
+                                <div class="col-md-12">
+                                    <div class="col-md-3 control-label" style="padding-top: 0px;">
+                                    </div>
+                                    <div class="col-md-3" style="padding-left: 0px;">
+                                        <span>@Model.CustomerDetail.FranchiseeName <br />@Model.CustomerDetail.F_Address<br />@Model.CustomerDetail.F_City, @Model.CustomerDetail.F_StateName @Model.CustomerDetail.F_PostalCode</span>
+                                    </div>
+                                    <div class="col-md-1">
+                                    </div>
+                                    <div class="col-md-2 control-label">
+                                    </div>
+                                    <div class="col-md-3" style="padding-left:0px;">
+                                        <span>@Model.CustomerDetail.CustomerName <br />@Model.CustomerDetail.C_Address<br />@Model.CustomerDetail.C_City, @Model.CustomerDetail.C_StateName @Model.CustomerDetail.C_PostalCode</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row" style="margin-top:10px;">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-10 text-left" style="background: #99a2a2;color: #fff;font-size: 16px;">
+                                    Finder Fee Information
+                                </div>
+                                <div class="col-md-1"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                @*Status of Customer*@
+                                <div class="col-md-12">
+
+                                    <div class="col-md-2 control-label">
+                                        Status <span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        @Html.DropDownListFor(one => one.FindersFee.StatusListId, (SelectList)ViewBag.FranchiseStatusListModel, new { @class = "form-control input-sm", @disabled = "disabled" })
+                                    </div>
+                                </div>
+                                @*Start Date*@
+                                <div class="col-md-12">
+                                    <div class="col-md-2 control-label" style="padding-left: 0px;padding-right: 0px;">
+                                        Start Date<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        @Html.TextBoxFor(one => one.FindersFee.StartDate, "{0:MM/dd/yyyy}", new { @class = "form-control input-sm  edit-txtbx date-picker ", required = "required" })
+                                        @*@Html.TextBoxFor(one => one.FranchiseeDistribution.StartDate, "{0:MM/dd/yyyy}", new { @class = "form-control input-sm  edit-txtbx date-picker ", required = "required" })*@
+                                    </div>
+                                </div>
+                                @*Description*@
+                                <div class="col-md-12">
+                                    <div class="col-md-2 control-label">
+                                        Description<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-9">
+                                        @Html.TextBoxFor(one => one.FindersFee.Description, new { @class = "form-control input-sm  edit-txtbx", @value = "Finder Fees on Contract Billing", required = "required", @disabled = "disabled" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row" style="padding-top: 0px;padding-bottom: 0px;">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-10 text-left" style="background: #99a2a2;color: #fff;font-size: 16px;">
+                                    Finder Fee Calculation Information
+                                </div>
+                                <div class="col-md-1"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                @*Adjustment*@
+                                <div class="col-md-12">
+                                    <div class="col-md-2 control-label">
+                                        Adjustment:<span style="color:#000000;">&nbsp;:</span>
+                                        <br /><a id="addNewAdjustment" style="margin-right: 4px; display:none;" href="javascript:void(0);" onclick="AppendNewFinderAdjestment(@Model.FindersFee.FindersFeeId,0)">+ Add</a>
+                                    </div>
+                                    <div class="col-md-9">
+
+                                        <table class="table table-striped table-bordered table-hover order-column" id="tblNewFindersFeeAdjustment">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center" style="width:150px;font-size:12px;">
+                                                        Type
+                                                    </th>
+                                                    <th class="text-center" style="font-size:12px;">
+                                                        Description
+                                                    </th>
+                                                    <th class="text-center" style="width:100px;font-size:12px;">
+                                                        Amount
+                                                    </th>
+                                                    <th class="text-center" style="width:50px;font-size:12px;">
+                                                        Action
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for (int b = 0; b < Model.lstFindersFeeAdjustment.Where(o => o.FindersFeeId == Model.FindersFee.FindersFeeId).ToList().Count; b++)
+                                                {
+                                                    @*<tr rel="@("trFindersFeeAdjustment_" + b )">
+                                                            <td>
+                                                                @Html.HiddenFor(m => m.lstFindersFeeAdjustment[b].FindersFeeAdjustmentId)
+                                                                @Html.HiddenFor(m => m.lstFindersFeeAdjustment[b].FranchiseeId)
+                                                                @Html.HiddenFor(m => m.lstFindersFeeAdjustment[b].FindersFeeId)
+                                                                @Html.DropDownListFor(m => m.lstFindersFeeAdjustment[b].FindersFeeAdjustmentTypeListId, (SelectList)ViewBag.FindersFeeAdjustmentTypeList, "Select", new { @class = "form-control input-sm" })
+                                                            </td>
+                                                            <td>@Html.TextBoxFor(o => o.lstFindersFeeAdjustment[b].Description, new { @class = "form-control input-sm", @style = "width:100%;" })</td>
+                                                            <td>@Html.TextBoxFor(o => o.lstFindersFeeAdjustment[b].Amount, new { @class = "form-control input-sm", @style = "width:100px;" })</td>
+                                                            <td style="text-align:center;"><a style="font-size: 16px;padding: 3px;color: mediumvioletred;" href="#" onclick="RemoveFindersFeeAdjustmentRow('@("trFindersFeeAdjustment_" + b )')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
+                                                        </tr>*@
+
+                                                    <tr rel="@("trFindersFeeAdjustment_" + b)">
+                                                        <td>
+                                                            @Html.HiddenFor(m => m.lstFindersFeeAdjustment[b].FindersFeeAdjustmentId)
+                                                            @Html.HiddenFor(m => m.lstFindersFeeAdjustment[b].FranchiseeId)
+                                                            @Html.HiddenFor(m => m.lstFindersFeeAdjustment[b].FindersFeeId)
+
+                                                            <select class="form-control input-sm" style="width:100%;" readonly = "readonly" id="@("lstFindersFeeAdjustment_"+b+"__FindersFeeAdjustmentTypeListId")" name="@("lstFindersFeeAdjustment["+b+"].FindersFeeAdjustmentTypeListId")">
+                                                                @foreach (var item in (SelectList)ViewBag.FindersFeeAdjustmentTypeList)
+                                                                {
+                                                                    <option @(Model.lstFindersFeeAdjustment[b].FindersFeeAdjustmentTypeListId.ToString()==item.Value?"selected":"") value="@item.Value">@item.Text</option>
+                                                                }
+                                                            </select>
+
+
+                                                            @*@Html.DropDownListFor(Model => Model.lstFindersFeeAdjustment[b].FindersFeeAdjustmentTypeListId, (SelectList)ViewBag.FindersFeeAdjustmentTypeList,
+                                                            Model.lstFindersFeeAdjustment[b].FindersFeeAdjustmentTypeListName,
+                                                            new { @class = "form-control input-sm", @style = "width:100%;", @readonly = "readonly" })*@
+                                                        </td>
+                                                        <td>@Html.TextBoxFor(o => o.lstFindersFeeAdjustment[b].Description, new { @class = "form-control input-sm", @style = "width:100%;", @readonly = "readonly" })</td>
+                                                        <td>@Html.TextBoxFor(o => o.lstFindersFeeAdjustment[b].Amount, new { @class = "form-control input-sm", @style = "width:100px;", @readonly = "readonly", @id = "txtFindersFeeAdjustment_" + Model.lstFindersFeeAdjustment[b].FindersFeeId + "_" + b + "_Amount" })</td>
+                                                        <td>
+                                                            <a style="font-size: 16px;padding: 3px;color: mediumvioletred;"
+                                                               href="javascript:void(0)"
+                                                               onclick="RemoveFindersFeeAdjustmentRow('@("trFindersFeeAdjustment_"+b)','@("txtFindersFeeAdjustment_"+Model.lstFindersFeeAdjustment[b].FindersFeeId+"_"+b+"_Amount")')">
+                                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                            <tfoot></tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-12">
+                                    <div class="col-md-1 control-label">
+
+                                    </div>
+                                    @*Calculation Medthod*@
+                                    <div class="col-md-2 control-label" style="padding-left: 0px;">
+                                        Calculation Method<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+
+                                    @*Calculation Method DropDown*@
+                                    <div class="col-md-2">
+                                        @Html.DropDownListFor(m => m.FindersFee.FindersFeeTypeListId, (SelectList)ViewBag.FindersFeeTypeList, "Select", new { @class = "form-control input-sm edit-txtbx", required = "required", @disabled = "disabled" })
+                                    </div>
+
+                                    @*Total Adjustment*@
+                                    <div class="col-md-3 control-label">
+                                        Total Adjustments<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+
+                                    @*Total Adjustment Field*@
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(one => one.FindersFee.TotalAdjustmentAmount, new { @class = "form-control input-sm edit-txtbx txamt", @readonly = "readonly" })
+                                    </div>
+                                    @*<div class="col-md-1 control-label">
+                                            Factor<span style="color:#000000;">&nbsp;:</span>
+                                        </div>
+                                        <div class="col-md-1">
+                                            @Html.TextBoxFor(one => one.FindersFee.Factor, new { @class = "form-control input-sm", @style = "padding: 3px;" })
+                                        </div>*@
+
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="col-md-1 control-label">
+
+                                    </div>
+                                    <div class="col-md-2 control-label" style="padding-left: 0px;">
+                                        Monthly Billing<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(one => one.FindersFee.ContractBillingAmount, new { @class = "form-control input-sm edit-txtbx txamt", onchange = "CalculateFindersFee(0)", required = "required", @readonly = "readonly" })
+                                    </div>
+                                    <div class="col-md-3 control-label">
+                                        Multi-Tenant 100% Occupancy<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(one => one.FindersFee.MultiTenantOccupancyAmount, new { @class = "form-control input-sm", onchange = "CalculateFindersFee(0)", })
+                                    </div>
+
+                                </div>
+
+                                @*Payable On*@
+                                <div class="col-md-12">
+                                    <div class="col-md-1 control-label"></div>
+                                    <div class="col-md-2 control-label">
+                                        Payable On<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(one => one.FindersFee.PayableOnAmount, new { @class = "form-control input-sm edit-txtbx txamt", @readonly = "readonly" })
+                                    </div>
+                                </div>
+
+                                @*DownPayment Percent*@
+                                <div class="col-md-12">
+                                    <div class="col-md-1 control-label"></div>
+                                    <div class="col-md-2 control-label">
+                                        DownPayment Percent<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(one => one.FindersFee.DownPayPercentage, new { @class = "form-control input-sm edit-txtbx", onchange = "CalculateFindersFee()", required = "required", @disabled = "disabled" })
+                                    </div>
+                                    <div class="col-md-3 control-label" style="padding-left: 0px;">
+                                        Down Pymnt Amount<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(one => one.FindersFee.DownPaymentAmount, new { @class = "form-control input-sm edit-txtbx txamt", @readonly = "readonly" })
+                                    </div>
+                                </div>
+
+                                @*Monthly Payment Percentage*@
+                                <div class="col-md-12">
+                                    <div class="col-md-3 control-label">
+                                        Monthly Payment Percentage<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(one => one.FindersFee.MonthlyPaymentPercentage, new { @class = "form-control input-sm edit-txtbx txamt", onchange = "CalculateFindersFee()", required = "required", @disabled = "disabled" })
+                                    </div>
+                                    <div class="col-md-3 control-label" style="padding-right: 0px">
+                                        Monthly Payment Amount<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(one => one.FindersFee.MonthlyPaymentAmount, new { @class = "form-control input-sm edit-txtbx txamt", @readonly = "readonly" })
+                                    </div>
+                                </div>
+
+                                @*Interest Percent*@
+                                <div class="col-md-12" style="display:none;">
+                                    <div class="col-md-1 control-label"></div>
+                                    <div class="col-md-2 control-label">
+                                        Interest Percent<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(one => one.FindersFee.Interest, new { @class = "form-control input-sm  edit-txtbx txamt", @readonly = "readonly", @value = "0", @disabled = "disabled" })
+                                    </div>
+                                    <div class="col-md-3 control-label">
+                                        Interest Amount<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(one => one.FindersFee.Interest, new { @class = "form-control input-sm  edit-txtbx txamt", @readonly = "readonly", @value = "0", @disabled = "disabled" })
+                                    </div>
+                                </div>
+
+                                @*Number of Payments*@
+                                <div class="col-md-12">
+                                    <div class="col-md-1 control-label"></div>
+                                    <div class="col-md-2 control-label" style="padding-left: 0px;">
+                                        Number of Payments<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(one => one.FindersFee.TotalNumOfpayments, new { @class = "form-control input-sm edit-txtbx", onchange = "CalculateFindersFee()", @disabled = "disabled" })
+                                    </div>
+                                </div>
+
+                                @*Amount Financed*@
+                                <div class="col-md-12">
+                                    <div class="col-md-1 control-label"></div>
+                                    <div class="col-md-2 control-label">
+                                        Amount Financed<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(one => one.FindersFee.FinancedAmount, new { @class = "form-control input-sm edit-txtbx txamt", @readonly = "readonly" })
+                                    </div>
+                                    <div class="col-md-6" style="padding-right: 0px">
+                                        <label class="mt-checkbox mt-checkbox-outline">
+                                            @Html.CheckBoxFor(one => one.FindersFee.IncludeDownPayInFirstPay, new { @disabled = "disabled" })Include First Payment in down payment
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                @*Total Finder Fee*@
+                                <div class="col-md-12">
+                                    FinancedAmount  IncludeDownPayInFirstPay TotalAmount Notes
+                                    <div class="col-md-1 control-label"></div>
+                                    <div class="col-md-2 control-label">
+                                        Total FF<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.TextBoxFor(one => one.FindersFee.TotalAmount, new { @class = "form-control input-sm edit-txtbx txamt", @readonly = "readonly" })
+                                    </div>
+                                </div>
+
+                                @*Note*@
+                                <div class="col-md-12">
+                                    <div class="col-md-1 control-label"></div>
+                                    <div class="col-md-2 control-label">
+                                        Note<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(one => one.FindersFee.Notes, new { @class = "form-control input-sm edit-txtbx", @disabled = "disabled" })
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div class="col-md-12" style="padding-right: 28px;">
+
+                        <input type="button" id="SubmitFC_onClick" value="Submit" class="btn btn-primary col-md-2 pull-right" style="margin-left: 10px; display:none; " />
+                        <input type="button" id="EditFC_onClick" class="btn btn-primary" value="Edit" style="padding-left:55px; padding-right:55px;" />
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+}
+
+
+<script type="text/javascript">
+
+    var lstContractDetailServiceTypeList = [];
+    var lineNo = 0;
+    var flineNo = 0;
+    var typeaheadSource = [];
+    var app = {};
+
+    $(document).ready(function () {
+        $('.date-picker').datepicker({ autoclose: true ,dateFormat: 'mm/dd/yy'});
+        $('.date-picker').attr("placeholder","mm/dd/yyyy");
+        $('#btnContractDetailSave').click(function () {
+
+            var isvalid = true;
+
+            if ($('#Contract_PurchaseOrderNo').val() == '') { $('#Contract_PurchaseOrderNo').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_PurchaseOrderNo').css('border-color', ''); }
+            if ($('#AccountTypeList').val() == '') { $('#AccountTypeList').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#AccountTypeList').css('border-color', ''); }
+
+            if ($('#Contract_SignDate').val() == '') { $('#Contract_SignDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_SignDate').css('border-color', ''); }
+            if ($('#Contract_StartDate').val() == '') { $('#Contract_StartDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_StartDate').css('border-color', ''); }
+
+            //if ($('#Contract_ContractTermListId').val() == '') { $('#Contract_ContractTermListId').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_ContractTermListId').css('border-color', ''); }
+            if ($('#Contract_ContractTermMonth').val() == '') { $('#Contract_ContractTermMonth').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_ContractTermMonth').css('border-color', ''); }
+            if ($('#Contract_ExpirationDate').val() == '') { $('#Contract_ExpirationDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_ExpirationDate').css('border-color', ''); }
+
+            if ($('#Contract_Amount').val() == '') { $('#Contract_Amount').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_Amount').css('border-color', ''); }
+            if ($('#Contract_AmountSubjectToFee').val() == '') { $('#Contract_AmountSubjectToFee').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_AmountSubjectToFee').css('border-color', ''); }
+
+            if ($('#Contract_StatusDate').val() == '') { $('#Contract_StatusDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_StatusDate').css('border-color', ''); }
+            if ($('#Contract_ResumeDate').val() == '') { $('#Contract_ResumeDate').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_ResumeDate').css('border-color', ''); }
+            if ($('#Contract_AmountSubjectToFee').val() == '') { $('#Contract_AmountSubjectToFee').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Contract_AmountSubjectToFee').css('border-color', ''); }
+
+            if (isvalid == true) {
+                $("#SaveCustomerContractform_wizard_1").submit();
+            }
+        });
+
+        $("#fsearch-box").keyup(function () {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("Frenchiseedata", "AccountReceivable", new { area = "Portal" })',
+                data: 'keyword=' + $(this).val(),
+                success: function (data) {
+                    custlist = data;
+                    var typeaheadSource = [];
+                    $.each(custlist, function (key, value) {
+                        typeaheadSource.push({ id: value.FranchiseeId, name: value.FranchiseeNo + ' ' + $.trim(value.Name) })
+                    });
+
+                    $('#fsearch-box').typeahead({
+                        source: typeaheadSource,
+                        updater: function (item) {
+                            $("#hdfFrenchiseeId").val(item.id);
+                            if (($('#ddldetaillinenumber').val() != "Select") && ($('#ddldetaillinenumber').val() != "0")) {
+
+                                bindfranchiseedetail($('#ddldetaillinenumber').val(), item.id, item.name, item.FranchiseeNo, $("#ddldetaillinenumber option[value=" + $('#ddldetaillinenumber').val() + "]").text(), data.Amount);
+                                return item;
+
+                            }else {
+                                swal({title: "Please slect a line.",text: "",type: "warning"});
+                                return '';
+                            }
+
+                        }
+
+                    });
+                }
+            });
+        });
+    });
+
+
+
+    function ShowAddNEwFeeFinder() {
+        if (!TransferValidateStepFirst()) {
+            return;
+        }
+        var _FindersFeeTypeListId = $("#FindersFee_FindersFeeTypeListId").val();
+
+
+        $('#FindersFee_StartDate').val('@String.Format("{0:MM/dd/yyyy}", (Model.FindersFee != null ? Model.FindersFee.StartDate : Model.CustomerDetail.StartDate))');
+
+         //$('#FindersFee_StartDate').val('@String.Format("{0:MM/dd/yyyy}", Model.CustomerDetail.StartDate)');
+
+
+
+        $('#FindersFee_ContractBillingAmount').val(@Model.CustomerDetail.TotalAmount);
+
+        $('#FindersFee_MultiTenantOccupancyAmount').prop('readonly', true);
+            if (_FindersFeeTypeListId == 9 ||_FindersFeeTypeListId == 2 || _FindersFeeTypeListId == 7 || _FindersFeeTypeListId == 3 || _FindersFeeTypeListId == 4) {
+            $('#FindersFee_MultiTenantOccupancyAmount').prop('readonly', false);
+            }
+        $("#modal_FeeFinderdetailResult").modal({ backdrop: 'static' });
+
+        maskCurrency('FindersFee_DownPaymentAmount');
+        maskCurrency('FindersFee_MonthlyPaymentAmount');
+        maskCurrency('FindersFee_FinancedAmount');
+        maskCurrency('FindersFee_TotalAmount');
+        maskCurrency('FindersFee_MultiTenantOccupancyAmount');
+
+        maskPercentage('FindersFee_DownPayPercentage');
+        maskPercentage('FindersFee_MonthlyPaymentPercentage');
+
+        }
+
+        function CIDFranchiseeservice(mo, tu, we, th, fr, sa, su) {
+
+        $("#cid_chkScheduleMonday").prop('checked', false);
+        $("#cid_chkScheduleTuesday").prop('checked', false);
+        $("#cid_chkScheduleWednesday").prop('checked', false);
+        $("#cid_chkScheduleThursday").prop('checked', false);
+        $("#cid_chkScheduleFriday").prop('checked', false);
+        $("#cid_chkScheduleSaturday").prop('checked', false);
+        $("#cid_chkScheduleSunday").prop('checked', false);
+
+
+
+        $("#cid_chkScheduleMonday").prop('checked', mo);
+
+        $("#cid_chkScheduleTuesday").prop('checked', tu);
+
+        $("#cid_chkScheduleWednesday").prop('checked', we);
+
+        $("#cid_chkScheduleThursday").prop('checked', th);
+
+        $("#cid_chkScheduleFriday").prop('checked', fr);
+
+        $("#cid_chkScheduleSaturday").prop('checked', sa);
+
+        $("#cid_chkScheduleSunday").prop('checked', su);
+
+        $("#CIDmodal_service").modal({ backdrop: 'static' });
+        }
+
+    $(function () {
+        window.AddContractDetailDescriptionModal = function (ContractDetailId, i) {
+            $.blockUI({
+                //baseZ: 99999,
+                //message: '<center><img height: src="/Images/loading_icon.gif" /><h3> <b>Processing....</br> Please wait! and do not refresh page.</b></h3></center>',
+                //css: { backgroundColor: 'rgb{0,0,0}', border: '0', color: '#fff', "z-index": 99999 }
+            });
+            var ContractId = 0;
+            if ($('#CustomerIncreaseDecreaseDetail_ContractId').val() != "") {
+                ContractId = $('#CustomerIncreaseDecreaseDetail_ContractId').val();
+            }
+            if ($('#CustomerIncreaseDecreaseDetail_ContractId').val() != 0) {
+                ContractId = $('#CustomerIncreaseDecreaseDetail_ContractId').val();
+            }
+            else {
+                swal(
+                    'Oops...',
+                    'Save Customer Contract First, Before add Contract Detail!',
+                    'warning'
+                )
+            }
+
+
+            $('#lstContractDetail_' + i + '__StartTime').timepicker({ timeFormat: 'h:mm:ss p' });
+            $('#lstContractDetail_' + i + '__EndTime').timepicker({ timeFormat: 'h:mm:ss p' });
+
+            $('#lstContractDetail_' + i + '__CleanFrequencyListId').on('change', function () {
+                if (this.value == '1') {
+                    $('#lstContractDetail_' + i + '__Mon').removeAttr('checked');
+                    $('#lstContractDetail_' + i + '__Tues').removeAttr('checked');
+                    $('#lstContractDetail_' + i + '__Wed').removeAttr('checked');
+                    $('#lstContractDetail_' + i + '__Thur').removeAttr('checked');
+                    $('#lstContractDetail_' + i + '__Fri').removeAttr('checked');
+                    $('#lstContractDetail_' + i + '__Sat').removeAttr('checked');
+                    $('#lstContractDetail_' + i + '__Sun').removeAttr('checked');
+                    $("#divweek" + ContractDetailId).show();
+                }
+                else {
+                    $("#divweek" + ContractDetailId).hide();
+                }
+            });
+
+            if (ContractId > 0 && ContractDetailId > 0) {
+                $('#modalDataCusContractPopup' + ContractDetailId).modal();
+            }
+            else if (ContractId > 0) {
+                $('#modalDataCusContractPopup' + ContractDetailId).modal();
+            }
+
+
+            var __ContractDetailCount = parseInt($('#CustomerIncreaseDecreaseDetail_ContractDetailCount').val());
+            var __FranchiseeDistributionCount = parseInt($('#CustomerIncreaseDecreaseDetail_FranchiseeDistributionCount').val());
+
+            if (__ContractDetailCount == 1) {
+                $('#lstContractDetail_0__Amount').val($('#CustomerIncreaseDecreaseDetail_TotalAmount').val());
+
+            }
+            if (__FranchiseeDistributionCount == 1) {
+                $('#lstFranchiseeDistribution_0__Amount').val($('#CustomerIncreaseDecreaseDetail_TotalAmount').val());
+
+            }
+
+            $('#DFCustomerIncreaseDecreaseDetail_ContractExpirationDate').text($('#CustomerIncreaseDecreaseDetail_ExpirationDate').val());
+            $('#DFCustomerIncreaseDecreaseDetail_ContractTotalAmount').text($('#CustomerIncreaseDecreaseDetail_TotalAmount').val());
+
+
+
+
+
+
+            $.unblockUI();
+        }
+    });
+
+    function IncreaseDistribution() {
+
+        $('#modal_CIDFranchiseeDistribution').modal({ backdrop: 'static' });
+    }
+
+    var _FFSchedule = [];
+    function GetFindersFeeScheduleList() {
+        $.ajax({
+            type: "get",
+            url: '@Url.Action("GetFindersFeeScheduleList", "Customer",new {area ="Portal" })',
+            success: function (response) {
+                _FFSchedule = response;
+                GetFindersFeeScheduleCalculation();
+                $('#CustomerDetail_EffectiveDate').datepicker("setDate", new Date());
+
+                //if ($('#hdfFranchiseeDistributionStartDate').val() != "") {
+                //    $('#CustomerDetail_EffectiveDate').datepicker("setDate", new Date($('#hdfFranchiseeDistributionStartDate').val()));
+
+                //}
+                //if ($('#hdfFranchiseeDistributionStartDate').val() != "") {
+                //    var from = $('#hdfFranchiseeDistributionStartDate').val().split(" ")
+
+                //    $('#CustomerDetail_EffectiveDate').val(from[0])
+                //}
+
+
+                //for (var i = 0; i < 10; i++) {
+                //    if ($('#lstFranchiseeDistribution_' + i + '__Amount').length > 0) {
+                //        maskCurrency('lstFranchiseeDistribution_' + i + '__Amount');
+                //    }
+                //    else
+                //        break;
+
+                //}
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
+
+
+
+
+    function GetFindersFeeScheduleCalculation() {
+
+        var _AdjustmentAmount = parseFloat($("#FindersFee_TotalAdjustmentAmount").val() != '' ? $("#FindersFee_TotalAdjustmentAmount").val() : 0);
+        //var _BillingAmount = parseFloat($("#FranchiseeDistribution_Amount").val() != '' ? $("#FranchiseeDistribution_Amount").val() : 0);
+        //$("#FindersFee_ContractBillingAmount").val(_BillingAmount);
+        $("#FindersFee_TotalAdjustmentAmount").val(_AdjustmentAmount);
+        //$("#FindersFee_PayableOnAmount").val(_BillingAmount - _AdjustmentAmount);
+
+        maskCurrency('FindersFee_ContractBillingAmount');
+        maskCurrency('FindersFee_TotalAdjustmentAmount');
+        maskCurrency('FindersFee_PayableOnAmount');
+
+
+
+    }
+
+    function RemoveContractDetail(ContractDetailId, ContractId) {
+        $.blockUI({
+            baseZ: 99999,
+            message: '<center><img height: src="/Images/loading_icon.gif" /><h3> <b>Processing....</br> Please wait! and do not refresh page.</b></h3></center>',
+            css: { backgroundColor: 'rgb{0,0,0}', border: '0', color: '#fff', "z-index": 99999 }
+        });
+        $.ajax({
+            type: "post",
+            url: '@Url.Action("RemoveContractDetail", "Customer")',
+            ajaxasync: true,
+            data: { ContractDetailId: ContractDetailId, ContarctId: ContractId },
+            success: function (response) {
+                loadOwners(response.id);
+
+                $.unblockUI();
+            },
+            error: function (data) {
+                $.unblockUI();
+            }
+        })
+        $.unblockUI();
+    }
+
+    function loadOwners(id) {
+        $.blockUI({
+            baseZ: 99999,
+            message: '<center><img height: src="/Images/loading_icon.gif" /><h3> <b>Processing....</br> Please wait! and do not refresh page.</b></h3></center>',
+            css: { backgroundColor: 'rgb{0,0,0}', border: '0', color: '#fff', "z-index": 99999 }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetContractDetail", "Customer", new { @area = "Portal" })?id=' + id,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                $('#tblContractDescriptionData').html(response);
+                $.unblockUI();
+            },
+            error: function (xhr, textStatus, error) {
+                if (typeof console == "object") {
+
+                    $('#tblContractDescriptionData').html(xhr.responseText);
+                    console.log(xhr.status + "," + xhr.responseText + "," + textStatus + "," + error);
+                }
+                $.unblockUI();
+            }
+        });
+        $.unblockUI();
+    }
+
+    $("#CustomerIncreaseDecreaseDetail_ContractTermMonth").change(function () {
+
+        var monthadd = $("#CustomerIncreaseDecreaseDetail_ContractTermMonth").val();
+        var startdate = $("#CustomerIncreaseDecreaseDetail_StartDate").val();
+        var contractstartdate = new Date(startdate);
+
+        if (monthadd == "")
+            monthadd = 0;
+
+        contractstartdate.setMonth(contractstartdate.getMonth() + parseInt(monthadd));
+        var c = (contractstartdate.getMonth() + 1) + '/' + contractstartdate.getDate() + '/' + contractstartdate.getFullYear()
+        $("#CustomerIncreaseDecreaseDetail_ExpirationDate").val(c);
+
+    });
+
+    $("#FindersFee_FindersFeeTypeListId").change(function () {
+
+        var _FindersFeeTypeListId = $("#FindersFee_FindersFeeTypeListId").val();
+
+        $('#FindersFee_MultiTenantOccupancyAmount').prop('readonly', true);
+        if (_FindersFeeTypeListId == 9 || _FindersFeeTypeListId == 2 || _FindersFeeTypeListId == 7 || _FindersFeeTypeListId == 3 || _FindersFeeTypeListId == 4) {
+            $('#FindersFee_MultiTenantOccupancyAmount').prop('readonly', false);
+        } else { $("#FindersFee_MultiTenantOccupancyAmount").val(0)}
+
+        $.each(_FFSchedule, function (index, item) {
+            if (item.FindersFeeTypeListId == parseInt(_FindersFeeTypeListId)) {
+
+                var _AdjustmentAmount = parseFloat($("#FindersFee_TotalAdjustmentAmount").val() != '' ? $("#FindersFee_TotalAdjustmentAmount").val() : 0);
+                var _BillingAmount = parseFloat($("#FindersFee_ContractBillingAmount").val() != '' ? $("#FindersFee_ContractBillingAmount").val() : 0);
+
+                $("#FindersFee_TotalAdjustmentAmount").val(_AdjustmentAmount);
+                $("#FindersFee_PayableOnAmount").val(_BillingAmount - _AdjustmentAmount);
+                var _Payable = parseFloat($("#FindersFee_PayableOnAmount").val())
+
+                if (_Payable >= item.StartAmount && _Payable <= item.EndAmount) {
+                    $("#FindersFee_Factor").val(item.Factor);
+                    $("#FindersFee_DownPayPercentage").val(item.DownPayPercentage);
+                    $("#FindersFee_DownPaymentAmount").val((item.DownPayPercentage * _Payable / 100).toFixed(2));
+                    $("#FindersFee_MonthlyPaymentPercentage").val(item.MonthlyPercentage);
+                    $("#FindersFee_MonthlyPaymentAmount").val((item.MonthlyPercentage * _Payable / 100).toFixed(2));
+                    $("#FindersFee_TotalNumOfpayments").val(item.NumOfPayments);
+
+                    //$("#FindersFee_FinancedAmount").val((item.MonthlyPercentage * _Payable / 100) * item.NumOfPayments);
+                    //$("#FindersFee_TotalAmount").val(((item.DownPayPercentage * _Payable / 100) + ((item.MonthlyPercentage * _Payable / 100) * item.NumOfPayments)).toFixed(2));
+                    $("#FindersFee_FinancedAmount").val((parseFloat($("#FindersFee_MonthlyPaymentAmount").val()) * item.NumOfPayments).toFixed(2));
+                    $("#FindersFee_TotalAmount").val(((_Payable * item.DownPayPercentage / 100) + (parseFloat($("#FindersFee_MonthlyPaymentAmount").val()) * item.NumOfPayments)).toFixed(2));
+
+                    maskCurrency('FindersFee_DownPaymentAmount');
+                    maskCurrency('FindersFee_MonthlyPaymentAmount');
+                    maskCurrency('FindersFee_FinancedAmount');
+                    maskCurrency('FindersFee_TotalAmount');
+                    maskCurrency('FindersFee_MultiTenantOccupancyAmount');
+
+                    maskPercentage('FindersFee_DownPayPercentage');
+                    maskPercentage('FindersFee_MonthlyPaymentPercentage');
+
+                }
+            }
+        });
+    });
+
+    $("#FindersFee_DownPayPercentage").change(function () {
+        CalculateFindersFee();
+    });
+    $("#FindersFee_MonthlyPaymentPercentage").change(function () {
+        CalculateFindersFee();
+    });
+    $("#FindersFee_TotalNumOfpayments").change(function () {
+        CalculateFindersFee();
+    });
+    $("#FindersFee_TotalNumOfpayments").change(function () {
+        CalculateFindersFee();
+    });
+    $("#FindersFee_MultiTenantOccupancyAmount").change(function () {
+        CalculateFindersFee();
+    });
+    $("#FindersFee_ContractBillingAmount").change(function () {
+        var _FindersFeeTypeListId = $("#FindersFee_FindersFeeTypeListId").val();
+        var ctTemp = 0;
+        var _this = this;
+        $.each(_FFSchedule, function (index, item) {
+            ctTemp++;
+            if (item.FindersFeeTypeListId == parseInt(_FindersFeeTypeListId)) {
+                var _Payable = parseFloat(_this.value);//parseFloat($("#FindersFee_PayableOnAmount").val())
+
+                if (_Payable >= item.StartAmount && _Payable <= item.EndAmount) {
+
+                    $("#FindersFee_Factor").val(item.Factor);
+                    $("#FindersFee_DownPayPercentage").val(item.DownPayPercentage);
+                    $("#FindersFee_DownPaymentAmount").val((item.DownPayPercentage * _Payable / 100).toFixed(2));
+                    $("#FindersFee_MonthlyPaymentPercentage").val(item.MonthlyPercentage);
+                    $("#FindersFee_MonthlyPaymentAmount").val((item.MonthlyPercentage * _Payable / 100).toFixed(2));
+                    $("#FindersFee_TotalNumOfpayments").val(item.NumOfPayments);
+
+                    $("#FindersFee_FinancedAmount").val((item.MonthlyPercentage * _Payable / 100) * item.NumOfPayments);
+                    $("#FindersFee_TotalAmount").val(((item.DownPayPercentage * _Payable / 100) + ((item.MonthlyPercentage * _Payable / 100) * item.NumOfPayments)).toFixed(2));
+
+                    maskCurrency('FindersFee_DownPaymentAmount');
+                    maskCurrency('FindersFee_MonthlyPaymentAmount');
+                    maskCurrency('FindersFee_FinancedAmount');
+                    maskCurrency('FindersFee_TotalAmount');
+                    maskCurrency('FindersFee_MultiTenantOccupancyAmount');
+
+                    maskPercentage('FindersFee_DownPayPercentage');
+                    maskPercentage('FindersFee_MonthlyPaymentPercentage');
+
+                }
+            }
+
+            if (ctTemp == _FFSchedule.length) {
+
+                setTimeout(CalculateFindersFee(), 100);
+            }
+
+        });
+
+
+
+    });
+    function CalculateFindersFee(totalAdjustment) {
+        debugger;
+
+        if (totalAdjustment != '' && totalAdjustment != 0 && totalAdjustment != null) {
+            var adjustment = $("#FindersFee_TotalAdjustmentAmount").val() != '' ? $("#FindersFee_TotalAdjustmentAmount").val() : 0;
+            $("#FindersFee_TotalAdjustmentAmount").val(parseFloat(totalAdjustment) + parseFloat(adjustment));
+
+            _Factor = $("#FindersFee_Factor").val();
+            _ContractBillingAmount = $("#FindersFee_ContractBillingAmount").val() != '' ? $("#FindersFee_ContractBillingAmount").val() : 0;
+            _TotalAdjustmentAmount = $("#FindersFee_TotalAdjustmentAmount").val() != '' ? $("#FindersFee_TotalAdjustmentAmount").val() : 0;
+
+            $("#FindersFee_PayableOnAmount").val(_ContractBillingAmount - _TotalAdjustmentAmount);
+            _PayableOnAmount = $("#FindersFee_PayableOnAmount").val() == '' || $("#FindersFee_PayableOnAmount").val() == null ? 0.00 : parseFloat($("#FindersFee_PayableOnAmount").val());
+
+        }
+        else {
+
+            _Factor = $("#FindersFee_Factor").val();
+            _ContractBillingAmount = $("#FindersFee_ContractBillingAmount").val() != '' ? $("#FindersFee_ContractBillingAmount").val() : 0;
+            _TotalAdjustmentAmount = $("#FindersFee_TotalAdjustmentAmount").val() != '' ? $("#FindersFee_TotalAdjustmentAmount").val() : 0;
+            $("#FindersFee_PayableOnAmount").val(_ContractBillingAmount - _TotalAdjustmentAmount);
+            _PayableOnAmount = $("#FindersFee_PayableOnAmount").val() == '' || $("#FindersFee_PayableOnAmount").val() == null ? 0.00 : parseFloat($("#FindersFee_PayableOnAmount").val());
+
+        }
+
+
+        _DownPayPercentage = parseFloat($("#FindersFee_DownPayPercentage").val() != '' ? $("#FindersFee_DownPayPercentage").val() : 0);
+        $("#FindersFee_DownPaymentAmount").val((_PayableOnAmount * _DownPayPercentage / 100).toFixed(2));
+
+        _MonthlyPaymentPercentage = parseFloat($("#FindersFee_MonthlyPaymentPercentage").val() != '' ? $("#FindersFee_MonthlyPaymentPercentage").val() : 0);
+        $("#FindersFee_MonthlyPaymentAmount").val((_PayableOnAmount * _MonthlyPaymentPercentage / 100).toFixed(2));
+
+        _TotalNumOfpayments = parseInt($("#FindersFee_TotalNumOfpayments").val() != '' ? $("#FindersFee_TotalNumOfpayments").val() : 0);
+
+        //$("#FindersFee_FinancedAmount").val(((_PayableOnAmount * _MonthlyPaymentPercentage / 100) * _TotalNumOfpayments).toFixed(2));
+        //$("#FindersFee_TotalAmount").val(((_PayableOnAmount * _DownPayPercentage / 100) + ((_PayableOnAmount * _MonthlyPaymentPercentage / 100) * _TotalNumOfpayments)).toFixed(2));
+
+        $("#FindersFee_FinancedAmount").val(parseFloat($("#FindersFee_MonthlyPaymentAmount").val()) * _TotalNumOfpayments);
+        $("#FindersFee_TotalAmount").val(((_PayableOnAmount * _DownPayPercentage / 100) + (parseFloat($("#FindersFee_MonthlyPaymentAmount").val()) * _TotalNumOfpayments)).toFixed(2));
+
+        var _FindersFeeTypeListId = $('#FindersFee_FindersFeeTypeListId').val();
+        var _FindersFee_MultiTenantOccupancyAmount = $("#FindersFee_MonthlyPaymentAmount").val() != '' ? parseFloat($("#FindersFee_MonthlyPaymentAmount").val()) : 0;
+        if (_FindersFeeTypeListId == 9 || _FindersFeeTypeListId == 2 || _FindersFeeTypeListId == 7 || _FindersFeeTypeListId == 3 || _FindersFeeTypeListId == 4) {
+
+            _MonthlyPaymentPercentage = parseFloat($("#FindersFee_MonthlyPaymentPercentage").val() != '' ? $("#FindersFee_MonthlyPaymentPercentage").val() : 0);
+            var _amtMT = _FindersFee_MultiTenantOccupancyAmount * 3;
+            $("#FindersFee_FinancedAmount").val((_amtMT).toFixed(2));
+            $("#FindersFee_TotalAmount").val(((_PayableOnAmount * _DownPayPercentage / 100) + _amtMT).toFixed(2));
+        }
+
+
+        //_Factor = $("#lstFindersFee_" + i + "__Factor").val();
+        //var _ContractBillingAmount = parseFloat($("#lstFindersFee_" + i + "__ContractBillingAmount").val() != '' ? $("#lstFindersFee_" + i + "__ContractBillingAmount").val() : 0);
+        //var _TotalAdjustmentAmount = parseFloat($("#lstFindersFee_" + i + "__TotalAdjustmentAmount").val() != '' ? $("#lstFindersFee_" + i + "__TotalAdjustmentAmount").val() : 0);
+        //var _MultiTenantOccupancyAmount = parseFloat($('#lstFindersFee_' + i + '__MultiTenantOccupancyAmount').val() != '' ? $('#lstFindersFee_' + i + '__MultiTenantOccupancyAmount').val() : 0);
+
+
+        //_PayableOnAmount = _ContractBillingAmount + _MultiTenantOccupancyAmount - _TotalAdjustmentAmount;
+
+        //$("#lstFindersFee_" + i + "__PayableOnAmount").val(_PayableOnAmount);
+
+        //_DownPayPercentage = parseFloat($("#lstFindersFee_" + i + "__DownPayPercentage").val() != '' ? $("#lstFindersFee_" + i + "__DownPayPercentage").val() : 0);
+        //$("#lstFindersFee_" + i + "__DownPaymentAmount").val((_PayableOnAmount * _DownPayPercentage / 100).toFixed(2));
+
+        //_MonthlyPaymentPercentage = parseFloat($("#lstFindersFee_" + i + "__MonthlyPaymentPercentage").val() != '' ? $("#lstFindersFee_" + i + "__MonthlyPaymentPercentage").val() : 0);
+        //$("#lstFindersFee_" + i + "__MonthlyPaymentAmount").val((_PayableOnAmount * _MonthlyPaymentPercentage / 100).toFixed(2));
+
+        //_TotalNumOfpayments = parseInt($("#lstFindersFee_" + i + "__TotalNumOfpayments").val() != '' ? $("#lstFindersFee_" + i + "__TotalNumOfpayments").val() : 0);
+
+        //$("#lstFindersFee_" + i + "__FinancedAmount").val(((_PayableOnAmount * _MonthlyPaymentPercentage / 100) * _TotalNumOfpayments).toFixed(2));
+        //$("#lstFindersFee_" + i + "__TotalAmount").val(((_PayableOnAmount * _DownPayPercentage / 100) + ((_PayableOnAmount * _MonthlyPaymentPercentage / 100) * _TotalNumOfpayments)).toFixed(2));
+    }
+    //function CalculateFindersFee() {
+    //    _Factor = $("#FindersFee_Factor").val();
+    //    var _FindersFeeTypeListId = $("#FindersFee_FindersFeeTypeListId").val();
+
+
+
+    //    _ContractBillingAmount = $("#FindersFee_ContractBillingAmount").val() != '' ? $("#FindersFee_ContractBillingAmount").val() : 0;
+    //    _TotalAdjustmentAmount = $("#FindersFee_TotalAdjustmentAmount").val() != '' ? $("#FindersFee_TotalAdjustmentAmount").val() : 0;
+
+    //    var _FindersFee_MultiTenantOccupancyAmount = $("#FindersFee_MultiTenantOccupancyAmount").val() != '' ? parseFloat($("#FindersFee_MultiTenantOccupancyAmount").val()) : 0;
+    //    if (_FindersFeeTypeListId == 9 || _FindersFeeTypeListId == 2 || _FindersFeeTypeListId == 7 || _FindersFeeTypeListId == 3 || _FindersFeeTypeListId == 4) {
+    //        _DownPayPercentage = parseFloat($("#FindersFee_DownPayPercentage").val() != '' ? $("#FindersFee_DownPayPercentage").val() : 0);
+    //        _MonthlyPaymentPercentage = parseFloat($("#FindersFee_MonthlyPaymentPercentage").val() != '' ? $("#FindersFee_MonthlyPaymentPercentage").val() : 0);
+
+    //        var _amtMT = _FindersFee_MultiTenantOccupancyAmount * 3;
+
+    //        _PayableOnAmount = parseFloat($("#FindersFee_PayableOnAmount").val());
+
+
+    //        _DownPayPercentage = parseFloat($("#FindersFee_DownPayPercentage").val() != '' ? $("#FindersFee_DownPayPercentage").val() : 0);
+    //        $("#FindersFee_DownPaymentAmount").val((_PayableOnAmount * _DownPayPercentage / 100).toFixed(2));
+
+    //        _MonthlyPaymentPercentage = parseFloat($("#FindersFee_MonthlyPaymentPercentage").val() != '' ? $("#FindersFee_MonthlyPaymentPercentage").val() : 0);
+    //        $("#FindersFee_MonthlyPaymentAmount").val((_PayableOnAmount * _MonthlyPaymentPercentage / 100).toFixed(2));
+
+    //        _TotalNumOfpayments = parseInt($("#FindersFee_TotalNumOfpayments").val() != '' ? $("#FindersFee_TotalNumOfpayments").val() : 0);
+
+    //        $("#FindersFee_FinancedAmount").val((_amtMT).toFixed(2));
+    //        $("#FindersFee_TotalAmount").val(((_PayableOnAmount * _DownPayPercentage / 100) + _amtMT).toFixed(2));
+
+
+
+    //    } else {
+    //        _PayableOnAmount = parseFloat($("#FindersFee_PayableOnAmount").val());
+
+    //        _DownPayPercentage = parseFloat($("#FindersFee_DownPayPercentage").val() != '' ? $("#FindersFee_DownPayPercentage").val() : 0);
+    //        $("#FindersFee_DownPaymentAmount").val((_PayableOnAmount * _DownPayPercentage / 100).toFixed(2));
+
+    //        _MonthlyPaymentPercentage = parseFloat($("#FindersFee_MonthlyPaymentPercentage").val() != '' ? $("#FindersFee_MonthlyPaymentPercentage").val() : 0);
+    //        $("#FindersFee_MonthlyPaymentAmount").val((_PayableOnAmount * _MonthlyPaymentPercentage / 100).toFixed(2));
+
+    //        _TotalNumOfpayments = parseInt($("#FindersFee_TotalNumOfpayments").val() != '' ? $("#FindersFee_TotalNumOfpayments").val() : 0);
+
+    //        $("#FindersFee_FinancedAmount").val(((_PayableOnAmount * _MonthlyPaymentPercentage / 100) * _TotalNumOfpayments).toFixed(2));
+    //        $("#FindersFee_TotalAmount").val(((_PayableOnAmount * _DownPayPercentage / 100) + ((_PayableOnAmount * _MonthlyPaymentPercentage / 100) * _TotalNumOfpayments)).toFixed(2));
+    //    }
+
+    //}
+
+    function RemoveFindersFeeAdjustmentRow(item, ii) {
+        console.log(ii)
+        var removeAMT = $('#' + ii).val();
+        CalculateFindersFee(-parseFloat(removeAMT))
+        $('tr[rel=' + item + ']').remove()
+    }
+
+    var FindersFeeAdjustmentRowCount = @Model.lstFindersFeeAdjustment.Count()-1
+    $("#CustomerIncreaseDecreaseDetail_FindersFeeAdjustmentCount").val(FindersFeeAdjustmentRowCount);
+    function AppendNewFinderAdjestment(ffID, i) {
+        FindersFeeAdjustmentRowCount++;
+        var rFFA = "";
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetFindersFeeAdjustmentList", "Customer", new { @area = "Portal" })',
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+
+                rFFA += '<tr rel="trFindersFeeAdjustment_' + ffID + '"><td><select id="txtFindersFeeAdjustment_' + ffID + '_' + FindersFeeAdjustmentRowCount + '_Adjustment" name="txtFindersFeeAdjustment_' + ffID + '_' + FindersFeeAdjustmentRowCount + '_Adjustment" class="form-control input-sm">';
+                rFFA += "<option value=" + 0 + ">" + "Select" + "</option>";
+                for (var i = 0; i < response.length; i++) {
+                    rFFA += "<option value=" + response[i].Value + ">" + $.trim(response[i].Text) + "</option>";
+                }
+                rFFA += '</select>';
+
+                rFFA += '<td><input type="text" id="txtFindersFeeAdjustment_' + ffID + '_' + FindersFeeAdjustmentRowCount + '_Description" name="txtFindersFeeAdjustment_' + ffID + '_' + FindersFeeAdjustmentRowCount + '_Description" value="" class="form-control input-sm" /></td>';
+                rFFA += '<td><input type="text" id="txtFindersFeeAdjustment_' + ffID + '_' + FindersFeeAdjustmentRowCount + '_Amount" name="txtFindersFeeAdjustment_' + ffID + '_' + FindersFeeAdjustmentRowCount + '_Amount" value="" class="form-control input-sm"/></td>';
+                rFFA += '<td style="text-align:center;"><a style="font-size: 16px;padding: 3px;color: mediumvioletred;" href="#" onclick="RemoveFindersFeeAdjustmentRow(\'trFindersFeeAdjustment_' + ffID +'\')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>';
+
+
+                rFFA += '</tr>';
+
+
+
+                $('#tblNewFindersFeeAdjustment').append(rFFA);
+
+                maskCurrency('txtFindersFeeAdjustment_' + ffID + '_' + FindersFeeAdjustmentRowCount + '_Amount');
+
+                $('#txtFindersFeeAdjustment_' + ffID + '_' + FindersFeeAdjustmentRowCount + '_Amount').change(function () {
+
+                    var amt = 0.00;
+                    for (var j = 0; j <= FindersFeeAdjustmentRowCount; j++) {
+                        if ($.trim($('#txtFindersFeeAdjustment_' + ffID + '_' + j + '_Amount').val()) != '')
+                            amt += parseFloat($('#txtFindersFeeAdjustment_' + ffID + '_' + j + '_Amount').val());
+                    }
+                    $("#FindersFee_TotalAdjustmentAmount").val(amt);
+                    $("#FindersFee_PayableOnAmount").val((parseFloat($('#FindersFee_ContractBillingAmount').val()) - amt).toFixed(2));
+                    //GetFindersFeeScheduleCalculation();
+                    CalculateFindersFee();
+                });
+            }
+        });
+        $("#CustomerIncreaseDecreaseDetail_FindersFeeAdjustmentCount").val(FindersFeeAdjustmentRowCount);
+    }
+
+
+    /********************************************************************************************************************************************/
+    /********************************************************************************************************************************************/
+
+    function bindfranchiseedetail(linenumber, franchiseeid, franchiseename, franchiseeno, ln, Amount) {
+
+            flineNo++;
+            var txtqty = isNaN($('#txtqty' + linenumber).val()) ? parseFloat(0.00) :  parseFloat($('#txtqty' + linenumber).val());
+            var txtunitprice = isNaN($('#txtunitprice' + linenumber).val()) ?  parseFloat(0.00) : parseFloat($('#txtunitprice' + linenumber).inputmask('unmaskedvalue') == '' ? 0 : $('#txtunitprice' + linenumber).inputmask('unmaskedvalue'));
+            var txttotal = parseFloat(txtqty * txtunitprice);
+            var customerId = $('#CustomerDetail_CustomerId').val();
+            var contractId = $('#CustomerDetail_ContractId').val();
+
+            FDistributionFinal.push({ FranchiseeId: franchiseeid, Amount: Amount, CustomerId: customerId, ContractId: contractId, ContractDetailId: linenumber, DetailLineNumber: ln, FranchiseeName: franchiseename, FranchiseeNo: franchiseeno })
+            var lineTotalAmount = 0;
+            $('input[relLinea="' + linenumber + '"]').each(function (el) {
+                lineTotalAmount += parseFloat(this.defaultValue);
+            });
+
+            if (lineTotalAmount + txttotal > txttotal) {
+                if (lineTotalAmount < txttotal) {
+                    txttotal = parseFloat(txttotal - lineTotalAmount);
+                }
+                else {
+                txttotal = parseFloat(0.00);
+                }
+            }
+            var someString = '';
+            var index = 0;  // Gets the first index where a space occours
+            var FranchiseeNo = ''; // Gets the first part
+
+
+            if ($('#hdfCustomerDetailCallFrom').val() == "RO") {
+                someString = franchiseename;
+                index = someString.indexOf(" ");  // Gets the first index where a space occours
+                FranchiseeNo = franchiseeno; // Gets the first part
+                franchiseename = franchiseename;
+
+                AppendDistribution(ln, franchiseeid, franchiseeno, franchiseename, Amount, linenumber, 0);
+            } else {
+                someString = franchiseename;
+                index = someString.indexOf(" ");  // Gets the first index where a space occours
+                FranchiseeNo = someString.substr(0, index); // Gets the first part
+                franchiseename = someString.substr(index + 1);
+
+                AppendDistribution(ln, franchiseeid, FranchiseeNo, franchiseename, txttotal, linenumber, 0);
+            }
+
+            setTimeout(function () {
+                $("#hdfFrenchiseeId").val(0);
+                document.getElementById('ddldetaillinenumber').selectedIndex = 0;
+                $('#fsearch-box').val('');
+            }, 500);
+        }
+
+
+
+    $('#fsearch-box').keypress(function (event) {
+
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if (keycode == '13') {
+            $(this).typeahead('val', '');
+            $("#ddldetaillinenumber").val('')
+        }
+    });
+
+    var FDistributionFinal = [];
+
+    var tempRowDistribution = "";
+    var tempRowLineNo = 0;
+    var tempFRowLineNo = 0;
+
+    function FranchiseeDistributionData(id) {
+
+        $('#hdffrenchiseedetail_customerid').val(id);
+        var sURL = '@Url.Action("GetCustomerFranchiseeDistributionData", "Customer", new { area = "Portal" })?Id=' + id;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+
+                $('#hdfdistributioncustomerid').val(data.CustomerId);
+                $('#spnCustomerName').html(data.CustomerName);
+                $('#spnCustomerNo').html(data.CustomerNo);
+                $('#tblFranchiseeDistributionList>tbody').html('');
+                $('#hdfcontractAmount').val(data.TotalAmount);
+                tempRow = "";
+                tempRow += '<tr><td style="width:20px;text-align:center;">' + data.PurchaseOrderNo + '</td>';
+                tempRow += '<td style="text-align:left;width:140px;">' + data.AccountTypeName + '</td>';
+                tempRow += '<td style="text-align:center;width:30px;">' + data.Term + '</td>';
+                //tempRow += '<td style="text-align:center;width:50px;">' + formatJSONDate(data.StartDate) + '</td>';
+                //tempRow += '<td style="text-align:center;width:50px;">' + formatJSONDate(data.ExpirationDate) + '</td>';
+                tempRow += '<td style="text-align:right;width:30px;">$<span>' + data.TotalAmount + '</span></td>';
+                tempRow += '<td style="text-align:center;width:30px;">' + data.Status + '</td>';
+
+                tempRow += '<tr><td colspan="7" style="padding:5px;"><div class="table-responsive">';
+                tempRow += '<table class="table table-striped table-bordered table-hover order-column" id="FranchiseeDistributionDetailList">';
+                tempRow += '<thead>';
+                tempRow += '<tr><th style="width:150px;text-align:center;font-size:11px;">Contract Detail Line</th>';
+                tempRow += '<th style="text-align:center;font-size:11px;"> Service Description</th>';
+                tempRow += '<th style="width:120px;text-align:center;font-size:11px;">Amount</th>';
+                tempRow += '<th style="width:100px;text-align:center;font-size:11px;">Frequency</th>';
+                tempRow += '<th style="width:50px;text-align:center;font-size:11px;">Schedule</th>';
+                tempRow += '</tr></thead><tbody></tbody></table></div></td></tr>';
+
+
+                $('#tblFranchiseeDistributionList>tbody').append(tempRow);
+                $('#ddldetaillinenumber').html('');
+                var lineitems = []; lineitems.push("<option value='0'>Select</option>");
+
+
+                $.each(data.listContractDetail, function (index, value) {
+                    tempRowLineNo = value.LineNumber;
+                    tempRowDistribution = "";
+                    tempRowDistribution += '<tr>'
+                    tempRowDistribution += '<td style="text-align:center;"><input type="hidden" relcdamt="cd_relcdamt" id="cd_relcdamt' + tempRowLineNo + '" value="' + value.Amount + '" />'
+                    tempRowDistribution += value.LineNumber + '</td>';
+                    tempRowDistribution += '<td style="text-align:center;">' + value.ServiceTypeName + '</td>';
+                    tempRowDistribution += '<td style="text-align:right;"><input type="text" value="$' + parseFloat(value.Amount)+ '" class="form-control input-sm editvalue txtsrvamt" style="text-align:right;" readonly="readonly"/></td>';
+                    tempRowDistribution += '<td style="text-align:center;">' + value.BillingFrequencyListName + '</td>';
+                    tempRowDistribution += '<td style="text-align:center;"><a href="#" onclick="Franchiseeservice(' + value.Mon + ',' + value.Tues + ',' + value.Wed + ',' + value.Thur + ',' + value.Fri + ',' + value.Sat + ',' + value.Sun + ')">View</a></td>'
+                    tempRowDistribution += '</tr>'
+
+                    $('#FranchiseeDistributionDetailList>tbody').append(tempRowDistribution);
+
+                    lineitems.push("<option value=" + value.ContractDetailId + ">" + value.LineNumber + "</option>");
+
+                    $('#frdestributionTable>tbody').html('');
+                    var flineNo = 0;
+                    data.listFranchiseeDistribution.push({DetailLineNumber: value.LineNumber, FranchiseeId: $('#hdfSelectedFranchiseId').val(), FranchiseeNo:$('#CustomerDetail_FranchiseeNo').val(), FranchiseeName:$('#CustomerDetail_FranchiseeName').val(), Amount: value.Amount, ContractDetailId: value.ContractDetailId});
+                    $.each(data.listFranchiseeDistribution, function (index, value) {
+
+                        if ($('#hdfCustomerDetailCallFrom').val() == "RO") {
+                            bindfranchiseedetail(value.ContractDetailId, value.FranchiseeId, value.FranchiseeName, value.FranchiseeNo, value.DetailLineNumber, value.Amount)
+                            TransferDistributionfee(value.FranchiseeId, value.ContractDetailId, value.DistributionId, value.DetailLineNumber, 0);
+                        } else {
+                            AppendDistribution(value.DetailLineNumber, value.FranchiseeId, value.FranchiseeNo, value.FranchiseeName, value.Amount, value.ContractDetailId, value.DistributionId);
+
+
+
+                        }
+                    }),
+
+                    bindfrenchiseelistbox(tempRowLineNo);
+
+
+                });
+
+                $('#ddldetaillinenumber').html(lineitems.join(' '));
+
+                $("#hdfcontractdetail_linecount").val(tempRowLineNo);
+                $("#hdffrenchiseedetail_linecount").val(tempFRowLineNo);
+
+                $("#modal_FranchiseeDistribution").modal({ backdrop: 'static' });
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function bindfrenchiseelistbox(lineno) {
+        $("#fsearch-box_" + lineno).autocomplete({
+            source: typeaheadSource,
+            appendTo: $("#tblFranchiseeDistributionList"),
+            select: function (event, ui) {
+                event.preventDefault();
+                tempFRowLineNo++;
+                tempRowDistribution = "";
+                tempRowDistribution += '<tr><td style="width:20px;text-align:center;">'
+                tempRowDistribution += '<input type="hidden" id="FranchiseeDistributionFranchiseeId_' + lineno + '_' + tempFRowLineNo + '" name="FranchiseeDistributionFranchiseeId_' + lineno + '_' + tempFRowLineNo + '" value="' + ui.item.value + '" />';
+                tempRowDistribution += '<input type="hidden" id="FranchiseeDistributionContractDetailId_' + lineno + '_' + tempFRowLineNo + '" name="FranchiseeDistributionContractDetailId_' + lineno + '_' + tempFRowLineNo + '" value="' + $("#ContractDetailId_" + lineno).val() + '" />';
+                tempRowDistribution += '<input type="hidden" id="FranchiseeDistributionDetailId_' + lineno + '_' + tempFRowLineNo + '" name="FranchiseeDistributionDetailId_' + lineno + '_' + tempFRowLineNo + '" value="' + ui.item.value + '" /><span>' + ui.item.label.split(' ')[0] + '</span></td>';
+                tempRowDistribution += '<td style="text-align:center;width:242px;">' + ui.item.label.replace(ui.item.label.split(' ')[0], "").trim() + '</td>';
+                tempRowDistribution += '<td style="text-align:center;width:30px;"><input type="text" rel="ContractDetailAmount_' + lineno + '" value="' + $("#ContractDetailAmount_" + lineno).val() + '" class="form-control input-sm editvalue" id="FranchiseeDistributionAmountId_' + lineno + '_' + tempFRowLineNo + '" name="FranchiseeDistributionAmountId_' + lineno + '_' + tempFRowLineNo + '" style="margin-top:-6px;margin-bottom: -6px;" /></td>';
+                tempRowDistribution += '</tr>'
+                onlyDecimal('#FranchiseeDistributionAmountId_' + tempRowLineNo + '_' + tempFRowLineNo);
+                $("#fsearch-box").val("");
+                console.log(ui.item.label);
+                console.log(ui.item.value);
+
+                $("#hdffrenchiseedetail_linecount").val(tempFRowLineNo);
+            }
+        });
+
+
+    }
+
+    function addCommas(nStr) {
+        nStr += '';
+        var x = nStr.split('.');
+        var x1 = x[0];
+        var x2 = x.length > 1 ? '.' + x[1] : '';
+        var rgx = /(\d+)(\d{3})/;
+        while (rgx.test(x1)) {
+            x1 = x1.replace(rgx, '$1' + ',' + '$2');
+        }
+        return x1 + x2;
+    }
+
+    var lnFranchiseeDistribution = 0;
+    function AppendDistribution(ln, fid, fnumber, fname, amt, contractdetailid, distributionid) {
+        lnFranchiseeDistribution++;
+        if (isNaN(amt)) { amt = 0.0;} else {amt = '$' + addCommas(amt)}
+
+        var tempRow = '';
+            tempRow = tempRow + '<tr id=row_' + lnFranchiseeDistribution  + '>'
+            tempRow = tempRow + '<td>'
+            tempRow = tempRow + '   <input type="hidden" relLine="' + lnFranchiseeDistribution + '" id="fd_hdfdistributionid' + lnFranchiseeDistribution + '" name="fd_hdfdistributionid' + lnFranchiseeDistribution + '" value="' + distributionid + '" />'
+            tempRow = tempRow + '   <input type="hidden" relLine="' + lnFranchiseeDistribution + '" id="fd_hdfcontractdetailid' + lnFranchiseeDistribution + '" name="fd_hdfcontractdetailid' + lnFranchiseeDistribution + '" value="' + contractdetailid + '" />'
+            tempRow = tempRow + '   <input type="hidden" relLine="' + lnFranchiseeDistribution + '" id="fd_hdfFrenchiseeId' + lnFranchiseeDistribution + '" name="fd_hdfFrenchiseeId' + lnFranchiseeDistribution + '" value="' + fid + '" />'
+            tempRow = tempRow + '   <input type="text"   relLine="' + lnFranchiseeDistribution + '" id="fd_txtlinenumber' + lnFranchiseeDistribution + '" name="fd_txtlinenumber' + lnFranchiseeDistribution + '" required readonly value="' + ln + '" class="form-control input-sm cnumeric" style="text-align:center;padding: 5px;border-radius: 0px;" />'
+            tempRow = tempRow + '</td>'
+            tempRow = tempRow + '<td>'
+            tempRow = tempRow + '   <input type="text" relLine="' + lnFranchiseeDistribution + '" id="fd_txtfranchiseeno' + lnFranchiseeDistribution + '" name="fd_txtfranchiseeno' + lnFranchiseeDistribution + '" required readonly   value="' + $.trim(fnumber) + '" class="form-control input-sm cnumeric" style="text-align:center;padding: 5px;border-radius: 0px;" />'
+            tempRow = tempRow + '</td>'
+            tempRow = tempRow + '<td>'
+            tempRow = tempRow + '   <input type="text" relLine="' + lnFranchiseeDistribution + '" id="fd_txtfranchiseename' + lnFranchiseeDistribution + '" name="fd_txtfranchiseename' + lnFranchiseeDistribution + '" required readonly  value="' + $.trim(fname) + '" class="form-control input-sm cnumeric" style="text-align:center;padding: 5px;border-radius: 0px;" />'
+            tempRow = tempRow + '</td>'
+            tempRow = tempRow + '<td>'
+            tempRow = tempRow + '   <input type="text" relfbamt="fb_amt' + ln + '" relLine="' + lnFranchiseeDistribution + '" id="fd_txtfranchiseeamount' + lnFranchiseeDistribution + '" name="fd_txtfranchiseeamount' + lnFranchiseeDistribution + '" required value="' + amt + '" class="form-control input-sm cnumeric" style="text-align:right;padding: 5px;border-radius: 0px;" />'
+            tempRow = tempRow + '</td>';
+            tempRow = tempRow + '<td style="text-align: center;">'
+
+            if ($('#hdfCustomerDetailCallFrom').val() == "RO") {
+                tempRow = tempRow + '   <a href="#" onclick="Distributionfee(' + fid + ',' + contractdetailid + ',' + distributionid + ',' + ln + ')">View/Edit</a>'
+            }else {
+                if (distributionid > 0)
+                    tempRow = tempRow + '   <a href="#" onclick="Distributionfee(' + fid + ',' + contractdetailid + ',' + distributionid + ',' + ln + ')">View/Edit</a>'
+                else
+                    tempRow = tempRow + '   <a href="#" onclick="Distributionfee(' + fid + ',' + contractdetailid + ',' + distributionid + ',' + ln + ')">View/Edit</a>'
+            }
+            tempRow = tempRow + '</td>';
+            tempRow = tempRow + '<td>'
+            tempRow = tempRow + '   <a style="font-size: 16px;padding: 3px;color: mediumvioletred;" href="#" onclick="deleteFrenchisee(' + lnFranchiseeDistribution + ',' + fnumber + ');"><i class="fa fa-trash" aria-hidden="true"></i></a>'
+            tempRow = tempRow + '</td></tr>';
+
+        $('#frdestributionTable tbody').append(tempRow);
+        $('#hdffrenchiseedetail_linecount').val(lnFranchiseeDistribution);
+    }
+
+
+
+    function deleteFrenchisee(linenumber, flineNo) {
+        $("tr[id=row_" + linenumber + "]").remove();
+        lnFranchiseeDistribution = lnFranchiseeDistribution - 1;
+    }
+
+    function scrubvalue(number) {
+
+        var num = ''
+        if (number != null) {
+            num = number;
+            num = num.replace('$', '');
+            num = num.replace(',', '');
+            num = !isNaN(num) && isFinite(num) && num != '' ? num : 0;
+
+        }
+        return num;
+
+    }
+
+    function TransferValidateStepFirst() {
+
+        if ($('#CustomerDetail_EffectiveDate').val().trim() == '') {
+            $('#CustomerDetail_EffectiveDate').addClass("has-error");
+            retVal = false;
+
+        } else {
+            $('#CustomerDetail_EffectiveDate').removeClass("has-error");
+        }
+
+        if ($('#hdfCustomerDetailCallFrom').val() != 'RO')
+        {
+            if (DistributionfeeListFinal.length == 0) {
+                $('#fdt_lnkAppendDistributionFee').addClass("has-error");
+                swal({title: "Distribution Fee is Required",text: "",type: "warning"});
+                retVal = false;
+            }
+            else {
+                $('#fdt_lnkAppendDistributionFee').removeClass("has-error");
+
+            }
+        }
+
+        var itmCount = 0
+        var dtAmount = 0.00;
+        var distributionAmount = 0.00
+        var contractAmount = $('#CustomerDetail_TotalAmount').val();
+        var contractAmount = @(Model.CustomerDetail.TotalAmount.HasValue ? Model.CustomerDetail.TotalAmount.Value: 0);
+
+        for (var i = 1; i <= lnFranchiseeDistribution; i++) {
+            if ($('#hdfCustomerDetailCallFrom').val() != 'RO') {
+                if ($('#lstFranchiseeDistribution_' + i + '__Amount').length > 0) {
+                    itmCount++;
+                    maskCurrency('lstFranchiseeDistribution_' + i + '__Amount');
+
+                    if ($('#lstFranchiseeDistribution_' + i + '__Amount').val() == '') {
+                        $('#lstFranchiseeDistribution_' + i + '__Amount').addClass("has-error");
+                        retVal = false;
+                    }
+                    else {
+                        $('#lstFranchiseeDistribution_' + i + '__Amount').removeClass("has-error");
+
+                        dtAmount += parseFloat(scrubvalue($('#lstFranchiseeDistribution_' + i + '__Amount').val()) != '' ? scrubvalue($('#lstFranchiseeDistribution_' + i + '__Amount')).val() : '0');
+                    }
+
+
+                } else {
+                    break;
+                }
+
+
+            } else {
+
+                if (isNaN(scrubvalue($('#fd_txtfranchiseeamount' + i).val())))
+                {
+                    swal({title: "Total Distribution amount must be equal contract amount.",text: "",type: "warning"});
+                    break;
+
+                }else {
+                    if (parseFloat(scrubvalue($('#fd_txtfranchiseeamount' + i).val())) == 0) {
+                        swal({title: "Distribution Amount should be greater than zero",text: "",type: "warning"});
+                        break;
+                    }else {
+
+                        distributionAmount = distributionAmount +  parseFloat(scrubvalue($('#fd_txtfranchiseeamount' + i).val()));
+                    }
+                }
+            }
+            //if (isNaN($('#fd_txtfranchiseeamount' + i).val()))
+            //{
+            //    swal({title: "Total Distribution amount must be equal contract amount.",text: "",type: "warning"});
+            //    break;
+
+            //}else {
+            //    if (parseFloat($('#fd_txtfranchiseeamount' + i).val()) == 0) {
+            //        swal({title: "Distribution Amount should be greater than zero",text: "",type: "warning"});
+            //        break;
+            //    }else {
+
+            //        distributionAmount = distributionAmount +  parseFloat($('#fd_txtfranchiseeamount' + i).val());
+            //    }
+            //}
+        }
+
+        if ($('#hdfCustomerDetailCallFrom').val() != 'RO')
+        {
+            if (dtAmount != (@(Model.CustomerDetail.TotalAmount.HasValue ? Model.CustomerDetail.TotalAmount.Value: 0))) {
+                for (var i = 0; i < itmCount; i++) {
+                    $('#lstFranchiseeDistribution_' + i + '__Amount').addClass("has-error");
+                    retVal = false;
+                }
+            }
+            return true;
+
+        } else {
+            if (parseFloat(distributionAmount) != parseFloat(contractAmount))
+            {
+                swal({title: "Total Distribution amount must be equal contract amount.",text: "",type: "warning"});
+                return false;
+            } else {
+                return true;
+
+
+            }
+        }
+
+    }
+
+
+
+
+    var DistributionfeeList = [];
+    var DistributionfeeListFinal = [];
+
+    function TransferDistributionfee(fid, ContractDetailId, DistributionId, ln, isReadonly) {
+
+        $('#hdfDestributionFee_FranchiseeId').val(fid);
+        $('#hdfDestributionFee_ContractDetailId').val(ContractDetailId);
+        $('#hdfDestributionFee_DestributionId').val(DistributionId);
+        $('#hdfDestributionFee_Linenumber').val($('#fdt_ddldetaillinenumber' + ln).val());
+
+        var new_arr = $.grep(DistributionfeeListFinal, function (n, i) { return (n.ContractDetailId == ContractDetailId && n.FranchiseeId == fid) });
+        if (new_arr.length > 0) {
+            DistributionfeeBindData(new_arr);
+            DistributionfeeList = new_arr;
+            if (isReadonly == 1) {
+                $('#btnTransDistributionFeeSave').hide();
+                $('#btnTransDistributionFeeAddLink').hide();
+
+            }
+            else {
+                $('#btnTransDistributionFeeSave').show();
+                $('#btnTransDistributionFeeAddLink').show();
+            }
+
+
+            $("#modal_Distribution").modal({ backdrop: 'static' });
+        }
+        else {
+            var sURL = '@Url.Action("FranchiseeDistributionFeeData", "Customer", new { area = "Portal" })?FranchiseeId=' + fid + '&ContractDetailId=' + ContractDetailId + '&DistributionId=' + DistributionId;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#feelist>tbody').html('');
+                    DistributionfeeList = data;
+                    DistributionfeeBindData(DistributionfeeList);
+
+                    if (DistributionfeeList.ContractDetailId != undefined) {
+                        DistributionfeeList.push({
+                            DistributionFeesId: DistributionfeeList.DistributionFeesId, DistributionId: DistributionfeeList.DistributionId, CustomerId: $('#hdftransfer_customerid').val(), ContractDetailId: DistributionfeeList.ContractDetailId,
+                            FranchiseeId: DistributionfeeList.FranchiseeId, DetailLineNumber: DistributionfeeList.DetailLineNumber, FeeId: DistributionfeeList.FeeId, Amount: DistributionfeeList.Amount
+                        });
+                    }
+
+                    if (isReadonly == 1) {
+                        $('#btnTransDistributionFeeSave').hide();
+                        $('#btnTransDistributionFeeAddLink').hide();
+
+                    }
+                    else {
+                        $('#btnTransDistributionFeeSave').show();
+                        $('#btnTransDistributionFeeAddLink').show();
+                    }
+
+
+                    $("#modal_Distribution").modal({ backdrop: 'static' });
+
+                }
+            });
+        }
+    }
+
+
+
+
+    function btnTransDistributionFeeSaveOnClick() {
+        $.each(DistributionfeeList, function (index, value) {
+            var new_arr = $.grep(DistributionfeeListFinal, function (n, i) { return (n.ContractDetailId == value.ContractDetailId && n.FranchiseeId == value.FranchiseeId && n.FeeId == value.FeeId); });
+            if (new_arr.length > 0) {
+                var amt = parseFloat($('#DistributionFeeAmount_' + value.FranchiseeId + '_' + value.ContractDetailId + '_' + value.FeeId).val());
+                new_arr[0].Amount = amt;
+            }
+            else {
+                DistributionfeeListFinal.push(value);
+            }
+
+
+            if (DistributionfeeListFinal.length > 0)
+                $("#fdt_lnkAppendDistributionFee").text('View/Edit');
+
+
+        });
+        $("#CustomerDistributionDetail_FeeString").val(JSON.stringify(DistributionfeeListFinal));
+
+        DistributionfeeList = [];
+        $("#modal_Distribution").modal('hide');
+    }
+
+    @*function InItTransferDistributionfee() {
+
+        for(var i=0;i<@Model.lstFranchiseeDistribution.Count;i++)
+        {
+            var DistributionId = $('#lstFranchiseeDistribution_'+i+'__DistributionId').val();
+            var fid =  $('#lstFranchiseeDistribution_'+i+'__FranchiseeId').val();
+            var ContractDetailId = $('#lstFranchiseeDistribution_'+i+'__ContractDetailId').val();
+            var sURL = '@Url.Action("FranchiseeDistributionFeeData", "Customer", new { area = "Portal" })?FranchiseeId=' + fid + '&ContractDetailId=' + ContractDetailId + '&DistributionId=' + DistributionId;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#feelist>tbody').html('');
+                    DistributionfeeList = data;
+                    DistributionfeeBindData(DistributionfeeList);
+
+                    if (DistributionfeeList.ContractDetailId != undefined) {
+                        DistributionfeeList.push({
+                            DistributionFeesId: DistributionfeeList.DistributionFeesId, DistributionId: DistributionfeeList.DistributionId, CustomerId: $('#hdftransfer_customerid').val(), ContractDetailId: DistributionfeeList.ContractDetailId,
+                            FranchiseeId: DistributionfeeList.FranchiseeId, DetailLineNumber: DistributionfeeList.DetailLineNumber, FeeId: DistributionfeeList.FeeId, Amount: DistributionfeeList.Amount
+                        });
+                    }
+
+                    $.each(DistributionfeeList, function (index, value) {
+                        DistributionfeeListFinal.push(value);
+
+                        if (DistributionfeeListFinal.length > 0)
+                            $("a[relName='fdt_lnkAppendDistributionFee']").text('View/Edit');
+                    });
+                    $("#CustomerDistributionDetail_FeeString").val(JSON.stringify(DistributionfeeListFinal));
+                    DistributionfeeList = [];
+                }
+            });
+        }
+    }*@
+
+    var DistributionfeeList = [];
+    var DistributionfeeListFinal = [];
+
+    function Distributionfee(fid, ContractDetailId, DistributionId, ln) {
+
+        $('#hdfDestributionFee_FranchiseeId').val(fid);
+        $('#hdfDestributionFee_ContractDetailId').val(ContractDetailId);
+        $('#hdfDestributionFee_DestributionId').val(DistributionId);
+        $('#hdfDestributionFee_Linenumber').val(ln);
+        var sURL = '@Url.Action("FranchiseeDistributionFeeData", "Customer", new { area = "Portal" })?FranchiseeId=' + fid + '&ContractDetailId=' + ContractDetailId + '&DistributionId=' + DistributionId;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#feelist>tbody').html('');
+                console.log(data)
+                DistributionfeeList = data;
+                DistributionfeeBindData(DistributionfeeList);
+
+                if (DistributionfeeList.ContractDetailId != undefined) {
+                    DistributionfeeList.push({
+                        DistributionFeesId: DistributionfeeList.DistributionFeesId, DistributionId: DistributionfeeList.DistributionId, CustomerId: $('#hdffrenchiseedetail_customerid').val(), ContractDetailId: DistributionfeeList.ContractDetailId,
+                        FranchiseeId: DistributionfeeList.FranchiseeId, DetailLineNumber: DistributionfeeList.DetailLineNumber, FeeId: DistributionfeeList.FeeId, Amount: DistributionfeeList.Amount
+                    });
+                }
+                $("#modal_Distribution").modal({ backdrop: 'static' });
+
+            }
+        });
+    }
+
+    function TransFranchiseeserviceAddDestribution() {
+
+        $.ajax({
+            url: '@Url.Action("GetFeeData", "Customer","Portal")',
+            success: function (res) {
+                console.log(res);
+                FeeDataForDistribution = res;
+                var tempRow = "";
+                $('#feeListAdd tbody').html('');
+                $.each(res, function (index, value) {
+                    tempRow = "";
+                    tempRow += '<tr>';
+                    tempRow += '    <td><input type="checkbox" rel="feeid_distribution" value="' + value.FeeId + '" /></td>';
+                    tempRow += '    <td>' + value.FeeName + '</td>';
+                    tempRow += '    <td>' + value.FeeRateTypeName + '</td>';
+                    tempRow += '    <td style="text-align: right;">' + (value.FeeRateTypeListId == 1 ? (value.Amount + '%') : ('$ ' + value.Amount)) + '</td>';
+                    tempRow += '</tr>';
+                    $('#feeListAdd tbody').append(tempRow);
+                });
+
+                $("#modal_AddDistribution").modal({ backdrop: 'static' });
+            },
+            error: function () { }
+        });
+    }
+
+    function DistributionfeeBindData(DistributionfeeList) {
+      $('#feelist>tbody').html('');
+        $.each(DistributionfeeList, function (index, value) {
+
+            tempRow = "";
+            tempRow += '<tr relDistributionFeeId="' + value.FranchiseeId + '_' + value.ContractDetailId + '_' + value.FeeId + '">';
+            tempRow += '<td style="vertical-align: middle;">' + value.FeeName + '</td>';
+            tempRow += '<td style="vertical-align: middle;">' + value.FeeRateTypeName + '</td>';
+            tempRow += '<td><input type="text" id="DistributionFeeAmount_' + value.FranchiseeId + '_' + value.ContractDetailId + '_' + value.FeeId + '" class="form-control input-sm pp" value="' + value.Amount + '" /></td>';
+            tempRow += '</tr>';
+            $('#feelist>tbody').append(tempRow);
+
+            $('#DistributionFeeAmount_' + value.FranchiseeId + '_' + value.ContractDetailId + '_' + value.FeeId).change(function () {
+                var new_arr = $.grep(DistributionfeeList, function (n, i) { return (n.FranchiseeId == value.FranchiseeId && n.ContractDetailId == value.ContractDetailId && n.FeeId == value.FeeId); });
+                if (new_arr.length > 0) {
+                    var amt = parseFloat($(this).val());
+                    new_arr[0].Amount = amt;
+                }
+            });
+
+        });
+    }
+
+
+        function showAddTransferAppendDistribution() {
+
+        $("#modal_SearchFranchiseeforTransfer").modal({ backdrop: 'static' });
+        $("#fsearch-boxI").autocomplete({
+            source: typeaheadSourceF,
+            appendTo: $("#fsearch-box-div"),
+            select: function (event, ui) {
+                event.preventDefault();
+                var vFid = ui.item.value;
+                var vFnumber = ui.item.label.split(' ')[0].trim();
+                var vFname = ui.item.label.replace(ui.item.label.split(' ')[0], "").trim();
+
+                CTAppendDistribution(0, vFid, vFnumber, vFname, 00, 0, 0);
+                $("#fsearch-boxI").val('');
+                $("#modal_SearchFranchiseeforTransfer").modal('hide');
+            }
+        });
+    }
+
+        function btnAddDistributionFeeSaveOnClick() {
+
+          $('input[rel="feeid_distribution"]').each(function (item) {
+            if ($(this).is(":checked")) {
+                var _FeeId = $(this).val();
+                var new_arr = $.grep(FeeDataForDistribution, function (n, i) { return n.FeeId == _FeeId; })[0];
+
+                if (DistributionfeeList[item].FeeId != _FeeId)
+                {
+                    DistributionfeeList.push({
+                        DistributionFeesId: 0,
+                        DistributionId: $('#hdfDestributionFee_DestributionId').val(),
+                        CustomerId: $('#lblCustomerID').val(),
+                        ContractDetailId: $('#hdfDestributionFee_ContractDetailId').val(),
+                        FranchiseeId: $('#hdfDestributionFee_FranchiseeId').val(),
+                        DetailLineNumber: $('#hdfDestributionFee_Linenumber').val(),
+                        FeeId: _FeeId,
+                        FeeName: new_arr.FeeName,
+                        FeeRateTypeListId: new_arr.FeeRateTypeListId,
+                        FeeRateTypeName: new_arr.FeeRateTypeName,
+                        Amount: new_arr.Amount
+                    });
+                }
+
+            }
+        });
+        DistributionfeeBindData(DistributionfeeList);
+
+        $("#modal_AddDistribution").modal('hide');
+
+    }
+
+        function btnDistributionFeeSaveOnClick() {
+          $.each(DistributionfeeList, function (index, value) {
+            var new_arr = $.grep(DistributionfeeListFinal, function (n, i) { return (n.ContractDetailId == value.ContractDetailId && n.FranchiseeId == value.FranchiseeId && n.FeeId == value.FeeId); });
+            if (new_arr.length > 0) {
+                var amt = parseFloat($('#DistributionFeeAmount_' + value.FranchiseeId + '_' + value.ContractDetailId + '_' + value.FeeId).val());
+                new_arr[0].Amount = amt;
+            }
+            else {
+                DistributionfeeListFinal.push(value);
+            }
+        });
+        DistributionfeeList = [];
+        $("#modal_Distribution").modal('hide');
+    }
+
+    $("#SubmitFC_onClick").click(function (e) {
+
+        if(!TransferValidateStepFinderFee())
+            return
+
+        e.preventDefault();
+
+        $("#FranchiseeDistributionDetail_String").val(JSON.stringify(FDistributionFinal));
+
+        $("#frmsubmitfc_onclick").submit();
+
+    });
+
+    /*Edit FC*/
+    $("#EditFC_onClick").click(function (e) {
+        enalbedFields();
+        $(this).hide();
+        $("#SubmitFC_onClick").show();
+
+    });
+
+    var enalbedFields = function () {
+        $("#FindersFee_StatusListId").prop("disabled", false);
+        $("#FindersFee_StartDate").prop("disabled", false);
+        $("#FindersFee_Description").prop("disabled", false);
+        $("#FindersFee_FindersFeeTypeListId").prop("disabled", false);
+        $("#addNewAdjustment").show();
+
+        $("#FindersFee_ContractBillingAmount").prop("disabled", false);
+        $("#FindersFee_MultiTenantOccupancyAmount").prop("disabled", false);
+        $("#FindersFee_DownPayPercentage").prop("disabled", false);
+        $("#FindersFee_MonthlyPaymentPercentage").prop("disabled", false);
+        $("#FindersFee_TotalNumOfpayments").prop("disabled", false);
+        $("#FindersFee_IncludeDownPayInFirstPay").prop("disabled", false);
+        $("#FindersFee_Notes").prop("disabled", false);
+    }
+
+    var disabledFields = function () {
+        $("#FindersFee_StatusListId").prop("disabled", true);
+        $("#FindersFee_StartDate").prop("disabled", true);
+        $("#FindersFee_Description").prop("disabled", true);
+        $("#FindersFee_FindersFeeTypeListId").prop("disabled", true);
+        $("#addNewAdjustment").hide();
+
+        $("#FindersFee_ContractBillingAmount").prop("disabled", true);
+        $("#FindersFee_MultiTenantOccupancyAmount").prop("disabled", true);
+        $("#FindersFee_DownPayPercentage").prop("disabled", true);
+        $("#FindersFee_MonthlyPaymentPercentage").prop("disabled", true);
+        $("#FindersFee_TotalNumOfpayments").prop("disabled", true);
+        $("#FindersFee_IncludeDownPayInFirstPay").prop("disabled", true);
+        $("#FindersFee_Notes").prop("disabled", true);
+
+        /*Hide Submit Button as well*/
+        $("#SubmitFC_onClick").hide();
+        /* Show Edit Button */
+        $("#EditFC_onClick").show();
+    }
+
+    /* Read Only Fields Name
+     *--TotalAdjustmentAmount
+     ContractBillingAmount
+     MultiTenantOccupancyAmount
+     --PayableOnAmount
+     DownPayPercentage
+    -- DownPaymentAmount
+    MonthlyPaymentPercentage
+    --MonthlyPaymentAmount
+    --Interest
+    --Interest
+   -- FinancedAmount
+   -- TotalAmount
+
+     */
+
+
+
+
+    function SubmitForRO() {
+
+        if (!TransferValidateStepFirst()) {
+            return;
+        }
+
+
+        $("#FranchiseeDistributionDetail_String").val(JSON.stringify(FDistributionFinal));
+
+        $.each(DistributionfeeList, function (index, value) {
+            var new_arr = $.grep(DistributionfeeListFinal, function (n, i) { return (n.ContractDetailId == value.ContractDetailId && n.FranchiseeId == value.FranchiseeId && n.FeeId == value.FeeId); });
+            if (new_arr.length > 0) {
+                var amt = parseFloat($('#DistributionFeeAmount_' + value.FranchiseeId + '_' + value.ContractDetailId + '_' + value.FeeId).val());
+                new_arr[0].Amount = amt;
+            }
+            else {
+                DistributionfeeListFinal.push(value);
+            }
+        });
+        DistributionfeeList = [];
+
+
+        $("#CustomerDistributionDetail_FeeString").val(JSON.stringify(DistributionfeeListFinal));
+        $("#frmsubmitfc_onclick").submit();
+    }
+
+
+    /**************************************************************************************************************************************/
+    /**************************************************************************************************************************************/
+
+
+    //var _FFSchedule = JSON.parse('ViewBag.FFSchedule');
+
+    function maskCurrency(id) {
+        $('#' + id).inputmask("currency", {
+            alias: 'currency',
+            prefix: '$ ',
+            digits: 2,
+            autoUnmask: true,
+            removeMaskOnSubmit: true,
+            unmaskAsNumber: true,
+            allowPlus: false,
+            allowMinus: false,
+            autoGroup: true,
+            groupSeparator: ",",
+        });
+    }
+
+    function maskPercentage(id) {
+        $('#' + id).inputmask("numeric", {
+            radixPoint: ".",
+            groupSeparator: ",",
+            autoGroup: true,
+            suffix: " %",
+            rightAlign: true,
+            autoUnmask: true,
+            removeMaskOnSubmit: true,
+            clearMaskOnLostFocus: false,
+            oncleared: function () { self.Value(''); }
+        });
+    }
+
+    function TransferValidateStepFinderFee() {
+
+        var retVal = true;
+
+
+        $('#frmsubmitfc_onclick').find('select, textarea, input').each(function(){
+            if(!$(this).prop('required')){
+
+
+            } else {
+                if ($(this).val() == '') {
+                    $(this).addClass("has-error");
+                    retVal = false;
+                } else {
+                    $(this).removeClass("has-error");
+                };
+            }
+        });
+
+
+        return retVal;
+    }
+
+    
+
+
+
+</script>
+
+

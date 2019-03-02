@@ -1,0 +1,138 @@
+﻿@model JKViewModels.AccountReceivable.PaymentDetailsPopupModel
+
+@*@{
+        string PhoneNoformat(string phone)
+            {
+            if (phone != null && phone.Length == 10)
+            {
+                phone = '(' + phone.Substring(0, 3) + ')' + ' ' + phone.Substring(3, 3) + '-' + phone.Substring(6, 4);
+            }
+            return phone;
+        }
+    }*@
+
+@{
+    var data = Model;
+}
+<p style="text-align:center;font-size:16px;"><b>Payment Detail</b></p><br />
+<table style="width: 100%" class="table table-bordered table-responsive borderClass">
+    <tr>
+        <td width="45%">
+            <table style="width:100%" border="1">
+                <tr>
+                    <td width="50%" style="text-align: right"><div style="padding:15px;font-size: 13px;">No.&nbsp;&nbsp;</div></td>
+                    <td width="50%" style="text-align: left"><div style="padding:15px;">&nbsp;&nbsp;@Model.TransactionNumber</div></td>
+                </tr>
+                <tr>
+                    <td width="50%" style="text-align: right"><div style="padding:15px;font-size: 13px;">Payment Date&nbsp;&nbsp;</div></td>
+                    <td width="50%" style="text-align: left"><div style="padding:15px;">&nbsp;&nbsp;@Convert.ToDateTime(Model.PaymentDate).ToString("MM/dd/yyyy")</div></td>
+                </tr>
+                <tr>
+                    <td width="50%" style="text-align: right"><div style="padding:15px;font-size: 13px;">Payment Type&nbsp;&nbsp;</div></td>
+                    <td width="50%" style="text-align: left"><div style="padding:15px;">&nbsp;&nbsp;@Model.PaymentType</div></td>
+                </tr>
+                <tr>
+                    <td width="50%" style="text-align: right"><div style="padding:15px;font-size: 13px;"> Payment Amount&nbsp;&nbsp; </div></td>
+                    <td width="50%" style="text-align: left"><div style="padding:15px;">&nbsp;&nbsp;@string.Format("{0:C}", Model.PaymentAmount)</div></td>
+                </tr>
+            </table>
+            <br />
+        </td>
+        <td width="15%"></td>
+        <td width="40%">
+            <table style="width:100%" border="1">
+                <tr>
+                    <td>
+                        <b>&nbsp;&nbsp;CUSTOMER #:</b> @Html.DisplayFor(one => one.CustomerNo)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table style="width:100%" border="0">
+                            <tr>
+                                <td width="100%"><div style="padding:15px;font-size: 13px;">&nbsp;&nbsp;@Html.DisplayFor(one => one.CustomerName)</div></td>
+                            </tr>
+                            <tr>
+                                <td width="100%"><div style="padding:15px;font-size: 13px;">&nbsp;&nbsp;@Html.DisplayFor(one => one.Address1),@Html.DisplayFor(one => one.Address2)</div></td>
+                            </tr>
+                            <tr>
+                                <td width="100%"><div style="padding:15px;font-size: 13px;">&nbsp;&nbsp;@Html.DisplayFor(one => one.City), @Html.DisplayFor(one => one.StateName) @Html.DisplayFor(one => one.PostalCode)</div></td>
+                            </tr>
+                            <tr>
+                                <td width="50%"><div style="padding:15px;font-size: 13px;">&nbsp;&nbsp;@(Model.Phone != null && Model.Phone != "" ? String.Format("{0: (###) ###-####}", long.Parse(Model.Phone)) : "")</div></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<br />
+<table class="table table-bordered table-responsive borderClass" width="100%" border="1">
+    <thead>
+        <tr style="border:2px solid #b3a9a9;">
+            <th style="text-align:center;border:2px solid #b3a9a9;"><b>Type</b></th>
+            <th style="text-align:center;border:2px solid #b3a9a9;"><b>Date</b></th>
+            <th style="text-align:center;border:2px solid #b3a9a9;"><b>Check No.</b></th>
+            <th style="text-align:center;border:2px solid #b3a9a9;"><b>Description</b></th>
+            <th style="text-align:center;border:2px solid #b3a9a9;"><b>Debit</b></th>
+            <th style="text-align:center;border:2px solid #b3a9a9;"><b>Credit</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.PaymentDetailType.Count() > 1 && Model.PaymentDetailType[1] != null)
+        {
+            <tr style="border:2px solid #b3a9a9;">
+                <td style="text-align:center;border:2px solid #b3a9a9;">@Model.PaymentDetailType[1].Type </td>
+                <td style="text-align:center;border:2px solid #b3a9a9;"> @Convert.ToDateTime(Model.PaymentDetailType[1].Date).ToString("MM/dd/yyyy")  </td>
+                <td style="text-align:center;border:2px solid #b3a9a9;"> @Model.PaymentDetailType[1].Number</td>
+                <td style="text-align:center;border:2px solid #b3a9a9;">@Model.PaymentDetailType[1].Description </td>
+                @if (Model.PaymentDetailType[1].AmountTypeListId == 2)
+                {
+                    <td style="text-align:right;color:red;border:2px solid #b3a9a9;">(@string.Format("{0:c}", Model.PaymentDetailType[1].Amount))</td>
+                    <td style="text-align:right;border:2px solid #b3a9a9;"> </td>
+                }
+                else
+                {
+                    <td style="text-align:right;border:2px solid #b3a9a9;"> </td>
+                    <td style="text-align:right;color:red;border:2px solid #b3a9a9;">(@string.Format("{0:c}", Model.PaymentDetailType[1].Amount))</td>
+                }
+
+            </tr>
+        }
+        @if (Model.PaymentDetailType.Count() > 0 && Model.PaymentDetailType[0] != null)
+        {
+            <tr style="border:2px solid black;">
+                <td style="text-align:center;border:2px solid #b3a9a9;">@Model.PaymentDetailType[0].Type </td>
+                <td style="text-align:center;border:2px solid #b3a9a9;"> @Convert.ToDateTime(Model.PaymentDetailType[0].Date).ToString("MM/dd/yyyy")  </td>
+                <td style="text-align:center;border:2px solid #b3a9a9;"> @Model.PaymentDetailType[0].Number</td>
+                <td style="text-align:center;border:2px solid #b3a9a9;">@Model.PaymentDetailType[0].Description </td>
+                @if (Model.PaymentDetailType[0].AmountTypeListId == 1)
+                {
+                    <td style="text-align:right;border:2px solid #b3a9a9;"> </td>
+                    <td style="text-align:right;border:2px solid #b3a9a9;">@string.Format("{0:c}", Model.PaymentDetailType[0].Amount)</td>
+                }
+                else
+                {
+                    <td style="text-align:right;border:2px solid #b3a9a9;">@string.Format("{0:c}", Model.PaymentDetailType[0].Amount)</td>
+                    <td style="text-align:right;border:2px solid #b3a9a9;"> </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<br />
+<table class="table table-bordered table-responsive borderClass" width="100%" border="0">
+    <tr>
+        <td style="text-align: right">
+            NOTE:&nbsp;&nbsp;
+        </td>
+        <td>
+            <table class="table table-bordered table-responsive borderClass" width="100%" border="1">
+                <tr><td height="50"><p>&nbsp;&nbsp;<br /></p></td></tr>
+            </table>
+        </td>
+    </tr>
+</table>

@@ -1,0 +1,40 @@
+﻿@model IEnumerable<JKViewModels.CRM.CRMLeadListViewModel>
+    @{ var count = 0;}
+    <table class="table table-striped table-bordered table-hover order-column" cellSpacing=1 cellPadding=1 border=0 style="margin-top:0 !important;" id="tblcall">
+        <thead>
+
+            <tr style="background: #9d9fa2;color: white;">
+                <td noWrap align=center>Lead Id</td>
+                <td noWrap align=center>Company Name</td>
+                <td noWrap align=center>Status</td>
+                <td noWrap align=center>Comment</td>
+                <td noWrap align=center>Assign To.</td>
+                <td noWrap align=center>Assign all in Group to</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="item">
+                    <td align=center class="leadvalue">@item.LeadId</td>
+                    <td align=center>@item.CompanyName</td>
+                    <td align=center>@item.StageStatus</td>
+                    <td align=center><textarea id="txtComment_@item.LeadId" class="comments" rows="2" cols="20"></textarea></td>
+                    <td align=center>
+                        @Html.DropDownList("SalesUserList", (SelectList)ViewBag.SalesUserList, "-Select-", new { @class = "form-control input-sm user-dropdown", @id = "ddlSalesUserAssignTo_" + @item.LeadId })
+                    </td>
+                    <td align=center>
+                        @if (count == 0)
+                        {
+                            @Html.DropDownList("SalesUserList", (SelectList)ViewBag.SalesUserList, "-Select-", new { @class = "form-control input-sm user-dropdowngroup", @id = "ddlSalesUserAssignGroupTo_" + @item.LeadId })
+                        }
+                    </td>
+                </tr>
+                if (count == 0)
+                {
+                    count = 1;
+                }
+            }
+
+        </tbody>
+    </table>

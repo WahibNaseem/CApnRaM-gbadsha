@@ -1,0 +1,251 @@
+﻿@model List<JKViewModels.Franchise.portal_spGet_F_ChargebackListForFranchiseeViewModel>
+@{
+
+    var RemitData = ViewBag.RemitTo;
+
+    var request = HttpContext.Current.Request;
+    var _siteUrl = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Authority);
+    string imgpath = _siteUrl + "/Content/admin/assets/layouts/layout2/img/lg_jklogo.jpg";
+
+    var isViewType = ViewBag.isViewType;
+
+    string monthName = new DateTime(2010, ViewBag.billmonth, 1).ToString("MMM");
+}
+<style>
+    .tblAccountHistory thead th,
+    .tblAccountHistory thead td {
+        padding: 3px 0px !important;
+        font-size: 12px !important;
+        /*background-color: #95A5A6 !important;
+        color: #fff;*/
+    }
+
+    .tblAccountHistory tbody td {
+        padding: 3px 0px !important;
+        font-size: 12px !important;
+    }
+
+    .tblAccountHistory thead th {
+        vertical-align: middle;
+        font-weight: bold;
+    }
+</style>
+<table>
+    <tr>
+        <td width="15%">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-4">
+                        <img src="@imgpath" width="90" height="70" />
+                    </div>
+                </div>
+            </div>
+        </td>
+        <td width="60%">
+            <div class="row">
+                <div class="col-md-12" style="text-align:center;">
+                    <b>
+                        @if (RemitData != null)
+                        {
+                            @RemitData.RegionName
+                        }
+                    </b>
+                    <p style="font-size:15px;padding-top:5px;"> Franchisee Chargeback as of <span class="billmonth" id="billmonth">@(monthName)</span>,&nbsp;<span class="billyear" id="billyear">@ViewBag.billyear</span></p>
+                </div>
+            </div>
+        </td>
+        <td width="20%">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-4">
+                    </div>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+@if (Convert.ToBoolean(isViewType) == true)
+{
+    <table cellspacing="0" style="width:100%;margin-left:-50px !important;margin-right:-50px !important; " class="tblAccountHistory">
+        <thead>
+            <tr>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;"><b>Region</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:85px!important;"><b> Franchisee No</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:190px !important;"><b>Franchisee Name</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;"><b>Total Invoice Amount</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"><b> Invoice Balance</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"><b> Total Amount Paid</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"><b>Total CB Fees</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"><b>ChargeBack Amount</b></th>
+            </tr>
+            <tr>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;height:5px;"></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:85px !important;"></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:180px!important;"></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;"></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @if (Model.Count() != 0)
+            {
+                decimal invoiceAmount = 0;
+                decimal totalInvoiceBalance = 0;
+                decimal totalPayment = 0;
+                decimal totalCBFees = 0;
+                decimal totalChargeback = 0;
+
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td style="text-align:center;">@Html.DisplayFor(modelItem => item.RegionName) </td>
+                        <td style="text-align:left;">@Html.DisplayFor(modelItem => item.FranchiseeNo)</td>
+                        <td style="text-align:left;font-size:11px;">@Html.DisplayFor(modelItem => item.FranchiseeName)</td>
+                        <td style="text-align:right;">@string.Format("{0:C}", item.InvoiceAmount)  </td>
+                        <td style="text-align:right;">@string.Format("{0:C}", item.InvoiceBalance)  </td>
+                        <td style="text-align:right;">@string.Format("{0:C}", item.TotalAmountPaid)  </td>
+                        <td style="text-align:right;">@string.Format("{0:C}", item.TotalFee)  </td>
+                        <td style="text-align:right;padding-right:3px !important;">@string.Format("{0:C}", item.ChargeBackAmount)  </td>
+                    </tr>
+                    invoiceAmount += Convert.ToDecimal(item.InvoiceAmount);
+                    totalInvoiceBalance += Convert.ToDecimal(item.InvoiceBalance);
+                    totalPayment += Convert.ToDecimal(item.TotalAmountPaid);
+                    totalCBFees += Convert.ToDecimal(item.TotalFee);
+                    totalChargeback += Convert.ToDecimal(item.ChargeBackAmount);
+                }
+                <tr>
+                    <td colspan="2" align="right"></td>
+                    <td colspan="1" style="height:27px;padding-left:10px;">
+                        <b>Total:</b>
+                    </td>
+                    <td style="text-align:right;">
+                        <b>@string.Format("{0:C}", invoiceAmount)</b>
+                    </td>
+                    <td style="text-align:right;">
+                        <b>@string.Format("{0:C}", totalInvoiceBalance)</b>
+                    </td>
+                    <td style="text-align:right;">
+                        <b>@string.Format("{0:C}", totalPayment)</b>
+                    </td>
+                    <td style="text-align:right;">
+                        <b>@string.Format("{0:C}", totalCBFees)</b>
+                    </td>
+                    <td style="text-align:right;padding-right:3px !important;">
+                        <b>@string.Format("{0:C}", totalChargeback)</b>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <table cellspacing="0" style="width:100%;margin-left:-50px !important;margin-right:-50px !important; " class="tblAccountHistory">
+        <thead>
+            <tr>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;"><b>Date</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"><b> Invoice No</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:185px !important;"><b>Customer Name</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;"><b>Fran BillNo</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"><b>Total Invoice Amount (w/o tax)</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"><b>Invoice Balance (w/o tax)</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"><b>Total Amount Paid (w/o tax)</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"><b>Total CB Fees</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"><b>ChargeBack Amount</b></th>
+            </tr>
+            <tr>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;height:5px;"></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px !important;"></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:185px!important;"></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;"></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;"></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @if (Model.Count() != 0)
+            {
+                var unique_customer_ids = Model.Select(s => s.FranchiseeNo).Distinct().ToList();
+                foreach (var customer_id in unique_customer_ids)
+                {
+                    var entries = Model.Where(s => s.FranchiseeNo == customer_id).ToList();
+                    if (entries.Count() != 0)
+                    {
+                        var first_item = entries.First();
+                        <tr>
+                            <td style="text-align:left;padding-top:5px;" colspan="5"><b>@Html.DisplayFor(modelItem => first_item.FranchiseeNo) </b>- <b>@Html.DisplayFor(modelItem => first_item.FranchiseeName) </b></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                        decimal invoiceAmount = 0;
+                        decimal totalInvoiceBalance = 0;
+                        decimal totalPayment = 0;
+                        decimal totalCBFees = 0;
+                        decimal totalChargeback = 0;
+
+
+                        foreach (var item in entries)
+                        {
+                            <tr>
+                                <td style="text-align:center;">@Convert.ToDateTime(item.Invoicedate).ToString("MM/dd/yyyy")</td>
+                                <td style="text-align:left;">@Html.DisplayFor(modelItem => item.InvoiceNo) </td>
+                                <td style="text-align:left;font-size:10px;">@Html.DisplayFor(modelItem => item.CustomerName)</td>
+
+                                @if (item.TransactionNumber == null)
+                                {
+                                    item.TransactionNumber = "";
+                                }
+                                <td style="text-align:center;">@Html.DisplayFor(modelItem => item.TransactionNumber)</td>
+                                <td style="text-align:right;">@string.Format("{0:C}", item.InvoiceAmount)  </td>
+                                <td style="text-align:right;">@string.Format("{0:C}", item.InvoiceBalance)  </td>
+                                <td style="text-align:right;">@string.Format("{0:C}", item.TotalAmountPaid)  </td>
+                                <td style="text-align:right;">@string.Format("{0:C}", item.TotalFee)  </td>
+                                <td style="text-align:right;padding-right:3px !important;">@string.Format("{0:C}", item.ChargeBackAmount)  </td>
+                            </tr>
+                            invoiceAmount += Convert.ToDecimal(item.InvoiceAmount);
+                            totalInvoiceBalance += Convert.ToDecimal(item.InvoiceBalance);
+                            totalPayment += Convert.ToDecimal(item.TotalAmountPaid);
+                            totalCBFees += Convert.ToDecimal(item.TotalFee);
+                            totalChargeback += Convert.ToDecimal(item.ChargeBackAmount);
+                        }
+                        <tr>
+                            <td colspan="3" align="right"></td>
+                            <td colspan="1" style="border-bottom:1px solid #000000 !important;border-top:1px solid #000000 !important;border-left:1px solid #000000 !important;height:27px;padding-left:10px;">
+                                <b>Total:</b>
+                            </td>
+                            <td style="text-align:right;border-bottom:1px solid #000000 !important;border-top:1px solid #000000 !important;">
+                                <b>@string.Format("{0:C}", invoiceAmount)</b>
+                            </td>
+                            <td style="text-align:right;border-bottom:1px solid #000000 !important;border-top:1px solid #000000 !important;">
+                                <b>@string.Format("{0:C}", totalInvoiceBalance)</b>
+                            </td>
+                            <td style="text-align:right;border-bottom:1px solid #000000 !important;border-top:1px solid #000000 !important;">
+                                <b>@string.Format("{0:C}", totalPayment)</b>
+                            </td>
+                            <td style="text-align:right;border-bottom:1px solid #000000 !important;border-top:1px solid #000000 !important;">
+                                <b>@string.Format("{0:C}", totalCBFees)</b>
+                            </td>
+                            <td style="text-align:right;border-bottom:1px solid #000000 !important;border-top:1px solid #000000 !important;border-right:1px solid #000000 !important;padding-right:3px !important;">
+                                <b>@string.Format("{0:C}", totalChargeback)</b>
+                            </td>
+
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+}
+<div style="page-break-before:always"></div>

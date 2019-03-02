@@ -1,0 +1,296 @@
+﻿
+@model List<JKApi.Service.Service.Company.CheckViewModelFinalizedReport>
+
+@{
+    ViewBag.Title = "Check";
+    Layout = "~/Areas/Portal/Views/Shared/_LayoutEmpty.cshtml";
+}
+
+
+
+
+@section styles{
+    <link rel="stylesheet" href="~/Content/Check.css" />
+    <link rel="stylesheet" href="~/Content/FranchiseeReport.css" />
+}
+
+@if (ViewBag.IsPrintView == true)
+{
+    <div class="print-container no-print">
+        <input type="button" class="print-button" value="Create PDF" onclick="createPDF()" />
+        <input type="button" class="print-button" value="Back to Portal" onclick="backToPortal()" />
+    </div>
+}
+
+@for (var i = 0; i < Model.Count; i++)
+{
+    var check = Model[i];
+
+    string[] displayOrder = null;
+
+    switch (check.CheckLayout?.Position)
+    {
+        case 0: // top
+        default:
+            displayOrder = new string[] { "Check", "Report" };
+            break;
+
+        case 1: // bottom
+            displayOrder = new string[] { "Report", "Check" };
+            break;
+
+    }
+
+    <div class="page-container">
+        @foreach (string orderEntry in displayOrder)
+        {
+            switch (orderEntry)
+            {
+                case "Report":
+                    @Html.Partial("_PartialFranchiseeReportFinalizedSummaryForCheck", check)
+                    break;
+
+                case "Check":
+                    @RenderCheck(check)
+                    break;
+            }
+        }
+    </div>
+
+    if (i < Model.Count - 1)
+    {
+        <P class="page-divider" />
+    }
+}
+
+@helper RenderCheck(JKApi.Service.Service.Company.CheckViewModelFinalizedReport check)
+{
+if (check.CheckLayout == null)
+{
+    return;
+}
+
+var debugClass = ViewBag.ShowSample ? "debug" : "";
+
+    <div class="check-container @((check.CheckLayout.Position == 1) ? "bottom" : "")">
+        <div class="check @debugClass" style="margin-left: @(check.Calibration.ShiftX)in; margin-top: @(check.Calibration.ShiftY)in">
+
+            @if (ViewBag.ShowSample == true)
+            {
+                <img src="~/Content/check-sample.png" style="position: absolute; left: 0px; top: 0px; z-index: -1000" />
+            }
+
+            @foreach (var elem in check.CheckLayout.Elements.Where(o => o.IsActive))
+            {
+                switch (elem.ElementTypeId)
+                {
+                    case 1: // Logo
+                        <div class="check-element img" style="@PositionStringForElement(elem.ElementTypeId) width: 0.90in; height: 0.50in; background-image: url('@Url.Content("~/Images/janiking_logo_alpha.png")'); background-size: 100%; background-repeat: no-repeat">
+                        </div>
+                        break;
+
+                    case 2: // Company Address
+                        <h4 class="check-element" style="@PositionStringForElement(elem.ElementTypeId); font-weight: bold">
+                            @check.RegionName
+                        </h4>
+                        <h4 class="check-element" style="@PositionStringForElement(elem.ElementTypeId, yOffset: 0.17)">
+                            @check.RegionAccountType
+                        </h4>
+                        <h4 class="check-element" style="@PositionStringForElement(elem.ElementTypeId, yOffset: 0.32)">
+                            @check.RegionAddress1
+                        </h4>
+                        <h4 class="check-element" style="@PositionStringForElement(elem.ElementTypeId, yOffset: 0.47)">
+                            @check.RegionAddress2
+                        </h4>
+                        break;
+
+                    case 3: // Check Number (Top)
+                        <h2 class="check-element" style="@PositionStringForElement(elem.ElementTypeId)">
+                            @check.CheckNumber
+                        </h2>
+                        break;
+
+                    case 4: // Label - Pay
+                        <h1 class="check-element" style="@PositionStringForElement(elem.ElementTypeId)">
+                            PAY
+                        </h1>
+                        break;
+
+                    case 5: // Label - To The Order Of
+                        <h1 class="check-element" style="@PositionStringForElement(elem.ElementTypeId)">
+                            To The
+                        </h1>
+                        <h1 class="check-element" style="@PositionStringForElement(elem.ElementTypeId, yOffset: 0.17)">
+                            Order Of:
+                        </h1>
+                        break;
+
+                    case 6: // Payment Amount (Text)
+                        <h3 class="check-element" style="@PositionStringForElement(elem.ElementTypeId)">
+                            @check.PayText
+                        </h3>
+                        break;
+
+                    case 7: // Payment Amount (Number)
+                        <h2 class="check-element" style="@PositionStringForElement(elem.ElementTypeId)">
+                            @check.PayDollars
+                        </h2>
+                        break;
+
+                    case 8: // Label - Date
+                        <h1 class="check-element" style="@PositionStringForElement(elem.ElementTypeId)">
+                            Date
+                        </h1>
+                        break;
+
+                    case 9: // Payee
+                        <h3 class="check-element" style="@PositionStringForElement(elem.ElementTypeId)">
+                            @check.PayeeNumber
+                        </h3>
+                        <h3 class="check-element" style="@PositionStringForElement(elem.ElementTypeId, yOffset: 0.20)">
+                            @check.PayeeName
+                        </h3>
+                        <h3 class="check-element" style="@PositionStringForElement(elem.ElementTypeId, yOffset: 0.40)">
+                            @check.PayeeAddress1
+                        </h3>
+                        <h3 class="check-element" style="@PositionStringForElement(elem.ElementTypeId, yOffset: 0.60)">
+                            @check.PayeeAddress2
+                        </h3>
+                        break;
+
+                    case 10: // Date
+                        <h2 class="check-element" style="@PositionStringForElement(elem.ElementTypeId)">
+                            @check.Date
+                        </h2>
+                        <div class="hline" style="@PositionStringForElement(elem.ElementTypeId, xOffset: -0.07, yOffset: 0.15); width: 0.90in">&nbsp;</div>
+                        break;
+
+                    case 11: // Signature
+                        <h5 class="check-element" style="@PositionStringForElement(elem.ElementTypeId, xOffset: 1.25, yOffset: -0.15)">
+                            Void after 90 Days
+                        </h5>
+                        <h5 class="check-element" style="@PositionStringForElement(elem.ElementTypeId, xOffset: 1.25, yOffset: 0.70)">
+                            Authorized Signature
+                        </h5>
+                        <div class="check-element img" style="@PositionStringForElement(elem.ElementTypeId) width: 2.50in; height: 0.65in;"></div>
+                        <div class="hline" style="@PositionStringForElement(elem.ElementTypeId, xOffset: 0.65, yOffset: 0.66); width: 2.50in">&nbsp;</div>
+                        break;
+
+                    case 12: // MICR Line
+
+                        if (check.CheckNumber != null && check.RoutingNumber != null && check.AccountNumber != null)
+                        {
+                            <h1 class="check-element micr" style="@PositionStringForElement(12)">
+                                C@(check.CheckNumber)C A@(check.RoutingNumber)A @(check.AccountNumber)C
+                            </h1>
+                        }
+
+                        break;
+
+                    case 15: // Bank Address
+                        <h6 class="check-element" style="@PositionStringForElement(elem.ElementTypeId); font-weight: bold">
+                            @check.BankName
+                        </h6>
+                        <h6 class="check-element" style="@PositionStringForElement(elem.ElementTypeId, yOffset: 0.11)">
+                            @check.BankRegion
+                        </h6>
+                        <h6 class="check-element" style="@PositionStringForElement(elem.ElementTypeId, yOffset: 0.22)">
+                            @check.BankAddress1
+                        </h6>
+                        <h6 class="check-element" style="@PositionStringForElement(elem.ElementTypeId, yOffset: 0.33)">
+                            @check.BankAddress2
+                        </h6>
+                        <h6 class="check-element" style="@PositionStringForElement(elem.ElementTypeId, yOffset: 0.55)">
+                            @check.BankPhone
+                        </h6>
+                        <h6 class="check-element" style="@PositionStringForElement(elem.ElementTypeId, yOffset: 0.66)">
+                            @check.BankNumber
+                        </h6>
+                        break;
+                }
+            }
+
+        </div>
+    </div>
+}
+
+@helper PositionStringForElement(int elementTypeId, double xOffset = 0.0, double yOffset = 0.0)
+{
+// ignore this; shifting check by calibration amounts instead.
+// change this to use calibration in the event it needs to be more granular (per element)
+//var x = (this.Calibration != null) ? this.Calibration.ShiftX : 0.0;
+//var y = (this.Calibration != null) ? this.Calibration.ShiftY : 0.0;
+var x = 0.0;
+var y = 0.0;
+var leftOrRight = "left";
+var topOrBottom = "top";
+
+x += xOffset;
+y += yOffset;
+
+switch (elementTypeId)
+{
+    case 1: // Logo
+        x += 0.30; y += 0.25;
+        break;
+
+    case 2: // Company Address
+        x += 1.30; y += 0.25;
+        break;
+
+    case 3: // Check Number (Top)
+        leftOrRight = "right";
+        x += 0.65; y += 0.20;
+        break;
+
+    case 4: // Label - Pay
+        x += 0.40; y += 1.25;
+        break;
+
+    case 5: // Label - To The Order Of
+        x += 0.37; y += 1.54;
+        break;
+
+    case 6: // Payment Amount (Text)
+        x += 0.98; y += 1.25;
+        break;
+
+    case 7: // Payment Amount (Number)
+        x += 7.08; y += 1.25;
+        break;
+
+    case 8: // Label - Date
+        x += 6.18; y += 0.93;
+        break;
+
+    case 9: // Payee
+        x += 1.22; y += 1.54;
+        break;
+
+    case 10: // Date
+        x += 6.75; y += 0.95;
+        break;
+
+    case 11: // Signature
+        x += 5.10; y += 1.90;
+        break;
+
+    case 12: // Bank Number (MICR)
+        x += 1.12; y += 3.03;
+        break;
+    case 13: // Account Number
+        break;
+    case 14: // Routing Number
+        break;
+
+    case 15: // Bank Address
+        x += 4.13; y += 0.25;
+        break;
+}
+
+    @:@string.Format("{0}: {1}in; {2}: {3}in;", leftOrRight, x, topOrBottom, y)
+}
+
+
+
+

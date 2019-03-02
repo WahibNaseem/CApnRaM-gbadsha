@@ -1,0 +1,389 @@
+﻿@model JKViewModels.Customer.ServiceCallLogModel
+
+<div class="modal-content" style="border-radius: 8px;">
+    <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+        <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+            CUSTOMER SERVICE CALL LOG
+        </h4>
+    </div>
+    <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+        <div class="form-body" style="padding-top: 0px;">
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <div class="col-md-5 control-label">
+                        <span>Select Customer:<span style="color:#000000;">&nbsp;:</span></span>
+                    </div>
+                    <div class="col-md-4" style="padding-top: 8px;">
+                        @Html.DropDownListFor(x => x.CustomerDetail.CustomerId, (IEnumerable<SelectListItem>)ViewBag.CustomerList, new { @class = "form-control input-sm", required = "required", onchange = "OnchangeCustomerDetails()" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12" style="padding-left:0px;padding-right:0px;">
+                    <hr style="margin-top: 5px;margin-bottom: 5px;" />
+                </div>
+            </div>
+             
+            <div class="form-group">
+                <div class="col-md-12">
+                    <div class="col-md-3 control-label">
+                        <span>Customer No.<span style="color:#000000;">&nbsp;:</span></span>
+                    </div>
+                    <div class="col-md-2" style="padding-top: 8px;">
+                        <b><span id="spnCustomerNo"> </span></b>
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-2 control-label">
+                        <span>Contact<span style="color:#000000;">&nbsp;:</span></span>
+                    </div>
+                    <div class="col-md-3" style="padding-top: 8px;">
+                        <b><span id="spnContactName"> </span></b>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <div class="col-md-3 control-label" style="padding-top: 0px;">
+                        <span>Customer Name<span style="color:#000000;">&nbsp;:</span></span>
+                    </div>
+                    <div class="col-md-4" style="">
+                        <b><span id="spnCustomerName"> </span></b>
+                    </div>
+                    <div class="col-md-2 control-label" style="padding-top: 0px;">
+                        <span>Phone No.<span style="color:#000000;">&nbsp;:</span></span>
+                    </div>
+                    <div class="col-md-3">
+                        <b><span id="spnPhone"> </span></b>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12" style="padding-left:0px;padding-right:0px;">
+                    <hr style="margin-top: 5px;margin-bottom: 10px;" />
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="hidden" id="hdnCustomerId" value="0" />
+                <div class="col-md-12">
+                    <div class="col-md-2 control-label">
+                        Initiated By<span style="color:#000000;"> &nbsp;:</span><span class="required"> * </span>
+                    </div>
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(x => x.InitiatedBy, new SelectList(ViewBag.InitiatedBy, "Value", "Key"), new { @class = "form-control input-sm ddl", required = "required" })
+                    </div>
+                    <div class="col-md-2 control-label">
+                        Area<span style="color:#000000;">&nbsp;:</span><span class="required"> * </span>
+                    </div>
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(x => x.ServiceLogAreaListId, (IEnumerable<SelectListItem>)ViewBag.ServiceCallAreaList, new { @class = "form-control input-sm ddl", required = "required" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <div class="col-md-2 control-label">
+                        Spoke With<span style="color:#000000;">&nbsp;:</span><span class="required"> * </span>
+                    </div>
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(x => x.SpokeWith, new { @class = "input-sm form-control" })
+                    </div>
+
+                    <div class="col-md-2 control-label">
+                        Type<span style="color:#000000;">&nbsp;:</span><span class="required"> * </span>
+                    </div>
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(x => x.ServiceLogTypeListId, (IEnumerable<SelectListItem>)ViewBag.ServiceCallLogTypeList, new { @class = "form-control input-sm ddl", required = "required" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <div class="col-md-2 control-label">
+                        Action<span style="color:#000000;">&nbsp;:</span><span class="required"> * </span>
+                    </div>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(x => x.Action, new { @class = "input-sm form-control" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <div class="col-md-2 control-label">
+                        Comments<span style="color:#000000;">&nbsp;:</span>
+                    </div>
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(x => x.Comments, new { @class = "input-sm form-control", @rows = "5", @style = "min-width: 556px;" })
+                        @*<textarea class="input-sm form-control" rows="5" style="min-width: 556px;"></textarea>*@
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <div class="col-md-2 control-label">
+                        Status<span style="color:#000000;">&nbsp;:</span>
+                    </div>
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(x => x.StatusResultListId, (IEnumerable<SelectListItem>)ViewBag.StatusResultList, new { @class = "form-control input-sm ddl", required = "required" })
+                    </div>
+                    <div class="col-md-2 control-label">
+                        Call Back<span style="color:#000000;">&nbsp;:</span>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group input-medium date" data-date-format="dd-mm-yyyy" data-date-start-date="+0d">
+                            @Html.TextBoxFor(x => x.CallBack, new { @class = "form-control input-sm date-picker" })
+                            <span class="input-group-btn">
+                                <button class="btn default" type="button">
+                                    <i class="fa fa-calendar"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <div class="col-md-2 control-label">
+                        Follow By<span style="color:#000000;">&nbsp;:</span>
+                    </div>
+                    <div class="col-md-4">
+                        <select class="input-sm form-control ddl" id="ddlFollowBy" name="FollowBy">
+                            <option value="0">-Select-</option>
+                            <option value="1">Option1</option>
+                            <option value="2">Option2</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 control-label">
+                        Email Call Notes to<span style="color:#000000;">&nbsp;:</span>
+                    </div>
+                    <div class="col-md-4">
+                        <select class="input-sm form-control ddl" id="ddlEmailCallNotes" name="EmailCallNotes">
+                            <option value="0">-Select-</option>
+                            <option value="1">Option1</option>
+                            <option value="2">Option2</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="form-group">
+                <div class="col-md-12 text-right" style="padding-right:30px;">
+
+                    <input type="button" class="btn btn-primary btn-default" id="btnSaveCloseForm" value="Save" />
+                    <input type="reset" class="btn btn-primary btn-default" value="Cancel" id="btnServiceCallCancel" onclick="onclickServiceCallCancel()" />
+                    @*<input type="button" class="btn btn-primary btn-default" id="btnSaveAndNewForm" value="Save & New" />*@
+                </div>
+            </div>
+            <div class="row" style="margin-top:5px">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="tblServiceCall">
+                            <thead>
+                                <tr>
+                                    <th style="width:70px;text-align:center;background-color: #4b85cc;color:white" class="tblServiceCall_CustNo">
+                                        Date/Time
+                                    </th>
+                                    <th style="text-align:center;width:30px;background-color: #4b85cc;color:white" class="tblServiceCall_Status">
+                                        Status
+                                    </th>
+                                    <th style="text-align:center;width:60px;background-color: #4b85cc;color:white" class="tblServiceCall_Spoke">
+                                        Spoke With
+                                    </th>
+                                    <th style="text-align:center;width:60px;background-color: #4b85cc;color:white" class="tblServiceCall_Action">
+                                        Action
+                                    </th>
+                                    <th style="text-align:center;width:70px;background-color: #4b85cc;color:white" class="tblServiceCall_CallBack">
+                                        Call Back
+                                    </th>
+                                    <th style="text-align:center;width:200px;background-color: #4b85cc;color:white" class="tblServiceCall_Comment">
+                                        Comment
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @*
+                                    <tr>
+                                    <td style="text-align:center;">10/26/2017<br />5:55:24 AM</td>
+                                    <td style="text-align:center;">Other</td>
+                                    <td style="text-align:center;"></td>
+                                    <td style="text-align:center;">Email Invoice</td>
+                                    <td style="text-align:center;"></td>
+                                    <td>System emailed invoice 101702016 to EGARD@PAULTBIDDLEMD.COM via eBill function --> jillbean</td>
+                                    </tr>
+                                    <tr>
+                                    <td style="text-align:center;">9/21/2017<br />2:04:15 AM</td>
+                                    <td style="text-align:center;">Other</td>
+                                    <td style="text-align:center;"></td>
+                                    <td style="text-align:center;">Email Invoice</td>
+                                    <td style="text-align:center;"></td>
+                                    <td>System emailed invoice 101702015 to EGARD@PAULTBIDDLEMD.COM via eBill function --> jillbean</td>
+                                    </tr>*@
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        //Datepicker set
+        $('.date-picker').datepicker({ autoclose: true, dateFormat: 'mm/dd/yy' });
+        $('.date-picker').attr("placeholder", "mm/dd/yyyy");
+
+        //List data load
+        LoadServiceCallLogList();
+
+        //Save data
+        $('#btnSaveCloseForm').click(function () {
+
+            if ($("#hdnCustomerId").val() != "" && $("#hdnCustomerId").val() != "0") {
+                $('#CustomerDetail_CustomerId').css('border-color', '');
+
+                var isvalid = true;
+                if ($('#InitiatedBy').val().trim() == '') { $('#InitiatedBy').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#InitiatedBy').css('border-color', ''); }
+                if ($('#ServiceLogAreaListId').val().trim() == '0') { $('#ServiceLogAreaListId').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ServiceLogAreaListId').css('border-color', ''); }
+                if ($('#ServiceLogTypeListId').val().trim() == '0') { $('#ServiceLogTypeListId').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ServiceLogTypeListId').css('border-color', ''); }
+                if ($('#SpokeWith').val().trim() == '') { $('#SpokeWith').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#SpokeWith').css('border-color', ''); }
+                if ($('#Action').val().trim() == '') { $('#Action').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#Action').css('border-color', ''); }
+
+                if (isvalid == true) {
+                    var Odata = {
+                        CustomerId: $("#hdnCustomerId").val(), InitiatedById: $('#InitiatedBy').val(), AreaId: $('#ServiceLogAreaListId').val(), TypeId: $('#ServiceLogTypeListId').val(), SpokeWith: $('#SpokeWith').val(),
+                        Action: $('#Action').val(), Comments: $("#Comments").val(), StatusId: $("#StatusResultListId").val(), Callback: $("#CallBack").val(), FollowBy: $("#ddlFollowBy").val(), EmailCallNotes: $("#ddlEmailCallNotes").val()
+                    };
+                    $.ajax({
+                        url: '@Url.Action("SaveFranchiseeServiceCallLogDetails", "Franchise")',
+                        dataType: "json",
+                        data: Odata,
+                        traditional: true,
+                        contentType: "application/json; charset=utf-8",
+                        success: function () {
+                            $('input[type=text]').val("");
+                            $('.ddl').val("0");
+                            $('#Comments').val("");
+                            LoadServiceCallLogList()
+                        },
+                        error: function () { }
+                    });
+                }
+            }
+            else {
+                $('#CustomerDetail_CustomerId').css('border-color', 'red');
+            }
+        });
+    });
+
+    //Load list data
+    function LoadServiceCallLogList() {
+        var CurrentLink = '@Url.Action("GetServiceLog", "Customer", new { area = "Portal" })?id=' + $("#hdnCustomerId").val();
+        var dtable = $('#tblServiceCall').dataTable({
+            "bAutoWidth": false,
+            cache: false,
+            "order": false,
+            "bDestroy": true,
+            "bLengthMenu": false,
+            "bPaginate": false,
+            "bLengthChange": false,
+            "dom": '<"top">rt<"bottom"lp><"clear">',
+            "aaSorting": [[0, "desc"]],
+            "sAjaxSource": CurrentLink,
+            "sAjaxDataProp": "aadata",  // Internationalisation. For more info refer to http://datatables.net/manual/i18n
+            "rowCallback": function (nRow, data) {
+            },
+
+            "aoColumns": [
+                {
+                    "sName": "Date/Time",
+                    "bSortable": true,
+                    "sClass": "alignleft",
+                    "mRender": function (data, type, full) {
+                        //var datetime = "<span>" + full.CallDate + "<br />" + formatJSONTime(full.CallTime) + "</span>";
+                        var datetime = "<span>" + full.CallDate + "<br />" +full.CallTime + "</span>";                        
+                        return datetime;
+                    }
+                },
+                {
+                    "sName": "Status",
+                    "bSortable": true,
+                    "sClass": "alignCenter",
+                    "mRender": function (data, type, full) {
+                        //var status = getstatus(full.Status);
+                        return full.Status;
+                    }
+                },
+                {
+                    "sName": "SpokeWith",
+                    "bSortable": true,
+                    "sClass": "alignCenter",
+                    "mRender": function (data, type, full) {
+                        return full.SpokeWith;
+                    }
+                },
+                {
+                    "sName": "Action",
+                    "bSortable": true,
+                    "sClass": "alignCenter",
+                    "mRender": function (data, type, full) {
+                        return full.Action;
+                    }
+                },
+                {
+                    "sName": "CallBack",
+                    "bSortable": true,
+                    "mRender": function (data, type, full) {
+                        if (full.CallBack != null && full.CallBack != "") {
+                            return moment(new Date(parseInt(full.CallBack.substr(6)))).format("MM/DD/YYYY");
+                        }
+                        return "";
+
+                    }
+                },
+                {
+                    "sName": "Comments",
+                    "bSortable": true,
+                    "sClass": "alignleft",
+                    "mRender": function (data, type, full) {
+                        return full.Comments;
+                    }
+                },
+            ],
+        });
+    }
+    function onclickServiceCallCancel() {
+        $("#modal_ServiceCallLog").modal('hide');
+    }
+    function OnchangeCustomerDetails() {
+
+        var CustomerId = $("#CustomerDetail_CustomerId").val();
+        if (CustomerId != null && CustomerId != "") {
+            var Odata = { CustomerId: CustomerId };
+            $.ajax({
+                url: '@Url.Action("GetCustomerDetails", "Franchise")',
+                dataType: "json",
+                data: Odata,
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (Data) {
+                    if (Data != null) {
+                        $("#hdnCustomerId").val(Data.CustomerId)
+                        $("#spnCustomerNo").html(Data.CustomerNo)
+                        $("#spnCustomerName").html(Data.Name)
+                        $("#spnContactName").html(Data.ContactName)
+                        $("#spnPhone").html(Data.Phone)
+                        LoadServiceCallLogList();
+                    }
+                },
+                error: function () { }
+            });
+        }
+    }
+</script>
+

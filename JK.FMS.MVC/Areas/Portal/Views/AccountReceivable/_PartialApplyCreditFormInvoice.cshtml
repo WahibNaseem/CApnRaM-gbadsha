@@ -1,0 +1,563 @@
+﻿@using JKViewModels.Common
+@model JKApi.Service.AccountReceivable.CreditDetailViewModel
+
+@{
+    int _InvId = Model.Invoice.InvoiceDetail.InvoiceId;
+    var IsApprove = false;
+    var IsReject = false;
+    JKApi.Core.Common.ClaimView _claim = JKApi.Core.Common.ClaimView.Instance;
+    var getPermission = _claim.GETCLAIM_AR_PERMISSION();
+    if (getPermission != null)
+    {
+        string enumName = ARPermission.Account_Credit_Pending.ToString();
+        var validIsApprove = getPermission.Where(x => x.EnumName == enumName && x.IsApprove).FirstOrDefault();
+        if (validIsApprove != null && validIsApprove.IsApprove)
+        {
+            IsApprove = true;
+        }
+        var validIsReject = getPermission.Where(x => x.EnumName == enumName && x.IsReject).FirstOrDefault();
+        if (validIsReject != null && validIsReject.IsReject)
+        {
+            IsReject = true;
+        }
+    }
+
+
+    var IsEdit = false;
+    var getEDPermission = _claim.GETCLAIM_ED_PERMISSION();
+    if (getEDPermission != null)
+    {
+        string enumName = EDPermission.Credit_Pending_Approval_Detail_Popup.ToString();
+        var validIsApprove = getEDPermission.Where(x => x.EnumName == enumName && x.IsEdit).FirstOrDefault();
+        if (validIsApprove != null && validIsApprove.IsEdit)
+        {
+            IsEdit = true;
+        }
+
+    }
+
+}
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+                font-size: 10px !important;
+                text-transform: uppercase;
+                padding: 4px !important;
+            }*/
+
+        .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+    </style>
+}
+
+@{
+    bool isUpdate = Model.CreditId > 0;
+    bool isExtraCredit = Model.InvoiceBalance <= 0;
+    bool isLastOne = ViewBag.IsLastOne ?? true;
+    bool isForCancellation = ViewBag.IsForCancellation ?? false;
+}
+<!--<form class="form-horizontal" role="form" id="@("form_applycreditform_"+_InvId)">-->
+<div class="form-horizontal" id="@("form_applycreditform_"+_InvId)">
+    <div class="modal fade custom-model custom-form-design" id="@("modal_applycreditform_"+_InvId)" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+
+        @Html.Hidden("updateCreditId_" + _InvId, Model.CreditId)
+        @Html.Hidden("isExtraCredit_" + _InvId, isExtraCredit)
+        @Html.Hidden("isForCancellation_" + _InvId, isForCancellation)
+        @Html.Hidden("isForCancellationMaintenancetempId_" + _InvId)
+
+        @Html.Hidden("hdfInvoiceDetailItemsCount_" + _InvId, Model.Invoice.InvoiceDetailItems.Count())
+        @Html.Hidden("hdfInvoiceFranchiseeItemsCount_" + _InvId, Model.FranchiseeItems.Count())
+
+        
+
+
+        <div class="modal-dialog" style="width:1000px">
+            <div class="modal-content" style="border-radius: 8px;">
+                <!-- Header -->
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold; background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                        @(isUpdate ? "Update" : "Apply") @(isExtraCredit ? "Extra Credit" : "Credit") @(isForCancellation ? ("for Cancellation (Last Service Date: " + ViewBag.LastServiceDate?.ToShortDateString() + ")") : "")
+                    </h4>
+                </div>
+                <div class="modal-body" style="padding: 0px 30px 15px 30px;">
+                    <input type="hidden" id="@("invoiceId_"+_InvId)" name="@("invoiceId_"+_InvId)" value="@Model.Invoice.InvoiceDetail.InvoiceId" />
+                    <input type="hidden" id="@("invoiceIdNext_"+_InvId)" name="@("invoiceIdNext_"+_InvId)" value="" />
+                    <input type="hidden" id="@("creditinvoiceId_"+_InvId)" name="@("creditinvoiceId_"+_InvId)" value="@Model.Invoice.InvoiceDetail.InvoiceId" />
+                    <input type="hidden" id="@("creditinvoiceNo_"+_InvId)" name="@("creditinvoiceNo_"+_InvId)" value="@Model.Invoice.InvoiceDetail.InvoiceNo" />
+                    <input type="hidden" id="@("creditfranchiseeId_"+_InvId)" name="@("creditfranchiseeId_"+_InvId)" value="@Model.FranchiseeItems" />
+                    <input type="hidden" id="@("numLineItems_"+_InvId)" name="@("numLineItems_"+_InvId)" value="@Model.Invoice.InvoiceDetailItems.Count" />
+                    <input type="hidden" id="@("invoiceCreditIsUpdate_"+_InvId)" name="@("invoiceCreditIsUpdate_"+_InvId)" value=" @(isUpdate ? 1 : 0)" />
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-1 text-right" style="width: 10%;"><b>Customer No:</b></div>
+                            <div class="col-md-1">@Html.DisplayFor(one => one.Invoice.InvoiceDetail.CustomerNo)</div>
+                            <div class="col-md-1 text-right" style="margin-left: -18px;"><b>Name:</b></div>
+                            <div class="col-md-3">@Html.Label("lblCustomerName", Model.Invoice.InvoiceDetail.Customer, new { id = "lblCustomerName" }) </div>
+                            <div class="col-md-1 text-right"><b>Date:</b></div>
+                            <div class="col-md-2">
+                                <div class="input-group" data-date-format="mm/dd/yyyy">
+                                    <input type="text" value="@((isUpdate ? (DateTime)Model.Credit.TransactionDate : DateTime.Today).ToString("MM/dd/yyyy"))"
+                                           class="form-control input-sm date-picker AddPeriodvalidation" style="margin-top: 0px;" id="@("creditDate_"+_InvId)" name="@("creditDate_"+_InvId)" />
+                                    <span class="input-group-btn">
+                                        <button class="btn default" type="button">
+                                            <i class="fa fa-calendar"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-1 text-right" style="padding-top: 6px;"><b>Inv. Amt:</b></div>
+                            <div class="col-md-2 form-inline">
+                                <span style="padding-top: 6px;"></span>
+                                @Html.TextBox("invAmt_" + _InvId, string.Format("{0:N}", Model.InvoiceAmount), new
+                                {
+                                    @id = "invAmt_" + _InvId,
+                                    @class = "form-control input-sm credit-field creditfieldcurrency",
+                                    @readonly = "readonly",
+                                    style = "text-align: right;"
+                                })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1 text-right"><b>Invoice No:</b></div>
+                            <div class="col-md-1">@Html.DisplayFor(one => one.Invoice.InvoiceDetail.InvoiceNo)</div>
+                            <div class="col-md-1 text-right"><b>Inv. Date:</b></div>
+                            <div class="col-md-1">@(Model.Invoice.InvoiceDetail.InvoiceDate?.ToShortDateString())</div>
+                            <div class="col-md-3 text-right"><b>Due Date:</b></div>
+                            <div class="col-md-1">@(Model.Invoice.InvoiceDetail.DueDate?.ToShortDateString())</div>
+                            <div class="col-md-2 text-right @(isExtraCredit ? "hidden" : "")" style="padding-top: 6px;"><b>Open Balance:</b></div>
+                            <div class="col-md-2 form-inline @(isExtraCredit ? "hidden" : "")"><span style="padding-top: 6px;"></span>@Html.TextBox("oldBalance_" + _InvId, string.Format("{0:N}", isUpdate ? (Model.InvoiceOpenCRBalance) : Model.InvoiceOpenCRBalance), new { @id = "oldBalance_" + _InvId, @class = "form-control input-sm credit-field creditfieldcurrency", @readonly = "readonly", style = "text-align: right;" })</div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1 text-right"><b>Reason:</b></div>
+                            <div class="col-md-3">
+                                @Html.DropDownList("slReasonList_" + _InvId, (SelectList)ViewBag.ReasonList, "-Select-", new { @class = "form-control input-sm", @id = "select_ReasonList_" + _InvId, @required = "required" })
+                            </div>
+                            <div class="col-md-3 text-right"><b>Amount Credit Request: </b></div>
+                            <div class="col-md-2">
+                                @Html.TextBox("requestCreditAmt_" + _InvId, string.Format("{0:N}", Model.UnappliedCreditAmount), new { @required = "required", @class = "form-control input-sm credit-field creditfieldcurrency", style = "width: 120px !important;" })
+                            </div>
+                            <div class="col-md-1 text-right" style="padding-top: 6px;"><b>@(isExtraCredit ? "Extra Credit" : "Credit"):</b></div>
+                            <div class="col-md-2 form-inline"><span style="padding-top: 6px;"></span>@Html.TextBox("creditAmt_" + _InvId, isUpdate ? string.Format("{0:N}", Model.CreditAmounts.Sum()) : "", new { @class = "form-control input-sm credit-field creditfieldcurrency", @readonly = "readonly", style = "text-align: right;" })</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1 text-right"><b>Description:</b></div>
+                            <div class="col-md-7">
+                                @Html.TextBox("creditDesc_" + _InvId, isUpdate ? Model.Credit.CreditDescription : "", new { @class = "form-control input-sm", @required = "required" })
+                            </div>
+                            <div class="col-md-2 text-right @(isExtraCredit ? "hidden" : "")" style="padding-top: 6px;"><b>New Balance:</b></div>
+                            <div class="col-md-2 form-inline @(isExtraCredit ? "hidden" : "")"><span style="padding-top: 6px;"></span>@Html.TextBox("newBalance_" + _InvId, string.Format("{0:N}", Model.UnappliedCreditAmount), new { @id = "newBalance_" + _InvId, @class = "form-control input-sm credit-field creditfieldcurrency", @readonly = "readonly", style = "text-align: right;" })</div>
+                        </div>
+                        <hr style="margin-top: 6px;margin-bottom: 6px;" />
+                    </div>
+                    <div class="row">
+                        <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                            <tr>
+                                <th class="text-center text-bottom" style="width:100px">Line No.</th>
+                                <th class="text-center text-bottom" style="width:200px">Service Desc.</th>
+                                <th class="text-center text-bottom" style="width:120px">@(isExtraCredit ? "Inv. Amt." : "Open Balance")</th>
+                                <th class="text-center text-bottom" style="width:120px"><input type="radio" class="bigger-radio" id="@("rdApplyAmtTypeAMT_"+_InvId)" name="@("rdApplyAmtType_"+_InvId)" value="amt" checked="checked" onclick="toggleApplyAmtFieldINV(@_InvId)" /><br />Apply Amt.</th>
+                                <th class="text-center text-bottom" style="width:80px">Tax</th>
+                                <th class="text-center text-bottom" style="width:100px"><input type="radio" class="bigger-radio" id="@("rdApplyAmtTypeTOT_"+_InvId)" name="@("rdApplyAmtType_"+_InvId)" value="total" onclick="toggleApplyAmtFieldINV(@_InvId)" /><br />Amt. w/o Tax</th>
+                                <th class="text-center text-bottom @(isExtraCredit ? "hidden" : "")" style="width:120px">New Balance</th>
+                            </tr>
+                            @{
+                                for (int i = 0; i < Model.Invoice.InvoiceDetailItems.Count(); i++)
+                                {
+                                    var item = Model.Invoice.InvoiceDetailItems[i];
+                                    //var oldBalance = isUpdate ? Convert.ToString(item.Balance + Model.CreditAmounts[i]) : Convert.ToString(item.Balance);
+
+                                    var oldBalance = isUpdate ? Convert.ToString(item.Balance) : Convert.ToString(item.Balance);
+
+                                    var creditAmt = isUpdate ? Convert.ToString(Model.CreditAmounts[i]) : "";
+
+                                    if (isExtraCredit)
+                                    {
+                                        oldBalance = Convert.ToString(item.Total);
+                                    }
+
+                                    @Html.Hidden(string.Format("item{0}_taxRate_{1}", i, _InvId), item.TAXAmount / item.Total)
+                                    <tr>
+
+
+                                        <td class="text-center">@item.LineNumber</td>
+                                        <td class="text-center">@item.Description</td>
+                                        <td class="text-center form-inline">@Html.TextBox(string.Format("item{0}_oldBalance_{1}", i, _InvId), oldBalance, new { @id = string.Format("item{0}_oldBalance_{1}", i, _InvId), @class = "form-control input-sm credit-field creditfieldcurrency", @readonly = "readonly", @style = "text-align: right;" })</td>
+                                        <td class="text-center form-inline">@Html.TextBox(string.Format("item{0}_creditAmt_{1}", i, _InvId), creditAmt, new { @class = "form-control input-sm credit-field credit-line-item-autoapply credit-line-item-amt-field creditfieldcurrency", @readonly = "readonly", @style = "text-align: right;" })</td>
+                                        <td class="text-center form-inline">@Html.TextBox(string.Format("item{0}_tax_{1}", i, _InvId), "0.00", new { @id = string.Format("item{0}_tax_{1}", i, _InvId), @class = "form-control input-sm credit-field creditfieldcurrency", @readonly = "readonly", @style = "text-align: right;" })</td>
+                                        <td class="text-center form-inline">@Html.TextBox(string.Format("item{0}_total_{1}", i, _InvId), "0.00", new { @id = string.Format("item{0}_total_{1}", i, _InvId), @class = "form-control input-sm credit-field credit-line-item-autoapply credit-line-item-total-field creditfieldcurrency", @style = "text-align: right;", @readonly = "readonly" })</td>
+                                        <td class="text-center form-inline @(isExtraCredit ? "hidden" : "")">@Html.TextBox(string.Format("item{0}_newBalance_{1}", i, _InvId), Convert.ToString(item.Balance), new { @id = string.Format("item{0}_newBalance_{1}", i, _InvId), @class = "form-control input-sm credit-field creditfieldcurrency", @readonly = "readonly", @style = "text-align: right;" })</td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+                    </div>
+
+                    <!-- Detail Section -->
+                    <div class="row" id="@("modeldetail_Below_"+_InvId)">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="portlet light bordered" style="margin-right: 27px;margin-left: 30px; margin-bottom: -6px; height: 40px">
+                                    <div class="col-md-1 text-right" style="margin-top: -7px;"><b>Line No:</b></div>
+                                    <div class="col-md-2" style="margin-top: -7px;">
+                                        @Html.DropDownList("LineNoList_" + _InvId, (SelectList)ViewBag.LineNoList, new { @class = "form-control input-sm", @id = "select_LineNo_" + _InvId })
+                                    </div>
+                                    <div class="col-md-4 text-center" style="margin-top: -7px;">
+                                        <label class="mt-checkbox">
+                                            <input type="checkbox" id="@("chkAutoApply_"+_InvId)" checked="checked">Auto Apply
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-2" style="margin-top: -7px;">
+                                        <label class="mt-radio">
+                                            <input type="radio" id="@("chkAmount_"+_InvId)" name="@("rdCreditUnit_"+_InvId)" value="amt" onchange="getrdCreditUnitChangeINV(@_InvId)" checked="checked">Amount
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-2" style="margin-top: -7px;">
+                                        <label class="mt-radio">
+                                            <input type="radio" id="@("chkPercentage_"+_InvId)" name="@("rdCreditUnit_"+_InvId)" value="pct" onchange="getrdCreditUnitChangeINV(@_InvId)">Percentage
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                            <tr>
+
+                                <th style="width:120px;text-align:center">Name</th>
+                                <th style="width:100px;text-align:center">Number</th>
+                                <th style="width:100px;text-align:center">@(isExtraCredit ? "Inv. Amt." : "Open Balance")</th>
+                                <th class="franchisee-amt-col" style="width:100px;text-align:center">Apply Amt</th>
+                                <th class="franchisee-pct-col" style="width:100px;text-align:center">Apply Pct</th>
+                                <th class="@(isExtraCredit ? "hidden" : "")" style="width:100px;text-align:center">New Balance</th>
+                            </tr>
+                            @{
+                                if (Model.Invoice.InvoiceDetailItems.Count() > 1 && Model.FranchiseeItems.Count() == 1)
+                                {
+
+                                    for (int j = 0; j < Model.FranchiseeItems.Count(); j++)
+                                    {
+                                        var franchiseeItem = Model.FranchiseeItems[j];
+                                        var franchiseeLine = franchiseeItem.InvoiceFranchiseeDetailItem;
+
+                                        var bpId = franchiseeLine.BillingPayId;
+                                        var amt = (isUpdate && franchiseeItem.CreditFranchiseeId != -1) ? franchiseeItem.CreditAmount.ToString() : null;
+                                        var bal = (isUpdate && franchiseeItem.CreditFranchiseeId != -1) ? Convert.ToString(franchiseeLine.Balance) : Convert.ToString(franchiseeLine.Balance);
+
+                                        if (isExtraCredit)
+                                        {
+                                            bal = Convert.ToString(franchiseeItem.InvoiceFranchiseeDetailItem.Amount);
+                                        }
+
+                                        @Html.Hidden(string.Format("bp{0}_key_{1}", bpId, _InvId), bpId, new { @class = "franchisee-row-key" })
+                                        @Html.Hidden(string.Format("bp{0}_item_{1}", bpId, _InvId), -1, new { @class = "franchisee-row-item" })
+                                        <tr class="franchisee-row @string.Format("franchisee-row-line{0}_{1}", -1, _InvId)">
+                                            <td class="text-center">@franchiseeLine.Name</td>
+                                            <td class="text-center">@franchiseeLine.FranchiseeNo</td>
+                                            <td class="text-center form-inline">@Html.TextBox(string.Format("bp{0}_oldBalance_{1}", bpId, _InvId), bal, new { @id = string.Format("bp{0}_oldBalance_{1}", bpId, _InvId), @class = "form-control input-sm credit-field creditfieldcurrency", @readonly = "readonly", @style = "text-align: right;" })</td>
+                                            <td class="text-center franchisee-amt-col form-inline">@Html.TextBox(string.Format("bp{0}_creditAmt_{1}", bpId, _InvId), amt, new { @class = "form-control input-sm credit-field credit-franchisee-field creditfieldcurrency", @readonly = "readonly", @style = "text-align: right;" })</td>
+                                            <td class="text-center franchisee-pct-col form-inline">@Html.TextBox(string.Format("bp{0}_creditPct_{1}", bpId, _InvId), null, new { @class = "form-control input-sm credit-field" })<span>%</span></td>
+                                            <td class="text-center form-inline @(isExtraCredit ? "hidden" : "")">@Html.TextBox(string.Format("bp{0}_newBalance_{1}", bpId, _InvId), bal, new { @id = string.Format("bp{0}_newBalance_{1}", bpId, _InvId), @class = "form-control input-sm credit-field creditfieldcurrency", @readonly = "readonly", @style = "text-align: right;" })</td>
+                                        </tr>
+
+                                    }
+
+
+                                }
+                                else
+                                {
+                                    for (int i = 0; i < Model.Invoice.InvoiceDetailItems.Count(); i++)
+                                    {
+                                        var invoiceLine = Model.Invoice.InvoiceDetailItems[i];
+                                        for (int j = 0; j < Model.FranchiseeItems.Count(); j++)
+                                        {
+                                            var franchiseeItem = Model.FranchiseeItems[j];
+                                            var franchiseeLine = franchiseeItem.InvoiceFranchiseeDetailItem;
+                                            if (invoiceLine.LineNumber == franchiseeLine.LineNo)
+                                            {
+                                                var bpId = franchiseeLine.BillingPayId;
+                                                //var amt = (isUpdate && franchiseeItem.CreditFranchiseeId != -1) ? franchiseeItem.CreditAmount.ToString() : null;
+                                                //var bal = (isUpdate && franchiseeItem.CreditFranchiseeId != -1) ? Convert.ToString(franchiseeLine.Balance + franchiseeItem.CreditAmount) : Convert.ToString(franchiseeLine.Balance);
+
+                                                var amt = (isUpdate && franchiseeItem.CreditFranchiseeId != -1) ? franchiseeItem.CreditAmount.ToString() : null;
+                                                var bal = (isUpdate && franchiseeItem.CreditFranchiseeId != -1) ? Convert.ToString(franchiseeLine.Balance) : Convert.ToString(franchiseeLine.Balance);
+
+                                                if (isExtraCredit)
+                                                {
+                                                    bal = Convert.ToString(franchiseeItem.InvoiceFranchiseeDetailItem.Amount);
+                                                }
+
+                                                @Html.Hidden(string.Format("bp{0}_key_{1}", bpId, _InvId), bpId, new { @class = "franchisee-row-key" })
+                                                @Html.Hidden(string.Format("bp{0}_item_{1}", bpId, _InvId), string.Format("item{0}_{1}", i, _InvId), new { @class = "franchisee-row-item" })
+                                                <tr class="franchisee-row @string.Format("franchisee-row-line{0}_{1}", invoiceLine.LineNumber, _InvId)">
+                                                    <td class="text-center">@franchiseeLine.Name</td>
+                                                    <td class="text-center">@franchiseeLine.FranchiseeNo</td>
+                                                    <td class="text-center form-inline">@Html.TextBox(string.Format("bp{0}_oldBalance_{1}", bpId, _InvId), bal, new { @id = string.Format("bp{0}_oldBalance_{1}", bpId, _InvId), @class = "form-control input-sm credit-field creditfieldcurrency", @readonly = "readonly", @style = "text-align: right;" })</td>
+                                                    <td class="text-center franchisee-amt-col form-inline">@Html.TextBox(string.Format("bp{0}_creditAmt_{1}", bpId, _InvId), amt, new { @class = "form-control input-sm credit-field credit-franchisee-field creditfieldcurrency", @readonly = "readonly", @style = "text-align: right;" })</td>
+                                                    <td class="text-center franchisee-pct-col form-inline">@Html.TextBox(string.Format("bp{0}_creditPct_{1}", bpId, _InvId), null, new { @class = "form-control input-sm credit-field" })<span>%</span></td>
+                                                    <td class="text-center form-inline @(isExtraCredit ? "hidden" : "")">@Html.TextBox(string.Format("bp{0}_newBalance_{1}", bpId, _InvId), bal, new { @id = string.Format("bp{0}_newBalance_{1}", bpId, _InvId), @class = "form-control input-sm credit-field creditfieldcurrency", @readonly = "readonly", @style = "text-align: right;" })</td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        </table>
+
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div class="row">
+                        <div class="col-md-12">
+
+                            <div class="col-md-10"></div>
+                            <div class="col-md-2 control-label">
+                                <button type="button" class="btn btn-primary" id="@("btnSaveContinue_"+_InvId)" name="SaveContinue">Save & Continue</button>
+                            </div>
+                            @*@if (!isUpdate)
+                                {
+                                    if (isLastOne)
+                                    {
+                                        <div class="col-md-8"></div>
+                                        <div class="col-md-2 control-label">
+                                            <button type="button" class="btn btn-primary" id="@("btnSaveClose_"+_InvId)" name="SaveClose">Save & Close</button>
+                                        </div>
+                                        <div class="col-md-2 control-label">
+                                            <button type="button" class="btn btn-primary" id="@("btnSaveNew_"+_InvId)" name="SaveNew">Save & New</button>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-md-10"></div>
+                                        <div class="col-md-2 control-label">
+                                            <button type="button" class="btn btn-primary" id="@("btnSaveContinue_"+_InvId)" name="SaveContinue">Save & Continue</button>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="col-md-10"></div>
+
+                                    <div style="left: 35px;" class="col-md-2 control-label">
+                                        <input type="button" id="@("btnSubmit_"+_InvId)" class="btn btn-primary col-md-11 submit-button" value="Update" name="SaveClose" style="font-size:11px;padding-left:0px !important;padding-right:0px !important;margin-top:3px;margin-left:-40px !important" />
+                                    </div>
+
+                                    <div class="col-md-2 control-label">
+                                        Note :<span class="required"> * </span>
+                                    </div>
+                                    <div class="col-md-6 control-label">
+                                        <textarea class="form-control input-sm PendingMessage" style="resize: none;overflow-x: hidden;" rows="3" id="@("txtCraditStatusNote_"+_InvId)" name="@("txtCraditStatusNote_"+_InvId)"></textarea>
+                                    </div>
+
+                                    if (IsReject)
+                                    {
+                                        <div class="col-md-2 control-label MainAdmins" style="margin-top: 30px;">
+                                            <input type="button" id="@("btnReject_"+_InvId)" class="btn btn-primary col-md-11 submit-button-no-prompt-reject" name="SaveReject" value="REJECTED" style="margin-bottom:3px;font-size:11px;margin-top:3px;margin-left:5px !important;width: 100px;    height: 25px;" />
+                                        </div>
+                                    }
+                                    if (IsApprove)
+                                    {
+                                        <div class="col-md-2 control-label MainAdmins" style="margin-top: 30px;right: 40px;">
+                                            <input type="button" id="@("btnApprove_"+_InvId)" class="btn btn-primary col-md-11 submit-button-no-prompt-approve" name="SaveApprove" value="APPROVED" style="font-size:11px;padding-left:0px !important;padding-right:0px !important;margin-top:3px;margin-left:0px !important;width: 100px;    height: 25px;" />
+                                        </div>
+
+                                    }
+
+                                }*@
+                        </div>
+                    </div>
+                    @*@if (IsEdit)
+                            {
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <button type="button" class="btn btn-primary button-next" style="margin-right:10px;" onclick="EditCreditDetailsPopup(0)">Edit <i class="fa fa-edit"></i></button>
+                                            </div>
+                                        </div>
+                        }*@
+                    @{
+                        decimal Balance = Model.InvoiceAmount;
+                    }
+                    <br />
+                    <div class="row">
+                        <table class="table table-striped table-bordered table-hover order-column table-responsive" width="100%">
+                            <tr>
+                                <th colspan="6" style="text-align:center;background: #3598dc;color: #FFF !important;">TRANSACTION HISTORY</th>
+                            </tr>
+                            <tr>
+                                <th style="width:50px;text-align:center">Date</th>
+                                <th style="text-align:center;width:100px;">TRX Type</th>
+                                <th style="width:100px;text-align:center">TRX Number</th>
+                                <th style="width:120px;text-align:center">Description</th>
+                                <th style="width:70px;text-align:center">Amount</th>
+                                <th style="width:100px;text-align:center">INV Balance W/O Payment</th>
+                            </tr>
+
+                            @foreach (var item in Model.Invoice.lstInvoiceTransactionHistory.Where(o => o.TypeListId == 1).ToList())
+                            {
+                                if (item.AmountTypeListId == 1)
+                                {
+                                    Balance = Balance - item.Amount;
+                                }
+                                <tr>
+                                    <td style="text-align:center">@Convert.ToDateTime(item.TransactionDate).ToString("MM/dd/yyyy")</td>
+                                    <td style="white-space:pre-line">@item.MasterTrxTypeListName</td>
+                                    <td style="text-align:center">
+                                        @item.TransactionNumber
+                                    </td>
+                                    <td style="text-align:left">@item.Description</td>
+                                    <td style="text-align:right">
+                                        @if (item.AmountTypeListId == 1)
+                                        {
+                                            <span style="color:red">(@string.Format("{0:C}", item.Amount))</span>
+                                        }
+                                        else
+                                        {
+                                            <span>
+                                                $ @string.Format("{0:N}", item.Amount)
+                                            </span>
+                                        }
+
+                                    </td>
+                                    <td style="text-align:right">
+                                        $ @string.Format("{0:N}", Balance)
+
+                                    </td>
+                                </tr>
+
+                            }
+
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    </div>
+</div>
+
+<div class="form-horizontal" id="@("RenderCreditDetailsPopup_"+_InvId)"></div>
+
+<script>
+    $("#btnReject_" + @_InvId).click(function () {
+
+                var id = $('#updateCreditId_'+ @_InvId).val();
+                var txtCraditStatusNote = $('#txtCraditStatusNote_'+ @_InvId).val();
+
+                var sURL = '@Url.Action("ApproveRejectCredits", "AccountReceivable", new { area = "Portal" })?creditId=' + id + "&creditStatusNote=" + txtCraditStatusNote + "&isApprove=" + false;
+                $.ajax({
+                    type: "GET",
+                    url: sURL,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (data) {
+                        $("#modal_applycreditform_"+ @_InvId).modal({ backdrop: 'hide' });
+                        window.location.href = '@Url.Action("PendingCreditList", "AccountReceivable", new { area = "Portal" })';
+                    },
+                    error: function () {
+
+                        alert("Content load failed.");
+                    }
+                });
+
+            });
+
+            $("#btnApprove_"+ @_InvId).click(function () {
+                var id = $('#updateCreditId_'+ @_InvId).val();
+                var txtCraditStatusNote = $('#txtCraditStatusNote').val();
+                var sURL = '@Url.Action("ApproveRejectCredits", "AccountReceivable", new { area = "Portal" })?creditId=' + id + "&creditStatusNote=" + txtCraditStatusNote + "&isApprove=" + true;
+                $.ajax({
+                    type: "GET",
+                    url: sURL,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (data) {
+                        $("#modal_applycreditform_"+ @_InvId).modal({ backdrop: 'hide' });
+                        window.location.href = '@Url.Action("PendingCreditList", "AccountReceivable", new { area = "Portal" })';
+                    },
+                    error: function () {
+
+                        alert("Content load failed.");
+                    }
+                });
+
+            });
+
+    function EditCreditDetailsPopupINV(id) {
+                var sURL = '@Url.Action("EditCreditDetailsPopup", "AccountReceivable", new { area = "Portal" })?Id=' + id;
+                $.ajax({
+                    type: "GET",
+                    url: sURL,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (data) {
+                        $('#RenderCreditDetailsPopup_'+ @_InvId).html(data);
+                        $("#ModalCreditDetailsPopup_"+ @_InvId).modal({ backdrop: 'static' });
+                    },
+                    error: function () {
+                        alert("Content load failed.");
+                    }
+                });
+            }
+
+            function UpdateDateValidationINV() {
+                var month = parseInt('@JKApi.Core.Common.ClaimView.Instance.GetCLAIM_PeriodAccess().Where(x=>x.PeriodId== JKApi.Core.Common.ClaimView.Instance.GetCLAIM_SELECTED_PERIOD_ID()).FirstOrDefault().Month');
+                var year = parseInt('@JKApi.Core.Common.ClaimView.Instance.GetCLAIM_PeriodAccess().Where(x=>x.PeriodId== JKApi.Core.Common.ClaimView.Instance.GetCLAIM_SELECTED_PERIOD_ID()).FirstOrDefault().Year');
+                $('#creditDate_'+ @_InvId).datepicker("option", {
+                    minDate: new Date(year, month - 1, 1),
+                    maxDate: new Date(year, month, 0)
+                });
+            }
+
+</script>

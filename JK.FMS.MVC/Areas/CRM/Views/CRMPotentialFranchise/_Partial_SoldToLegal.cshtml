@@ -1,0 +1,234 @@
+﻿@model JKViewModels.CRM.CRMSignAgreementViewModel
+@using JK.Resources
+
+<style>
+    #sold_potential .mt-checkbox {
+        margin-right: 5px !important;
+    }
+</style>
+
+<!--Follow Up-->
+<div class="col-md-7" id="contact_followup" style="margin-left:-30px;">
+    <div class="row">
+        <div class="col-md-12 portlet-align">
+            <div class="portlet box div-right portlet-bottom" style="background-color: #a3a9ad;">
+                <div class="portlet-title compact">
+                    <div class="caption">
+                        Sold To Legal
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="form-body">
+                        <form action="#" class="form-horizontal">
+                            @*@Html.Hidden("AccountDetailId", "", new { @id = "accountdetailid" })*@
+                            <div class="form-group" style="margin-top:5px;">
+                                <label id="lbl_signfranchiseagreement" class="control-label col-md-5">Sign Franchise Agreement<span class="required">*</span>:</label>
+                                <div class="col-md-7">
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px;">
+                                            <input type="radio" value="1" class="i-checks" @(Model.SignFranchiseAgreement == true ? "checked=checked":string.Empty) disabled="disabled"/>
+                                            <span>Yes</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px; margin-left:0px;">
+                                            <input type="radio" value="0" class="i-checks" @(Model.SignFranchiseAgreement == false ? "checked=checked":string.Empty) disabled="disabled"/>
+                                            <span>No</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <form action="#" class="form-horizontal">
+                            <div class="form-group" style="margin-top:5px;">
+                                <label id="lbl_guarantees" class="control-label col-md-5">Guarantees Signed by All Non Officer/Partner Spouses<span class="required">*</span>:</label>
+                                <div class="col-md-7">
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px;">
+                                            <input type="radio" value="1" class="i-checks"  @(Model.GuaranteesSigned == true ? "checked=checked":string.Empty) disabled="disabled"/>
+                                            <span>Yes</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px; margin-left:0px;">
+                                            <input type="radio" value="0" class="i-checks"  @(Model.GuaranteesSigned == false ? "checked=checked":string.Empty) disabled="disabled"/>
+                                            <span>No</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <form action="#" class="form-horizontal">
+                            <div class="form-group" style="margin-top:5px;">
+                                <label id="lbl_requireddocuments" class="control-label col-md-5">Required documents uploaded<span class="required">*</span>:</label>
+                                <div class="col-md-7">
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px;">
+                                            <input type="radio" value="1" class="i-checks"  @(Model.RequiredDocument == true ? "checked=checked":string.Empty) disabled="disabled"/>
+                                            <span>Yes</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-3">
+
+                                        <label class="check-inline" style="margin-top: 6px; margin-left:0px;">
+                                            <input type="radio" value="0" class="i-checks"  @(Model.RequiredDocument == false ? "checked=checked":string.Empty) disabled="disabled"/>
+                                            <span>No</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <button class="btn green btn-block sold_btnDocumentUpload" disabled="disabled">Upload/Edit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <form action="#" class="form-horizontal">
+                            <div class="form-group" style="margin-top:5px;">
+                                <label id="lbl_backgroundcheck" class="control-label col-md-5">To Legal for Background Check<span class="required">*</span>:</label>
+                                <div class="col-md-7">
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px;">
+                                            <input type="radio" value="1" class="i-checks" @(Model.LegalBackGround == true ? "checked=checked":string.Empty) disabled="disabled"/>
+                                            <span>Yes</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="check-inline" style="margin-top: 6px; margin-left:0px;">
+                                            <input type="radio" value="0" class="i-checks"  @(Model.LegalBackGround == false ? "checked=checked":string.Empty) disabled="disabled"/>
+                                            <span>No</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="form-group errmsg" style="display:none; text-align:center" id="requiredDocumentsMsg">
+                            <span style="color:red;">You must upload the required documents.</span>
+                        </div>
+
+                        <form action="#" id="form_contactinfo_sold" class="form-horizontal">
+                            <div class="form-group" style="display:none; text-align:center">
+                                <span style="color:red;">Date must be more recent than previous meetings.</span>
+                            </div>
+
+                            <!--Date Sign AND Term(Yrs)-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label class="control-label col-md-3">Date Sign<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">                                   
+                                    @Html.TextBoxFor(x => x.DateSign, (Model.DateSign != null ? Convert.ToDateTime(Model.DateSign).ToString("MM-dd-yyyy") : string.Empty), new { @class = "form-control input-sm date date-picker", @data_date_format = "mm/dd/yyyy", @style = "margin-left:-5px;width:180px;", @disabled = "disabled" })
+                                </div>
+                                <label class="control-label col-md-3">Term(Yrs)<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;">
+                                    @Html.TextBoxFor(x => x.Term, Model.Term?.ToString(), new { @class = "form-control input-sm", @disabled = "disabled" })
+                                </div>
+                            </div>
+
+
+                            <!--Exp.Date AND Plan Type-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label class="control-label col-md-3">Exp.Date<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">                                    
+                                    @Html.TextBoxFor(x => x.ExpDate, (Model.ExpDate != null ? Convert.ToDateTime(Model.ExpDate).ToString("MM-dd-yyyy") : string.Empty), new { @class = "form-control input-sm date date-picker", @data_date_format = "mm/dd/yyyy", @style = "margin-left:-5px;width:180px;", @disabled = "disabled" })
+                                </div>
+                                <label class="control-label col-md-3">Plan Type<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;">                                   
+                                    @Html.DropDownList("ContractTypeList", (SelectList)ViewBag.FranchiseeContractTypeList, "Select...", new { @class = "form-control input-sm", @style = "padding-left:0px;" ,@disabled="disabled" })                                    
+                                </div>
+                            </div>
+
+                            <!--Plan Amount AND IB Amount-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label class="control-label col-md-3">Plan Amount<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                    @Html.TextBoxFor(x => x.PlanAmount, Model.PlanAmount?.ToString(), new { @class = "form-control input-sm planamount_modal", @style = "margin-left:-5px;width:180px;", @disabled = "disabled" })
+                                </div>
+                                <label class="control-label col-md-3">IB Amount:</label>
+                                <div class="col-md-3" style="padding-left:0px;">
+                                    @Html.TextBoxFor(x => x.IBAmount, Model.IBAmount?.ToString(), new { @class = "form-control input-sm ibamount_modal",@disabled = "disabled" })
+                                </div>
+                            </div>
+                            <!--Down Payment AND Interest-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label class="control-label col-md-3">Down Payment:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                    @Html.TextBoxFor(x => x.DownPayment, Model.DownPayment?.ToString(), new { @class = "form-control input-sm downpayment_modal", @style = "margin-left:-5px;width:180px;", @disabled = "disabled" })
+                                </div>
+                                <label class="control-label col-md-3">Interest:</label>
+                                <div class="col-md-3" style="padding-left:0px;">                                    
+                                    @Html.TextBoxFor(x => x.Interest, Model.Interest?.ToString(), new { @class = "form-control input-sm interest_modal", @disabled = "disabled" })
+                                </div>
+                            </div>
+
+                            <!-- Payment Amount AND No Of Payments-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label class="control-label col-md-3">Payment Amount:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">                                    
+                                    @Html.TextBoxFor(x => x.PaymentAmount, Model.PaymentAmount?.ToString(), new { @class = "form-control input-sm paymentamount_modal", @style = "margin-left:-5px;width:180px;", @disabled = "disabled" })
+                                </div>
+                                <label class="control-label col-md-3">No Of Payments<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;">                                   
+                                    @Html.TextBoxFor(x => x.NoOfPayments, Model.NoOfPayments?.ToString(), new { @class = "form-control input-sm currentamount_modal", @disabled = "disabled" })
+                                </div>
+                            </div>
+                            <!--Current Payment AND Payment Start Date-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label class="control-label col-md-3">Current Payment:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                    @Html.TextBoxFor(x => x.CurrentPayment, Model.CurrentPayment?.ToString(), new { @class = "form-control input-sm currentamount_modal", @style = "margin-left:-5px;width:180px;", @disabled = "disabled" })
+                                </div>
+                                <label class="control-label col-md-3">Payment Start Date<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;">                                    
+                                    @Html.TextBoxFor(x => x.PaymentStartDate, (Model.PaymentStartDate != null ? Convert.ToDateTime(Model.PaymentStartDate).ToString("MM-dd-yyyy") : string.Empty), new { @class = "form-control input-sm date date-picker", @data_date_format = "mm/dd/yyyy", @disabled = "disabled" })
+                                </div>
+                            </div>
+
+                            <!--Trigger Amt AND Legal Obl.Start-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label class="control-label col-md-3">Trigger Amt<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">                                   
+                                    @Html.TextBoxFor(x => x.TriggerAmount, Model.TriggerAmount?.ToString(), new { @class = "form-control input-sm triggeramount_modal", @style = "margin-left:-5px;width:180px;", @disabled = "disabled" })
+                                </div>
+                                <label class="control-label col-md-3">Legal Obl.Start<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;">                                   
+                                    @Html.TextBoxFor(x => x.legalOblStart, (Model.legalOblStart != null ? Convert.ToDateTime(Model.legalOblStart).ToString("MM-dd-yyyy"): string.Empty), new { @class = "form-control input-sm date date-picker", @data_date_format = "mm/dd/yyyy", @disabled = "disabled" })
+                                </div>
+                            </div>
+
+
+                            <!--Legal Obl.End AND Legal Obl.Due-->
+                            <div class="form-group" style="margin-top:5px;">
+                                <label class="control-label col-md-3">Legal Obl.End:</label>
+                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">                                   
+                                    @Html.TextBoxFor(x => x.LegalOblEnd, (Model.LegalOblEnd != null ? Convert.ToDateTime(Model.LegalOblEnd).ToString("MM-dd-yyyy") : string.Empty), new { @class= "form-control input-sm date date-picker" ,@style= "margin-left:-5px;width:180px;", @data_date_format = "mm/dd/yyyy" ,@disabled="disabled" })
+                                </div>
+                                <label class="control-label col-md-3">Legal Obl.Due<span class="required">*</span>:</label>
+                                <div class="col-md-3" style="padding-left:0px;">                                    
+                                    @Html.TextBoxFor(x=>x.LegalOblDue,Model.LegalOblDue,new { @class="form-control input-sm",@disabled="disabled" })
+                                </div>
+                            </div>
+
+                        </form>
+                        <h5 class="form-section sbold uppercase"><b>@JKCRMResource.note:</b></h5>
+                        <!-- Note -->
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                @Html.TextArea("Note", Model.Note, new { @class = "form-control autosizeme textarea_soldnote", rows = "4", style = "font-size: 11px", @disabled = "disabled" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <div class="row" id="summary_action">
+                            <div class="col-md-3 pull-right" style="margin-top: 20px;">
+                                <button type="button" class="btn green btn-block" onclick="validateSignAgreement();" disabled="disabled">@CommonResource.btnSave</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

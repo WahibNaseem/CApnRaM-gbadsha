@@ -1,0 +1,1700 @@
+﻿@{
+    ViewBag.Title = "LockboxFileSummary";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <style type="text/css">
+        .lbl-p5 {
+            padding: 3px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        tr > td {
+            font-size: 11px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+
+        #lockboxsummaryListUnmatched thead th,
+        #lockboxsummaryList thead th,
+        #invoiceList thead th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+            padding: 5px !important;
+        }
+
+        #lockboxsummaryListUnmatched tbody td,
+        #lockboxsummaryList tbody td,
+        #invoiceList tbody td {
+            font-size: 11px !important;
+            text-transform: uppercase;
+            padding: 5px !important;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 0px !important;
+            border-radius: 0px !important;
+        }
+
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .payment-field {
+            width: 80px !important;
+            text-align: right;
+        }
+
+        #invoiceList1_filter input {
+            min-width: 200%;
+        }
+
+        #invoiceList1_filter {
+            text-align: left;
+            width: 100%;
+        }
+
+            #invoiceList1_filter a {
+                display: none;
+            }
+    </style>
+}
+
+
+
+<form class="form-horizontal" action="@Url.Action("LockboxFileSummary", "AccountReceivable", new { area = "Portal" })" id="from_lockboxsummary" method="POST">
+    <div class="custom-form portlet light">
+        <div class="headerbox">
+            <div class="row">
+                &nbsp; LockboxEDIId <input type="hidden" name="hfLockboxEDIId" id="hfLockboxEDIId" value="" />
+            </div>
+        </div>
+        <div class="portlet-body form">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-2">Date Transmit:</div>
+                    <div class="col-md-2"><input type="text" readonly class="form-control input-sm" value="" id="txtVDateTransmit" name="txtVDateTransmit" /></div>
+                    <div class="col-md-2">Total number of Check:</div>
+                    <div class="col-md-2"><input type="text" readonly class="form-control input-sm" value="" id="txtVTotalnumberofCheck" name="txtVTotalnumberofCheck" /></div>
+                    <div class="col-md-2">Total Lockbox Amount:</div>
+                    <div class="col-md-2"><input type="text" readonly class="form-control input-sm inputAmt" value="" id="txtVTotalLockboxAmount" name="txtVTotalLockboxAmount" /></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">Region Name:</div>
+                    <div class="col-md-2"><input type="text" readonly class="form-control input-sm" value="" id="txtVRegionName" name="txtVRegionName" /></div>
+                    <div class="col-md-2">Total number of Invoice:</div>
+                    <div class="col-md-2"><input type="text" readonly class="form-control input-sm" value="" id="txtVTotalnumberofInvoice" name="txtVTotalnumberofInvoice" /></div>
+                    <div class="col-md-2">Total Amount to Apply:</div>
+                    <div class="col-md-2"><input type="text" readonly class="form-control input-sm inputAmt" value="" id="txtVTotalAmountoApply" name="txtVTotalAmountoApply" /></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">LockBox ID:</div>
+                    <div class="col-md-2"><input type="text" readonly class="form-control input-sm" value="" id="txtVLockBoxID" name="txtVLockBoxID" /></div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-2">Total Amount Execption:</div>
+                    <div class="col-md-2"><input type="text" readonly class="form-control input-sm inputAmt" value="" id="txtVTotalAmountExecption" name="txtVTotalAmountExecption" /></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-2">Total Customer Credit:</div>
+                    <div class="col-md-2"><input type="text" readonly class="form-control input-sm inputAmt" value="" id="txtVTotalAmountCustomerCredit" name="txtVTotalAmountCustomerCredit" /></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="dataTables_wrapper no-footer">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" id="lockboxsummaryList" role="grid">
+                                    <thead>
+                                        <tr role="row">
+                                            <th style="width:24px;text-align:center;">@*<input rel="mgglchkALL" type="checkbox" name="name"  class="chk" />*@</th>
+                                            <th style="text-align:center;width:100px;">Check No</th>
+                                            <th style="text-align:center;width:100px;">Customer No</th>
+                                            <th style="text-align: center; width: 185px;">Customer Name</th>
+                                            <th style="text-align:center;width:100px;">Invoice No</th>
+                                            <th style="text-align:center;width:120px;">Invoice Date</th>
+                                            <th style="text-align:center;width:120px;">Invoice Amount</th>
+                                            <th style="text-align:center;width:120px;">Apply Amount</th>
+                                            <th style="text-align:center;width:120px;">Invoice Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="name" value="" />
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="submit" class="btn btn-primary pull-right" style="margin-right:10px;" id="btnProcessPayment_OnSubmit" value="Process Payment" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="dataTables_wrapper no-footer">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" id="lockboxsummaryListUnmatched" role="grid">
+                                    <thead>
+                                        <tr role="row">
+                                            <th style="width:24px;text-align:center;"></th>
+                                            <th style="text-align:center;width:100px;">Check No</th>
+                                            <th style="text-align:center;width:100px;">Customer No</th>
+                                            <th style="text-align: center; width: 185px;">Customer Name</th>
+                                            <th style="text-align:center;width:100px;">Invoice No</th>
+                                            <th style="text-align:center;width:120px;">Invoice Date</th>
+                                            <th style="text-align:center;width:120px;">Invoice Amount</th>
+                                            <th style="text-align:center;width:120px;">Apply Amount</th>
+                                            <th style="text-align:center;width:120px;">Invoice Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="button" class="btn btn-primary pull-right" style="margin-right:10px;" id="btnProcessPayment_OnSaveforLater" value="Save for Later" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="form-horizontal" id="form_invoicedetail"></div>
+    <div class="modal fade custom-model custom-form-design" id="modal_lockboxview_error_detail" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" style="width:1250px">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                        LockBox View Detail
+                    </h4>
+                </div>
+                <div class="modal-body" style="padding: 0px 15px 15px 15px;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-striped table-bordered table-hover order-column table-responsive" id="tblviewdetailH" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align:center">Bank Name</th>
+                                        <th style="text-align:center">Bank Account</th>
+                                        <th style="text-align:center;width:150px;">Check No.</th>
+                                        <th style="text-align:center;width:150px;">Check Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="text-align:center"><span id="spnEBankName"></span></td>
+                                        <td style="text-align:center"><span id="spnEBankAccount"></span></td>
+                                        <td style="text-align:center"><span id="spnECheckNo"></span></td>
+                                        <td style="text-align:right">$ <span id="spnELockboxAmount"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td style="text-align:center">Apply Amount</td>
+                                        <td style="text-align:center"><input type="text" name="txtEApplyAmount" id="txtEApplyAmount" readonly value="0" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td style="text-align:center">Balance</td>
+                                        <td style="text-align:center"><input type="text" name="txtEBalanceAmount" id="txtEBalanceAmount" readonly value="0" /></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" id="divtblviewdetail">
+                            <table class="table table-striped table-bordered table-hover order-column table-responsive" id="tblviewdetail" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align:center">Customer No.</th>
+                                        <th style="text-align:center">Customer Name</th>
+                                        <th style="text-align:center">Invoice No.</th>
+                                        <th style="text-align:center;width:150px;">Invoice Amount</th>
+                                        <th style="text-align:center;width:150px;">Apply Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row" id="divinvoiceList" style="display:none;">
+                        <div class="col-md-12">
+                            <div class="custom-listbox" style="max-width:100%;margin: 0px auto;">
+                                <div class="tablebox">
+                                    <table class="table table-striped table-bordered table-hover order-column" id="invoiceList">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:25px;text-align:center;">
+                                                </th>
+                                                <th style="text-align:center;width:100px;">
+                                                    Customer No
+                                                </th>
+                                                <th style="text-align:center;">
+                                                    Customer Name
+                                                </th>
+                                                <th style="text-align:center;width:80px;">
+                                                    Invoice No
+                                                </th>
+                                                <th style="width:100px;text-align:center;">
+                                                    Invoice Date
+                                                </th>
+                                                <th style="text-align:center;width:150px;">
+                                                    Description
+                                                </th>
+                                                <th style="text-align:center;width:100px;">
+                                                    Invoice Amount
+                                                </th>
+                                                <th style="text-align:center;width:80px;">
+                                                    Apply Amount
+                                                </th>
+                                                <th style="text-align:center;width:80px;">
+                                                    Invoice Balance
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" id="divtblviewdetail_invoicelist" >
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover order-column" id="invoiceList1">
+                                    <thead>
+                                        <tr>
+                                            <th class="tblInvoice_chk" style="text-align:center; width: 30px">
+                                                @*<input type="checkbox" id="chkAll" name="chkAll" />*@
+                                            </th>
+
+                                            <th class="tblInvoice_customerNo" style="width:70px;text-align:center;">
+                                                Customer No.
+                                            </th>
+                                            <th class="tblInvoice_customerName" style="width:180px;text-align:center;">
+                                                Customer Name
+                                            </th>
+                                            <th class="tblInvoice_invoiceNo" style="width:80px;text-align:center;">
+                                                Invoice No
+                                            </th>
+                                            <th class="tblInvoice_invoiceDate" style="width:80px;text-align:center;">
+                                                Invoice Date
+                                            </th>
+                                            <th class="tblInvoice_invoiceDesc" style="width:220px;text-align:center;">
+                                                Invoice Description
+                                            </th>
+                                            <th class="tblInvoice_invoiceAmt" style="text-align:center;width:60px;">
+                                                Inv. Amount
+                                            </th>
+                                            <th class="tblInvoice_invoiceAmt" style="text-align:center;width:60px;">
+                                                Current Balance
+                                            </th>
+                                            <th class="tblInvoice_payment" style="text-align:center;width:60px;">
+                                                Payment Apply
+                                            </th>
+                                            <th class="tblInvoice_balance" style="text-align:center;width:60px;">
+                                                New Balance
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    @*<div class="row" id="divtblviewdetail_invoicelist_btn" style="display:none;">
+                            <div class="col-md-12">
+                                <div class="col-md-8">
+                                    <input type="hidden" name="SaveMethod" id="SaveMethod" />
+                                </div>
+                                <div class="col-md-2">
+                                    <button id="btnSaveAndClose" type="button" class="btn green btn-block" onclick="onClickSaveAndClose()">Save & Close</button>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <button id="btnSaveAndNew" type="button" class="btn green btn-block" onclick="onClickSaveAndNew()">Save & New</button>
+                                </div>
+                            </div>
+                        </div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="divApplyPartialPayment"></div>
+    <div class="modal fade custom-model custom-form-design" id="modal_lockboxview_error_detailconfirm" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" style="width:450px;top: 150px;">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                        &nbsp;
+                    </h4>
+                </div>
+                <div class="modal-body" style="padding: 0px 15px 15px 15px;">
+                    <div class="row">
+                        <div class="col-lg-12" style="text-align:center;">
+                            <h4>Do you want to apply partial payment against invoice No. <span id="spninvoicenumber_err_detail"></span>?</h4>
+                        </div>
+                    </div>
+                    <br />
+
+                    <div class="row">
+                        <div class="form-actions">
+
+                            <div class="col-md-12" style="text-align:center;">
+                                <input type="hidden" id="hdf_errlockbox_detail_Invoiceid" name="hdf_errlockbox_detail_Invoiceid" value="" />
+                                <input type="hidden" id="hdf_errlockbox_detail_InvoiceChequeno" name="hdf_errlockbox_detail_InvoiceChequeno" value="" />
+
+                                <button type="button" class="btn btn-primary button-next" onclick="btnOpenApplyPaymentFormYes()" style="margin-right:10px;">Yes</button>
+                                <button type="button" class="btn btn-primary button-next" onclick="btnOpenApplyPaymentFormNo()" style="margin-right:10px;">No</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade custom-model custom-form-design" id="modal_lockboxview_errorAmount_detailconfirm" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" style="width:400px;top: 150px;">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                        &nbsp;
+                    </h4>
+                </div>
+                <div class="modal-body" style="padding: 0px 15px 15px 15px;">
+                    <div class="row">
+                        <div class="col-lg-12" style="text-align:center;">
+                            <h3>No more credit available</h3>
+                        </div>
+                    </div>
+                    <br />
+
+                    <div class="row">
+                        <div class="form-actions">
+
+                            <div class="col-md-12" style="text-align:center;">
+
+                                <button type="button" class="btn btn-primary button-next" data-dismiss="modal" onclick="" style="margin-right:10px;">OK</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade custom-model custom-form-design" id="modal_lockboxview_errorAmount_detailBalancemsg" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" style="width:400px;top: 150px;">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                        &nbsp;
+                    </h4>
+                </div>
+                <div class="modal-body" style="padding: 0px 15px 15px 15px;">
+                    <div class="row">
+                        <div class="col-lg-12" style="text-align:center;">
+                            <h3>Apply complete amount</h3>
+                        </div>
+                    </div>
+                    <br />
+
+                    <div class="row">
+                        <div class="form-actions">
+
+                            <div class="col-md-12" style="text-align:center;">
+
+                                <button type="button" class="btn btn-primary button-next" data-dismiss="modal" onclick="" style="margin-right:10px;">OK</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@section scripts{
+    <script type="text/javascript">
+        var matchedRecords = [];
+        var matchedRecord = {};
+        var unmatchedRecords = [];
+        var unmatchedRecord = {};
+
+        var allLockboxRecords = [];
+
+
+        function AppendLockboxMatchedItem(Id, RowNo, CheckNumber, LockboxEDIDetailId, CustomerId, CustomerNo, CustomerName, InvoiceId, InvoiceNo, InvoiceDate, InvoiceAmount, ApplyAmount, BalanceAmount, IsProcessed) {
+            var tblMatched = $('#lockboxsummaryList tbody');
+            matchedRecords.push({ Id: Id, RowNumber: RowNo, LockboxEDIDetailId: LockboxEDIDetailId, CheckNumber: CheckNumber, CustomerId: CustomerId, CustomerNo: CustomerNo, CustomerName: CustomerName, InvoiceId: InvoiceId, InvoiceNo: InvoiceNo, InvoiceDate: InvoiceDate, InvoiceAmount: InvoiceAmount, ApplyAmount: ApplyAmount, Balance: BalanceAmount, IsProcessed: IsProcessed });
+            trData = "";
+            trData += '<tr  rel="mcr_' + CheckNumber + '">'
+            if (!IsProcessed) {
+                trData += '<td style="width:25px;text-align:center;">'
+                trData += '<input type="hidden" name="hf_' + InvoiceId + '_customerid" value="' + CustomerId + '" />'
+                trData += '<input type="hidden" name="hf_' + InvoiceId + '_chkNumber" value="' + CheckNumber + '" />'
+                trData += '<input type="hidden" name="hf_' + InvoiceId + '_invoiceid" value="' + InvoiceId + '" />'
+                trData += '<input type="hidden" name="hf_' + InvoiceId + '_invoiceamount" value="' + InvoiceAmount + '" />'
+                trData += '<input type="hidden"name="hf_' + InvoiceId + '_applyamount" value="' + ApplyAmount + '" />'
+                trData += '<input type="hidden"name="hf_' + InvoiceId + '_balanceamount" value="' + BalanceAmount + '" />'
+                trData += '</td>'
+                trData += '<td style="text-align: left;padding-left: 30px!important;"><a href="javascript:void(0)" onclick="bindLockboxErrorDataList(' + LockboxEDIDetailId + ',\'' + CheckNumber + '\')">' + CheckNumber + '</a></td>'
+            }
+            else
+            {
+                trData += '<td style="width:25px;text-align:center;">Processed</td>'
+                trData += '<td style="text-align: left;padding-left: 30px!important;">' + CheckNumber + '</td>'
+            }
+            
+            trData += '<td style="text-align: left;padding-left: 30px!important;">' + CustomerNo + '</td>'
+            trData += '<td style="text-align: left;padding-left: 30px!important;">' + CustomerName + '</td>'
+            trData += '<td style="text-align:center;"><a href="javascript:void(0)" onclick="btnOpenInvoiceDetail(' + InvoiceId + ')">' + InvoiceNo + '</a></td>'
+            trData += '<td style="text-align:center;">' + InvoiceDate + '</td>'
+            trData += '<td style="text-align:right;">$ ' + InvoiceAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</td>'
+            trData += '<td style="text-align:right;">$ ' + ApplyAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</td>'
+            trData += '<td style="text-align:right;width:120px;">$ ' + BalanceAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</td></tr>'
+
+            tblMatched.append(trData);
+        }
+
+        function AppendLockboxUnMatchedItem(Id, RowNo, CheckNumber, LockboxEDIDetailId, CustomerId, CustomerNo, CustomerName, InvoiceId, InvoiceNo, InvoiceDate, InvoiceAmount, ApplyAmount, BalanceAmount) {
+            var tblUnMatched = $('#lockboxsummaryListUnmatched tbody');
+            unmatchedRecords.push({ Id: Id, RowNumber: RowNo, LockboxEDIDetailId: LockboxEDIDetailId, CheckNumber: CheckNumber, CustomerId: CustomerId, CustomerNo: CustomerNo, CustomerName: CustomerName, InvoiceId: InvoiceId, InvoiceNo: InvoiceNo, InvoiceDate: InvoiceDate, InvoiceAmount: InvoiceAmount, ApplyAmount: ApplyAmount, Balance: BalanceAmount, IsProcessed: false });
+        
+            trData = "";
+            trData += '<tr rel="umcr_' + CheckNumber + '">'
+
+            if (BalanceAmount >0)
+                trData += '<td style="width:25px;text-align:center;"><a href="javascript:void(0)" onclick="btnOpenApplyPaymentForm(' + InvoiceId + ',\'' + InvoiceNo + '\',\'' + CheckNumber + '\')"><i class="fa fa-times" aria-hidden="true" style="color:red;"></i></a></td>'
+            else
+                trData += '<td style="width:25px;text-align:center;"><a href="javascript:void(0)" onclick="bindLockboxErrorDataList(' + LockboxEDIDetailId + ',\'' + CheckNumber + '\')"><i class="fa fa-times" aria-hidden="true" style="color:red;"></i></a></td>'
+
+            trData += '<td style="text-align: left;padding-left: 30px!important;">' + CheckNumber + '</td>'
+            trData += '<td style="text-align: left;padding-left: 30px!important;">' + CustomerNo + '</td>'
+            trData += '<td style="text-align: left;padding-left: 30px!important;">' + (CustomerName != null ? CustomerName : '') + '</td>'
+            trData += '<td style="text-align:center;"><a href="javascript:void(0)" onclick="btnOpenInvoiceDetail(' + InvoiceId + ')">' + (InvoiceNo != null ? InvoiceNo : '') + '</a></td>'
+            trData += '<td style="text-align:center;">' + InvoiceDate + '</td>'
+            trData += '<td style="text-align:right;">$ ' + InvoiceAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</td>'
+            trData += '<td style="text-align:right;">$ ' + ApplyAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</td>'
+            trData += '<td style="text-align:right;width:120px;">$ ' + BalanceAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</td></tr>'
+
+            tblUnMatched.append(trData);
+        }
+
+        var _lockbox_regionId = 0;
+        function bindLockboxDataList(id) {
+            $.blockUI()
+            var sURL = '@Url.Action("LockboxFileSummaryData", "AccountReceivable", new { area = "Portal" })?id=' + id
+            $.ajax(
+            {
+                type: "GET", //HTTP POST Method
+                url: sURL, // Controller/View
+                    success: function (res) {
+                        //$('.inputAmt');
+
+                        applyMaskCurrency('#txtVTotalLockboxAmount');
+                        applyMaskCurrency('#txtVTotalAmountoApply');
+                        applyMaskCurrency('#txtVTotalAmountExecption');
+                        applyMaskCurrency('#txtVTotalAmountCustomerCredit');
+                        
+                        
+                        console.log(res);
+
+                        allLockboxRecords = res;
+                        _lockbox_regionId = allLockboxRecords[0].RegionId;
+
+                    var trInvoicelist = "";
+                    var trInvoicelistIsOpen = 0;
+                    var trInvoicelistIsClosed = 0;
+                    var trInvoicelistIsOverPaid = 0;
+                    var trInvoicelistIsOverDue = 0;
+
+                    var TotalInvoiceAmount = 0;
+                    var TotalInvoiceBalance = 0;
+
+
+                    var tblinvoiceList = $('#lockboxsummaryList tbody');
+                    var tblinvoiceListUnmatched = $('#lockboxsummaryListUnmatched tbody');
+                    tblinvoiceList.html("");
+                    tblinvoiceListUnmatched.html("");
+                    var isFirst = true;
+                    var chkNumber = "";
+                    var chkAmount = 0;
+
+                    var vTotalApply = 0;
+                    var vTotalBalance = 0;
+                    var vTotalAmount = 0;
+
+                    AllDetailRow = res;
+
+                    var errList = $.grep(res, function (t, i) { return !(t.InvoiceNo != "" && t.InvoiceNo != null && t.CustomerName != "" && t.CustomerName != null && parseFloat(t.BalanceAmount, 10).toFixed(2).toString() == '0.00'); });
+
+                    res.forEach(function (item) {
+
+                        if (isFirst) {
+                            vTotalAmount = parseFloat(item.TotalDollars, 10);
+                            $('#txtVDateTransmit').val(item.YYMMDD.substring(2, 4) + '/' + item.YYMMDD.substring(4, 6) + '/' + item.YYMMDD.substring(0, 2))
+                            $('#txtVLockBoxID').val(item.LockboxNumber)
+                            $('#txtVRegionName').val(item.RegionName)
+                            $('#txtVTotalLockboxAmount').val(parseFloat(item.TotalDollars, 10).toFixed(2).toString())
+                            isFirst = false;
+                        }
+
+                        var vInvoiceDate = (item.InvoiceDate != null ? moment(new Date(parseInt(item.InvoiceDate.substr(6)))).format("MM/DD/YYYY") : "");
+                        var vInvoiceAmount = (item.InvoiceAmount != null ? parseFloat(item.InvoiceAmount, 10).toFixed(2).toString() : 0.00);
+                        var vApplyAmount = (item.ApplyAmount != null ? parseFloat(item.ApplyAmount, 10).toFixed(2).toString() : 0.00);
+                        var vBalanceAmount = (item.BalanceAmount != null ? parseFloat(item.BalanceAmount, 10).toFixed(2).toString() : 0.00);
+
+                        var errListInner = $.grep(errList, function (t, i) { return t.CheckNumber == item.CheckNumber; });
+
+                        if (errListInner.length == 0) {
+
+                            AppendLockboxMatchedItem(0, item.RowNo, item.CheckNumber, item.LockboxEDIDetailId, item.CustomerId, item.CustomerNo, item.CustomerName,
+                                item.InvoiceId, item.InvoiceNo, vInvoiceDate, vInvoiceAmount, vApplyAmount, vBalanceAmount, item.IsProcessed)
+                            vTotalApply += parseFloat(item.ApplyAmount, 10);
+                        }
+                        else {
+
+                            AppendLockboxUnMatchedItem(0, item.RowNo, item.CheckNumber, item.LockboxEDIDetailId, item.CustomerId, item.CustomerNo, item.CustomerName,
+                                item.InvoiceId, item.InvoiceNo, vInvoiceDate, vInvoiceAmount, vApplyAmount, vBalanceAmount)
+                            vTotalBalance += parseFloat(item.ApplyAmount, 10);
+
+                        }
+                    });
+
+
+
+                    var dupes = {}, chkCount = 0, invCount = 0;
+                    $.each(res, function (i, el) {
+                        if (!dupes[el.CheckNumber]) {
+                            dupes[el.CheckNumber] = true;
+                            chkCount++;
+                        }
+
+                        if (!dupes[el.InvoiceNo]) {
+                            dupes[el.InvoiceNo] = true;
+                            invCount++;
+                        }
+                    });
+                    $('#txtVTotalnumberofCheck').val(chkCount);
+                    $('#txtVTotalnumberofInvoice').val(invCount);
+                    $('#txtVTotalAmountExecption').val(vTotalBalance.toFixed(2).toString())
+                    $('#txtVTotalAmountoApply').val(vTotalApply.toFixed(2).toString())
+                    $('#txtVTotalAmountCustomerCredit').val(0);
+                    $.unblockUI()
+
+                },
+                    error: function (err) {
+                        $.unblockUI()
+                    alert('failure');
+                },
+            });
+        };
+
+    </script>
+
+
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#BatchNumber').inputmask("mask", { "mask": "999" });
+            $('#LockboxDate').inputmask({ "mask": "99/99/9999", "placeholder": 'MM/DD/YYYY' });
+            $('#hfLockboxEDIId').val(@ViewBag.LockboxId);
+
+            bindLockboxDataList(@ViewBag.LockboxId)
+        });
+        var GlobalInvoiceData =[];
+        var selectDetailRow = {};
+        var AllDetailRow = [];
+        var errCustomerName;
+        function bindLockboxErrorDataList(id, chkno) {
+            //console.log(AllDetailRow);
+            $.blockUI();//$.blockUI({ message: $('#throbberBlock'), theme: true, baseZ: 12000 });
+            $('input[rel="mgglchk"]').prop('checked', false);
+            $('input[rel="TIApplyAmount"]').prop('value', 0);
+            $('input[rel="TIBalanceAmount"]').prop('value', 0);
+
+            $('#spnEBankName').html('');
+            $('#spnEBankAccount').html('');
+            $('#spnECheckNo').html('');
+            $('#spnELockboxAmount').html('');
+
+
+            applyMaskCurrency('#txtEApplyAmount');
+            applyMaskCurrency('#txtEBalanceAmount');
+
+            var selectedErrDetail = $.grep(AllDetailRow, function (item, i) { return item.CheckNumber == chkno; });
+            $('#spnEBankName').html(selectedErrDetail[0].BankName != null ? selectedErrDetail[0].BankName : "");
+            $('#spnEBankAccount').html(selectedErrDetail[0].AccountNumber != null ? selectedErrDetail[0].AccountNumber : '');
+            $('#spnECheckNo').html(selectedErrDetail[0].CheckNumber);
+            $('#spnELockboxAmount').html(parseFloat(selectedErrDetail[0].DollarAmount, 10).toFixed(2).toString().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $('#txtEApplyAmount').val(0);
+            $('#txtEBalanceAmount').val(parseFloat(selectedErrDetail[0].DollarAmount, 10).toFixed(2).toString());
+
+
+            var tblinvoiceList = $('#tblviewdetail tbody');
+            tblinvoiceList.html("");
+            selectedErrDetail.forEach(function (item) {
+                if ((item.CustomerName != null ? item.CustomerName : '') != '')
+                    errCustomerName = item.CustomerName;
+                else
+                    errCustomerName = '';
+
+
+
+
+                if (item.CustomerId == null) {
+
+                    $('#divtblviewdetail_invoicelist').show();
+                    $('#divtblviewdetail_invoicelist_btn').show();
+                }
+                //else {
+                    trInvoicelist = "";
+                    trInvoicelist += '<tr id="lbediRow_' + item.LockboxEDIDetailId + '"  relInvid="' + item.InvoiceId + '" relcusId="' + item.CustomerId + '">'
+                    trInvoicelist += '<td style="text-align:center"><span name="spnECustomerNumber_' + item.LockboxEDIDetailId + '" id="spnECustomerNumber_' + item.LockboxEDIDetailId + '">' + item.CustomerNo + '</span></td>'
+                    trInvoicelist += '<td style="text-align:center"><span id="spnECustomerName_' + item.LockboxEDIDetailId + '">' + (item.CustomerName != null ? item.CustomerName : '') + '</span></td>'
+                    trInvoicelist += '<td style="text-align:center"><span id="spnEInvoiceNumber_' + item.LockboxEDIDetailId + '">' + item.InvoiceNo + '</span></td>'
+                trInvoicelist += '<td style="text-align:right"><span id="spnEInvoiceAmount_' + item.LockboxEDIDetailId + '">' + (item.InvoiceAmount != null ? ('$ ' + parseFloat(item.InvoiceAmount, 15).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")) : '') + '</span></td>'
+                    trInvoicelist += '<td style="text-align:right"><span id="spnEApplyAmount_' + item.LockboxEDIDetailId + '" id="spnEApplyAmount_' + item.LockboxEDIDetailId + '">$ ' + item.ApplyAmount + '</span></td>'
+                    trInvoicelist += '</tr>'
+
+                    tblinvoiceList.append(trInvoicelist);
+                //}
+            });
+
+
+            //bind invoice list
+            if (isShowInvoicelist == false || isShowInvoicelist == true && GlobalInvoiceData.legnth<0) {
+                var sURL = '@Url.Action("OpenInvoiceListdata", "AccountReceivable", new { area = "Portal" })?regionid=' + _lockbox_regionId
+                $.ajax(
+                {
+                    type: "GET", //HTTP POST Method
+                    url: sURL, // Controller/View
+                    //data: { 'accid': id, 'issubacct': issub },
+                    success: function (res) {
+                        GlobalInvoiceData = res.aadata;
+                        var trInvoicelist = "";
+                        var trInvoicelistIsOpen = 0;
+                        var trInvoicelistIsClosed = 0;
+                        var trInvoicelistIsOverPaid = 0;
+                        var trInvoicelistIsOverDue = 0;
+                        var TotalInvoiceAmount = 0;
+                        var TotalInvoiceBalance = 0;
+                        var tblinvoiceList = $('#invoiceList1 tbody');
+                        tblinvoiceList.html("");
+                        InvoicelistH = res.aadata;
+                        res.aadata.forEach(function (item) {
+                            trInvoicelist = "";
+                            trInvoicelist += '<tr id="ir_' + item.InvoiceId + '">'
+                            trInvoicelist += '<td style="text-align:center;"><input rel="mgglchk" type="checkbox" name="name" onchange="chkChangeinv(this)"  class="chk" value="' + item.InvoiceId + '"  /></td>';
+                            trInvoicelist += '<td style="text-align:center;width:50px;">' + item.CustomerNo + '</td>';
+                            trInvoicelist += '<td style="text-align:left;">' + item.CustomerName + '</td>';
+                            trInvoicelist += '<td style="text-align:center;"><a href="javascript:void(0);" onclick="btnOpenInvoiceDetail(' + item.InvoiceId + ')">' + item.InvoiceNo + '</a></td>';
+                            trInvoicelist += '<td style="text-align:center;">' + moment(new Date(parseInt(item.InvoiceDate.substr(6)))).format("MM/DD/YYYY") + '</td>';
+                            trInvoicelist += '<td style="text-align:left;">' + item.Description + '</td>';
+                            trInvoicelist += '<td style="text-align:right;">$ ' + parseFloat(item.Amount, 10).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</td>';
+                            trInvoicelist += '<td style="text-align:right;"><input type="hidden" rel="hdnIInvoiceAmount" id="hfINVbalanceAmount_' + item.InvoiceId + '" value="' + parseFloat(item.Balance, 10).toFixed(2).toString() + '" />$ <span rel="spnIInvoiceAmount">' + parseFloat(item.Balance, 10).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</span></td>';
+                            trInvoicelist += '<td style="text-align:right;"><input type="text" rel="TIApplyAmount" onchange="chkChangeinvAMT(' + item.InvoiceId + ')" name="txtIApplyAmount_' + item.InvoiceId + '" id="txtIApplyAmount_' + item.InvoiceId + '" value="0.00" /></td>';
+                            trInvoicelist += '<td style="text-align:right;"><input type="text" readonly rel="TIBalanceAmount" name="txtIBalanceAmount_' + item.InvoiceId + '" id="txtIBalanceAmount_' + item.InvoiceId + '" value="' + parseFloat(item.Balance, 10).toFixed(2) + '" /></td></tr>';
+                            tblinvoiceList.append(trInvoicelist);
+
+                            applyMaskCurrency('#txtIApplyAmount_' + item.InvoiceId)
+                            applyMaskCurrency('#txtIBalanceAmount_' + item.InvoiceId)
+
+                        });
+
+
+                        var oTable = $('#invoiceList1').DataTable({
+                            "paging": true,
+                            "ordering": true,
+                            "info": true,
+                            "bProcessing": true,
+                            "pageLength": 10,
+                            "dom": "<'headerbox list'<'row'<'col-md-1'l><'#divrightckbox1.col-md-4'f><'#divrightckbox.col-md-4 pull-right text-center'>>><'table-responsive't><'bottom'ip><'clear'>"
+
+                        });
+
+                        $("#divrightckbox").html('');
+                        $("#divrightckbox").append('<a href="javascript:void(0);"  class="btn btn-primary pull-right" onclick="hideInvoiceListApply(\'' + chkno + '\')" style="margin-right:10px;">Apply</a>');
+                        isShowInvoicelist = true;
+                        if (errCustomerName != '' && errCustomerName != undefined) {
+                            $('#invoiceList1').DataTable().search(errCustomerName).draw();
+                        }
+
+                        txtEApplyAmount = 0;
+                        txtEBalanceAmount = 0;
+                        txtELockboxAmount = 0;
+                        $.unblockUI();
+
+
+                        $("#invoiceList1_filter input").prop("placeholder", "search invoice")
+
+                    },
+                    error: function (err) {
+                        alert('failure');
+                        $.unblockUI();
+                    },
+                });
+            }
+            else {
+                if (errCustomerName != '' && errCustomerName != undefined) {
+                    $('#invoiceList1').DataTable().search(errCustomerName).draw();
+                }
+                else {
+                    $('#invoiceList1').DataTable().search('').draw();
+                }
+                $.unblockUI();
+            }
+
+            jQuery(function ($) {
+                $('#tblviewdetail tbody tr').click(function () {
+                    return false;
+                }).dblclick(function () {
+                    bindINvoiceList();
+                    return false;
+                });
+            });
+            $("#modal_lockboxview_error_detail").modal({ backdrop: 'static' });
+        }
+        var isShowInvoicelist = false;
+        var InvoicelistH = [];
+        function bindINvoiceList() {
+            $("#divtblviewdetail_invoicelist").show();
+            $('input[rel="mgglchk"]').prop('checked', false);
+            $('input[rel="TIApplyAmount"]').prop('value', '0.00');
+            //$('input[rel="TIBalanceAmount"]').prop('value', '0.00');
+
+
+
+        };
+
+        function getInvoiceIdChunk(elem) {
+            return $(elem).attr("id").split('_')[0];
+        }
+        function btnOpenApplyPaymentForm(id, InvoiceNo, chknum) {
+
+            $('#hdf_errlockbox_detail_Invoiceid').val(id);
+            $('#hdf_errlockbox_detail_InvoiceChequeno').val(chknum);
+            $('#spninvoicenumber_err_detail').html(InvoiceNo);
+            $("#modal_lockboxview_error_detailconfirm").modal({ backdrop: 'static' });
+        };
+        function btnOpenApplyPaymentFormYes() {
+            var InvId = $('#hdf_errlockbox_detail_Invoiceid').val();
+            var InvCheckNumber = $('#hdf_errlockbox_detail_InvoiceChequeno').val();
+
+            var sURL = '@Url.Action("GetApplyLockboxPaymentForm", "AccountReceivable", new { area = "Portal" })?Id=' + InvId;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+     
+                    //console.log(data);
+                    if (!data) {
+
+
+                        var tblinvoiceList = $('#lockboxsummaryList tbody');
+
+                        var selectedErrDetail = $.grep(InvoicelistH, function (t, i) { return t.InvoiceId == InvId; })[0];
+
+                        var vInvoiceDate = (selectedErrDetail.InvoiceDate != null ? moment(new Date(parseInt(selectedErrDetail.InvoiceDate.substr(6)))).format("MM/DD/YYYY") : "");
+                        var vInvoiceAmount = (selectedErrDetail.Amount != null ? parseFloat(selectedErrDetail.Amount, 10).toFixed(2).toString() : '');
+                        var vApplyAmount = ($('#txtIApplyAmount_' + InvId).val() != null ? parseFloat($('#txtIApplyAmount_' + InvId).val(), 10).toFixed(2).toString() : '');
+                        var vBalanceAmount = ($('#txtIBalanceAmount_' + InvId).val() != null ? parseFloat($('#txtIBalanceAmount_' + InvId).val(), 10).toFixed(2).toString() : '');
+
+
+                        //var selectedErrDetail = $.grep(AllDetailRow, function (t, i) { return t.InvoiceId == InvId; })[0];
+
+                        //var vInvoiceDate = (selectedErrDetail.InvoiceDate != null ? moment(new Date(parseInt(selectedErrDetail.InvoiceDate.substr(6)))).format("MM/DD/YYYY") : "");
+                        //var vInvoiceAmount = (selectedErrDetail.InvoiceAmount != null ? parseFloat(selectedErrDetail.InvoiceAmount, 10).toFixed(2).toString() : '');
+                        //var vApplyAmount = (selectedErrDetail.ApplyAmount != null ? parseFloat(selectedErrDetail.ApplyAmount, 10).toFixed(2).toString() : '');
+                        //var vBalanceAmount = (selectedErrDetail.BalanceAmount != null ? parseFloat(selectedErrDetail.BalanceAmount, 10).toFixed(2).toString() : '');
+
+                        var trInvoicelist = "";
+
+                        trInvoicelist += '<tr  rel="mcr_' + InvCheckNumber + '"><td style="width:25px;text-align:center;">'
+                        trInvoicelist += '<input type="hidden" name="hf_' + InvId + '_customerid" value="' + selectedErrDetail.CustomerId + '" />'
+                        trInvoicelist += '<input type="hidden" name="hf_' + InvId + '_chkNumber" value="' + InvCheckNumber + '" />'
+                        trInvoicelist += '<input type="hidden" name="hf_' + InvId + '_invoiceid" value="' + InvId + '" />'
+                        trInvoicelist += '<input type="hidden" name="hf_' + InvId + '_invoiceamount" value="' + vInvoiceAmount + '" />'
+                        trInvoicelist += '<input type="hidden" name="hf_' + InvId + '_applyamount" value="' + vInvoiceAmount + '" />'
+                        trInvoicelist += '<input type="hidden" name="hf_' + InvId + '_balanceamount" value="' + vBalanceAmount + '" />'
+                        trInvoicelist += '</td>'
+
+
+                        trInvoicelist += '<td style="text-align: left;padding-left: 30px!important;"><a href="javascript:void(0)" onclick="bindLockboxErrorDataList(' + selectedErrDetail.LockboxEDIDetailId + ',\'' + InvCheckNumber + '\')">' + InvCheckNumber + '</a></td>'
+                        trInvoicelist += '<td style="text-align: left;padding-left: 30px!important;">' + selectedErrDetail.CustomerNo + '</td>'
+                        trInvoicelist += '<td style="text-align: left;padding-left: 30px!important;">' + selectedErrDetail.CustomerName + '</td>'
+                        trInvoicelist += '<td style="text-align:center;"><a href="javascript:void(0)" onclick="btnOpenInvoiceDetail(' + InvId + ')">' + selectedErrDetail.InvoiceNo + '</a></td>'
+                        trInvoicelist += '<td style="text-align:center;">' + vInvoiceDate + '</td>'
+                        trInvoicelist += '<td style="text-align:right;">$ ' + vInvoiceAmount + '</td>'
+                        trInvoicelist += '<td style="text-align:right;">$ ' + vApplyAmount + '</td>'
+                        trInvoicelist += '<td style="text-align:right;width:120px;">$ ' + vBalanceAmount + '</td></tr>'
+
+                        $('#txtVTotalAmountoApply').val((parseFloat($('#txtVTotalAmountoApply').val().toString().replace(',', ''), 10) + parseFloat((selectedErrDetail.ApplyAmount != null ? parseFloat(selectedErrDetail.ApplyAmount) : 0), 10)).toFixed(2).toString());
+                        $('#txtVTotalAmountExecption').val((parseFloat($('#txtVTotalAmountExecption').val().toString().replace(',', ''), 10) - parseFloat((selectedErrDetail.ApplyAmount != null ? parseFloat(selectedErrDetail.ApplyAmount) : 0), 10)).toFixed(2).toString());
+
+                        $('#txtVTotalAmountCustomerCredit').val(0);
+
+                        tblinvoiceList.append(trInvoicelist);
+
+
+
+                        $('tr[rel = "umcr_' + InvCheckNumber + '"]').remove();
+
+                    }
+                    else {
+                        btnOpenApplyPaymentFormOpen($('#hdf_errlockbox_detail_Invoiceid').val())
+                    }
+                    $("#modal_lockboxview_error_detailconfirm").modal('hide');
+
+                },
+                error: function () {
+                    alert("Content load failed.");
+                    $("#modal_lockboxview_error_detailconfirm").modal('hide');
+                }
+            });
+
+
+        };
+        function btnOpenApplyPaymentFormNo() {
+            $('#hdf_errlockbox_detail_Invoiceid').val('');
+            $("#modal_lockboxview_error_detailconfirm").modal('hide');
+        };
+        function btnOpenApplyPaymentFormOpen(id) {
+         
+            var existingForm = $("#inv" + id + "_modal_applypaymentform");
+
+            if ($(existingForm).length > 0) // already fetched form, so just display it again
+            {
+                $(existingForm).modal({ backdrop: 'static' });
+            }
+            else // first time loading form, so fetch by ajax
+            {
+                var sURL = '@Url.Action("ApplyLockboxPaymentForm", "AccountReceivable", new { area = "Portal" })?Id=' + id;
+                $.ajax({
+                    type: "GET",
+                    url: sURL,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (data) {
+                        vselCust = 0;
+
+                        $('#divApplyPartialPayment').append(data);
+                        var newForm = $('#divApplyPartialPayment').children().last();
+
+                        $(".date-picker").datepicker();
+
+                        var inv = getInvoiceIdChunk(newForm);
+                        initPaymentForm(inv);
+                        //var selectedErrDetail = $.grep(AllDetailRow, function (t, i) { return t.InvoiceId == id; })[0];
+
+                        var vApplyAmount = ($('#txtIApplyAmount_' + id).val() != null ? parseFloat($('#txtIApplyAmount_' + id).val(), 10).toFixed(2).toString() : '');
+                        $("#inv" + id + "_paymentAmt").val(parseFloat(vApplyAmount, 10).toFixed(2));
+                        $("#inv" + id + "_modal_applypaymentform").modal({ backdrop: 'static' });
+                    },
+                    error: function () {
+                        alert("Content load failed.");
+                    }
+                });
+            }
+        };
+        function initPaymentForm(inv) {
+
+            var invPrefix = getInvoicePrefix(inv);
+
+            var totalPayment = parseFloat($("#" + invPrefix + "totalPayment").val());
+            if ($.isNumeric(totalPayment)) {
+                $("#" + invPrefix + "paymentAmt").val(totalPayment.toFixed(2));
+            }
+
+            refreshPaymentForm(inv);
+            showFranchiseesForLineNumber(inv, 1);
+            togglePaymentUnitColumns(inv);
+        }
+
+        function buildFilters(table, element, filterClass) {
+            var searchFilters;
+            if (filterClass === "undefined") {
+                filterClass = ".searchFilter";
+            }
+            if (typeof element === "undefined") {
+                searchFilters = $(filterClass);
+            } else {
+                searchFilters = $(element).find(filterClass);
+            }
+            searchFilters.each(function () {
+                var t = $(this);
+                var type = t.data('type'),
+                    col = t.data('col'),
+                    id = this.id;
+                if (type === 'select') {
+                    //build options
+                    table.column(col).data().unique().sort().each(function (d, j) {
+                        t.append('<option value="' + d + '">' + d + '</option>')
+                    });
+                    //apply filters
+                    t.on('change', function () {
+                        var val = $(this).val();
+
+                        table.column(col)
+                            .search(val ? '^' + $(this).val() + '$' : val, true, false)
+                            .draw();
+                    })
+                } else {
+                    t.on('keyup change', function () {
+                        table
+                            .column(col)
+                            .search(this.value)
+                            .draw();
+                    });
+                }
+            })
+        }
+
+        var vItemNumber = 0;
+        var vselCust = 0;
+        var txtEApplyAmount = 0;
+        var txtEBalanceAmount = 0;
+        var txtELockboxAmount = 0;
+
+        function chkChangeinv(item) {
+     
+            var selectedErrDetail = $.grep(InvoicelistH, function (t, i) { return t.InvoiceId == item.value; });
+
+            txtELockboxAmount = parseFloat($('#spnELockboxAmount').html().toString().replace(',', '').replace(' ', ''));
+            txtEApplyAmount = parseFloat($('#txtEApplyAmount').val());
+            txtEBalanceAmount = parseFloat($('#txtEBalanceAmount').val());
+
+            console.log(selectedErrDetail);
+            if (item.checked) {
+                if (vselCust == 0) {
+                    vselCust = selectedErrDetail[0].CustomerId;
+                }
+                else if (vselCust != selectedErrDetail[0].CustomerId) {
+                    var countaaa= 0
+                    $('#ir_' + item.value).find('input[rel="mgglchk"]').each(function () {
+                        countaaa++;
+
+                    });
+                    if (countaaa>1) {
+                        item.checked = false;
+                        return;
+                    }
+
+                }
+
+                var invAmount = 0;
+                var invAppAmount = 0;
+                var invBalAmount = 0;
+
+                invAmount = parseFloat($('#hfINVbalanceAmount_' + item.value).val());
+
+                //$('#ir_' + item.value).find('span[rel="spnIInvoiceAmount"]').each(function () {
+                //    invAmount = parseFloat($('#hfINVbalanceAmount_' + item.value).val());
+                //});
+
+                //invAppAmount = parseFloat($('#txtIApplyAmount_' + item.value).val());
+
+                if (txtEBalanceAmount >= invAmount) {
+                    txtEBalanceAmount = txtEBalanceAmount - invAmount;
+                    invAppAmount = invAmount;
+                    $('#txtEBalanceAmount').val(txtEBalanceAmount);
+                    txtEApplyAmount = txtEApplyAmount + invAppAmount;
+                }
+                else {
+                    invAppAmount = txtEBalanceAmount;
+                    txtEBalanceAmount = 0;
+                    txtEApplyAmount = txtEApplyAmount + invAppAmount;
+                }
+
+
+
+                if (invAppAmount > 0) {
+                    $('#txtIApplyAmount_' + item.value).val(invAppAmount);
+                    $('#txtIBalanceAmount_' + item.value).val(invAmount - invAppAmount);
+                }
+                else if (invAppAmount == 0) {
+
+                    $('#txtIApplyAmount_' + item.value).val(invAppAmount);
+                    $('#txtIBalanceAmount_' + item.value).val(invAmount);
+
+                    item.checked = false;
+                    $("#modal_lockboxview_errorAmount_detailconfirm").modal({ backdrop: 'static' });
+                }
+
+
+
+                //$('#ir_' + item.value).find('input[rel="TIBalanceAmount"]').each(function () {
+                //    if (invAppAmount > 0) {
+                //        this.value =
+                //    }
+                //    else
+                //        this.value = 0;
+                //});
+
+
+                //$('#ir_' + item.value).find('input[rel="TIApplyAmount"]').each(function () {
+                //    if (txtEBalanceAmount >= invAmount) {
+                //        txtEBalanceAmount = txtEBalanceAmount - invAmount;
+                //        invAppAmount = invAmount;
+                //        $('#txtEBalanceAmount').val(txtEBalanceAmount);
+                //        txtEApplyAmount = txtEApplyAmount + invAppAmount;
+                //    }
+                //    else {
+                //        //txtEApplyAmount = parseFloat($('#txtEApplyAmount').val());
+                //        //txtEBalanceAmount = parseFloat($('#txtEBalanceAmount').val());
+
+
+                //        invAppAmount = txtEBalanceAmount;
+                //        txtEBalanceAmount = 0;
+                //        txtEApplyAmount = txtEApplyAmount + invAppAmount;
+                //    }
+
+                //    this.value = invAppAmount;
+
+
+                //    if (invAppAmount == 0) {
+                //        item.checked = false;
+                //        $("#modal_lockboxview_errorAmount_detailconfirm").modal({ backdrop: 'static' });
+                //    }
+
+                //});
+
+                //$('#ir_' + item.value).find('input[rel="TIBalanceAmount"]').each(function () {
+                //    if (invAppAmount > 0) {
+                //        this.value = invAmount - invAppAmount;
+                //    }
+                //    else
+                //        this.value = 0;
+                //});
+
+
+
+
+            }
+            else {
+                $('#ir_' + item.value).find('input[rel="TIApplyAmount"]').each(function () {
+                    txtEApplyAmount = txtEApplyAmount - parseFloat(this.value);
+                    txtEBalanceAmount = txtEBalanceAmount + parseFloat(this.value);
+                    this.value = '0.00';
+                });
+                $('#ir_' + item.value).find('input[rel="TIBalanceAmount"]').each(function () {
+                    var _balThis = this;
+                    $(this).val($('#hfINVbalanceAmount_' + item.value).val());
+
+                    //$('#ir_' + item.value).find('span[rel="spnIInvoiceAmount"]').each(function () {
+                   
+                    //    _balThis.value = $(this).html();// = '0.00';
+                    //});
+                });
+            }
+            $('#txtEApplyAmount').val(txtEApplyAmount);
+            $('#txtEBalanceAmount').val(txtEBalanceAmount);
+
+        }
+
+        function chkChangeinvAMT(invNO) {
+        
+            var selectedErrDetail = $.grep(InvoicelistH, function (t, i) { return t.InvoiceId == invNO; });
+
+            $('#ir_' + invNO).find('input[rel="mgglchk"]').each(function () {
+                var item = this;
+
+
+                txtELockboxAmount = parseFloat($('#spnELockboxAmount').html().toString().replace(',', '').replace(' ', ''));
+                txtEApplyAmount = parseFloat($('#txtEApplyAmount').val());
+                txtEBalanceAmount = parseFloat($('#txtEBalanceAmount').val());
+
+                console.log(selectedErrDetail);
+                if (item.checked) {
+                    if (vselCust == 0) {
+                        vselCust = selectedErrDetail[0].CustomerId;
+
+                        var invAmount = 0;
+                        var invAppAmount = 0;
+                        var invBalAmount = 0;
+
+                        invAmount = parseFloat($('#hfINVbalanceAmount_' + item.value).val());
+
+                        //$('#ir_' + item.value).find('span[rel="spnIInvoiceAmount"]').each(function () {
+                        //    invAmount = parseFloat($('#hfINVbalanceAmount_' + item.value).val());
+                        //});
+
+                        //invAppAmount = parseFloat($('#txtIApplyAmount_' + item.value).val());
+
+                        if (txtEBalanceAmount >= invAmount) {
+                            txtEBalanceAmount = txtEBalanceAmount - invAmount;
+                            invAppAmount = invAmount;
+                            $('#txtEBalanceAmount').val(txtEBalanceAmount);
+                            txtEApplyAmount = txtEApplyAmount + invAppAmount;
+                        }
+                        else {
+                            invAppAmount = txtEBalanceAmount;
+                            txtEBalanceAmount = 0;
+                            txtEApplyAmount = txtEApplyAmount + invAppAmount;
+                        }
+
+
+
+                        if (invAppAmount > 0) {
+                            $('#txtIApplyAmount_' + item.value).val(invAppAmount);
+                            $('#txtIBalanceAmount_' + item.value).val(invAmount - invAppAmount);
+                        }
+                        else if (invAppAmount == 0) {
+
+                            $('#txtIApplyAmount_' + item.value).val(invAppAmount);
+                            $('#txtIBalanceAmount_' + item.value).val(invAmount);
+
+                            item.checked = false;
+                            $("#modal_lockboxview_errorAmount_detailconfirm").modal({ backdrop: 'static' });
+                        }
+                    }
+                    else if (vselCust != selectedErrDetail[0].CustomerId) {
+                        item.checked = false;
+                    }
+
+
+                }
+                else {
+                    $('#ir_' + item.value).find('input[rel="TIApplyAmount"]').each(function () {
+                        txtEApplyAmount = txtEApplyAmount - parseFloat(this.value);
+                        txtEBalanceAmount = txtEBalanceAmount + parseFloat(this.value);
+                        this.value = '0.00';
+                    });
+                    $('#ir_' + item.value).find('input[rel="TIBalanceAmount"]').each(function () {
+                        var _balThis = this;
+                        $(this).val($('#hfINVbalanceAmount_' + item.value).val());
+
+                        //$('#ir_' + item.value).find('span[rel="spnIInvoiceAmount"]').each(function () {
+                      
+                        //    _balThis.value = $(this).html();// = '0.00';
+                        //});
+                    });
+                }
+                $('#txtEApplyAmount').val(txtEApplyAmount);
+                $('#txtEBalanceAmount').val(txtEBalanceAmount);
+            });
+        }
+
+        function hideInvoiceListApply(CheckNumber) {
+            if (txtEBalanceAmount == 0) {
+                CheckNumber = $('#spnECheckNo').html();
+
+                var _partialInvoiceId = 0;
+                var _partialInvoiceNo = 0;
+                var _partialCheckNumber = 0;
+
+                $('tr[rel = "mcr_' + CheckNumber + '"]').remove();
+                $('input[rel="mgglchk"]').each(function (item) {
+                    if ($(this).is(":checked")) {
+                        var InvId = $(this).val();
+                  
+
+                        var tblinvoiceList = $('#lockboxsummaryList tbody');
+
+                        var selectedErrDetail = $.grep(InvoicelistH, function (t, i) { return t.InvoiceId == InvId; })[0];
+
+                        var vInvoiceDate = (selectedErrDetail.InvoiceDate != null ? moment(new Date(parseInt(selectedErrDetail.InvoiceDate.substr(6)))).format("MM/DD/YYYY") : "");
+                        var vInvoiceAmount = (selectedErrDetail.Amount != null ? parseFloat(selectedErrDetail.Amount, 10).toFixed(2).toString() : '');
+                        var vApplyAmount = ($('#txtIApplyAmount_' + InvId).val() != null ? parseFloat($('#txtIApplyAmount_' + InvId).val(), 10).toFixed(2).toString() : '');
+                        var vBalanceAmount = ($('#txtIBalanceAmount_' + InvId).val() != null ? parseFloat($('#txtIBalanceAmount_' + InvId).val(), 10).toFixed(2).toString() : '');
+
+
+
+                        var trInvoicelist = "";
+                        trInvoicelist += '<tr  rel="mcr_' + CheckNumber + '"><td style="width:25px;text-align:center;">'
+                        trInvoicelist += '<input type="hidden" name="hf_' + InvId + '_customerid" value="' + selectedErrDetail.CustomerId + '" />'
+                        trInvoicelist += '<input type="hidden" name="hf_' + InvId + '_chkNumber" value="' + CheckNumber + '" />'
+                        trInvoicelist += '<input type="hidden" name="hf_' + InvId + '_invoiceid" value="' + InvId + '" />'
+                        trInvoicelist += '<input type="hidden" name="hf_' + InvId + '_invoiceamount" value="' + vInvoiceAmount + '" />'
+                        trInvoicelist += '<input type="hidden"name="hf_' + InvId + '_applyamount" value="' + vApplyAmount + '" />'
+                        trInvoicelist += '<input type="hidden"name="hf_' + InvId + '_balanceamount" value="' + vBalanceAmount + '" />'
+                        trInvoicelist += '</td>'
+
+                        trInvoicelist += '<td style="text-align: left;padding-left: 30px!important;"><a href="javascript:void(0)" onclick="bindLockboxErrorDataList(' + selectedErrDetail.LockboxEDIDetailId + ',\'' + CheckNumber + '\')">' + CheckNumber + '</a></td>'
+                        trInvoicelist += '<td style="text-align: left;padding-left: 30px!important;">' + selectedErrDetail.CustomerNo + '</td>'
+                        trInvoicelist += '<td style="text-align: left;padding-left: 30px!important;">' + selectedErrDetail.CustomerName + '</td>'
+                        trInvoicelist += '<td style="text-align:center;"><a href="javascript:void(0)" onclick="btnOpenInvoiceDetail(' + InvId + ')">' + selectedErrDetail.InvoiceNo + '</a></td>'
+                        trInvoicelist += '<td style="text-align:center;">' + vInvoiceDate + '</td>'
+                        trInvoicelist += '<td style="text-align:right;">$ ' + vInvoiceAmount + '</td>'
+                        trInvoicelist += '<td style="text-align:right;">$ ' + vApplyAmount + '</td>'
+                        trInvoicelist += '<td style="text-align:right;width:120px;">$ ' + vBalanceAmount + '</td></tr>'
+
+
+
+                        $('#txtVTotalAmountoApply').val((parseFloat($('#txtVTotalAmountoApply').val().toString().replace(',', ''), 10) + parseFloat(vApplyAmount, 10)).toFixed(2).toString());
+                        $('#txtVTotalAmountExecption').val((parseFloat($('#txtVTotalAmountExecption').val().toString().replace(',', ''), 10) - parseFloat(vApplyAmount, 10)).toFixed(2).toString());
+                        $('#txtVTotalAmountCustomerCredit').val(0);
+                        tblinvoiceList.append(trInvoicelist);
+
+
+
+                        $('tr[rel = "umcr_' + CheckNumber + '"]').remove();
+
+                        $("#modal_lockboxview_error_detail").modal('hide');
+
+                        //if (vBalanceAmount != 0) {
+                        //    _partialInvoiceId = InvId;
+                        //    _partialInvoiceNo = selectedErrDetail.InvoiceNo;
+                        //    _partialCheckNumber = CheckNumber;
+                        //}
+
+
+                    }
+                });
+
+                //alert(_partialInvoiceId);
+                //if (_partialInvoiceId > 0)
+                //{
+                //    btnOpenApplyPaymentForm(_partialInvoiceId, _partialInvoiceNo, _partialCheckNumber);
+                //}
+
+                $("#divtblviewdetail_invoicelist").show();
+            }
+            else {
+                alert("Please apply complete amount!")
+            }
+        }
+
+
+
+        function btnOpenInvoiceDetail(id) {
+
+            var sURL = '@Url.Action("InvoiceDetail", "AccountReceivable", new { area = "Portal" })?Id=' + id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_invoicedetail').html(data);
+                    $("#modal_invoicedetail").modal({ backdrop: 'static' });
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+        }
+
+
+
+
+        function showLockboxReportListDetail() {
+            $("#modal_lockboxreport").modal({ backdrop: 'static' });
+        }
+        function showInvoiceDetail(id) {
+            $("#modal_invoicedetail").modal({ backdrop: 'static' });
+        }
+        function showLockboxreport(id) {
+            $("#modal_lockboxreport").modal({ backdrop: 'static' });
+        }
+        function showLockboxcheckreport(id) {
+            $("#modal_lockboxcheckreport").modal({ backdrop: 'static' });
+
+        }
+        function initPaymentForm(inv) {
+
+            var invPrefix = getInvoicePrefix(inv);
+
+            var totalPayment = parseFloat($("#" + invPrefix + "totalPayment").val());
+            if ($.isNumeric(totalPayment)) {
+                $("#" + invPrefix + "paymentAmt").val(totalPayment.toFixed(2));
+            }
+
+            refreshPaymentForm(inv);
+            showFranchiseesForLineNumber(inv, 1);
+            togglePaymentUnitColumns(inv);
+        }
+        function handleAutoApply(inv, item) {
+
+            var invFilter = getInvoiceFilter(inv);
+            var invPrefix = getInvoicePrefix(inv);
+            var invFormFilter = getInvoiceParentFormFilter(inv);
+
+            var totalAmt = 0;
+
+            var paymentAmt = parseFloat($("#" + invPrefix + item + "_total").val());
+
+            $(invFormFilter + ".franchisee-row-item").each(function () {
+                if (this.value == item) {
+                    var key = $(this).prev().val();
+                    var prefix = "#" + invPrefix + "bp" + key;
+                    totalAmt += parseFloat($(prefix + "_oldBalance").val());
+                }
+            });
+
+            if (totalAmt == 0)
+                return;
+
+            $(invFormFilter + ".franchisee-row-item").each(function () {
+                if (this.value == item) {
+                    var key = $(this).prev().val();
+                    var prefix = "#" + invPrefix + "bp" + key;
+                    var amt = parseFloat($(prefix + "_oldBalance").val());
+                    var portion = amt / totalAmt;
+                    var franchiseePaymentPct = portion * 100.00;
+                    var franchiseePaymentAmt = portion * paymentAmt;
+
+                    $(prefix + "_paymentAmt").val(franchiseePaymentAmt.toFixed(2));
+                    $(prefix + "_paymentPct").val(franchiseePaymentPct.toFixed(2));
+                }
+            });
+        }
+        function refreshPaymentForm(inv) {
+            updateLineItemData(inv);
+            updateFranchiseeData(inv);
+        }
+        function updateLineItemData(inv) {
+            var invPrefix = getInvoicePrefix(inv);
+
+            var oldBalance = $("#" + invPrefix + "oldBalance").val();
+            var paymentAmt = $("#" + invPrefix + "paymentAmt").val();
+            $("#" + invPrefix + "newBalance").val((oldBalance - paymentAmt).toFixed(2));
+
+            var itemCnt = 0;
+            while (true) {
+                var prefix = "#" + invPrefix + "item" + itemCnt;
+                if ($(prefix + "_oldBalance").length) {
+                    var item_taxRate = $(prefix + "_taxRate").val();
+                    var item_oldBalance = $(prefix + "_oldBalance").val();
+                    var item_paymentAmt = $(prefix + "_paymentAmt").val();
+                    var item_tax = (item_paymentAmt * item_taxRate).toFixed(2);
+                    var item_total = (item_paymentAmt - item_tax).toFixed(2);
+                    $(prefix + "_tax").val(item_tax);
+                    $(prefix + "_total").val(item_total);
+                    $(prefix + "_newBalance").val((item_oldBalance - item_paymentAmt).toFixed(2));
+
+                    itemCnt++;
+                }
+                else
+                    break;
+            }
+        }
+        function updateFranchiseeData(inv) {
+            var invFilter = getInvoiceFilter(inv);
+            var invPrefix = getInvoicePrefix(inv);
+            var invFormFilter = getInvoiceParentFormFilter(inv);
+            var paymentUnit = $("input" + invFilter + "[type=radio][name=rdPaymentUnit]:checked").val();
+            $(invFormFilter + ".franchisee-row-key").each(function () {
+                var prefix = "#" + invPrefix + "bp" + this.value;
+                var item = $(prefix + "_item").val();
+                var paymentAmt = parseFloat($("#" + invPrefix + item + "_total").val());
+                var franchiseePaymentAmt = $(prefix + "_paymentAmt").val();
+                var franchiseePaymentPct = $(prefix + "_paymentPct").val();
+                if (paymentUnit == "amt")
+                    $(prefix + "_paymentPct").val((franchiseePaymentAmt * 100 / paymentAmt).toFixed(2));
+                else if (paymentUnit == "pct") {
+                    $(prefix + "_paymentAmt").val((franchiseePaymentPct * paymentAmt / 100.00).toFixed(2));
+                }
+                franchiseePaymentAmt = $(prefix + "_paymentAmt").val();
+                var oldBalance = $(prefix + "_oldBalance").val();
+
+                $(prefix + "_newBalance").val((oldBalance - franchiseePaymentAmt).toFixed(2));
+            });
+        }
+        function showFranchiseesForLineNumber(inv, lineNo) {
+            var invFormFilter = getInvoiceParentFormFilter(inv);
+            $(invFormFilter + ".franchisee-row").hide();
+            $(invFormFilter + ".franchisee-row-line" + lineNo).show();
+        }
+        var saveInProgress = false;
+        var currentPromptedInvoice = "";
+        var promptedInvoices = [];
+        var isLastPrompt = true;
+        function togglePaymentUnitColumns(inv, paymentUnit) {
+            var invFilter = getInvoiceFilter(inv);
+            var invFormFilter = getInvoiceParentFormFilter(inv);
+            var paymentUnit = $("input[type=radio]" + invFilter + "[name=rdPaymentUnit]:checked").val();
+            $(invFormFilter + ".franchisee-amt-col").hide();
+            $(invFormFilter + ".franchisee-pct-col").hide();
+            $(invFormFilter + ".franchisee-" + paymentUnit + "-col").show();
+        }
+        function onClickContinueToNextInvoice(invId) {
+            var invStr = invId.toString();
+
+            var payAmountT = $("#inv" + invId + "_paymentAmt").val();
+            var invoiceItemCount = $("#inv" + invId + "_invoiceItemCount").val();
+            console.log(payAmountT)
+            console.log(invoiceItemCount)
+
+            var payAmountItemT = 0
+
+            for (var i = 0; i < invoiceItemCount; i++) {
+                payAmountItemT = payAmountItemT + parseFloat(($("#inv" + invId + "_item" + i + "_paymentAmt").val() != "" ? $("#inv" + invId + "_item" + i + "_paymentAmt").val() : 0));
+            }
+            console.log(payAmountItemT)
+
+            if (payAmountItemT != payAmountT) {
+                $("#modal_lockboxview_errorAmount_detailBalancemsg").modal({ backdrop: 'static' });
+            }
+            else {
+                var InvId = invId;
+
+                var tblinvoiceList = $('#lockboxsummaryList tbody');
+                var selectedErrDetail = $.grep(AllDetailRow, function (t, i) { return t.InvoiceId == InvId; })[0];
+
+                var vInvoiceDate = (selectedErrDetail.InvoiceDate != null ? moment(new Date(parseInt(selectedErrDetail.InvoiceDate.substr(6)))).format("MM/DD/YYYY") : "");
+                var vInvoiceAmount = (selectedErrDetail.InvoiceAmount != null ? parseFloat(selectedErrDetail.InvoiceAmount, 10).toFixed(2).toString() : '');
+                var vApplyAmount = (selectedErrDetail.ApplyAmount != null ? parseFloat(selectedErrDetail.ApplyAmount, 10).toFixed(2).toString() : '');
+                //($('#txtIApplyAmount_' + InvId).val() != null ? parseFloat($('#txtIApplyAmount_' + InvId).val(), 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() : '');
+                var vBalanceAmount = (selectedErrDetail.BalanceAmount != null ? parseFloat(selectedErrDetail.BalanceAmount, 10).toFixed(2).toString() : '');
+                //($('#txtIBalanceAmount_' + InvId).val() != null ? parseFloat($('#txtIBalanceAmount_' + InvId).val(), 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() : '');
+
+                var trInvoicelist = "";
+                trInvoicelist += '<tr  rel="mcr_' + selectedErrDetail.CheckNumber + '"><td style="width:25px;text-align:center;">'
+                trInvoicelist += '<input type="hidden" name="hf_' + InvId + '_customerid" value="' + selectedErrDetail.CustomerId + '" />'
+                trInvoicelist += '<input type="hidden" name="hf_' + InvId + '_chkNumber" value="' + selectedErrDetail.CheckNumber + '" />'
+                trInvoicelist += '<input type="hidden" name="hf_' + InvId + '_invoiceid" value="' + InvId + '" />'
+                trInvoicelist += '<input type="hidden" name="hf_' + InvId + '_invoiceamount" value="' + vInvoiceAmount + '" />'
+                trInvoicelist += '<input type="hidden"name="hf_' + InvId + '_applyamount" value="' + vApplyAmount + '" />'
+                trInvoicelist += '<input type="hidden"name="hf_' + InvId + '_balanceamount" value="' + vBalanceAmount + '" />'
+                trInvoicelist += '</td>'
+
+
+                trInvoicelist += '<td style="text-align: left;padding-left: 30px!important;"><a href="javascript:void(0)" onclick="bindLockboxErrorDataList(' + selectedErrDetail.LockboxEDIDetailId + ',\'' + selectedErrDetail.CheckNumber + '\')">' + selectedErrDetail.CheckNumber + '</a></td>'
+                trInvoicelist += '<td style="text-align: left;padding-left: 30px!important;">' + selectedErrDetail.CustomerNo + '</td>'
+                trInvoicelist += '<td style="text-align: left;padding-left: 30px!important;">' + selectedErrDetail.CustomerName + '</td>'
+                trInvoicelist += '<td style="text-align:center;"><a href="javascript:void(0)" onclick="btnOpenInvoiceDetail(' + InvId + ')">' + selectedErrDetail.InvoiceNo + '</a></td>'
+                trInvoicelist += '<td style="text-align:center;">' + vInvoiceDate + '</td>'
+                trInvoicelist += '<td style="text-align:center;">$ ' + vInvoiceAmount + '</td>'
+                trInvoicelist += '<td style="text-align:center;">$ ' + vApplyAmount + '</td>'
+                trInvoicelist += '<td style="text-align:center;width:120px;">$ ' + vBalanceAmount + '</td></tr>'
+
+                $('#txtVTotalAmountoApply').val((parseFloat($('#txtVTotalAmountoApply').val().toString().replace(',', ''), 10) + parseFloat((selectedErrDetail.ApplyAmount != null ? parseFloat(selectedErrDetail.ApplyAmount) : 0), 10)).toFixed(2).toString());
+                $('#txtVTotalAmountExecption').val((parseFloat($('#txtVTotalAmountExecption').val().toString().replace(',', ''), 10) - parseFloat((selectedErrDetail.ApplyAmount != null ? parseFloat(selectedErrDetail.ApplyAmount) : 0), 10)).toFixed(2).toString());
+                tblinvoiceList.append(trInvoicelist);
+
+
+
+                $('tr[rel = "umcr_' + selectedErrDetail.CheckNumber + '"]').remove();
+
+
+                var form = $("#inv" + invStr + "_modal_applypaymentform");
+                $(form).modal('hide');
+            }
+
+
+            //if (saveInProgress) { // in the middle of save process, so continue to next invoice
+
+            //    if (promptedInvoices.indexOf(invStr) == -1)
+            //        promptedInvoices.push(invStr);
+
+            //    var form = $("#inv" + invStr + "_modal_applypaymentform");
+            //    $(form).modal('hide');
+
+            //    continueSaveProcess();
+            //}
+        }
+
+        $(document).on('click', '#btnClosemodel', function () {
+            $("#modal_invoicedetail").modal('hide');
+        });
+        $(document).on("change", ".payment-field", function () {
+            var inv = getInvoiceIdChunk(this);
+            var invPrefix = getInvoicePrefix(inv);
+
+            var invId = inv.substring(3);
+
+            var payAmountT = $("#inv" + invId + "_paymentAmt").val();
+            var invoiceItemCount = $("#inv" + invId + "_invoiceItemCount").val();
+            //inv40914_item1_paymentAmt
+            console.log(payAmountT)
+            console.log(invoiceItemCount)
+
+            var payAmountItemT = 0
+
+            for (var i = 0; i < invoiceItemCount; i++) {
+                payAmountItemT = payAmountItemT + parseFloat(($("#inv" + invId + "_item" + i + "_paymentAmt").val() != "" ? $("#inv" + invId + "_item" + i + "_paymentAmt").val() : 0));
+            }
+            console.log(payAmountItemT)
+
+            if (payAmountItemT > payAmountT) {
+                this.value = 0;
+                $("#modal_lockboxview_errorAmount_detailconfirm").modal({ backdrop: 'static' });
+            }
+
+
+            updateLineItemData(inv);
+            if ($("#" + invPrefix + "chkAutoApply").prop("checked") && $(this).hasClass("payment-line-item-amt-field"))
+                handleAutoApply(inv, this.name.split('_')[1]);
+            updateFranchiseeData(inv);
+        });
+        $(document).on("change", "[id$=_LineNoList]", function () {
+            var inv = getInvoiceIdChunk(this);
+            showFranchiseesForLineNumber(inv, this.value);
+        });
+        $(document).on("change", "input[type=radio][name=rdPaymentUnit]", function () {
+            var inv = getInvoiceIdChunk(this);
+            togglePaymentUnitColumns(inv);
+        });
+
+        function getInvoiceIdChunk(elem) {
+            return $(elem).attr("id").split('_')[0];
+        }
+        function getInvoiceFilter(inv) {
+            return "[id^=" + getInvoicePrefix(inv) + "]";
+        }
+        function getInvoicePrefix(inv) {
+            return inv + "_";
+        }
+        function getInvoiceParentFormFilter(inv) {
+            return "#" + getInvoicePrefix(inv) + "modal_applypaymentform ";
+        }
+        $(document).on("keydown", ".payment-field", function (event) {
+            if (event.shiftKey == true) { event.preventDefault(); }
+            if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105) || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 190 || event.keyCode == 110) { }
+            else { event.preventDefault(); }
+            if ($(this).val().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110)) event.preventDefault();
+
+        });
+        function onlyDecimal(id) {
+            $(id).keydown(function (event) {
+                if (event.shiftKey == true) { event.preventDefault(); }
+                if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105) || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 190 || event.keyCode == 110) { }
+                else { event.preventDefault(); }
+                if ($(this).val().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110)) event.preventDefault();
+            });
+        }
+        function OnlyNumber(id) {
+            $(id).keydown(function (event) {
+                if (event.shiftKey == true) { event.preventDefault(); }
+                if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105) || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46) { }
+                else { event.preventDefault(); }
+            });
+        }
+        function applyMaskCurrency(id) {
+            $(id).inputmask("currency", {
+                alias: 'currency',
+                prefix: '$ ',
+                digits: 2,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                unmaskAsNumber: true,
+                allowPlus: false,
+                allowMinus: true,
+                autoGroup: true,
+                groupSeparator: ",",
+            });
+        }
+
+        $("#btnProcessPayment_OnSubmit").click(function () {
+            var sURL = '@Url.Action("LockboxFileSummary", "AccountReceivable", new { area = "Portal" })'
+            $.ajax({
+                type: "POST",
+                url: sURL,
+                data: $("from_lockboxsummary").serialize(),
+                success: function (data) {
+                    console.log(data);
+                }
+            });
+        });
+
+        $("#btnProcessPayment_OnSaveforLater").click(function () {
+            alert(1)
+            @*var sURL = '@Url.Action("LockboxFileSummary", "AccountReceivable", new { area = "Portal" })'
+            $.ajax({
+                type: "POST",
+                url: sURL,
+                data: $("from_lockboxsummary").serialize(),
+                success: function (data) {
+                    console.log(data);
+                }
+            });*@
+        });
+        
+
+
+    </script>
+}
+

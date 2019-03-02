@@ -1,0 +1,236 @@
+﻿<style type="text/css">
+     .has-error {
+        border-color: red;
+    }
+</style>
+<div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+        Account Offering
+    </h4>
+</div>
+<div class="modal-body" style="padding: 3px">
+    <section>
+        <div class="row">
+            <div style="max-width: 99%;margin: 0px auto;">
+                <div class="custom-form portlet light " id="form_wizard_1">
+                    <div class="portlet-body form">
+                        <div class="form-body-outer" style="padding: 0px;">
+                            <div style="overflow:auto;width: 100%; margin: 0em auto;">
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="tb_fr_page1">
+                                        <div class="form-group">
+                                            <div class="col-md-7" style="padding: 10px;">
+                                                <div class="row" style="padding: 3px;margin-top:-10px;"><b>Customer Name: @Convert.ToString(ViewBag.CustomerName)</b></div>
+                                                <div class="row" style="padding: 3px;"><b>Customer No:  @Convert.ToString(ViewBag.CustomerNo)</b></div>
+                                            </div>
+                                            <div class="col-md-5 text-right" style="text-align:right">
+                                                <div class="row" style="padding: 3px;"><b>Address: </b>@Convert.ToString(ViewBag.Address)</div>
+                                                <div class="row" style="padding: 3px;">@Convert.ToString(ViewBag.Address2) <br />@Convert.ToString(ViewBag.Phone)</div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="control-label col-md-4" id="selectAccountOfferingFranchisee">
+                                                Franchisees Type:
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.DropDownList("FranchiseeTypeList", (SelectList)ViewBag.FranchiseeTypeList, new { @class = "form-control input-sm", @id = "select_AOFranchiseeTypeList" })
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="control-label col-md-4">
+                                                Distance within:
+                                            </div>
+                                            <div class="col-md-3">
+                                                <input class="form-control input-sm" id="txtAccountOfferingDistance" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="control-label col-md-4">
+                                                Include Call Results From:
+                                            </div>
+                                            <div class="col-md-3">
+                                                <select id="select_timedurationAccountOffering" class="form-control input-sm">
+                                                    <option value="1">This Week</option>
+                                                    <option value="2">This Week-to-date</option>
+                                                    <option value="3" selected="selected">This Month</option>
+                                                    <option value="4">This Month-to-date</option>
+                                                    <option value="5">This Fiscal Quarter</option>
+                                                    <option value="6">This Fiscal Quarter-to-date</option>
+                                                    <option value="7">This Fiscal Year</option>
+                                                    <option value="8">This Fiscal Year-to-date</option>
+                                                    <option value="9">Yesterday</option>
+                                                    <option value="10">Last Week</option>
+                                                    <option value="11">Last Month</option>
+                                                    <option value="12">Last Quarter</option>
+                                                    <option value="13">Last Year</option>
+                                                    <option value="14">Custom Date</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input class="date date-picker input-sm form-control RemovePeriodvalidation" id="sDateAccountOffering" />
+                                            </div>
+                                            <div class="col-md-1 control-label" style="padding-right: 12px;">
+                                                To
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input class="date date-picker input-sm form-control RemovePeriodvalidation" id="eDateAccountOffering" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-md-12 text-center">
+                                                <a class="btn btn-primary" href="javascript:void(0)" onclick="SearchAccountOffer(@ViewBag.CustomerId)">Search</a>
+                                                <input type="hidden" id="hdfCustomerId" name="hdfCustomerId" value="@ViewBag.CustomerId" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade custom-model custom-form-design" id="modalData" tabindex="-1" role="basic" aria-hidden="true" style="display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+<script type="text/javascript">
+    $("#txtAccountOfferingDistance").keypress(function (e) {
+        if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+            return false;
+        }
+    });
+    $('#select_timedurationAccountOffering').change(function () {
+        //alert($(this).val());
+        $("#sDateAccountOffering").prop("disabled", true);
+        $("#eDateAccountOffering").prop("disabled", true);
+        switch (parseInt($(this).val())) {
+            case 1:
+                firstDay = moment().startOf('isoWeek').toString();
+                lastDay = moment().endOf('isoWeek').toString();
+                break;
+            case 2:
+                //code block
+                firstDay = moment().startOf('isoWeek').toString();
+                lastDay = new Date().toString();
+                break;
+            case 3:
+                firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                break;
+            case 4:
+                //code block
+                firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                lastDay = new Date().toString();
+                break;
+            case 5:
+                //code block
+                firstDay = moment().startOf('quarter').toString();
+                lastDay = moment().endOf('quarter').toString();
+                break;
+            case 6:
+                //code block
+                firstDay = moment().startOf('quarter').toString();
+                lastDay = new Date().toString();
+                break;
+            case 7:
+                //code block
+                firstDay = moment().startOf('year').toString();;
+                lastDay = moment().endOf('year').toString();
+                break;
+            case 8:
+                //code block
+                firstDay = moment().startOf('year').toString();
+                lastDay = new Date().toString();
+                break;
+            case 9:
+                //code block
+                firstDay = moment().add(-1, 'days').toString();
+                lastDay = moment().add(-1, 'days').toString();
+                break;
+            case 10:
+                //code block
+                firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                break;
+            case 11:
+                //code block
+                firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                break;
+            case 12:
+                //code block
+                firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                break;
+            case 13:
+                //code block
+                firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                break;
+            case 14:
+                //code block
+                $("#sDateAccountOffering").prop("disabled", false);
+                $("#eDateAccountOffering").prop("disabled", false);
+
+                break;
+            default:
+                //code block
+        }
+        $('#sDateAccountOffering').val(moment(firstDay).format('L'));
+        $('#eDateAccountOffering').val(moment(lastDay).format('L'));
+    });
+
+    function SearchAccountOffer(_id) {
+        $('#_div_AccountOffringResult').html('');
+        if ($('#txtAccountOfferingDistance').val() == '') {
+            $('#txtAccountOfferingDistance').addClass("has-error");
+            return;
+        }
+        else {
+            $('#txtAccountOfferingDistance').removeClass("has-error");
+        }
+        
+        //$("#modal_AccountOffringResult").modal("show");
+
+        var _frt = $('#select_AOFranchiseeTypeList').val()
+        var _dis = $('#txtAccountOfferingDistance').val()
+        //var _eDate = select_timedurationAccountOffering
+        var _sDate = $('#sDateAccountOffering').val()
+        var _eDate = $('#eDateAccountOffering').val()
+
+        var sURL = '@Url.Action("GetAccountOffringResult", "Customer", new { area = "Portal" })?id=' + _id + '&frt=' + _frt + '&dis=' + _dis + '&sdate=' + _sDate + '&edate=' + _eDate;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#_div_AccountOffringResult').html('');
+                $('#_div_AccountOffringResult').html(data);
+                $("#modal_AccountOffringResult").modal({ backdrop: 'static' });
+            },
+            error: function () {
+                alert("Content load failed.");
+            }
+        });
+        //
+    }
+</script>

@@ -1,0 +1,396 @@
+﻿@model JKViewModels.UserViewModel
+@{
+    ViewBag.Title = "UserProfile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <style type="text/css">
+        .modal-dialog {
+            width: 750px;
+        }
+
+        .portlet.light .portlet-body {
+            padding-top: 0px;
+        }
+
+        .smallform {
+            width: 780px !important;
+            margin-left: 275px;
+        }
+    </style>
+    <style type="text/css">
+        table.detailbillrunList thead > tr > td, table.detailbillrunList tbody > tr > td {
+            font-size: 12px;
+        }
+
+        .table td, .table th {
+            font-size: 12px;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .row {
+            margin: 0;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .custom-form .headerbox {
+            padding: 3px 0px 3px 5px;
+            font-weight: normal;
+        }
+
+        .error {
+            border-color: red;
+        }
+    </style>
+
+}
+<link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+<h3 style="margin-bottom:0px;margin-top:-17px;font-size:20px;"><b>Edit Profile</b></h3>
+@using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form_wizard_1", @role = "form", @class = "form form-horizontal" }))
+{
+    <div class="custom-form portlet light" id="">
+        <div class="portlet-body">
+            <div class="tab-pane active" id="tb_fr_page1">
+                <h4 class="block"> USER INFORMATION</h4>
+                <div class="form-group" style="margin-right:60px !important;">
+                    <label class="control-label col-md-2">
+                        Userrname
+                    </label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control input-sm" value="@Model.UserName" name="UserName" />
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-primary button-next  pull-right" id="" style="margin-left: 10px;min-width:200px" onclick="onClickFMSPassword()">
+                            FMS Password
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-right:60px !important;">
+                    <label class="control-label col-md-2">
+                        Frist Name:
+                    </label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control input-sm" value="@Model.FirstName" name="FirstName" />
+                    </div>
+                    <label class="control-label col-md-2">
+                        Last Name:
+                    </label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control input-sm" value="@Model.LastName" name="LastName" />
+                    </div>
+                </div>
+                <div class="form-group" style="margin-right:60px !important;">
+                    <label class="control-label col-md-2">
+                        Email:
+                    </label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control input-sm" value="@Model.Email" name="Email" />
+                    </div>
+                    <label class="control-label col-md-2">
+                        Phone:
+                    </label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control input-sm" value="@Model.Phone" name="Email" />
+                    </div>
+                </div>
+                <h4 class="block"> SCHEDULE INTEGRATE WITH OUTLOOK  SETTING</h4>
+
+                <div class="form-group" style="margin-right:60px !important;">
+                    <label class="control-label col-md-2">
+                        Outlook Username
+                    </label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control input-sm" value="@Model.OutlookUsername" name="OutlookUsername" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-primary button-next pull-right" id="" onclick="onClickOutlookPassword()" style="margin-left: 10px;min-width:200px">
+                            OutLook Password
+                        </button>
+                    </div>
+                </div>
+                <h4 class="block"> User Profile Setting</h4>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="row">
+                                <label class="control-label col-md-4">
+                                    Defaul HomePage:
+                                </label>
+                                <div class="col-md-6">
+                                    <label class="mt-radio">
+                                        <input type="radio" name="clsprofile" id="" class="editbill1" checked="checked">Schedlue & Tasks
+                                        <span></span>
+                                    </label>
+                                    <br /><br />
+                                    <label class="mt-radio">
+                                        <input type="radio" name="clsprofile" id="" class="editbill1">Main DashBoard
+                                        <span></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 text-center">
+                            <div class="col-md-1"> </div>
+                            <div class="row">
+                                <label class="control-label col-md-2">
+                                    My Avatar:
+                                </label>
+                                <div class="col-md-3">
+                                    <img height="120" width="120" />
+                                    @*<div class="kv-avatar">
+                                            <div class="file-loading">
+                                                <input id="avatar-1" name="avatar-1" type="file" required>
+                                            </div>
+                                        </div>*@
+                                    @*<div class="kv-avatar-hint"><small>Select file < 1500 KB</small></div>*@
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-primary button-next" id="" style="margin-top: 40px;height: 40px;">
+                                        Upload New Image
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div class="col-md-12" style="padding-right: 60px;">
+                        @*<button type="submit" class="btn btn-primary button-next  pull-right" id="btnContinue" style="margin-left: 10px;">
+                                Continue
+                                <i class="fa fa-angle-right"></i>
+                            </button>&nbsp;&nbsp;&nbsp;&nbsp;*@
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="modal fade custom-model custom-form-design" id="ModalFMSUserPasswordSettingPopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:550px">
+        <div class="modal-content" style="border-radius: 8px;" id="">
+            <div class="custom-form portlet light" id="" style="margin-top:0px;box-shadow: none;">
+                <div class="headerbox" style="font-weight: normal;border-radius: 0;">
+                    <div class="col-md-12 text-center" style="font-size:15px;">
+                        <b> FMS USER PASSWORD SETTING </b>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 5px !important;margin-right: 12px !important;"></button>
+                    </div>
+                    <div class="clearfix"> </div>
+                </div>
+                <div class="row" style="padding-top:8px;padding-bottom:8px;margin-left: 0px;margin-right: 0px;min-height: 100px;">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-4">
+                                Old Password:<span class="required"> * </span>
+                            </label>
+                            <div class="col-md-6">
+                                <input type="password" class="form-control input-sm" placeholder="******" id="txtfmsoldpwd" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-4">
+                                New Password:<span class="required"> * </span>
+                            </label>
+                            <div class="col-md-6">
+                                <input type="password" class="form-control input-sm" placeholder="******" id="txtfmsnewpwd" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-4">
+                                Confirm Password:<span class="required"> * </span>
+                            </label>
+                            <div class="col-md-6">
+                                <input type="password" class="form-control input-sm" placeholder="******" id="txtfmsconfmpwd" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8" style="text-align:center;">
+                        <button type="button" class="btn btn-primary button-next pull-right" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary button-next pull-right" style="margin-right:30px;" onclick="onclickfmsSubmit()">Submit</button>
+                    </div>
+                </div>
+                <br />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade custom-model custom-form-design" id="ModalOutlookPasswordPopup" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:550px">
+        <div class="modal-content" style="border-radius: 8px;" id="">
+            <div class="custom-form portlet light" id="" style="margin-top:0px;box-shadow: none;">
+                <div class="headerbox" style="font-weight: normal;border-radius: 0;">
+                    <div class="col-md-12 text-center" style="font-size:15px;">
+                        <b> OUTLOOK PASSWORD SETTING</b>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 5px !important;margin-right: 12px !important;"></button>
+                    </div>
+                    <div class="clearfix"> </div>
+                </div>
+                <div class="row" style="padding-top:8px;padding-bottom:8px;margin-left: 0px;margin-right: 0px;min-height: 100px;">
+                    
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-4">
+                                Password:<span class="required"> * </span>
+                            </label>
+                            <div class="col-md-6">
+                                <input type="password" class="form-control input-sm" placeholder="******" id="txtotlnewpwd" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-4">
+                                Confirm Password:<span class="required"> * </span>
+                            </label>
+                            <div class="col-md-6">
+                                <input type="password" class="form-control input-sm" placeholder="******" id="txtotlconfmpwd" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8" style="text-align:center;">
+                        <button type="button" class="btn btn-primary button-next pull-right" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary button-next pull-right" style="margin-right:30px;" onclick="onclickoutlookSubmit()">Submit</button>
+                    </div>
+                </div>
+                <br />
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section pageplugins{
+
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    @*<script src="@Url.Content("~/Content/admin/assets/pages/scripts/form-wizard.min.js")" type="text/javascript"></script>*@
+    <!-- END PAGE LEVEL SCRIPTS -->
+    @*<script src="@Url.Content("~/Content/admin/assets/pages/scripts/form-validation.min.js")" type="text/javascript"></script>*@
+
+}
+
+<script type="text/javascript">
+
+    function onClickFMSPassword() {
+        $("#ModalFMSUserPasswordSettingPopup").modal({ backdrop: 'static' });
+
+    }
+    function onClickOutlookPassword() {
+        $("#ModalOutlookPasswordPopup").modal({ backdrop: 'static' });
+    }
+
+    function onclickfmsSubmit() {
+        var isvalid = true;
+        if ($('#txtfmsoldpwd').val().trim() == '') { $('#txtfmsoldpwd').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtfmsoldpwd').css('border-color', ''); }
+        if ($('#txtfmsnewpwd').val().trim() == '') { $('#txtfmsnewpwd').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtfmsnewpwd').css('border-color', ''); }
+        if ($('#txtfmsconfmpwd').val().trim() == '') { $('#txtfmsconfmpwd').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtfmsconfmpwd').css('border-color', ''); }
+        if (isvalid == true) {
+
+            var _dataFMS = { fmsoldpwd: $("#txtfmsoldpwd").val(), fmsnewpwd: $("#txtfmsnewpwd").val(), fmsconfmpwd: $("#txtfmsconfmpwd").val() };
+            $.ajax({
+                url: '@Url.Action("UpdateFMSTabPassword", "User")',
+                dataType: "json",
+                data: _dataFMS,
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data == "") {
+                        $('#txtfmsoldpwd').val("");
+                        $('#txtfmsnewpwd').val("");
+                        $('#txtfmsconfmpwd').val("");
+                        alert("Password reset successfully.");
+                        $('#ModalFMSUserPasswordSettingPopup').modal('hide');
+                    }
+                    else {
+                        alert(data);
+                    }
+                },
+                error: function () { $('#ModalFMSUserPasswordSettingPopup').modal('hide'); }
+            });
+        }
+    }
+
+    function onclickoutlookSubmit() {
+        var isvalid = true;
+        if ($('#txtotlnewpwd').val().trim() == '') { $('#txtotlnewpwd').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtotlnewpwd').css('border-color', ''); }
+        if ($('#txtotlconfmpwd').val().trim() == '') { $('#txtotlconfmpwd').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#txtotlconfmpwd').css('border-color', ''); }
+        if (isvalid == true) {
+            var _dataOTL = {otlnewpwd: $("#txtotlnewpwd").val(), otlconfmpwd: $("#txtotlconfmpwd").val() };
+            $.ajax({
+                url: '@Url.Action("UpdateOutlookTabPassword", "User")',
+                dataType: "json",
+                data: _dataOTL,
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data == "") {
+                        
+                        $('#txtotlnewpwd').val("");
+                        $('#txtotlconfmpwd').val("");
+                        alert("Password reset successfully.");
+                        $('#ModalOutlookPasswordPopup').modal('hide');
+                    }
+                    else {
+                        alert(data);
+                    }
+                },
+                error: function () { $('#ModalOutlookPasswordPopup').modal('hide'); }
+            });
+        }
+    }
+
+</script>

@@ -1,0 +1,1055 @@
+﻿@model  JKViewModels.Customer.CustomerFranchiseeDistribution
+@{
+    var request = HttpContext.Current.Request;
+    var address = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Authority);
+
+    List<JKApi.Data.DAL.CSAccountWalkThursFormFieldDetail> dataList = new List<JKApi.Data.DAL.CSAccountWalkThursFormFieldDetail>();
+
+    if (ViewBag.FormFieldDetail != null)
+    {
+        dataList = (List<JKApi.Data.DAL.CSAccountWalkThursFormFieldDetail>)ViewBag.FormFieldDetail;
+    }
+}
+
+<div id="page_1">
+    <table class="header" style="margin-bottom:0px;">
+        <tr>
+            <td width="25%">
+                <img src="@(address)/Images/janiking_logo.png" style="height: 60px" />
+            </td>
+            <td width="75%">
+                <P style="text-align: left;font-size:20px; vertical-align:bottom;"><b>NEW ACCOUNT START UP / SET UP</b></P>
+            </td>
+        </tr>
+    </table>
+    <table class="check-table" style="width:100%;">
+        <tr>
+            <td class="text1" style="font-size:14px;width:13%;text-align:right;">Date:</td>
+            <td class="line line1" style="font-size:14px;width:16%;">@System.DateTime.Now.ToString("MM-dd-yyyy")</td>
+            <td class="text2" style="font-size:14px;width:20%;text-align:right;">Walk through Date:</td>
+            <td class="line line2" style="font-size:14px;width:16%;">&nbsp;</td>
+            <td class="text3" style="font-size:14px;width:13%;text-align:right;">Start Date:</td>
+            <td class="line line3" style="font-size:14px;width:20%;">@(Model.StartDate != null ? Convert.ToDateTime(Model.StartDate).ToString("MM-dd-yyyy") : string.Empty )</td>
+        </tr>
+        <tr>
+            <td colspan="6">&nbsp;</td>
+        </tr>
+    </table>
+    <table class="check-table2" style="width:100%;">
+        <tr>
+            <td class="textcol1" style="font-size:14px;width:13%;text-align:right;">Account Name:</td>
+            <td class="line textcolline1" style="font-size:14px;width:19%;">@Model.CustomerName</td>
+            <td style="font-size:14px;width:2%;">&nbsp;</td>
+            <td class="textcol3" style="font-size:14px;width:14%;text-align:right;">Franchise Name:</td>
+            <td class="line textcolline3" style="font-size:14px;width:19%;">@Model.FranchiseeName</td>
+        </tr>
+        <tr><td colspan="5">&nbsp;</td></tr>
+        <tr>
+            <td class="textcol1" style="font-size:14px;width:13%;text-align:right;">Address:</td>
+            <td class="line textcolline1" style="font-size:14px;width:19%;">@Model.Address1</td>
+            <td style="font-size:14px;width:2%;">&nbsp;</td>
+            <td class="textcol3" style="font-size:14px;width:14%;text-align:right;">Contact Name:</td>
+            <td class="line textcolline3" style="font-size:13px;width:19%;"> @Model.FranchiseeContactName</td>
+        </tr>
+        <tr><td colspan="4">&nbsp;</td></tr>
+        <tr>
+            <td class="textcol1" style="font-size:14px;width:13%;text-align:right;"></td>
+            <td class="line textcolline1" style="font-size:14px;width:19%;">@Model.City@((Model.City != null && Model.City != "") ? ", " : string.Empty)@Model.StateName@(Model.StateName != null && Model.StateName != "" ? ", " : string.Empty)@Model.PostalCode</td>
+            <td style="font-size:14px;width:2%;">&nbsp;</td>
+            <td class="textcol3" style="font-size:14px;width:14%;text-align:right;">Days Cleaned:</td>
+            <td class="line textcolline3" style="font-size:13px;width:19%;">
+                <div style="width:25px;float:left;">
+                    @if (Model.Mon == true)
+                    {<img src="@(address)/Images/check-box-chk-pdf.png" height="13" width="13" />}
+                    else
+                    {<img src="@(address)/Images/chkbox-pdf.png" height="13" width="13" />}
+                    M
+                </div>
+                <div style="width:23px;float:left;">
+                    @if (Model.Tues == true)
+                    {<img src="@(address)/Images/check-box-chk-pdf.png" height="13" width="13" /> }
+                    else
+                    {<img src="@(address)/Images/chkbox-pdf.png" height="13" width="13" />}
+                    T
+                </div>
+                <div style="width:24px;float:left;">
+                    @if (Model.Wed == true)
+                    {<img src="@(address)/Images/check-box-chk-pdf.png" height="11" width="11" /> }
+                    else
+                    {<img src="@(address)/Images/chkbox-pdf.png" height="13" width="13" />}
+                    W
+                </div>
+                <div style="width:27px;float:left;">
+                    @if (Model.Thur == true)
+                    {<img src="@(address)/Images/check-box-chk-pdf.png" height="13" width="13" /> }
+                    else
+                    {<img src="@(address)/Images/chkbox-pdf.png" height="13" width="13" />}
+                    T
+                </div>
+                <div style="width:24px;float:left;">
+                    @if (Model.Fri == true)
+                    {<img src="@(address)/Images/check-box-chk-pdf.png" height="13" width="13" /> }
+                    else
+                    {<img src="@(address)/Images/chkbox-pdf.png" height="13" width="13" />}
+                    F
+                </div>
+                <div style="width:24px;float:left;">
+                    @if (Model.Sat == true)
+                    {<img src="@(address)/Images/check-box-chk-pdf.png" height="13" width="13" /> }
+                    else
+                    {<img src="@(address)/Images/chkbox-pdf.png" height="13" width="13" />} S
+                </div>
+                <div style="width:24px;float:left;">
+                    @if (Model.Sun == true)
+                    {<img src="@(address)/Images/check-box-chk-pdf.png" height="13" width="13" /> }
+                    else
+                    {<img src="@(address)/Images/chkbox-pdf.png" height="13" width="13" />} S
+                </div>
+                <div style="width:35px;float:left;"><img src="@(address)/Images/chkbox-pdf.png" height="13" width="13" />WE</div>
+            </td>
+        </tr>
+        <tr><td colspan="5">&nbsp;</td></tr>
+        <tr>
+            <td class="textcol1" style="font-size:14px;width:13%;text-align:right;">Contact Phone:</td>
+            <td class="line textcolline1" style="font-size:14px;width:19%;">@Model.Phone</td>
+            <td style="font-size:14px;width:2%;">&nbsp;</td>
+            <td class="textcol3" style="font-size:14px;width:14%;text-align:right;">Time Cleaned:</td>
+            <td class="line textcolline3" style="font-size:14px;width:19%;">@Model.CleanTimes</td>
+
+        </tr>
+        <tr><td colspan="4">&nbsp;</td></tr>
+        <tr>
+            <td class="textcol1" style="font-size:14px;width:13%;text-align:right;">Contact Email:</td>
+            <td class="line textcolline1" style="font-size:14px;width:19%;">@Model.EmailAddress</td>
+            <td style="font-size:14px;width:2%;">&nbsp;</td>
+            <td class="textcol3" style="font-size:14px;width:14%;text-align:right;">Office Phone:</td>
+            <td class="line textcolline3" style="font-size:14px;width:19%;">@Model.FranchiseePhone</td>
+
+        </tr>
+        <tr><td colspan="5">&nbsp;</td></tr>
+        <tr>
+            <td class="textcol1" style="font-size:14px;width:13%;text-align:right;">Billing Address:</td>
+            <td class="line textcolline1" style="font-size:14px;width:19%;">@Model.BAddress1</td>
+            <td style="font-size:14px;width:2%;">&nbsp;</td>
+            <td class="textcol3" style="font-size:14px;width:14%;text-align:right;">Office Email:</td>
+            <td class="line textcolline3" style="font-size:14px;width:19%;">@Model.FranchiseeEmail</td>
+
+        </tr>
+        <tr><td colspan="5">&nbsp;</td></tr>
+        <tr>
+            <td class="textcol1" style="font-size:14px;width:13%;text-align:right;"></td>
+            <td class="line textcolline1" style="font-size:14px;width:19%;">@Model.BCity@((Model.BCity != null && Model.BCity != "") ? ", " : string.Empty)@Model.BStateName@((Model.BStateName != null && Model.BStateName != "") ? ", " : string.Empty) @Model.BPostalCode</td>
+            <td style="font-size:14px;width:2%;">&nbsp;</td>
+            <td class="textcol3" style="font-size:14px;width:14%;text-align:right;">Mo. Billing Amount: $</td>
+            <td class="textcolline3" style="font-size:14px;width:19%;">
+                <table class="check-table2" style="width:100%;">
+                    <tr>
+                        <td class="line" style="width:35%;">@string.Format("{0:c}", Model.Amount)</td>
+                        <td style="width:15%;">P.O#</td>
+                        <td class="line" style="width:25%;">&nbsp;</td>
+                    </tr>
+                </table>
+            </td>
+
+        </tr>
+        <tr><td colspan="5">&nbsp;</td></tr>
+        <tr>
+            <td class="textcol1" style="font-size:14px;width:13%;text-align:right;">A.P Contact Name:</td>
+            <td class="line textcolline1" style="font-size:14px;width:19%;">&nbsp;</td>
+            <td style="font-size:14px;width:2%;">&nbsp;</td>
+            <td class="textcol3" style="font-size:14px;width:14%;text-align:right;">Partial Billing Amount: $ </td>
+            <td class="line textcolline3" style="font-size:14px;width:19%;">&nbsp;</td>
+
+        </tr>
+        <tr><td colspan="5">&nbsp;</td></tr>
+        <tr>
+            <td class="textcol1" style="font-size:14px;width:13%;text-align:right;">A.P Contact Email:</td>
+            <td class="line textcolline1" style="font-size:14px;width:19%;">&nbsp;</td>
+            <td style="font-size:14px;width:2%;">&nbsp;</td>
+            <td class="textcol3" style="font-size:14px;width:14%;text-align:right;">I.C Amount: $ </td>
+            <td class="textcolline3" style="font-size:14px;width:19%;">
+                <table class="check-table2" style="width:100%;">
+                    <tr>
+                        <td class="line" style="width:35%;">@string.Format("{0:c}", Model.InitialCleanAmount)</td>
+                        <td style="width:15%;">P.O#</td>
+                        <td class="line" style="width:25%;">&nbsp;</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr><td colspan="5">&nbsp;</td></tr>
+    </table>
+    @{
+        var Field_1 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 1).FirstOrDefault();
+        var Field_2 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 2).FirstOrDefault();
+        var Field_3 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 3).FirstOrDefault();
+        var Field_4 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 4).FirstOrDefault();
+        var Field_5 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 5).FirstOrDefault();
+        var Field_6 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 6).FirstOrDefault();
+        var Field_7 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 7).FirstOrDefault();
+        var Field_8 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 8).FirstOrDefault();
+        var Field_9 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 9).FirstOrDefault();
+        var Field_10 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 10).FirstOrDefault();
+        var Field_11 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 11).FirstOrDefault();
+        var Field_12 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 12).FirstOrDefault();
+        var Field_13 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 13).FirstOrDefault();
+        var Field_14 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 14).FirstOrDefault();
+        var Field_15 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 15).FirstOrDefault();
+        var Field_16 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 16).FirstOrDefault();
+        var Field_17 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 17).FirstOrDefault();
+        var Field_18 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 18).FirstOrDefault();
+        var Field_19 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 19).FirstOrDefault();
+        var Field_20 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 20).FirstOrDefault();
+        var Field_21 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 21).FirstOrDefault();
+        var Field_22 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 22).FirstOrDefault();
+        var Field_23 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 23).FirstOrDefault();
+        var Field_24 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 24).FirstOrDefault();
+        var Field_25 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 25).FirstOrDefault();
+        var Field_26 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 26).FirstOrDefault();
+        var Field_27 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 27).FirstOrDefault();
+        var Field_28 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 28).FirstOrDefault();
+
+
+    }
+    <div><p style="font-size:14px;padding-bottom:15px;"><b>LOCATION CHECKLIST</b></p></div>
+    <table class="check-table2" style="width:100%;">
+        <tr>
+            <td style="font-size:14px;width:12%;text-align:right;">Light Switches?</td>
+            <td style="font-size:14px;width:7%;">
+                &nbsp;
+                @if (Field_1 != null)
+                {
+                    if (Field_1.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;Y</span>
+                @if (Field_1 != null)
+                {
+                    if (Field_1.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+            <td style="font-size:14px;width:12%;text-align:right;">Breaker's Panel?</td>
+            <td style="font-size:14px;width:7%;">
+                &nbsp;
+                @if (Field_2 != null)
+                {
+                    if (Field_2.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;Y</span>
+                @if (Field_2 != null)
+                {
+                    if (Field_2.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+
+
+
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+            <td style="font-size:14px;width:12%;text-align:right;">Contact's Office?</td>
+            <td style="font-size:14px;width:7%;">
+                &nbsp;
+
+                @if (Field_3 != null)
+                {
+                    if (Field_3.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+
+                <span style="font-size:12px;">&nbsp;Y</span>
+                @if (Field_3 != null)
+                {
+                    if (Field_3.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+            <td style="font-size:14px;width:14%;text-align:right;">Storage Areas?</td>
+            <td style="font-size:14px;width:7%;">
+                &nbsp;
+                @if (Field_4 != null)
+                {
+                    if (Field_4.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;Y</span>
+                @if (Field_4 != null)
+                {
+                    if (Field_4.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+        </tr>
+        <tr><td colspan="9">&nbsp;</td></tr>
+        <tr>
+            <td style="font-size:14px;width:12%;text-align:right;">Water Source?</td>
+            <td style="font-size:14px;width:7%;">
+                &nbsp;
+                @if (Field_5 != null)
+                {
+                    if (Field_5.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+
+                <span style="font-size:12px;">&nbsp;Y</span>
+                @if (Field_5 != null)
+                {
+                    if (Field_5.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+            <td style="font-size:14px;width:12%;text-align:right;">Trash Disposal?</td>
+            <td style="font-size:14px;width:7%;">
+                &nbsp;
+                @if (Field_6 != null)
+                {
+                    if (Field_6.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;Y</span>
+                @if (Field_6 != null)
+                {
+                    if (Field_6.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+            <td style="font-size:14px;width:12%;text-align:right;">Recycling?</td>
+            <td style="font-size:14px;width:7%;">
+                &nbsp;
+                @if (Field_7 != null)
+                {
+                    if (Field_7.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;Y</span>
+                @if (Field_7 != null)
+                {
+                    if (Field_7.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+            <td style="font-size:14px;width:14%;text-align:right;">Account supplies?</td>
+            <td style="font-size:14px;width:7%;">
+                &nbsp;
+
+                @if (Field_8 != null)
+                {
+                    if (Field_8.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+
+                <span style="font-size:12px;">&nbsp;Y</span>
+
+                @if (Field_8 != null)
+                {
+                    if (Field_8.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+        </tr>
+        <tr><td colspan="8">&nbsp;</td></tr>
+    </table>
+    <div><p style="font-size:14px;padding-bottom:15px;"><b>SECURITY CHECKLIST</b></p></div>
+    <table class="check-table2" style="width:100%;">
+        <tr>
+            <td style="font-size:14px;width:10%;text-align:right;">Key?:  Entry:</td>
+            <td style="font-size:14px;width:7%;">
+                &nbsp;
+                @if (Field_9 != null)
+                {
+                    if (Field_9.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;Y</span>
+                @if (Field_9 != null)
+                {
+                    if (Field_9.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+            <td style="font-size:14px;width:15%;text-align:right;"> Alarm System:</td>
+            <td style="font-size:14px;width:7%;">
+                &nbsp;
+                @if (Field_10 != null)
+                {
+                    if (Field_10.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;Y</span>
+                @if (Field_10 != null)
+                {
+                    if (Field_10.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+            <td style="font-size:14px;width:20%;text-align:right;"> Restroom paper dispensers:</td>
+            <td style="font-size:14px;width:7%;">
+                &nbsp;
+                @if (Field_11 != null)
+                {
+                    if (Field_11.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;Y</span>
+                @if (Field_11 != null)
+                {
+                    if (Field_11.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+            @*<td style="font-size:14px;width:13%;text-align:right;"> Alarm System?</td>
+                <td style="font-size:14px;width:7%;">&nbsp;<span style="font-size:18px;">O</span><span style="font-size:12px;">&nbsp;Y</span> <span style="font-size:18px;">O</span><span style="font-size:12px;">&nbsp;N</span></td>*@
+
+        </tr>
+        <tr><td colspan="8">&nbsp;</td></tr>
+
+    </table>
+    <table class="check-table2" style="width:100%;font-size:14px;">
+        <tr>
+            <td style="width:50%;text-align:right;">Security Procedures?:</td>
+            <td style="width:50%;" class="line">@(Field_12 != null ? (Field_12.FieldText != null && Field_12.FieldText != "") ? Field_12.FieldText : string.Empty : string.Empty )</td>
+        </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
+        <tr>
+            <td style="width:50%;text-align:right;">Emergency names and telephone numbers.1:</td>
+            <td style="width:50%;" class="line">@(Field_13 != null ? (Field_13.FieldText != null && Field_13.FieldText != "") ? Field_13.FieldText : string.Empty : string.Empty )</td>
+        </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
+        <tr>
+            <td style="width:50%;text-align:right;">2:</td>
+            <td style="width:50%;" class="line">@(Field_14 != null ? (Field_14.FieldText != null && Field_14.FieldText != "") ? Field_14.FieldText : string.Empty : string.Empty )</td>
+        </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
+    </table>
+    <table class="check-table2" style="width:100%;font-size:14px;">
+        <tr>
+            <td style="width:75%;text-align:right;">Problem, conncerns, areas needing improvement and general comments?</td>
+            <td style="width:25%;" class="line">@(Field_15 != null ? (Field_15.FieldText != null && Field_15.FieldText != "") ? Field_15.FieldText : string.Empty : string.Empty )</td>
+        </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
+        <tr>
+            <td style="width:100%;" class="line" colspan="2"></td>
+        </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
+    </table>
+
+    <table class="check-table2" style="width:100%;font-size:14px;">
+        <tr>
+            <td style="width:50%;text-align:center;">
+                <b> PAPERWORK CHECKLIST</b>
+            </td>
+            <td style="width:50%;text-align:center;">
+                <b>SIGNATURES</b>
+            </td>
+        </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
+    </table>
+    <table class="check-table2" style="width:100%;font-size:14px;">
+        <tr>
+            <td style="width:3%;">1</td>
+            <td style="width:22%;">Signed Maintenance Agreement?</td>
+            <td style="width:6%;">
+                @if (Field_16 != null)
+                {
+                    if (Field_16.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;Y</span>&nbsp;
+                @if (Field_16 != null)
+                {
+                    if (Field_16.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+            <td style="width:4%;"></td>
+            <td style="width:5%;">A.E. </td>
+            <td style="width:20%;" class="line">@(Field_25 != null ? (Field_25.FieldText != null && Field_25.FieldText != "") ? Field_25.FieldText : string.Empty : string.Empty )</td>
+            <td style="width:5%;"></td>
+        </tr>
+        <tr><td colspan="7">&nbsp;</td></tr>
+        <tr>
+            <td style="width:3%;">2</td>
+            <td style="width:22%;">Signed Price Page?</td>
+            <td style="width:6%;">
+                @if (Field_17 != null)
+                {
+                    if (Field_17.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;Y</span>&nbsp;
+                @if (Field_17 != null)
+                {
+                    if (Field_17.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+            <td style="width:4%;"></td>
+            <td style="width:5%;">OPS</td>
+            <td style="width:20%;" class="line">@(Field_26 != null ? (Field_26.FieldText != null && Field_26.FieldText != "") ? Field_26.FieldText : string.Empty : string.Empty )</td>
+            <td style="width:5%;"></td>
+        </tr>
+        <tr><td colspan="7">&nbsp;</td></tr>
+        <tr>
+            <td style="width:3%;">3</td>
+            <td style="width:22%;">Signed Cleaning Schedule?</td>
+            <td style="width:6%;">
+                @if (Field_18 != null)
+                {
+                    if (Field_18.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;Y</span>&nbsp;
+                @if (Field_18 != null)
+                {
+                    if (Field_18.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+            <td style="width:4%;"></td>
+            <td style="width:5%;">R.D.</td>
+            <td style="width:20%;" class="line"> @(Field_27 != null ? (Field_27.FieldText != null && Field_27.FieldText != "") ? Field_27.FieldText : string.Empty : string.Empty )</td>
+            <td style="width:5%;"></td>
+        </tr>
+        <tr><td colspan="7">&nbsp;</td></tr>
+        <tr>
+            <td style="width:3%;">4</td>
+            <td style="width:22%;">Analysis of Account?</td>
+            <td style="width:6%;">
+                @if (Field_19 != null)
+                {
+                    if (Field_19.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;Y</span>&nbsp;
+                @if (Field_19 != null)
+                {
+                    if (Field_19.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+            <td style="width:4%;"></td>
+            <td style="width:5%;">F.O.</td>
+            <td style="width:20%;" class="line"> @(Field_28 != null ? (Field_28.FieldText != null && Field_28.FieldText != "") ? Field_28.FieldText : string.Empty : string.Empty ) </td>
+            <td style="width:5%;"></td>
+        </tr>
+        <tr><td colspan="7">&nbsp;</td></tr>
+        <tr>
+            <td style="width:3%;">5</td>
+            <td style="width:22%;">Account Bid Sheet?</td>
+            <td style="width:6%;">
+                @if (Field_20 != null)
+                {
+                    if (Field_20.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;Y</span>&nbsp;
+                @if (Field_20 != null)
+                {
+                    if (Field_20.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+            <td style="width:4%;"></td>
+            <td style="width:5%;"></td>
+            <td style="width:20%;"></td>
+            <td style="width:5%;"></td>
+        </tr>
+        <tr><td colspan="7">&nbsp;</td></tr>
+        <tr><td colspan="7">&nbsp;</td></tr>
+    </table>
+    <table class="check-table2" style="width:100%;font-size:14px;">
+        <tr>
+            <td style="width:17%;">Uploaded Documents?</td>
+            <td style="width:7%;">
+                @if (Field_21 != null)
+                {
+                    if (Field_21.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;Y</span>&nbsp;
+                @if (Field_21 != null)
+                {
+                    if (Field_21.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+            <td style="width:22%;">&nbsp;E-mailed to Customer Service?</td>
+            <td style="width:7%;">
+                @if (Field_22 != null)
+                {
+                    if (Field_22.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;Y</span>&nbsp;
+                @if (Field_22 != null)
+                {
+                    if (Field_22.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+            <td style="width:18%;">
+                &nbsp;Business Card Attached?
+            </td>
+            <td style="width:7%;">
+                @if (Field_23 != null)
+                {
+                    if (Field_23.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;Y</span>&nbsp;
+                @if (Field_23 != null)
+                {
+                    if (Field_23.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6">&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan="6" style="text-align:center;">
+                Transaction A Completed and Sent to Franchise Accounting? &nbsp;&nbsp;
+                @if (Field_24 != null)
+                {
+                    if (Field_24.FieldValue == true)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;Y</span>&nbsp;
+                @if (Field_24 != null)
+                {
+                    if (Field_24.FieldValue == false)
+                    {
+                        <img src="@(address)/Images/sel-optbox-pdf2.png" height="15" width="15" />
+                    }
+                    else
+                    {
+                        <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                    }
+                }
+                else
+                {
+                    <img src="@(address)/Images/optbox-pdf2.png" height="15" width="15" />
+                }
+                <span style="font-size:12px;">&nbsp;N</span>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6">&nbsp;</td>
+        </tr>
+    </table>
+
+
+</div>

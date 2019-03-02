@@ -1,0 +1,226 @@
+﻿@{
+    var viewData = ViewBag.selView;
+
+    List<JKViewModels.AccountsPayable.ChargebackHistoryReportSummaryViewModel> ListSummaryView = new List<JKViewModels.AccountsPayable.ChargebackHistoryReportSummaryViewModel>();
+    List<JKViewModels.AccountsPayable.ChargebackHistoryReportViewModel> ListDetailsView = new List<JKViewModels.AccountsPayable.ChargebackHistoryReportViewModel>();
+
+    ListSummaryView = (List<JKViewModels.AccountsPayable.ChargebackHistoryReportSummaryViewModel>)ViewBag.SummaryViewModel;
+    ListDetailsView = (List<JKViewModels.AccountsPayable.ChargebackHistoryReportViewModel>)ViewBag.DetailsViewModel;
+
+}
+
+
+<style>
+    .tblAccountHistory thead th,
+    .tblAccountHistory thead td {
+        padding: 3px 0px !important;
+        font-size: 12px !important;
+        /*background-color: #95A5A6 !important;
+        color: #fff;*/
+    }
+
+    .tblAccountHistory tbody td {
+        padding: 3px 0px !important;
+        font-size: 12px !important;
+    }
+
+    .tblAccountHistory thead th {
+        vertical-align: middle;
+        font-weight: bold;
+    }
+</style>
+
+@if (viewData == "1")
+{
+    <table cellspacing="0" style="width:100%;" class="tblAccountHistory">
+        <thead>
+            <tr>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:60px!important;"><b>Region</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px !important;"><b>Franchisee No</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:162px!important;"><b>Franchisee Name</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:85px!important;"><b>C/B Amount</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:85px!important;"><b>C/B Tar Chk No</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:85px!important;"><b>C/B Tar Amount</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:85px!important;"><b>Balance</b></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (ListSummaryView.Count() != 0)
+            {
+                decimal CBAmount = 0;
+                decimal TARAmount = 0;
+                decimal BalanceAmount = 0;
+
+                foreach (var item in ListSummaryView)
+                {
+                    CBAmount += Convert.ToDecimal(item.CBAmount);
+                    TARAmount += Convert.ToDecimal(item.TARAmount);
+                    BalanceAmount += Convert.ToDecimal(item.BalanceAmount);
+
+                    <tr>
+                        <td style="text-align:center;">@item.Region</td>
+                        <td style="text-align:center;">@item.FranchiseeNo</td>
+                        <td>@item.FranchiseeName</td>
+                        <td style="text-align:right;">@string.Format("{0:C}", item.CBAmount)</td>
+                        <td>@item.TARCheckNo</td>
+                        <td style="text-align:right;">@string.Format("{0:C}", item.TARAmount)</td>
+                        <td style="text-align:right;">@string.Format("{0:C}", item.BalanceAmount)</td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="3" align="right">
+                        <b>Total:</b>
+                    </td>
+                    <td style="text-align:right;">
+                        <b>@string.Format("{0:C}", CBAmount)</b>
+                    </td>
+                    <td style="text-align:right;"></td>
+                    <td style="text-align:right;">
+                        <b>@string.Format("{0:C}", TARAmount)</b>
+                    </td>
+                    <td style="text-align:right;">
+                        <b>@string.Format("{0:C}", BalanceAmount)</b>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <table cellspacing="0" style="width:100%;" class="tblAccountHistory">
+        <thead>
+            <tr>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:60px!important;"><b>Customer No</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:185px !important;"><b>Customer Name</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:75px!important;"><b>Invoice No</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;"><b>C/B Date</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;"><b>C/B Amount</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:60px!important;"><b> C/B Tar Chk No</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:85px!important;"><b>C/B Tar Amount</b></th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;"><b>Balance</b></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (ListDetailsView.Count() != 0)
+            {
+                var frId = 0;
+                var sec_frid = 0;
+                decimal cbTotal = 0;
+                decimal tarTotal = 0;
+                decimal balanceTotal = 0;
+
+                var data = ListDetailsView;
+                for (var i = 0; i < data.Count; i++)
+                {
+                    var lengthdata = data.Count;
+
+                    if (data[i] != null)
+                    {
+                        frId = data[i].FranchiseeId;
+
+                        if (sec_frid != frId)
+                        {
+                            if (sec_frid != 0 && sec_frid != frId)
+                            {
+                                <tr>
+                                    <td style="text-align:center;" colspan="3"></td>
+                                    <td style="text-align:center;background: #bbf7f7;">Total</td>
+                                    <td style="text-align:right;background: #bbf7f7;">@String.Format("{0:c}", cbTotal)</td>
+                                    <td style="text-align:center;background: #bbf7f7;"></td>
+                                    <td style="text-align:right;background: #bbf7f7;">@String.Format("{0:c}", tarTotal) </td>
+                                    <td style="text-align:right;background: #bbf7f7;">@String.Format("{0:c}", balanceTotal) </td>
+                                </tr>
+                                cbTotal = 0;
+                                tarTotal = 0;
+                                balanceTotal = 0;
+                            }
+                            <tr>
+                                <td style="font-size:12px" colspan="8"><b>@data[i].FranchiseeNo</b>-<span style="color: blue;"> <b>@data[i].FranchiseeName </b></span></td>
+                            </tr>
+                            sec_frid = data[i].FranchiseeId;
+                        }
+                        <tr>
+                            <td style="text-align:center;">@data[i].CustomerNo </td>
+                            <td style="text-align:left;">@data[i].CustomerName</td>
+                            <td style="text-align:center;"> @data[i].InvoiceNo</td>
+                            <td style="text-align:center;">@data[i].TrxDate.ToString("mm/dd/yyyy")</td>
+                            <td style="text-align:right;">@String.Format("{0:c}", data[i].CBAmount)</td>
+
+                            @if (data[i].TARCheckNo == null)
+                            {
+                                data[i].TARCheckNo = "";
+                            }
+                            <td style="text-align:center;">@data[i].TARCheckNo </td>
+                            <td style="text-align:right;">@String.Format("{0:c}", data[i].TARAmount)</td>
+                            <td style="text-align:right;">@String.Format("{0:c}", data[i].BalanceAmount)</td>
+                        </tr>
+
+                        if (sec_frid == frId)
+                        {
+                            cbTotal += Convert.ToDecimal(data[i].CBAmount);
+                            tarTotal += Convert.ToDecimal(data[i].TARAmount);
+                            balanceTotal += Convert.ToDecimal(data[i].BalanceAmount);
+                        }
+                        if (i == lengthdata - 1)
+                        {
+                            <tr>
+                                <td style="text-align:center;" colspan="3"></td>
+                                <td style="text-align:center;background: #bbf7f7;">Total</td>
+                                <td style="text-align:right;background: #bbf7f7;">@String.Format("{0:c}", cbTotal) </td>
+                                <td style="text-align:center;background: #bbf7f7;"></td>
+                                <td style="text-align:right;background: #bbf7f7;">@String.Format("{0:c}", tarTotal) </td>
+                                <td style="text-align:right;background: #bbf7f7;">@String.Format("{0:c}", balanceTotal) </td>
+                            </tr>
+                        }
+                                        }
+                                    }
+                                }
+            @*<tr>
+                    <td style="text-align:left;" colspan="3"><b>sdfsdf </b>- <b>ssdfsf </b></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td style="text-align:left;">555) </td>
+                    <td style="text-align:left;">hhh</td>
+                    <td style="text-align:center;">tttt</td>
+                    <td style="text-align:center;">S</td>
+                    <td style="text-align:right;">@string.Format("{0:C}", 100)</td>
+                    <td style="text-align:center;">MM/dd/yyyy</td>
+                    <td style="text-align:center;"></td>
+                    <td style="text-align:right;">@string.Format("{0:C}", 100)  </td>
+                    <td style="text-align:right;">@string.Format("{0:C}", 100)  </td>
+                    <td style="text-align:right;">@string.Format("{0:C}", 100)  </td>
+                    <td style="text-align:right;">@string.Format("{0:C}", 100)  </td>
+                </tr>
+
+                <tr>
+                    <td colspan="7" align="right">
+                        <b>Total:</b>
+                    </td>
+                    <td style="text-align:right;">
+                        <b>@string.Format("{0:C}", 2000)</b>
+                    </td>
+                    <td style="text-align:right;">
+                        <b>@string.Format("{0:C}", 3000)</b>
+                    </td>
+                    <td style="text-align:right;">
+                        <b>@string.Format("{0:C}", 4000)</b>
+                    </td>
+                    <td style="text-align:right;">
+                        <b>@string.Format("{0:C}", 45000)</b>
+                    </td>
+
+                </tr>*@
+
+        </tbody>
+    </table>
+}
+
+
+
+<div style="page-break-before:always"></div>
+

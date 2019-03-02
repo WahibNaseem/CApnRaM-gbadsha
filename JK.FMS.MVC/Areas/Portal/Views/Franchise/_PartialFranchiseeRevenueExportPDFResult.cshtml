@@ -1,0 +1,105 @@
+﻿
+@model IEnumerable<JKViewModels.Franchisee.FranchiseeRevenuesResultViewModel>
+
+<style>
+    .tblFranchiseeRevenues thead th,
+    .tblFranchiseeRevenues thead td {
+        padding: 3px 5px !important;
+        font-size: 12px !important;
+        /*background-color: #95A5A6 !important;
+        color: #fff;*/
+    }
+
+    .tblFranchiseeRevenues tbody td {
+        padding: 3px 5px !important;
+        font-size: 12px !important;
+    }
+
+    .tblFranchiseeRevenues thead th {
+        vertical-align: middle;
+        font-weight: bold;
+    }
+</style>
+@{int PageNo = 0;}
+@foreach(int Regionid in Model.Select(o => o.RegionId).Distinct())
+{
+    PageNo += 1;
+    <table cellspacing="0" class="tblFranchiseeRevenues" style="margin-bottom:10px !important;">
+        <tr>
+            <th style="text-align:left;font-size: 12px !important;">
+                Page No.  @PageNo <br /> 
+                Jani-King of @Model.Where(o => o.RegionId == Regionid).FirstOrDefault().RegionName, Inc<br />
+                For the month of @ViewBag.PeriodTtitle
+            </th>
+        </tr>
+    </table><br /> 
+    <table class="tblFranchiseeRevenues" id='@("tblFranchiseeRevenues"+Regionid)' style="width:100%;">
+        <thead>
+            <tr>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:65px!important;">
+                    <b>Franchisee No</b>
+                </th>
+                <th style="text-align:left;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:215px !important;">
+                    <b>Franchisee Name</b>
+                </th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;">
+                    Date Signed
+                </th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:40px!important;">
+                    Plan Type
+                </th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:100px!important;">
+                    Contract Billing
+                </th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:105px!important;">
+                    Actual Billing
+                </th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:75px!important;">
+                    Add Bill Franchisee
+                </th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:90px!important;">
+                    Client Suppliers
+                </th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:105px!important;">
+                    Monthly Revenue
+                </th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:105px!important;">
+                    Client sales tax
+                </th>
+                <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:105px!important;">
+                    Grand Total
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Where(o => o.RegionId == Regionid))
+            {
+                <tr>
+                    <td style="text-align:center">@item.FranchiseeNo</td>
+                    <td style="text-align:left">@item.FranchiseeName</td>
+                    <td style="text-align:center">@string.Format("{0:MM/dd/yyyy}", item.DateSign)</td>
+                    <td style="text-align:center">@item.PlanType</td>
+                    <td style="text-align:right">$ @string.Format("{0:n}", item.ContractBilling)</td>
+                    <td style="text-align:right;">$ @string.Format("{0:n}", item.ActualBilling)</td>
+                    <td style="text-align:right;"></td>
+                    <td style="text-align:right;">$ @string.Format("{0:n}", item.ClientSupplies)</td>
+                    <td style="text-align:right;">$ @string.Format("{0:n}", item.MonthlyRevenue)</td>
+                    <td style="text-align:right;">$ @string.Format("{0:n}", item.MonthlySalesTax)</td>
+                    <td style="text-align:right;">$ @string.Format("{0:n}", item.GrandTotal)</td>
+                </tr>
+            }
+            <tr>
+                <td colspan="2" style="text-align:center;border-top:1px solid #000000 !important"></td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;" colspan="2"><b>Total</b></td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @Model.Where(o => o.RegionId == Regionid).Sum(d => d.ContractBilling)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @Model.Where(o => o.RegionId == Regionid).Sum(d => d.ActualBilling)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;"></td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @Model.Where(o => o.RegionId == Regionid).Sum(d => d.ClientSupplies)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @Model.Where(o => o.RegionId == Regionid).Sum(d => d.MonthlyRevenue)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @Model.Where(o => o.RegionId == Regionid).Sum(d => d.MonthlySalesTax)</td>
+                <td style="text-align:right;border-top:1px solid #000000 !important;padding-top:8px;">$ @Model.Where(o => o.RegionId == Regionid).Sum(d => d.GrandTotal)</td>
+            </tr>                                                        
+        </tbody>
+    </table>
+    <div style="page-break-before:always"></div>
+}

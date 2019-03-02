@@ -1,0 +1,566 @@
+﻿@using System.Globalization
+@using MvcAjaxPager
+@using PagedList
+@using JKViewModels.AccountReceivable
+
+@model IEnumerable<JKViewModels.AccountReceivable.AgingReportViewModel>
+
+@{
+    var isAjaxRequest = (bool)ViewBag.isAjaxRequest;
+    var filters = ViewBag.AgingReportFilters as JKViewModels.AccountReceivable.AgingReportViewModel;
+    var isSummaryView = Convert.ToBoolean(filters.isSummaryView);
+    var pagedData = (StaticPagedList<AgingReportViewModel>)ViewBag.pagedCustomers;
+    var data = pagedData.ToList();
+    var objPageList = (SelectList)ViewBag.PageSizeList;
+    var objDdlSort = (SelectList)ViewBag.objDdlSort;
+
+    var reportDate = filters.ReportDate != null ? filters.ReportDate.Value.ToString("MM/dd/yyyy") : "";
+    var agingDate = filters.agingDate != null ? filters.agingDate.Value.ToString("MM/dd/yyyy") : "";
+    var paymentDate = filters.PaymentDate != null ? filters.PaymentDate.Value.ToString("MM/dd/yyyy") : "";
+
+    var sortBy = (string)ViewBag.sortBy;
+    var IsMonthView = (string)ViewBag.IsMonthView;
+
+}
+
+<div class="row">
+    <input type="hidden" id="agingDate" value="@agingDate" />
+    <input type="hidden" id="monthsToInclude" value="@filters.monthsToInclude" />
+    <input type="hidden" id="isNonChargebackOnly" value="@filters.isNonChargebackOnly" />
+    <input type="hidden" id="isSummaryView" value="@isSummaryView.ToString()" />
+    <input type="hidden" id="hidPageSize" value="@pagedData.PageSize" />
+    <input type="hidden" id="hidSortBy" value="@sortBy" />
+    <input type="hidden" id="hidIsMonthView" value="@IsMonthView" />
+ 
+</div>
+@if (!isSummaryView)
+{
+<div class="row">
+    <div class="col-md-6">
+
+        Show Customer :
+
+        @Html.DropDownList("AgginRptPageSize", objPageList, new { @class = "form-control input-sm pageSize", @style= "width: 175px;", @id = "pageSize" })
+
+        Sort By :
+
+        @Html.DropDownList("ddlSort", objDdlSort, new { @class = "form-control input-sm ddlSort", @id = "ddlSort", @style = "width: 175px;" })
+
+    </div>
+
+    <div class="col-md-6" style="text-align:right;">
+        @Html.AjaxPager(pagedData.TotalItemCount, pagedData.PageSize, pagedData.PageNumber, "AgingReport", "AccountRecievable", null, new PagerOptions
+        {
+        AjaxUpdateTargetId = "divAgingReport",
+        CssClass = "AgingRptNav PublicPager",
+        ShowDisabledPagerItems = true,
+        ShowNumericPagerItems = true,
+
+        AlwaysShowFirstLastPageNumber = true,
+        HorizontalAlign = "right",
+        ShowFirstLast = true,
+        FirstPageText = "<i class='fa fa-fast-backward'></i>",
+        LastPageText = "<i class='fa fa-fast-forward'></i>",
+        NextPageText = "<i class='fa fa-step-forward'></i>",
+        PrevPageText = "<i class='fa fa-step-backward'></i>"
+        }, new { area = "portal" }, new { @PageNumber = pagedData.PageNumber })
+    </div>
+</div>
+}
+
+<div class="table-responsive">
+    @if (Model.Count() != 0 && ViewBag.IsSummary != null && Convert.ToBoolean(ViewBag.IsSummary) == false)
+    {
+    var uniqueRegions = data.Select(s => s.RegionId).Distinct().ToList();
+    // Genrate detailed report
+
+    <table class="table table-striped table-bordered order-column" id="CustomerList" style="margin-top:0 !important;">
+        <thead>
+            <tr>
+                <td colspan="10">
+                    <div class="col-md-12 alignCenter">
+                        <table style="font-size:18px; margin:0 auto;">
+                            <tr>
+                                <td style="width:170px; text-align:right">Report Date:</td>
+                                <td style="font-weight:900; text-align:left; padding-left:12px;"> <span id="spnrptdate">@reportDate </span></td>
+                                <td style="width:170px; text-align:right">Aging as of Date:</td>
+                                <td style="font-weight:900; text-align:left; padding-left:12px;"> @( string.IsNullOrEmpty(agingDate) ? "None" : agingDate) </td>
+                                <td style="width:170px; text-align:right"></td>
+                                <td style="font-weight:900; text-align:left; padding-left:12px;"></td>
+
+                            </tr>
+                            <tr>
+                                <td style="width:170px; text-align:right">Based on Past:</td>
+                                <td style="font-weight:900; text-align:left; padding-left:12px;"> @filters.monthsToInclude Month(s) </td>
+                                <td style="width:170px; text-align:right">Payment as of Date:</td>
+                                <td style="font-weight:900; text-align:left; padding-left:12px;"> @( string.IsNullOrEmpty(paymentDate) ? "None" : paymentDate) </td>
+                                <td style="width:170px; text-align:right">Calculation Method:</td>
+                                <td style="font-weight:900; text-align:left; padding-left:12px;">@IsMonthView</td>
+                            </tr>
+                            
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="td1">
+                    @Html.DisplayNameFor(model => model.invNumber)
+                </td>
+                <td class="td1">
+                    @Html.DisplayNameFor(model => model.originalTotal)
+                </td>
+                <td class="td2">
+                    @Html.DisplayNameFor(model => model.invDate)
+                </td>
+                <td class="td3">
+                    @Html.DisplayNameFor(model => model.dueDate)
+                </td>
+                <td class="td4">
+                    @Html.DisplayNameFor(model => model.onemo)
+                </td>
+                <td class="td5">
+                    @Html.DisplayNameFor(model => model.twomo)
+                </td>
+                <td class="td6">
+                    @Html.DisplayNameFor(model => model.threemo)
+                </td>
+                <td class="td7">
+                    @Html.DisplayNameFor(model => model.fourmo)
+                </td>
+                <td class="td8">
+                    @Html.DisplayNameFor(model => model.fivemo)
+                </td>
+                <td class="td9">
+                    @Html.DisplayNameFor(model => model.sixmo)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var region in uniqueRegions)
+            {
+            <tr>
+                <td style="padding:5px; text-align:left;font-size:13px" colspan="10"><b>Region:  @data.Find(x => x.RegionId == region).RegionName </b></td>
+            </tr>
+
+            var unique_customer_ids = Model.Select(s => s.customerId).Distinct().ToList();
+
+            foreach (var customer_id in unique_customer_ids)
+            {
+            var entries = data.Where(s => s.customerId == customer_id).ToList();
+
+            if (entries.Count() != 0)
+            {
+            var first_item = entries.First();
+
+            <tr relcusn="@Html.DisplayFor(modelItem => first_item.customerNo) @Html.DisplayFor(modelItem => first_item.customerName)">
+                <td style="font-size:13px" colspan="4"><b>@Html.DisplayFor(modelItem => first_item.customerNo) </b>-<span style="color: blue;"> <b>@Html.DisplayFor(modelItem => first_item.customerName) </b></span> &nbsp;&nbsp;&nbsp;&nbsp;<b>Phone:  @(Html.DisplayFor(modelItem => first_item.phone, "{0:(###) ###-####}", new { @class = "sky" })) </b></td>
+                <td style="font-size:13px" colspan="1"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+
+            decimal currentTotal = 0;
+            decimal oneMoTotal = 0;
+            decimal twoMoTotal = 0;
+            decimal threeMoTotal = 0;
+            decimal fourMoTotal = 0;
+            decimal fiveMoTotal = 0;
+            decimal sixMoTotal = 0;
+
+
+            foreach (var item in entries)
+            {
+            <tr relcusn="@Html.DisplayFor(modelItem => first_item.customerNo) @Html.DisplayFor(modelItem => first_item.customerName)">
+                <td style="padding:5px; text-align:center;font-size:13px"><a onclick="OpenInvoiceDetail(@item.id)">@Html.DisplayFor(modelItem => item.invNumber)</a></td>
+                <td style="padding:5px; text-align:right;font-size:13px">@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Convert.ToDecimal(item.originalTotal))</td>
+                <td style="padding:5px; text-align:center;font-size:13px">@Html.DisplayFor(modelItem => item.invDate)</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@Html.DisplayFor(modelItem => item.dueDate)</td>
+
+                <td style="padding:5px; text-align:right;font-size:13px">@(item.totalAmount == "0.00" ? "" : string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Convert.ToDecimal(item.totalAmount)))</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@(item.onemo == "0.00" ? "" : string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Convert.ToDecimal(item.onemo)))</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@(item.twomo == "0.00" ? "" : string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Convert.ToDecimal(item.twomo)))</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@(item.threemo == "0.00" ? "" : string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Convert.ToDecimal(item.threemo)))</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@(item.fourmo == "0.00" ? "" : string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Convert.ToDecimal(item.fourmo)))</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@(item.sixmo == "0.00" ? "" : string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Convert.ToDecimal(item.sixmo)))</td>
+            </tr>
+
+            currentTotal += Convert.ToDecimal(item.totalAmount);
+            oneMoTotal += Convert.ToDecimal(item.onemo);
+            twoMoTotal += Convert.ToDecimal(item.twomo);
+            threeMoTotal += Convert.ToDecimal(item.threemo);
+            fourMoTotal += Convert.ToDecimal(item.fourmo);
+            fiveMoTotal += Convert.ToDecimal(item.fivemo);
+            sixMoTotal += Convert.ToDecimal(item.sixmo);
+
+            }
+
+            <tr class="odd gradeX" relcusn="@Html.DisplayFor(modelItem => first_item.customerNo) @Html.DisplayFor(modelItem => first_item.customerName)">
+                <td style="font-size:15px" colspan="4" align="right">
+                    <b>Customer Totals:</b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", currentTotal)</b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b>@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", oneMoTotal) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b>@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", twoMoTotal) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b>@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", threeMoTotal) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", fourMoTotal) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", sixMoTotal) </b>
+                </td>
+            </tr>
+            }
+            }
+
+            <tr>
+                <td colspan="10" style="height:25px;"></td>
+            </tr>
+            if (ViewBag.RegionWiseTotal != null)
+            {
+            foreach (var item in ViewBag.RegionWiseTotal)
+            {
+            <tr class="odd gradeX">
+                <td style="font-size:15px" colspan="4" align="right">
+                    <b>Totals: @item.RegionName</b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", item.FinalTotal)</b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b>@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", item.FirstTotal) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b>@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", item.SecondTotal) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b>@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", item.ThirdTotal) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", item.FourthTotal) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", item.FifthTotal) </b>
+                </td>
+            </tr>
+            }
+            }
+
+            <tr class="odd gradeX">
+                <td style="font-size:15px" colspan="4" align="right">
+                    <b>Totals:</b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(x => Convert.ToDecimal(x.totalAmount)))</b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b>@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(x => Convert.ToDecimal(x.onemo))) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b>@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(x => Convert.ToDecimal(x.twomo))) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b>@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(x => Convert.ToDecimal(x.threemo))) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(x => Convert.ToDecimal(x.fourmo))) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(x => Convert.ToDecimal(x.sixmo))) </b>
+                </td>
+            </tr>
+            }
+
+            @if (data.Count() > 0 && (pagedData.IsLastPage || pagedData.PageCount == 1))
+            {
+            <tr>
+                <td colspan="10" style="height:25px;"></td>
+            </tr>
+            <tr class="odd gradeX">
+                <td style="font-size:15px" colspan="4" align="right">
+                    <b>Totals:</b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(x => Convert.ToDecimal(x.totalAmount)))</b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b>@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(x => Convert.ToDecimal(x.onemo))) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b>@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(x => Convert.ToDecimal(x.twomo))) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b>@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(x => Convert.ToDecimal(x.threemo))) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(x => Convert.ToDecimal(x.fourmo))) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(x => Convert.ToDecimal(x.sixmo))) </b>
+                </td>
+            </tr>
+
+            }
+        </tbody>
+    </table>
+
+    <table class="table table-striped table-bordered order-column" id="CustomerForExcelFormat" style="margin-top:0 !important;display:none;">
+        <thead>
+            <tr>
+                <td colspan="9">
+                    <div class="col-md-12 alignCenter">
+                        <table style="font-size:18px; margin:0 auto;">
+                            <tr>
+                                <td style="width:170px; text-align:right">Report Date:</td>
+                                <td style="font-weight:900; text-align:left; padding-left:12px;"> @reportDate </td>
+                                <td style="width:170px; text-align:right">Aging as of Date:</td>
+                                <td style="font-weight:900; text-align:left; padding-left:12px;"> @( string.IsNullOrEmpty(agingDate) ? "None" : agingDate) </td>
+                            </tr>
+                            <tr>
+                                <td style="width:170px; text-align:right">Based on Past:</td>
+                                <td style="font-weight:900; text-align:left; padding-left:12px;"> @filters.monthsToInclude Month(s) </td>
+                                <td style="width:170px; text-align:right">Payment as of Date:</td>
+                                <td style="font-weight:900; text-align:left; padding-left:12px;"> @( string.IsNullOrEmpty(paymentDate) ? "None" : paymentDate) </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="td1">
+                    @Html.DisplayNameFor(model => model.invNumber)
+                </td>
+                <td class="td1">
+                    @Html.DisplayNameFor(model => model.customerNo)
+                </td>
+                <td class="td1">
+                    @Html.DisplayNameFor(model => model.customerName)
+                </td>
+                <td class="td1">
+                    @Html.DisplayNameFor(model => model.phone)
+                </td>
+                <td class="td2">
+                    @Html.DisplayNameFor(model => model.invDate)
+                </td>
+                <td class="td3">
+                    @Html.DisplayNameFor(model => model.dueDate)
+                </td>
+                <td class="td4">
+                    @Html.DisplayNameFor(model => model.onemo)
+                </td>
+                <td class="td5">
+                    @Html.DisplayNameFor(model => model.twomo)
+                </td>
+                <td class="td6">
+                    @Html.DisplayNameFor(model => model.threemo)
+                </td>
+                <td class="td7">
+                    @Html.DisplayNameFor(model => model.fourmo)
+                </td>
+                <td class="td8">
+                    @Html.DisplayNameFor(model => model.fivemo)
+                </td>
+                <td class="td9">
+                    @Html.DisplayNameFor(model => model.sixmo)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var region in uniqueRegions)
+            {
+            var unique_customer_ids = Model.Select(s => s.customerId).Distinct().ToList();
+
+            foreach (var customer_id in unique_customer_ids)
+            {
+            var entries = data.Where(s => s.customerId == customer_id).ToList();
+
+            if (entries.Count() != 0)
+            {
+            var first_item = entries.First();
+
+            decimal currentTotal = 0;
+            decimal oneMoTotal = 0;
+            decimal twoMoTotal = 0;
+            decimal threeMoTotal = 0;
+            decimal fourMoTotal = 0;
+            decimal fiveMoTotal = 0;
+            decimal sixMoTotal = 0;
+
+            foreach (var item in entries)
+            {
+            <tr relcusn="@Html.DisplayFor(modelItem => first_item.customerNo) @Html.DisplayFor(modelItem => first_item.customerName)">
+                <td style="padding:5px; text-align:center;font-size:13px"><a onclick="OpenInvoiceDetail(@item.id)">@Html.DisplayFor(modelItem => item.invNumber)</a></td>
+
+                <td style="padding:5px; text-align:center;font-size:13px">@Html.DisplayFor(modelItem => item.customerNo)</td>
+                <td style="padding:5px; text-align:center;font-size:13px">@Html.DisplayFor(modelItem => item.customerName)</td>
+                <td style="padding:5px; text-align:center;font-size:13px">@Html.DisplayFor(modelItem => item.phone)</td>
+
+                <td style="padding:5px; text-align:center;font-size:13px">@Html.DisplayFor(modelItem => item.invDate)</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@Html.DisplayFor(modelItem => item.dueDate)</td>
+
+                <td style="padding:5px; text-align:right;font-size:13px">@(item.totalAmount == "0.00" ? "" : string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Convert.ToDecimal(item.totalAmount)))</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@(item.onemo == "0.00" ? "" : string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Convert.ToDecimal(item.onemo)))</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@(item.twomo == "0.00" ? "" : string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Convert.ToDecimal(item.twomo)))</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@(item.threemo == "0.00" ? "" : string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Convert.ToDecimal(item.threemo)))</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@(item.fourmo == "0.00" ? "" : string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Convert.ToDecimal(item.fourmo)))</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@(item.sixmo == "0.00" ? "" : string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Convert.ToDecimal(item.sixmo)))</td>
+
+            </tr>
+
+            currentTotal += Convert.ToDecimal(item.totalAmount);
+            oneMoTotal += Convert.ToDecimal(item.onemo);
+            twoMoTotal += Convert.ToDecimal(item.twomo);
+            threeMoTotal += Convert.ToDecimal(item.threemo);
+            fourMoTotal += Convert.ToDecimal(item.fourmo);
+            fiveMoTotal += Convert.ToDecimal(item.fivemo);
+            sixMoTotal += Convert.ToDecimal(item.sixmo);
+
+            }
+            }
+            }
+            <tr>
+                <td colspan="12" style="height:25px;"></td>
+            </tr>
+            <tr class="odd gradeX">
+                <td style="font-size:15px" colspan="6" align="right">
+                    <b>Region Totals:</b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", data.Where(x => x.RegionId == region).Sum(x => Convert.ToDecimal(x.totalAmount)))</b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b>@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", data.Where(x => x.RegionId == region).Sum(x => Convert.ToDecimal(x.onemo))) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b>@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", data.Where(x => x.RegionId == region).Sum(x => Convert.ToDecimal(x.twomo))) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b>@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", data.Where(x => x.RegionId == region).Sum(x => Convert.ToDecimal(x.threemo))) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", data.Where(x => x.RegionId == region).Sum(x => Convert.ToDecimal(x.fourmo))) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", data.Where(x => x.RegionId == region).Sum(x => Convert.ToDecimal(x.sixmo))) </b>
+                </td>
+            </tr>
+            }
+
+            @if (data.Count() > 0 && (pagedData.IsLastPage || pagedData.PageCount == 1))
+            {
+            <tr>
+                <td colspan="9" style="height:25px;"></td>
+            </tr>
+            <tr class="odd gradeX">
+                <td style="font-size:15px" colspan="3" align="right">
+                    <b>Totals:</b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(x => Convert.ToDecimal(x.totalAmount)))</b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b>@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(x => Convert.ToDecimal(x.onemo))) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b>@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(x => Convert.ToDecimal(x.twomo))) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b>@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(x => Convert.ToDecimal(x.threemo))) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(x => Convert.ToDecimal(x.fourmo))) </b>
+                </td>
+                <td style="padding:5px;text-align:right;font-size:13px">
+                    <b> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(x => Convert.ToDecimal(x.sixmo))) </b>
+                </td>
+            </tr>
+
+            }
+        </tbody>
+    </table>
+    }
+    else if (Model.Count() != 0 && ViewBag.IsSummary != null && Convert.ToBoolean(ViewBag.IsSummary) == true)
+    {
+    // Genrate summary report
+    var regions = Model.GroupBy(x => new { x.RegionId, x.RegionName, x.RegionAcronym }).Select(b => new JKViewModels.RegionInfoViewModel
+    {
+    RegionId = (int)b.Key.RegionId,
+    Name = b.Key.RegionName,
+    Acronym = b.Key.RegionAcronym
+    }).Distinct().ToList();
+
+
+    <table class="table table-striped table-bordered order-column" id="CustomerList" style="margin-top:0 !important;">
+        <thead>
+            <tr>
+                <td class="td1">
+                    Region
+                </td>
+                <td class="td2">
+                    Summary
+                </td>
+                <td class="td4">
+                    @Html.DisplayNameFor(model => model.onemo)
+                </td>
+                <td class="td5">
+                    @Html.DisplayNameFor(model => model.twomo)
+                </td>
+                <td class="td6">
+                    @Html.DisplayNameFor(model => model.threemo)
+                </td>
+                <td class="td7">
+                    @Html.DisplayNameFor(model => model.fourmo)
+                </td>
+                <td class="td8">
+                    @Html.DisplayNameFor(model => model.fivemo)
+                </td>
+                <td class="td9">
+                    @Html.DisplayNameFor(model => model.sixmo)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var region in regions)
+            {
+            <tr>
+                <td style="padding:5px; text-align:center;font-size:13px">@region.Acronym</td>
+                <td style="padding:5px; text-align:center;font-size:13px"> @Model.Where(x => x.RegionId == region.RegionId).Select(y => y.customerId).Distinct().Count() Customers, @Model.Where(x => x.RegionId == region.RegionId).Select(y => y.invNumber).Distinct().Count() Invoices </td>
+                <td style="padding:5px; text-align:right;font-size:13px"> @string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Where(x => x.RegionId == region.RegionId).Sum(y => Convert.ToDecimal(y.totalAmount))) </td>
+
+                <td style="padding:5px; text-align:right;font-size:13px">@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Where(x => x.RegionId == region.RegionId).Sum(y => Convert.ToDecimal(y.onemo)))</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Where(x => x.RegionId == region.RegionId).Sum(y => Convert.ToDecimal(y.twomo)))</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Where(x => x.RegionId == region.RegionId).Sum(y => Convert.ToDecimal(y.threemo)))</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Where(x => x.RegionId == region.RegionId).Sum(y => Convert.ToDecimal(y.fourmo)))</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Where(x => x.RegionId == region.RegionId).Sum(y => Convert.ToDecimal(y.sixmo)))</td>
+            </tr>
+
+            }
+            <tr>
+                <td colspan="8" style="height:25px;"></td>
+            </tr>
+            <tr class="footer" style="font-weight:700;">
+                <td style="padding:5px; text-align:center;font-size:13px">Total</td>
+                <td style="padding:5px; text-align:center;font-size:13px">Invoice: @Model.Select(y => y.invNumber).Distinct().Count() </td>
+                <td style="padding:5px; text-align:right;font-size:13px">@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(y => Convert.ToDecimal(y.totalAmount)))</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(y => Convert.ToDecimal(y.onemo)))</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(y => Convert.ToDecimal(y.twomo)))</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(y => Convert.ToDecimal(y.threemo)))</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(y => Convert.ToDecimal(y.fourmo)))</td>
+                <td style="padding:5px; text-align:right;font-size:13px">@string.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Model.Sum(y => Convert.ToDecimal(y.sixmo)))</td>
+            </tr>
+        </tbody>
+    </table>
+    }
+</div>

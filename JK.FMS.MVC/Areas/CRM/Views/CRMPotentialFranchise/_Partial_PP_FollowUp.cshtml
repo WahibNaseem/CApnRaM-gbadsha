@@ -1,0 +1,180 @@
+﻿@model JKViewModels.CRM.CRMFranchiseFollowUpViewModel
+@using JKViewModels.CRM
+
+@{
+    var franchisefollowschedule = new List<CRMScheduleViewModel>();
+
+    if(ViewBag.followupschedule != null)
+    {
+        franchisefollowschedule = ViewBag.followupschedule as List<CRMScheduleViewModel>;
+    }
+
+}
+
+
+<div class="modal-header modal-custom-header" id="followup_modalview_header">
+    <button type="button" class="close modal-close-button" data-dismiss="modal" aria-hidden="true"></button>
+    <h4 class="modal-title">Follow-Up</h4>
+</div>
+
+<div class="modal-body" id="followup_modalview_body">
+    <div class="row">
+        <form action="#" id="form_followup" class="form-horizontal">
+            <div class="form-body">
+
+                <!-- Signing Schedule  -->
+                <div class="form-group">
+                    <label class="control-label col-md-4">Signing Schedule <span class="required">*</span>:</label>
+                    <div class="col-md-3">
+                        <!-- Date -->
+                        <input type="text" class="form-control input-mysize input-group input-group-sm input-sm date date-picker" name="datepicker" @*data-date-format="mm/dd/yyyy"*@ disabled="disabled" value="@(franchisefollowschedule[0].StartDate !=null? Convert.ToDateTime(franchisefollowschedule[0].StartDate).ToString("MM-dd-yyyy"):string.Empty)" />
+                    </div>
+                    <div class="col-md-3">
+                        <!-- Time -->
+                        <div class="input-icon">
+                            <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                            <input type="text" class="form-control input-group input-mysize2 input-group-sm input-sm  timepicker timepicker-default" disabled="disabled" value="@(franchisefollowschedule[0].StartDate !=null? Convert.ToDateTime(franchisefollowschedule[0].StartDate).ToString("hh:mm tt"):string.Empty)" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Purpose -->
+                <div class="form-group">
+                    <label class="control-label col-md-4">Purpose:</label>
+                    <div class="col-md-5 fieldspadding-left">
+                        @Html.DropDownList("purpose",(SelectList)ViewBag.CloseType,"Select", new { @class = "form-control input-sm" , @name = "options2", @disabled = "disabled" })
+                        @*<select class="form-control input-sm" name="options2" disabled="disabled">
+                            <option value="">Select..</option>
+                            <option value="1" @(franchisefollowschedule[0].PurposeId == 1 ? "selected=selected" : string.Empty)>First Visit</option>
+                            <option value="2" @(franchisefollowschedule[0].PurposeId == 2 ? "selected=selected" : string.Empty)>Proposal Delivery</option>
+                            <option value="3" @(franchisefollowschedule[0].PurposeId == 3 ? "selected=selected" : string.Empty)>Proposal Follow up</option>
+                            <option value="4" @(franchisefollowschedule[0].PurposeId == 4 ? "selected=selected" : string.Empty)>Walk Thru</option>
+                            <option value="5" @(franchisefollowschedule[0].PurposeId == 5 ? "selected=selected" : string.Empty)>Call Back</option>
+                            <option value="6" @(franchisefollowschedule[0].PurposeId == 6 ? "selected=selected" : string.Empty)>Cold Call</option>
+                            <option value="7" @(franchisefollowschedule[0].PurposeId == 7 ? "selected=selected" : string.Empty)>Prospecting Email</option>
+                            <option value="8" @(franchisefollowschedule[0].PurposeId == 8 ? "selected=selected" : string.Empty)>Past Proposal </option>
+                            <option value="9" @(franchisefollowschedule[0].PurposeId == 9 ? "selected=selected" : string.Empty)>Follow Up</option>
+                        </select>*@
+                    </div>
+                </div>
+
+
+                @if(franchisefollowschedule[0].Purpose != "Contract Signed" || franchisefollowschedule[0].Purpose != "Close Sale Cycle") { 
+                <!-- Start Date & Time -->
+                <div class="form-group">
+                    <label class="control-label col-md-4">Start Date/Time <span class="required">*</span>:</label>
+                    <!--  Date -->
+                    <div class="col-md-3">
+                        <input type="text" class="form-control input-mysize input-group input-group-sm input-sm date date-picker RemovePeriodvalidation" name="datepicker" @*data-date-format="mm/dd/yyyy"*@ id="input_enddate_modal" value="@(franchisefollowschedule.Count > 2 &&  franchisefollowschedule[1].StartDate !=null? Convert.ToDateTime(franchisefollowschedule[1].StartDate).ToString("MM/dd/yy"):string.Empty)" disabled="disabled" />
+                    </div>
+                    <!-- Time -->
+                    <div class="col-md-3">
+                        <div class="input-icon">
+                            <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                            <input type="text" class="form-control input-group input-mysize2 input-group-sm input-sm  timepicker timepicker-default" id="input_endtime_modal" value="@( franchisefollowschedule.Count > 2 && franchisefollowschedule[1].StartDate !=null? Convert.ToDateTime(franchisefollowschedule[1].StartDate).ToString("hh:mm tt"):string.Empty)" disabled="disabled" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- End Date & Time -->
+                <div class="form-group">
+                    <label class="control-label col-md-4">End Date/Time <span class="required">*</span>:</label>
+                    <!--  Date -->
+                    <div class="col-md-3">
+                        <input type="text" class="form-control input-mysize input-group input-group-sm input-sm date date-picker RemovePeriodvalidation" name="datepicker" @*data-date-format="mm/dd/yyyy"*@ id="input_enddate_modal" value="@(franchisefollowschedule.Count > 2 && franchisefollowschedule[2].StartDate !=null? Convert.ToDateTime(franchisefollowschedule[2].StartDate).ToString("MM-dd-yy"):string.Empty)" disabled="disabled" />
+                    </div>
+                    <!-- Time -->
+                    <div class="col-md-3">
+                        <div class="input-icon">
+                            <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                            <input type="text" class="form-control input-group input-mysize2 input-group-sm input-sm  timepicker timepicker-default" id="input_endtime_modal" value="@(franchisefollowschedule.Count > 2 && franchisefollowschedule[2].StartDate !=null ? Convert.ToDateTime(franchisefollowschedule[2].StartDate).ToString("hh:mm tt"):string.Empty)" disabled="disabled" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Purpose -->
+                <div class="form-group">
+                    <label class="control-label col-md-4">Purpose:</label>
+                    <div class="col-md-6">
+                        <select class="form-control input-sm" name="options2" disabled="disabled">
+                            <option value="">Select..</option>
+                            <option value="1" @(franchisefollowschedule.Count > 2 && franchisefollowschedule[1].PurposeId == 1 ? "selected=selected" : string.Empty)>First Visit</option>
+                            <option value="2" @(franchisefollowschedule.Count > 2 && franchisefollowschedule[1].PurposeId == 2 ? "selected=selected" : string.Empty)>Proposal Delivery</option>
+                            <option value="3" @(franchisefollowschedule.Count > 2 && franchisefollowschedule[1].PurposeId == 3 ? "selected=selected" : string.Empty)>Proposal Follow up</option>
+                            <option value="4" @(franchisefollowschedule.Count > 2 && franchisefollowschedule[1].PurposeId == 4 ? "selected=selected" : string.Empty)>Walk Thru</option>
+                            <option value="5" @(franchisefollowschedule.Count > 2 && franchisefollowschedule[1].PurposeId == 5 ? "selected=selected" : string.Empty)>Call Back</option>
+                            <option value="6" @(franchisefollowschedule.Count > 2 && franchisefollowschedule[1].PurposeId == 6 ? "selected=selected" : string.Empty)>Cold Call</option>
+                            <option value="7" @(franchisefollowschedule.Count > 2 && franchisefollowschedule[1].PurposeId == 7 ? "selected=selected" : string.Empty)>Prospecting Email</option>
+                            <option value="8" @(franchisefollowschedule.Count > 2 && franchisefollowschedule[1].PurposeId == 8 ? "selected=selected" : string.Empty)>Past Proposal </option>
+                            <option value="9" @(franchisefollowschedule.Count > 2 && franchisefollowschedule[1].PurposeId == 9 ? "selected=selected" : string.Empty)>Follow Up</option>
+                        </select>
+                    </div>
+                </div>
+
+                }
+                <!-- All Principle Disclosed -->
+
+                <div class="form-group">
+                    <input type="checkbox" name="service" class="i - checks control-label col-md-4" style="margin-left:130px; margin-right:-90px; margin-top:12px;" @(Model.DiscloseAdditional == true ? "checked=checked" : string.Empty) disabled="disabled" />
+                    <div class="col-md-6">
+                        <label class="control-label">Disclose Additional Purpose</label>
+                    </div>
+                </div>
+
+
+                <!-- Completed Franchise Application -->
+                <form>
+                    <div class="form-group" style="margin-top:5px;">
+                        <label for="radio_contact_creationconfirmed" class="control-label col-md-4">Status Creation Confirmed<span class="required">*</span>:</label>
+                        <div class="col-md-8 fieldspadding-left">
+                            <label class="check-inline" style="margin-top: 6px;">
+                                <input type="radio" name="membership" value="1" class="i-checks" @(Model.StatusCreationConfirmed == true ? "checked=checked" : string.Empty) disabled="disabled" />
+                                <span>Yes</span>
+                            </label>
+
+                            <label class="check-inline" style="margin-top: 6px; margin-left:40px;">
+                                <input type="radio" name="membership" value="0" class="i-checks" @(Model.StatusCreationConfirmed == false ? "checked=checked" : string.Empty) disabled="disabled" />
+                                <span>No</span>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+
+                <!--Notify Next Training-->
+                <div class="form-group">
+                    <input type="checkbox" name="service" class="i - checks control-label col-md-4" style="margin-left:130px; margin-right:-90px; margin-top:12px;" @(Model.NotifyNextTraining == true ? "checked=checked" : string.Empty) disabled="disabled" />
+                    <div class="col-md-6">
+                        <label class="control-label">Notify Next Training</label>
+                    </div>
+                </div>
+
+                <!-- Keep it active-->
+                <form>
+                    <div class="form-group" style="margin-top:5px;">
+                        <label for="radio_contact_keepactive" class="control-label col-md-4">Keep it active<span class="required">*</span>:</label>
+                        <div class="col-md-8 fieldspadding-left">
+                            <label class="check-inline" style="margin-top: 6px;">
+                                <input type="radio" name="membership" value="1" class="i-checks" @(Model.KeepActive == true ? "checked=checked" : string.Empty) disabled="disabled" />
+                                <span>Yes</span>
+                            </label>
+
+                            <label class="check-inline" style="margin-top: 6px; margin-left:40px;">
+                                <input type="radio" name="membership" value="0" class="i-checks" @(Model.KeepActive == false ? "checked=checked" : string.Empty) disabled="disabled" />
+                                <span>No</span>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Note -->
+                <div class="form-group">
+                    <label for="schedule_purpose" class="control-label col-md-4">Note:</label>
+                    <div class="col-md-6">
+                        @*<textarea name="note" id="text_initialcommunicationmodal" class="form-control autosizeme" rows="6" style="font-size: 11px" disabled="disabled">@Model.Note</textarea>*@
+                        @Html.TextArea("Note", Model.Note, new { @class = "form-control autosizeme", @rows = "6", @style = "font-size: 11px", @disabled = "disabled" })
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

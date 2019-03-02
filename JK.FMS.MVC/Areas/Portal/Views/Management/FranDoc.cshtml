@@ -1,0 +1,85 @@
+﻿
+@{
+    ViewBag.Title = "FranDoc";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="custom-listbox" style="margin-top:4px;margin-bottom:3px;">
+    <div class="headerbox">
+        <div class="row">
+            <div class="col-md-12 no-padding">
+                <div class="alignCenter">
+                    <div class="col-md-12 text-center">
+                        Franchisee Documents
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tablebox">
+        <div class="row" style="padding-top: 50px;padding-bottom: 20px;">
+            <div class="col-md-12">
+                <div class="col-md-3">
+                    <input type="button" class="btn btn-primary  col-md-8" value="Account Finder Fee" onclick="OpenFinderFeeForm();" style="margin-left: 20px;" />
+                </div>
+                <div class="col-md-3">
+                    @*<input type="button" class="btn btn-primary  col-md-8" value="Percent Paid By Date" onclick="openPercentPaidByDate();" style="margin-left: 20px;" />*@
+                </div>
+                <div class="col-md-3">
+                    @*<input type="button" class="btn btn-primary  col-md-8" value="DRO Report" onclick="openDROReport();" style="margin-left: 20px;" />*@
+                </div>
+                <div class="col-md-3">
+                    @*<input type="button" class="btn btn-primary  col-md-8" value="Tax Liability Report" style="margin-left: 20px;" />*@
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade custom-model custom-form-design" id="_FinderFeeForm" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width:830px">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="custom-form portlet light" id="" style="margin-top:0px;">
+                <div class="headerbox" style="font-weight: normal;">
+                    <div class="col-md-12 text-center" style="font-size:15px;">
+                        <b> Finder Fee Form</b>
+                        <button type="button" class="close" onclick="" data-dismiss="modal" aria-hidden="true" style="margin-top: 5px !important;margin-right: 12px !important;"></button>
+                    </div>
+                    <div class="clearfix"> </div>
+                </div>
+                <div class="form-actions">
+                    <div class="col-md-8">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-primary button-next" style="margin-left:10px;" onclick="ExportPDFFranchiseePayReport()">Export <i class="fa fa-download"></i></button>
+                        <button type="button" class="btn btn-primary button-next" style="margin-left:10px;" onclick="PrintFranchiseePayReport()">Print <i class="fa fa-print"></i></button>
+                    </div>
+                </div>
+                <div class="portlet-body" style="padding:14px;" id="_FinderFeeFormData">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function OpenFinderFeeForm() {
+        var sURL = '@Url.Action("_FinderFeeForm", "Management", new { area = "Portal" })';
+
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#_FinderFeeFormData').html(data);
+                $("#_FinderFeeForm").modal({ backdrop: 'static' });
+            },
+            error: function () {
+                alert("Content load failed.");
+            }
+        });
+    }
+</script>

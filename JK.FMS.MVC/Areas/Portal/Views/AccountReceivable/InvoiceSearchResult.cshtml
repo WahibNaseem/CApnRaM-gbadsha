@@ -1,0 +1,324 @@
+﻿@model JKViewModels.AccountReceivable.InvoiceSearchViewModel
+@{
+    ViewBag.Title = "Account Receivable Invoice List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+    </style>
+}
+
+@Html.HiddenFor(o => o.consolidatedInvoice)
+@Html.HiddenFor(o => o.searchBy)
+@Html.HiddenFor(o => o.searchValue)
+@Html.HiddenFor(o => o.billMonth)
+@Html.HiddenFor(o => o.billYear)
+@Html.HiddenFor(o => o.filterBy)
+@Html.HiddenFor(o => o.eomOnly)
+@Html.HiddenFor(o => o.openInvoiceOnly)
+
+
+
+
+<div class="custom-listbox" id="divfranchiseList">
+    <div class="headerbox">
+        <div class="row">
+            <div class="col-md-4">
+                Invoice List
+            </div>
+        </div>
+    </div>
+    <div class="tablebox">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-6">
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-3 opendiv">Open:&nbsp;<span id="spnIsOpen">0</span></div>
+                        <div class="col-md-3 closeddiv">Closed:&nbsp;<span id="spnIsClosed">0</span></div>
+                        <div class="col-md-3 overpaiddiv">Over Paid:&nbsp;<span id="spnIsOverPaid">0</span></div>
+                        <div class="col-md-3 overduediv">Over Due:&nbsp;<span id="spnIsOverDue">0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="control-label">
+                            <input type="checkbox" name="chkbillingsameas" id="chkbillingsameas">&nbsp;Email
+                            <span></span>
+                        </label>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="control-label">
+                            <input type="checkbox" name="chkbillingsameas" id="chkbillingsameas">&nbsp;Print
+                            <span></span>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="control-label">
+                            <input type="checkbox" name="chkbillingsameas" id="chkbillingsameas">&nbsp;Consolidated
+                            <span></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="col-md-12">
+                    &nbsp;<button type="submit" class="btn btn-primary button-next pull-right" style="margin-left:10px;">Email</button>
+                    &nbsp;<button type="submit" class="btn btn-primary button-next pull-right" onclick="InvoiceListExportPDF()">Print</button>
+                </div>
+            </div>
+
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover order-column" id="invoiceList" style="display:none;">
+                <thead>
+                    <tr>
+                        <th style="width:25px;text-align:center;">
+
+                        </th>
+                        <th style="width:25px;text-align:center;">
+                            <input type="checkbox" id="chkSelectAll" name="chkSelectAll" />
+                        </th>
+                        <th style="width:100px;text-align:center;">
+                            Invoice No
+                        </th>
+                        <th style="width:100px;text-align:center;">
+                            Invoice Date
+                        </th>
+                        <th style="text-align:center;">
+                            Customer Name
+                        </th>
+                        <th style="text-align:center;width:105px;">
+                            Customer No
+                        </th>
+                        <th style="text-align:center;width:35px;">
+                            E/P
+                        </th>
+                        <th style="text-align:center;width:225px;">
+                            Description
+                        </th>
+                        <th style="text-align:center;width:100px;">
+                            Amount
+                        </th>
+                        <th style="text-align:center;width:100px;">
+                            Balance
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<div class="form-horizontal" id="form_invoicedetail"></div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+            bindINvoiceList($('#billMonth').val(), $('#billYear').val());
+            });
+
+            $(document).on('click', '#btnClosemodel', function () {
+                $("#modal_invoicedetail").modal('hide');
+            });
+
+        function bindINvoiceList(_monthVal, _yearVal) {
+
+            console.log($('#consolidatedInvoice').val())
+            console.log($('#searchBy').val())
+            console.log($('#searchValue').val())
+            console.log($('#billMonth').val())
+            console.log($('#billYear').val())
+            //console.log($('#filterBy').val())
+            //console.log($('#eomOnly').val())
+
+
+            var _searchtextVal = $('#invoicesearchtextbox').val('');
+            var sURL = '@Url.Action("InvoicesSearchResultData", "AccountReceivable", new { area = "Portal" })?m=' + _monthVal + '&y=' + _yearVal + '&st=' + _searchtextVal + '&sv=' + $('#searchValue').val() + '&sb=' + $('#searchBy').val() + '&cb=' + $('#consolidatedInvoice').val()
+            $.ajax(
+            {
+                type: "GET", //HTTP POST Method
+                url: sURL, // Controller/View
+                //data: { 'accid': id, 'issubacct': issub },
+                success: function (res) {
+                    var trInvoicelist = "";
+                    var trInvoicelistIsOpen = 0;
+                    var trInvoicelistIsClosed = 0;
+                    var trInvoicelistIsOverPaid = 0;
+                    var trInvoicelistIsOverDue = 0;
+
+                    var TotalInvoiceAmount = 0;
+                    var TotalInvoiceBalance = 0;
+
+
+                    var tblinvoiceList = $('#invoiceList tbody');
+                    tblinvoiceList.html("");
+                    res.forEach(function (item) {
+                        trInvoicelist = "";
+                        trInvoicelist += '<tr><td style="width:25px;text-align:center;"></td><td style="width:25px;text-align:center;"><input rel="mgglchk" type="checkbox" name="name" class="chk" value="' + item.InvoiceId + '" /></td>';
+                        trInvoicelist += '<td style="width:50px;text-align:center;"><a href="javascript:void(0);" onclick="btnOpenInvoiceDetail(' + item.InvoiceId + ')">' + item.InvoiceNo + '</a></td>';
+                        trInvoicelist += '<td style="width:50px;text-align:center;">' + moment(new Date(parseInt(item.InvoiceDate.substr(6)))).format("MM/DD/YYYY") + '</td><td style="text-align:left;">' + item.CustomerName + '</td>';
+                        trInvoicelist += '<td style="text-align:center;width:50px;">' + item.CustomerNo + '</td>';
+                        trInvoicelist += '<td style="text-align:left;">' + item.Ebill + " " + item.PrintInvoice + '</td>';
+                        trInvoicelist += '<td style="text-align:left;">' + item.Description + '</td>';
+                        trInvoicelist += '<td style="text-align:right;width:80px;">$ ' + parseFloat(item.Amount, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</td>';
+                        trInvoicelist += '<td style="text-align:right;width:80px;">$ ' + parseFloat(item.Balance, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</td></tr>';
+
+
+                        TotalInvoiceAmount += item.Amount;
+                        TotalInvoiceBalance += item.Balance;
+                        if (item.Amount < item.Balance)
+                            trInvoicelistIsOverPaid++;
+                        if (item.StatusId == 1)
+                            trInvoicelistIsOpen++;
+                        else if (item.StatusId == 2)
+                            trInvoicelistIsClosed++;
+
+                        if (item.StatusId == 1 && (Date.parse(new Date()) < new Date(parseInt(item.InvoiceDate.substr(6)))))
+                            trInvoicelistIsOverDue++;
+
+                        tblinvoiceList.append(trInvoicelist);
+                    }); 
+
+
+
+
+                    if (res.length > 0) {
+                        trInvoicelist = "";
+                        trInvoicelist += '<tr><td colspan="7"> Total Invoice count ' + res.length + '</td>';
+                        trInvoicelist += '<td style="text-align:right;"><b>Total</b></td>';
+                        trInvoicelist += '<td style="text-align:right;width:80px;">$ ' + parseFloat(TotalInvoiceAmount, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</td>';
+                        trInvoicelist += '<td style="text-align:right;width:80px;">$ ' + parseFloat(TotalInvoiceBalance, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '</td></tr>';
+
+                        tblinvoiceList.append(trInvoicelist);
+                    }
+
+
+
+                    $('#spnIsOpen').html(trInvoicelistIsOpen)
+                    $('#spnIsClosed').html(trInvoicelistIsClosed)
+                    $('#spnIsOverPaid').html(trInvoicelistIsOverPaid)
+                    $('#spnIssOverDue').html(trInvoicelistIsOverDue)
+
+                    $('#invoiceList').show();
+
+                },
+                error: function (err) {
+                    alert('failure');
+                },
+            });
+        };
+
+       
+
+        function btnOpenInvoiceDetail(id) {
+
+            var sURL = '@Url.Action("InvoiceDetail", "AccountReceivable", new { area = "Portal" })?Id=' + id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_invoicedetail').html(data);
+                    $("#modal_invoicedetail").modal({ backdrop: 'static' });
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        };
+
+            $('#chkSelectAll').change(function () {
+                if ($(this).is(":checked")) {
+                    $('input[rel="mgglchk"]').prop('checked', true);
+                }
+                else {
+                    $('input[rel="mgglchk"]').prop('checked', false);
+                }
+            });
+
+    </script>
+}
+
+
+
+<script type="text/javascript">
+    function InvoiceListExportPDF() {
+
+   
+
+        var Ids = $('.chk:checked').map(function () { return this.value; }).get().join(',')
+        if (Ids != "")
+        {
+            window.location.href = '@Url.Action("InvoiceListExportPDF")' + "?InvoiceIds=" + Ids;             
+        }
+
+        //window.location.href = '@Url.Action("InvoiceListExportPDF")';
+    }
+</script>

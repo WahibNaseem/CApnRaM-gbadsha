@@ -1,0 +1,208 @@
+﻿@model JKViewModels.Franchisee.CommonFranchiseeAccountHistoryReportViewModel
+
+<style>
+     #tblAccountHistory thead th, 
+        #tblAccountHistory thead td {
+            padding: 3px 5px !important;           
+            font-size: 11px !important;
+          
+            background-color: #95A5A6 !important;
+            color: #fff;
+        }
+         #tblAccountHistory tbody td {
+            padding: 3px 5px !important;           
+            font-size: 11px !important;
+        }
+        #tblAccountHistory thead th{
+             vertical-align: middle;
+             font-weight: bold;
+        }
+</style>
+<div class="col-md-12">
+
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-2 control-label" style="padding-top: 0px;">
+                Franchisee No.:
+            </div>
+            <div class="col-md-3">
+                <span id="spnFranchiseeNumber">@Model.FranchiseeDetail.FranchiseeNo</span>
+            </div>
+            <div class="col-md-offset-2 col-md-1 control-label" style="padding-top: 0px;">
+                Address:
+            </div>
+            <div class="col-md-4">
+                <span id="spnFranchiseeAddress">@Model.FranchiseeDetail.Address1</span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+
+            <div class="col-md-2 control-label" style="padding-top: 0px;">
+                Franchisee Name:
+            </div>
+            <div class="col-md-3">
+                <span id="spnFranchiseeName">@Model.FranchiseeDetail.Name</span>
+            </div>
+            <div class="col-md-offset-3 col-md-4">
+                <span id="spnFranchiseeCityStatePincode">@Model.FranchiseeDetail.City, @Model.FranchiseeDetail.StateName @Model.FranchiseeDetail.PostalCode</span>
+            </div>
+        </div>
+    </div>
+    <hr style="margin-top: 2px;margin-bottom: 5px;" />
+    <div class="row">
+        <div class="actions">
+            <div class="col-md-4" style="padding-left: 36px;padding-top: 6px;">
+            </div>
+            <div class="col-md-5 text-center" style="font-size: 10px;font-weight: bold;">
+                <div style="margin-bottom: -14px;color: brown;">@Model.FranchiseeDetail.RegionName</div> <br />Account History for @Model.FranchiseeDetail.FranchiseeNo - @Model.FranchiseeDetail.Name<br />Signed 
+                @Convert.ToDateTime(Model.FranchiseeDetail.DateSign).ToString("MM/dd/yyyy")
+                , Plan type @Model.FranchiseeDetail.PlanType
+            </div>
+        </div>
+    </div>
+    <hr style="margin-top: 2px;margin-bottom: 1px;" />
+    <div class="row">
+        <div class="col-md-6" style="padding-left:0;">
+            &nbsp;<button id="_FAHR__btnPrint" type="button" class="btn btn-primary button-next pull-left" style="margin-right:10px;padding: 3px 10px;font-size: 12px;" onclick="DetailFranchiseeAccountHistoryReportPrint()">Print</button>
+            &nbsp;<button id="_FAHR__btnExport" type="button" class="btn btn-primary button-next pull-left" style="padding: 3px 10px;font-size: 12px;" onclick="FranchiseeAccountHistoryReportExport(@Model.FranchiseeDetail.FranchiseeId)">Export</button>
+        </div>
+        <div class="col-md-6 text-right" style="font-size:11px;padding: 5px;">
+            A=Active,C=Cancelled,D=Declined,I=InActive,O=One-Time Clean,S=Suspended,T=Transferred
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover table-checkable order-column dataTable no-footer" id="tblAccountHistory" role="grid" aria-describedby="tblAccountHistory">
+                    <thead>
+                        <tr role="row" class="heading">
+                            <th style="text-align:center;">
+                                Status
+                            </th>
+                            <th style="text-align:center;">
+                                Cust No
+                            </th>
+                            <th style="text-align:center;">
+                                Offered
+                            </th>
+                            <th style="width:200px;text-align:center;">
+                                Customer Name
+                            </th>
+                            <th style="text-align:center;">
+                                Sales rep
+                            </th>
+                            <th style="text-align:center;">
+                                Contract  Amount
+                            </th>
+                            <th style="text-align:center;">
+                                IB Credit
+                            </th>
+                            <th style="text-align:center;">
+                                FF Credit
+                            </th>
+                            <th style="text-align:center;background: lightblue;">
+                                Tot FF Due
+                            </th>
+                            <th style="text-align:center;background: lightblue;">
+                                FF Paid
+                            </th>
+                            <th style="width: 70px;text-align:center;">
+                                FF on Hold
+                            </th>
+                            <th style="text-align:center;">
+                                Days Kept
+                            </th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var oRow in Model.lstFranchiseeAccountHistoryReport.Where(c => c.isActive == true).ToList())
+                    {
+                    <tr class="odd gradeX">
+                        <td class="text-center">@oRow.StatusName</td>
+                        <td class="text-center">@oRow.CustomerNo</td>
+                        <td class="text-center">@String.Format("{0:MM/dd/yyy}",oRow.StartDate)</td>
+                        <td>@oRow.CustomerName</td>
+                        <td class="text-center">TS</td>
+                        <td class="text-right">@String.Format("{0:c}", oRow.ContractAmount)</td>
+                        <td class="text-right">@String.Format("{0:c}", oRow.IBCreditAmount)</td>
+                        <td class="text-right">@String.Format("{0:c}", oRow.FFCreditAmount)</td>
+                        <td class="text-right" style="background: lightblue;">@String.Format("{0:c}", oRow.FFTotalDueAmount)</td>
+                        <td class="text-right" style="background: lightblue;">@String.Format("{0:c}", oRow.FFPaidAmount)</td>
+                        @if (oRow.FFHold == 31)
+                        {
+                        <td class="text-center">N</td>
+                        }
+                        @if (oRow.FFHold == 32)
+                        {
+                            <td class="text-center">N</td>
+                        }
+                        @if (oRow.FFHold == 33)
+                        {
+                            <td class="text-center">Y</td>
+                        }
+                        <td class="text-center">@oRow.DaysKept</td>
+                    </tr>
+                    }
+                        <tr>
+                            <td colspan="4" style="background:antiquewhite;">Total Active Account: @Model.lstFranchiseeAccountHistoryReport.Where(c => c.isActive == true).Count()</td>
+                            <td style="background:antiquewhite;">Total</td>
+                            <td class="text-right" style="background:antiquewhite;">@String.Format("{0:c}", Model.lstFranchiseeAccountHistoryReport.Where(c => c.isActive == true).Sum(l => l.ContractAmount))</td>
+                            <td class="text-right" style="background:antiquewhite;">@String.Format("{0:c}", Model.lstFranchiseeAccountHistoryReport.Where(c => c.isActive == true).Sum(l => l.IBCreditAmount))</td>
+                            <td class="text-right" style="background:antiquewhite;">@String.Format("{0:c}", Model.lstFranchiseeAccountHistoryReport.Where(c => c.isActive == true).Sum(l => l.FFCreditAmount))</td>
+                            <td class="text-right" style="background: lightblue;">@String.Format("{0:c}", Model.lstFranchiseeAccountHistoryReport.Where(c => c.isActive == true).Sum(l => l.FFTotalDueAmount))</td>
+                            <td class="text-right" style="background: lightblue;">@String.Format("{0:c}", Model.lstFranchiseeAccountHistoryReport.Where(c => c.isActive == true).Sum(l => l.FFPaidAmount))</td>
+                            <td style="background:antiquewhite;"></td>
+                            <td style="background:antiquewhite;"></td>
+                            
+                        </tr>
+
+                     @foreach (var oRow in Model.lstFranchiseeAccountHistoryReport.Where(c => c.isActive == false).ToList())
+                    {
+                    <tr class="odd gradeX">
+                        <td class="text-center">@oRow.StatusName</td>
+                        <td class="text-center">@oRow.CustomerNo</td>
+                        <td class="text-center">@String.Format("{0:MM/dd/yyy}", oRow.StartDate)</td>
+                        <td>@oRow.CustomerName</td>
+                        <td class="text-center">TS</td>
+                        <td class="text-right">@String.Format("{0:c}", oRow.ContractAmount)</td>
+                        <td class="text-right">@String.Format("{0:c}", oRow.IBCreditAmount)</td>
+                        <td class="text-right">@String.Format("{0:c}", oRow.FFCreditAmount)</td>
+                        <td class="text-right" style="background: lightblue;">@String.Format("{0:c}", oRow.FFTotalDueAmount)</td>
+                        <td class="text-right" style="background: lightblue;">@String.Format("{0:c}", oRow.FFPaidAmount)</td>
+                        <td class="text-center">Y</td>
+                        <td class="text-center">@oRow.DaysKept</td>
+                    </tr>
+
+                    }
+                        <tr>
+                            <td colspan="4" style="background:antiquewhite;">Total InActive Account: @Model.lstFranchiseeAccountHistoryReport.Where(c => c.isActive == false).Count()</td>
+                            <td style="background:antiquewhite;">Total</td>
+                            <td class="text-right" style="background:antiquewhite;">@String.Format("{0:c}", Model.lstFranchiseeAccountHistoryReport.Where(c => c.isActive == false).Sum(l => l.ContractAmount))</td>
+                            <td class="text-right" style="background:antiquewhite;">@String.Format("{0:c}", Model.lstFranchiseeAccountHistoryReport.Where(c => c.isActive == false).Sum(l => l.IBCreditAmount))</td>
+                            <td class="text-right" style="background:antiquewhite;">@String.Format("{0:c}", Model.lstFranchiseeAccountHistoryReport.Where(c => c.isActive == false).Sum(l => l.FFCreditAmount))</td>
+                            <td class="text-right" style="background: lightblue;">@String.Format("{0:c}", Model.lstFranchiseeAccountHistoryReport.Where(c => c.isActive == false).Sum(l => l.FFTotalDueAmount))</td>
+                            <td class="text-right" style="background: lightblue;">@String.Format("{0:c}", Model.lstFranchiseeAccountHistoryReport.Where(c => c.isActive == false).Sum(l => l.FFPaidAmount))</td>
+                            <td style="background:antiquewhite;"></td>
+                            <td style="background:antiquewhite;"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+<script>
+    function formatCurrency(total, dollar) {
+        dollar = (dollar == true ? true : false);
+        var neg = false;
+        if (total < 0) {
+            neg = true;
+            total = Math.abs(total);
+        }
+        return (neg ? "-" : '') + (dollar ? "$" : "") + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+    }
+</script>

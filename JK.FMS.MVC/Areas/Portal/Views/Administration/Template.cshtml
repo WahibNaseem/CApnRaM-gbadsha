@@ -1,0 +1,637 @@
+﻿
+@model JKViewModels.FormTemplateViewModel
+
+
+@{
+    ViewBag.Title = "Template";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+
+    <style type="text/css">
+        table.dataTable thead .sorting {
+            background-image: none;
+        }
+
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+            display: table-cell;
+            min-width: 105px;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+            display: table-cell;
+            min-width: 90px;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+            display: table-cell;
+            min-width: 100px;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+            display: table-cell;
+            min-width: 96px;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        .page-size {
+            padding-left: 0;
+            padding-right: 0;
+            width: 62px;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        #invoiceList th {
+            vertical-align: middle;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .no-margin {
+            margin: 0;
+        }
+
+        .padding-tb1 {
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        .margin-tb1 {
+            margin-top: 1px;
+            margin-bottom: 1px;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        #divfranchiseList .headerbox {
+            text-transform: none;
+            font-weight: normal;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        #modal_RegionModel .modal-content {
+            width: 55% !important;
+            margin-left: 30% !important;
+        }
+
+        .text-bottom {
+            vertical-align: bottom !important;
+        }
+
+        input[type="radio"].bigger-radio {
+            -ms-transform: scale(1.5); /* IE 9 */
+            -webkit-transform: scale(1.5); /* Chrome, Safari, Opera */
+            transform: scale(1.5);
+            margin-bottom: 10px;
+        }
+    </style>
+}
+<link href="~/Content/admin/assets/global/plugins/jstree/dist/themes/default/style.min.css" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript"></script>
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script src="~/Content/admin/assets/global/plugins/jquery-multi-select/js/jquery.multi-select.js"></script>
+<script src="~/Scripts/multiselect.min.js"></script>
+<script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+@*<div class="custom-listbox" id="divfranchiseList" style="margin-top:4px;margin-bottom:3px;">
+        <div class="headerbox">
+            <div class="row no-padding">
+                <div class="col-sm-1 page-size">
+                    <select class="form-control input-sm" id="pageSize" style="padding-left:6px;">
+                        <option value="-1">All</option>
+                        <option value="100">100</option>
+                        <option value="50" selected>50</option>
+                        <option value="25">25</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <div class="input-icon">
+                        <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                        <input id="csearch-box" type="text" required name="customernumber" autocomplete="off" placeholder="Search...." value="" class="form-control input-sm typeahead" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+<div class="tablebox">
+    <div class="row padding-tb1">
+        <div class="row no-padding">
+            <div class="col-md-3" style="padding-top:2px;padding-left:0;padding-bottom: 3px;">
+                <div class="col-md-12" style="padding-left:0;">
+                    &nbsp;<button type="button" class="btn btn-primary button-next pull-left" style="margin-right:10px;" onclick="RedirectDetail()"><i class="fa fa-plus"></i>Add New Template</button>
+                </div>
+            </div>
+        </div>
+        <div class="row no-padding">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover order-column" id="UserGroup" style="margin-top:0 !important;">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center;"> ACCOUNT TYPE </th>
+                            @*<th style="text-align:center;"> SERVICE NAME </th>*@
+                            <th style="text-align:center;"> TEMPLATE NAME </th>
+                            <th style="text-align:center;"> ACTION </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.FormTemplateList.Count > 0)
+                        {
+                            for (var i = 0; i < Model.FormTemplateList.Count; i++)
+                            {
+                                <tr>
+                                    <td style="text-align:center;padding-left:10px !important">
+                                        <a href='/Portal/Administration/TemplateDetail/@Model.FormTemplateList[i].FormTemplateId'>@Model.FormTemplateList[i].AccountTypeListName</a>
+                                    </td>
+                                    @*<td style="text-align:center;padding-left:10px !important">
+                                        @Model.FormTemplateList[i].ServiceTypeListName
+                                    </td>*@
+                                    <td style="text-align:center;padding-left:10px !important">
+                                        @Model.FormTemplateList[i].FormName
+                                    </td>
+                                    <td style="text-align:center;padding-left:10px !important">
+                                        <a href='/Portal/Administration/TemplateDetail/@Model.FormTemplateList[i].FormTemplateId'>Edit</a>
+                                        <a onclick="DeleteTemplateForm(@Model.FormTemplateList[i].FormTemplateId);">Delete</a>
+                                        <input type="hidden" id="FormTemplateId_@i" name="name" value="@Model.FormTemplateList[i].FormTemplateId" />
+                                        <input type="hidden" id="AccountTypeListId_@i" name="name" value="@Model.FormTemplateList[i].AccountTypeListId" />
+                                        <input type="hidden" id="FormName_@i" name="name" value="@Model.FormTemplateList[i].FormName" />
+                                        <input type="hidden" id="FormTemplateTypeId_@i" name="name" value="@Model.FormTemplateList[i].FormTemplateTypeId" />
+                                        <input type="hidden" id="ServiceTypeListId_@i" name="name" value="@Model.FormTemplateList[i].ServiceTypeListId" />
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="3">
+                                    No Record found.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@using (Html.BeginForm("Template", "Administration", FormMethod.Post, new { @id = "form_wizard_1", @role = "form", @class = "form " }))
+{
+
+    @*@Html.HiddenFor(x => x.ActionType, new { @id = "hdnActionType", Value = Model.ActionType })
+        @Html.HiddenFor(x => x.FormTemplateId, new { @id = "hdnFormTemplateId", Value = Model.FormTemplateId })
+        <div id="AddNewgroupModal" class="modal fade custom-model  in" role="dialog" aria-hidden="true" style="padding-top:90px;padding-right: 0px;" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content" style="border-radius: 8px;width: 800px;margin-left: -8% !important;">
+                    <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                        <h4 class="modal-title" style="margin-top: 0px;margin-bottom: 4px;padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                            Add New Template
+                        </h4>
+                    </div>
+                    <div class="modal-body" id="" style="padding: 15px 25px 5px 25px;">
+                        <form id="fgUnPdvEmailForm" name="verifyEmailForm" method="post">
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="control-label col-md-2">
+                                            Template Name
+                                            <span class="required" aria-required="true"> * </span>
+                                        </label>
+                                        <div class="col-md-4">
+                                            @Html.TextBoxFor(model => model.FormName, new { @class = "form-control input-sm requiredValidation", @id = "txtTemplateName" })
+                                            <span class="help-block"> Provide your Template Name </span>
+                                        </div>
+                                        <label class="control-label col-md-2">
+                                            Description
+                                            <span class="required" aria-required="true"> * </span>
+                                        </label>
+                                        <div class="col-md-4">
+                                            @Html.TextBoxFor(model => model.Description, new { @class = "form-control input-sm requiredValidation", @id = "txtDescription" })
+                                            <span class="help-block"> Provide your description. </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="control-label col-md-2">
+                                            Template Type
+                                            <span class="required" aria-required="true"> * </span>
+                                        </label>
+                                        <div class="col-md-4">
+                                            @Html.DropDownListFor(model => model.FormTemplateTypeId, ViewBag.FormTemplateTypeList as SelectList, "-Select-", new { @class = "form-control input-sm requiredValidation", @id = "ddlFormTemplateTypeList" })
+                                            <span class="help-block"> Confirm your password </span>
+                                        </div>
+                                        <label class="control-label col-md-2">
+                                            Account Type
+                                            <span class="required" aria-required="true"> * </span>
+                                        </label>
+                                        <div class="col-md-4">
+                                            @Html.DropDownListFor(model => model.AccountTypeListId, ViewBag.AccountTypeList as SelectList, "-Select-", new { @class = "form-control input-sm requiredValidation", @id = "ddlAccountTypeList" })
+                                            <span class="help-block"> Provide your description. </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="control-label col-md-2">
+                                            Service Type
+                                            <span class="required" aria-required="true"> * </span>
+                                        </label>
+                                        <div class="col-md-4">
+                                            @Html.DropDownListFor(model => model.ServiceTypeListId, ViewBag.ServiceTypeList as SelectList, "-Select-", new { @class = "form-control input-sm requiredValidation", id = "ddlServiceTypeList" })
+                                            <span class="help-block"> Confirm your password </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="control-label col-md-2">
+                                            Area
+                                            <span class="required" aria-required="true"> * </span>
+                                        </label>
+                                        <div class="col-md-4">
+                                            @Html.HiddenFor(x => x.AreaIds, new { @id = "hdnAreaIds" })
+                                            @Html.ListBox("ddlAreaIds", ViewBag.AreaList as MultiSelectList, new { @id = "ddlAreaIds", @class = "chosen-select form-control col-md-4 input-sm requiredValidation", data_placeholder = "--Select--" })
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <input type="checkbox" class="form-control input-sm" value="Select All" id="btnSelectAllArea" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="control-label col-md-2">
+                                            Question
+                                            <span class="required" aria-required="true"> * </span>
+                                        </label>
+                                        <div class="col-md-10">
+                                            @Html.HiddenFor(x => x.QuestionIds, new { @id = "hdnQuestionIds" })
+                                            @Html.ListBox("ddlQuestionIds", ViewBag.QuestionList as MultiSelectList, new { @id = "ddlQuestionIds", @class = "chosen-select form-control col-md-10 input-sm requiredValidation", data_placeholder = "--Select--" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="col-sm-12 text-center">
+                            <button type="button" id="btnCancel" data-dismiss="modal" class="btn green closeA">Cancel</button>
+                            <button type="submit" id="btnSubmit" style="display:none" class="btn green">Save</button>
+                            <button type="button" id="btnSave" onclick="AddEdit()" class="btn green">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+}
+
+<div class="modal fade in" id="modal_tempDelete" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;padding-top:60px;">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" style="border-radius: 8px;margin-left: -8% !important;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title" style="margin-top: 0px;margin-bottom: 4px;padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Conform ?
+                </h4>
+            </div>
+            <div class="modal-body" id="" style="padding: 15px 25px 5px 25px;">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="control-label col-md-12">
+                                Are you sure to delete this record ?
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-12 text-center">
+                    <input type="hidden" id="tempIdDelete" />
+                    <button type="button" id="btnCancel" class="btn green closeA">Cancel</button>
+                    <button type="button" id="btnSave" onclick="DeleteSubmit()" class="btn green">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section pageplugins{
+    @if (Request.IsSecureConnection)
+    {
+        <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    }
+    else
+    {
+        <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    }
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/chosen.css")" />
+    <script src="@Url.Content("~/Scripts/chosen.jquery.min.js")" type="text/javascript"></script>
+    <script src="~/Scripts/jquery.uniform.min.js"></script>
+
+}
+@section scripts{
+    <script>
+            jQuery(document).ready(function () {
+
+                $(".chosen-select").chosen({ no_results_text: "Oops, nothing found!" });
+
+                $('#ddlAreaIds').chosen();
+                $('#ddlQuestionIds').chosen();
+
+                $("#btnCancel").click(function () {
+                    $("#modal_tempDelete").modal("hide");
+                })
+
+                $('#btnSelectAllArea').click(function () {
+                    if ($("#btnSelectAllArea").is(':checked')) {
+                        $('#ddlAreaIds option').prop('selected', true);
+                        $("#ddlAreaIds").trigger("chosen:updated");
+
+                    } else {
+                        $('#ddlAreaIds option').prop('selected', false);
+                        $("#ddlAreaIds").trigger("chosen:updated");
+
+                    }
+
+                    var option_all = $("#ddlAreaIds option:selected").map(function () {
+                        return $(this).val();
+                    }).get().join(',');
+
+                    $("#hdnAreaIds").val(option_all);
+                });
+
+                $(".close").click(function () {
+                    Reset();
+                });
+                $(".closeA").click(function () {
+                    Reset();
+                });
+
+
+
+                function Reset() {
+                    $("#hdnFormTemplateId").val("0");
+                    $("#hdnAreaIds").val("");
+                    $("#hdnQuestionIds").val("");
+                    $("#txtTemplateName").val("");
+                    $("#txtDescription").val("");
+                    $("#ddlFormTemplateTypeList").val("");
+                    $("#ddlAccountTypeList").val("");
+                    $("#ddlServiceTypeList").val("");
+                    $("#ddlAreaIds").val("");
+                    $("#ddlQuestionIds").val("");
+                    $("#ddlAreaIds").trigger("chosen:updated");
+                    $("#ddlQuestionIds").trigger("chosen:updated");
+                    $("#btnSelectAllArea").prop("checked", false);
+                    $("#hdnActionType").val("");
+                }
+
+                var table = $('#UserGroup');
+                table.DataTable({
+                    "pageLength": 100, // default records per page
+                    "dom": "<'table-responsive't><'bottom'ip><'clear'>",
+                    "bInfo": false,
+                    "bStateSave": false,
+                    "bSort": true,
+                    "order": true,
+                    "fnStateSaveParams": function (oSettings, sValue) {
+                        $("#UserGroup tr.filter .form-control").each(function () {
+                            sValue[$(this).attr('name')] = $(this).val();
+                        });
+
+                        return sValue;
+                    },
+
+                });
+
+                $("#ddlAreaIds").change(function () {
+                    $("#hdnAreaIds").val($(this).val());
+                    //alert($(this).val());
+                });
+
+                $("#ddlQuestionIds").change(function () {
+                    $("#hdnQuestionIds").val($(this).val());
+                    //alert($(this).val());
+                });
+
+            });
+
+    function RedirectDetail() {
+        location.href = '/Portal/Administration/TemplateDetail/';
+        };
+
+            function DeleteTemplateForm(TempId) {
+                $("#modal_tempDelete").modal("show");
+                $("#tempIdDelete").val(TempId);
+            };
+
+            function DeleteSubmit() {
+                var id = $("#tempIdDelete").val();
+                 var sURL = '@Url.Action("DeleteTemplate", "Administration", new { area = "Portal" })?id=' + id;
+                    $.ajax({
+                            type: "GET",
+                            url: sURL,
+                            contentType: "application/json; charset=utf-8",
+                            datatype: "json",
+                        success: function (data) {
+                            swal('Template Deleted, Thanks')
+                            $("#modal_tempDelete").modal("hide");
+                            $.blockUI();
+                      var pageurl = '@Url.Action("Template", "Administration", new { area = "Portal"})';
+                    window.location.href = pageurl;
+                        },
+                            error: function () {
+                                alert("Content load failed.");
+                            }
+                        });
+            };
+
+    function Edit(id) {
+        $("#hdnFormTemplateId").val($("#FormTemplateId_" + id).val());
+        $("#txtTemplateName").val($("#FormName_" + id).val());
+        $("#txtDescription").val($("#Description_" + id).val());
+        $("#ddlFormTemplateTypeList").val($("#FormTemplateTypeId_" + id).val());
+        $("#ddlAccountTypeList").val($("#AccountTypeListId_" + id).val());
+        $("#ddlServiceTypeList").val($("#ServiceTypeListId_" + id).val());
+        $("#hdnAreaIds").val($("#AreaIds_" + id).val());
+        var str_array = $("#AreaIds_" + id).val().split(',');
+        $("#ddlAreaIds").val(str_array).trigger("chosen:updated");
+
+        $("#hdnQuestionIds").val($("#QuestionIds_" + id).val());
+        var str_array = $("#QuestionIds_" + id).val().split(',');
+        $("#ddlQuestionIds").val(str_array).trigger("chosen:updated");
+
+        $("#hdnActionType").val("U");
+    }
+
+    function Delete(id) {
+        $("#hdnFormTemplateId").val($("#FormTemplateId_" + id).val());
+        $("#hdnActionType").val("D");
+    }
+
+    function AddEdit() {
+        var IsValidItem = true;
+        $("input.requiredValidation").each(function () {
+            if ($(this).val().length == 0) {
+                $(this).addClass('error');
+                IsValidItem = false;
+            }
+            else {
+                $(this).removeClass('error');
+            }
+        });
+
+        $("select.requiredValidation").each(function () {
+            if ($(this).val() == "") {
+                $(this).addClass('error');
+                IsValidItem = false;
+            }
+            else {
+                $(this).removeClass('error');
+            }
+        });
+
+
+        if (IsValidItem) {
+            if ($("#hdnFormTemplateId").val() > 0)
+                $("#hdnActionType").val("U");
+            else
+                $("#hdnActionType").val("I");
+
+            PageSubmit();
+        }
+    }
+
+    function PageSubmit() {
+        $("#btnSubmit").click();
+    }
+
+    </script>
+}
+
+
+
+

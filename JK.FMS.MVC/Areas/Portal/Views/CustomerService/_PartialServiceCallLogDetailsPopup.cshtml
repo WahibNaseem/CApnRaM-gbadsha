@@ -1,0 +1,546 @@
+﻿@model JKViewModels.Customer.ServiceCallLogModel
+@{
+    JKViewModels.Customer.BasicInfoCustomerModel CustModel = new JKViewModels.Customer.BasicInfoCustomerModel();
+    if (ViewBag.CustomerDetail != null)
+    {
+        CustModel = (JKViewModels.Customer.BasicInfoCustomerModel)ViewBag.CustomerDetail;
+    }
+}
+
+<div class="modal-content" style="border-radius: 8px;">
+    <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+        <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+            Service Call Log
+            @*<a href="Javascrpit:void(0)" onclick=Editfunction(); style="color:red"><b>Edit</b></a>*@
+        </h4>
+    </div>
+    <div class="modal-body" style="padding: 0px 30px 15px 30px;">
+        @using (Html.BeginForm("EditServiceCallLogDetailsPopupData", "Customer", FormMethod.Post, new { @id = "frmServiceCallLogDetailsData", @role = "form" }))
+        {
+            @*@Html.HiddenFor(x => x.ClassId)
+                @Html.HiddenFor(x => x.TypeListId, new { @Value = "1" })
+                @Html.HiddenFor(x => x.RegionId)*@
+                        <input type="hidden" name="ServiceCallLogId" id="ServiceCallLogId" value="@Model.ServiceCallLogId" />
+                        <input type="hidden" name="ClassId" id="ClassId" value="@ViewBag.CustomerId" />
+                        <input type="hidden" name="TypeListId" id="TypeListId" value="1" />
+                        <input type="hidden" name="RegionId" id="RegionId" value="@ViewBag.RegionId" />
+                        <input type="hidden" name="hdnCallFrompop" id="hdnCallFrompop" value="@ViewBag.CallFrom" />                         
+                        <div class="form-group">
+                            <div class="row"  style="padding:0px;">
+                                <div class="col-md-12">
+                                    <div class="col-md-2 control-label" style="padding-top: 0px;text-align:right;">
+                                        <span><b>Customer No</b><span style="color:#000000;">&nbsp;:</span></span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        @*<span><b>@ViewBag.CustomerDetail.CustomerNo</b></span>*@
+                                        <span><b><label id="CustomerNos">@(CustModel.CustomerNo != null ? CustModel.CustomerNo : string.Empty)</label></b></span>
+                                    </div>
+                                    <div class="col-md-2">
+                                    </div>
+                                    <div class="col-md-2 control-label" style="padding-top: 0px;text-align:right;">
+                                        <span><b>Contact</b><span style="color:#000000;">&nbsp;:</span></span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <span><b><label id="ContactNames">@(CustModel.Contact != null ? CustModel.Contact : string.Empty) </label></b></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row"  style="padding:0px;">
+                                <div class="col-md-12">
+                                    <div class="col-md-2 control-label" style="padding-top: 0px;text-align:right;">
+                                        <span><b>Customer Name</b><span style="color:#000000;">&nbsp;:</span></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <span><b><label id="CustomerNames">@(CustModel.CustomerName != null ? CustModel.CustomerName : string.Empty)</label></b></span>
+                                    </div>
+                                    <div class="col-md-2 control-label" style="padding-top: 0px;text-align:right;">
+                                        <span><b>Phone No</b><span style="color:#000000;">&nbsp;:</span></span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <span><b><label id="Phones">@((CustModel.PhoneNo != null && CustModel.PhoneNo != "") ? string.Format("{0:(###) ###-####}", Convert.ToDecimal(CustModel.PhoneNo.Trim().Replace(" ", "").Replace("-", "").Replace(")", "").Replace("(", ""))) : string.Empty) </label></b></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row"  style="padding:0px;">
+                                <div class="col-md-12">
+                                    <div class="col-md-6">
+                                        <div class="control-label" style="text-align:right;padding-right:65px;">
+                                            <label class="mt-radio" style="margin-bottom: 13px;">
+                                                <input checked="checked" id="chkCallLog" name="chkCallLogType" type="radio" @((Model.Internal == null || Model.Internal == 0) ? "checked=checked" : string.Empty) >
+                                                <span></span>
+                                                Call Log
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="control-label" style="text-align:left;">
+                                            <label class="mt-radio" style="margin-bottom: 13px;">
+                                                <input id="chkInternalOfficeNotes" name="chkCallLogType" type="radio" @(Model.Internal == 1 ? "checked=checked" : string.Empty)>
+                                                <span></span>
+                                                Internal Office Notes
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="hdnActiveType" id="hdnActiveType" value="@((Model.Internal == null || Model.Internal == 0) ? "1":"2")" />
+
+                        <div class="form-group clscalllogtype"  @((Model.Internal == null || Model.Internal == 0) ? string.Empty: "style=display:none;" )>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-2 control-label" style="text-align:right;">
+                                        Initiated By<span style="color:#000000;"> &nbsp;:<span class="required">*</span></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Html.DropDownListFor(x => x.InitiatedBy, new SelectList(ViewBag.InitiatedBy, "Value", "Key"), new { @class = "form-control input-sm", required = "required" })
+                                    </div>
+                                    <div class="col-md-2 control-label" style="text-align:right;">
+                                        Type<span style="color:#000000;">&nbsp;:<span class="required">*</span></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Html.DropDownListFor(x => x.ServiceLogTypeListId, (IEnumerable<SelectListItem>)ViewBag.ServiceCallLogTypeList, "All Type", new { @class = "form-control input-sm", required = "required" })
+                                        @*<select class="input-sm form-control">
+                                                <option>Claim / Incident</option>
+                                            </select>*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group clscalllogtype"  @((Model.Internal == null || Model.Internal == 0) ? string.Empty : "style=display:none;" )>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-2 control-label" style="text-align:right;">
+                                        Spoke With<span style="color:#000000;">&nbsp;:<span class="required">*</span></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @*<input type="text" class="input-sm form-control" />*@
+                                        @Html.TextBoxFor(x => x.SpokeWith, new { @class = "input-sm form-control" })
+                                    </div>
+                                    <div class="col-md-2 control-label" style="text-align:right;display:none;">
+                                        Area<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-4" style="display:none;">
+                                        @Html.DropDownListFor(x => x.ServiceLogAreaListId, (IEnumerable<SelectListItem>)ViewBag.ServiceCallAreaList, "All Area", new { @class = "form-control input-sm", required = "required" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group clscalllogtype"  @((Model.Internal == null || Model.Internal == 0) ? string.Empty : "style=display:none;" )>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-2 control-label" style="text-align:right;">
+                                        Action<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-10">
+                                        @Html.TextBoxFor(x => x.Action, new { @class = "input-sm form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group clscalllogtype"  @((Model.Internal == null || Model.Internal == 0) ? string.Empty : "style=display:none;" )>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-2 control-label" style="text-align:right;">
+                                        Comments<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-10">
+                                        @Html.TextAreaFor(x => x.Comments, new { @class = "input-sm form-control", @rows = "5", @style = "min-width: 667px;" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group clscalllogtype"  @((Model.Internal == null || Model.Internal == 0) ? string.Empty : "style=display:none;" )>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-2 control-label" style="text-align:right;">
+                                        Status<span style="color:#000000;">&nbsp;:<span class="required">*</span></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @*@Html.DropDownListFor(, ViewBag.StatusResultList, new { @class = "form-control input-sm", required = "required", @id = "StatusResultListId", @name = "StatusResultListId" })*@
+                                        @Html.DropDownListFor(x => x.StatusResultListId, (IEnumerable<SelectListItem>)ViewBag.StatusResultList, "Select", new { @class = "form-control input-sm", required = "required" })
+                                    </div>
+                                    <div class="col-md-2 control-label" style="text-align:right;">
+                                        @*Call Back<span style="color:#000000;">&nbsp;:</span>*@
+                                        Call Back &nbsp;
+                                        <label class="mt-checkbox" style="margin-bottom: 13px;">
+                                            @if (Convert.ToInt32(ViewBag.iscbk) == 1)
+                                            {
+                                                <input id="chkIsCallBack" name="chkIsCallBack" type="checkbox" @((Model.Internal == 0 && Model.IsCallBack == true) ? "checked=checked" : string.Empty) onclick="return false">
+                                            }
+                                            else
+                                            {
+                                                <input id="chkIsCallBack" name="chkIsCallBack" type="checkbox" @((Model.Internal == 0 && Model.IsCallBack == true) ? "checked=checked" : string.Empty ) >
+                                            }                                            
+                                            <input name="hdnIsCallBack" id="hdnIsCallBack" type="hidden" value="1">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @*<div class="input-group input-medium date" data-date-format="mm/dd/yyyy">
+                                                @Html.TextBoxFor(x => x.CallBack, new { @class = "form-control input-sm date" })
+                                                <span class="input-group-btn">
+                                                    <button class="btn default" type="button">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </button>
+                                                </span>
+                                            </div>*@
+                                        <div class="col-md-6 clsdatetm" style="padding-right:2px; padding-left:0px; @((Model.Internal == 0 && Model.IsCallBack == false) ? "display:none" : string.Empty )">
+                                            <input type="text" id="txtCallBack" name="txtCallBack" class="form-control input-sm date date-picker" placeholder="Date" value="@((Model.Internal == 0 && Model.IsCallBack == true) ?  Convert.ToDateTime(Model.CallBack).ToString("MM-dd-yyyy") : string.Empty)" />
+                                            @*@Html.TextBoxFor(x => x.CallBack, new { @class = "form-control input-sm date date-picker" })*@
+                                            <input type="hidden" name="CallBack" id="CallBack" value="@Model.CallDate" />
+                                        </div>
+                                        @*<div class="col-md-6 clsdatetm" style="padding-right:0px; padding-left:2px;display:none;">
+                                                <div class="input-icon">
+                                                    <i class="fa fa-clock-o" style="margin-top:7px;"></i>
+                                                    @Html.TextBoxFor(x => x.CallTime, new { @class = "form-control input-sm timepicker timepicker-default" })
+                                                </div>
+                                            </div>*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group clscalllogtype" @((Model.Internal == null || Model.Internal == 0) ? string.Empty : "style=display:none;" )>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-2 control-label" style="text-align:right;">
+                                        Follow By<span style="color:#000000;">&nbsp;:<span class="required" id="spnreqfollowby" style="display:none">*</span></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Html.DropDownListFor(x => x.FollowUpBy, (IEnumerable<SelectListItem>)ViewBag.ServiceCallFollowBy, "Select User", new { @class = "form-control input-sm", required = "required" })
+                                    </div>
+
+                                    <div class="col-md-2 control-label" style="text-align:right;">
+                                        Email Call Notes to<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @*@Html.DropDownListFor(x => x.EmailNotesTo, (IEnumerable<SelectListItem>)ViewBag.ServiceEmailCall, new { @class = "form-control input-sm", required = "required" })*@
+                                        @Html.HiddenFor(x => x.EmailNotesTo, new { @id = "hdnEmailNotesTo" })
+                                        @* @Html.DropDownListFor(x => x.EmailNotesTo, (IEnumerable<SelectListItem>)ViewBag.ServiceEmailCall, new { @class = "chosen-select form-control input-sm", required = "required" })*@
+                                        @Html.ListBox("ddlEmailNotesTo", ViewBag.ServiceEmailCall as MultiSelectList, new { @id = "ddlEmailNotesTo", @class = "chosen-select form-control col-md-4 input-sm", data_placeholder = "--Select--" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        //Internal office note
+                        <div class="form-group clsinternalofficenote" @(Model.Internal == 1 ?  string.Empty : "style=display:none;" )>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-2 control-label" style="text-align:right;">
+                                        Spoke With<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="text" class="input-sm form-control" id="txtSpokeWith2" name="txtSpokeWith2" />
+                                    </div>
+                                    <div class="col-md-2 control-label" style="text-align:right;">
+                                        Type<span style="color:#000000;">&nbsp;:<span class="required">*</span></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Html.DropDownList("ddlServiceLogTypeListId2", (IEnumerable<SelectListItem>)ViewBag.ServiceCallLogTypeList, "All Type", new { @id = "ddlServiceLogTypeListId2", @class = "form-control input-sm", required = "required" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group clsinternalofficenote" @(Model.Internal == 1 ? string.Empty : "style=display:none;" )>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-2 control-label" style="text-align:right;">
+                                        Action<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <input type="text" class="input-sm form-control" id="txtAction2" name="txtAction2" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group clsinternalofficenote" @(Model.Internal == 1 ? string.Empty : "style=display:none;")>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-2 control-label" style="text-align:right;">
+                                        Comments<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <textarea id="txtComments2" name="txtComments2" class="input-sm form-control", rows="5" style="min-width: 667px;"> @((Model.Internal != null && Model.Internal == 1) ? Model.Comments : string.Empty)</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group clsinternalofficenote" @(Model.Internal == 1 ? string.Empty : "style=display:none;" )>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-6"></div>
+                                    <div class="col-md-2 control-label" style="text-align:right;"> Call Back:&nbsp;</div>
+                                    <div class="col-md-1 control-label" style="text-align:left;width:30px;">
+                                        <label class="mt-checkbox" style="margin-bottom: 13px;">
+                                            @if (Convert.ToInt32(ViewBag.iscbk) == 1)
+                                            {
+                                                <input id="chkIsCallBack2" name="chkIsCallBack2" type="checkbox" @((Model.Internal == 1 && Model.IsCallBack == true) ? "checked=checked" : string.Empty ) onclick="return false">
+                                            }
+                                            else
+                                            {
+                                                <input id="chkIsCallBack2" name="chkIsCallBack2" type="checkbox" @((Model.Internal == 1 && Model.IsCallBack == true) ? "checked=checked" : string.Empty ) >
+                                            }
+                                            <input name="hdnIsCallBack2" id="hdnIsCallBack2" type="hidden" value="1">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="col-md-6 clsdatetm2" style="padding-right:2px; padding-left:0px;display:none;">
+                                            <input type="text" id="txtCallBack2" name="txtCallBack2" class="form-control input-sm date date-picker" placeholder="Date" value="@((Model.Internal == 1 && Model.IsCallBack == true) ? Convert.ToDateTime(Model.CallDate).ToString("MM-dd-yyyy") : string.Empty )" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group clsinternalofficenote" @(Model.Internal == 1 ? string.Empty : "style=display:none;" )>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-2 control-label" style="text-align:right;">
+                                        Follow By<span style="color:#000000;">&nbsp;:<span class="required" id="spnreqfollowby2" style="display:none">*</span></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Html.DropDownList("ddlFollowUpBy2", (IEnumerable<SelectListItem>)ViewBag.ServiceCallFollowBy, "Select User", new { @id = "ddlFollowUpBy2", @class = "form-control input-sm", required = "required" })
+                                    </div>
+
+                                    <div class="col-md-2 control-label" style="text-align:right;">
+                                        Email Call Notes to<span style="color:#000000;">&nbsp;:</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @*@Html.DropDownListFor(x => x.EmailNotesTo, (IEnumerable<SelectListItem>)ViewBag.ServiceEmailCall, new { @class = "form-control input-sm", required = "required" })*@
+                                        <input type="hidden" id="hdnEmailNotesTo2" name="hdnEmailNotesTo2" value="@Model.EmailNotesTo" />
+
+                                        @* @Html.DropDownListFor(x => x.EmailNotesTo, (IEnumerable<SelectListItem>)ViewBag.ServiceEmailCall, new { @class = "chosen-select form-control input-sm", required = "required" })*@
+                                        @Html.ListBox("ddlEmailNotesTo2", ViewBag.ServiceEmailCall as MultiSelectList, new { @id = "ddlEmailNotesTo2", @class = "chosen-select form-control col-md-4 input-sm", data_placeholder = "--Select--" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        if (Model.ServiceCallLogId > 0)
+                        {
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-2 control-label" style="text-align:right;">
+                                        Status<span style="color:#000000;">&nbsp;:<span class="required" id="spnreqfollowby2" style="display:none">*</span></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Html.DropDownListFor(x => x.StatusListId, (IEnumerable<SelectListItem>)ViewBag.ServiceStatuslist, new { @id = "ddlFollowUpBy2", @class = "form-control input-sm ddlStatusListId2", required = "required" })
+                                    </div>
+
+                                    <div class="col-md-2 control-label" style="text-align:right;">
+                                        
+                                    </div>
+                                    <div class="col-md-4">
+                                                                         </div>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                        <hr style="margin-bottom: -10px;" />
+                        <div class="form-group" id="btmsectionfrm">
+                            <div class="row">
+                                <div class="col-md-12 text-right" style="padding:25px;">
+                                    <input type="button" id="btnSaveSubmitForm" class="btn btn-primary btn-default" value="Save" />
+                                    <input type="reset" class="btn btn-primary btn-default" value="Cancel" data-dismiss="modal" />
+                                </div>
+                            </div>
+                        </div>
+        }
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+         
+        if (@Model.Internal == 0) {
+            $("#InitiatedBy").val(@Model.InitiatedBy);
+            if($("#hdnEmailNotesTo").val() != null && $("#hdnEmailNotesTo").val() != "")
+            {
+                var emailTo =$("#hdnEmailNotesTo").val();
+                var str_array = emailTo.split(',');
+                for (var i = 0; i < str_array.length; i++) {
+                    str_array[i] = str_array[i].replace(/^\s*/, "").replace(/\s*$/, "");
+                }
+                $("#ddlEmailNotesTo").val(str_array).trigger("chosen:updated");
+            }
+        }
+        else {
+            $("#txtSpokeWith2").val('@Model.SpokeWith');
+            $("#txtAction2").val('@Model.Action');
+            //$("#txtComments2").val('@Model.Comments');
+            $("#ddlServiceLogTypeListId2").val(@Model.ServiceLogTypeListId);
+            $("#ddlFollowUpBy2").val(@Model.FollowUpBy);
+
+            if('@Model.IsCallBack' == 'True')
+            {
+                $(".clsdatetm2").show();
+            }
+            else{
+                $(".clsdatetm2").hide();
+            }
+            if($("#hdnEmailNotesTo2").val() != null && $("#hdnEmailNotesTo2").val() != "")
+            {
+                var emailTo =$("#hdnEmailNotesTo2").val();
+                var str_array = emailTo.split(',');
+                for (var i = 0; i < str_array.length; i++) {
+                    str_array[i] = str_array[i].replace(/^\s*/, "").replace(/\s*$/, "");
+                }
+                $("#ddlEmailNotesTo2").val(str_array).trigger("chosen:updated");
+            }            
+        }
+    });
+
+    $("#btnSaveSubmitForm").click(function () {
+
+        if ($("#chkCallLog").is(":checked")) {
+            var isvalid = true;
+            if ($('#InitiatedBy').val() == '') { $('#InitiatedBy').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#InitiatedBy').css('border-color', ''); }
+            //if ($('#ServiceLogAreaListId').val() == '0') { $('#ServiceLogAreaListId').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ServiceLogAreaListId').css('border-color', ''); }
+            if ($('#ServiceLogTypeListId').val() == '0' || $('#ServiceLogTypeListId').val() == '') { $('#ServiceLogTypeListId').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ServiceLogTypeListId').css('border-color', ''); }
+            if ($('#SpokeWith').val() == '') { $('#SpokeWith').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#SpokeWith').css('border-color', ''); }
+            if ($('#StatusResultListId').val() == '0' || $('#StatusResultListId').val() == '') { $('#StatusResultListId').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#StatusResultListId').css('border-color', ''); }
+            //if ($('#CallBack').val() == '0') { $('#CallBack').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#CallBack').css('border-color', ''); }
+
+            $('#FollowUpBy').css('border-color', '');
+            if ($("#chkIsCallBack").is(":checked")) {
+                if ($('#FollowUpBy').val() == '0' || $('#FollowUpBy').val() == '') { $('#FollowUpBy').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#FollowUpBy').css('border-color', ''); }
+            }
+
+            //$("#CallBack").val($("#txtCallBack").val() + " " + $("#CallTime").val());
+            $("#CallBack").val($("#txtCallBack").val());
+
+            var option_all = $("#ddlEmailNotesTo option:selected").map(function () {
+                return $(this).val();
+            }).get().join(',');
+
+            $("#hdnEmailNotesTo").val(option_all);
+
+            if (isvalid == true) {
+                //$("#frmServiceCallLog").submit();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("EditServiceCallLogDetailsPopupData", "Customer", "Portal")',
+                    data: $("#frmServiceCallLogDetailsData").serialize(),
+                    dataType: 'json',
+                    success: function (data) {
+                        $("#modal_ServiceCallLogDetail").modal("hide");
+                    }
+                });
+            }
+        }
+        else {
+            var isvalid = true;
+            //if ($('#InitiatedBy').val() == '') { $('#InitiatedBy').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#InitiatedBy').css('border-color', ''); }
+            //if ($('#ServiceLogAreaListId').val() == '0') { $('#ServiceLogAreaListId').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ServiceLogAreaListId').css('border-color', ''); }
+            if ($('#ddlServiceLogTypeListId2').val() == '0' || $('#ddlServiceLogTypeListId2').val() == '') { $('#ddlServiceLogTypeListId2').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ddlServiceLogTypeListId2').css('border-color', ''); }
+            //if ($('#SpokeWith').val() == '') { $('#SpokeWith').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#SpokeWith').css('border-color', ''); }
+            //if ($('#StatusResultListId').val() == '0') { $('#StatusResultListId').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#StatusResultListId').css('border-color', ''); }
+            //if ($('#CallBack').val() == '0') { $('#CallBack').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#CallBack').css('border-color', ''); }
+
+            $('#ddlFollowUpBy2').css('border-color', '');
+            if ($("#chkIsCallBack2").is(":checked")) {
+                if ($('#ddlFollowUpBy2').val() == '0' || $('#ddlFollowUpBy2').val() == '') { $('#ddlFollowUpBy2').css('border-color', 'red'); if (isvalid == true) { isvalid = false; } } else { $('#ddlFollowUpBy2').css('border-color', ''); }
+            }
+
+            //$("#CallBack").val($("#txtCallBack").val() + " " + $("#CallTime").val());
+            //$("#CallBack").val($("#txtCallBack").val());
+
+            var option_all2 = $("#ddlEmailNotesTo2 option:selected").map(function () {
+                return $(this).val();
+            }).get().join(',');
+
+            $("#hdnEmailNotesTo2").val(option_all2);
+
+            if (isvalid == true) {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("EditServiceCallLogDetailsPopupData", "Customer", "Portal")',
+                    data: $("#frmServiceCallLogDetailsData").serialize(),
+                    dataType: 'json',
+                    success: function (data) {
+                        $("#modal_ServiceCallLogDetail").modal("hide");
+
+                    }
+                });
+            }
+        }
+    });
+
+    //$("#chkIsCallBack").click(function () {
+    //    if ($("#chkIsCallBack").is(":checked")) {
+    //        $("#hdnIsCallBack").val("1");
+    //        $(".clsdatetm").show();
+    //        $("#spnreqfollowby").show();
+    //    }
+    //    else {
+    //        $("#hdnIsCallBack").val("0");
+    //        $(".clsdatetm").hide();
+    //        $("#spnreqfollowby").hide();
+    //    }
+    //})
+    $("#chkIsCallBack2").click(function () {
+        if ($("#chkIsCallBack2").is(":checked")) {
+            $("#hdnIsCallBack2").val("1");
+            $(".clsdatetm2").show();
+            $("#spnreqfollowby2").show();
+        }
+        else {
+            $("#hdnIsCallBack2").val("0");
+            $(".clsdatetm2").hide();
+            $("#spnreqfollowby2").hide();
+        }
+    })
+    //function OnclickEvent() {
+    //    if ($("#chkIsCallBack").is(":checked")) {
+    //        $("#hdnIsCallBack").val("1");
+    //        $(".clsdatetm").show();
+    //        $("#spnreqfollowby").show();
+    //    }
+    //    else {
+    //        $("#hdnIsCallBack").val("0");
+    //        $(".clsdatetm").hide();
+    //        $("#spnreqfollowby").hide();
+    //    }
+    //}
+    //function OnclickEvent2() {
+    //    if ($("#chkIsCallBack2").is(":checked")) {
+    //        $("#hdnIsCallBack2").val("1");
+    //        $(".clsdatetm2").show();
+    //        $("#spnreqfollowby2").show();
+    //    }
+    //    else {
+    //        $("#hdnIsCallBack2").val("0");
+    //        $(".clsdatetm2").hide();
+    //        $("#spnreqfollowby2").hide();
+    //    }
+    //}
+
+    $("#chkCallLog").click(function () {
+        $(".clscalllogtype").show();
+        $(".clsinternalofficenote").hide();
+        $("#hdnActiveType").val(1);
+    });
+
+    //function OnclickEventchkCallLog() {
+    //    $(".clscalllogtype").show();
+    //    $(".clsinternalofficenote").hide();
+    //    $("#hdnActiveType").val(1);
+    //}
+    $("#chkInternalOfficeNotes").click(function () {
+        $(".clscalllogtype").hide();
+        $(".clsinternalofficenote").show();
+        $("#hdnActiveType").val(2);
+    });
+    //function OnclickEventchkInternalOfficeNotes() {
+    //    $(".clscalllogtype").hide();
+    //    $(".clsinternalofficenote").show();
+    //    $("#hdnActiveType").val(2);
+    //}
+
+</script>

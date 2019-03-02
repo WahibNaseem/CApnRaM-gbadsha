@@ -1,0 +1,2660 @@
+﻿@{
+    ViewBag.Title = "Lockbox Import";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/admin/assets/Card/dist/card.css" rel="stylesheet" />
+<link href="~/Content/admin/assets/global/plugins/bootstrap-sweetalert/sweetalert.css" rel="stylesheet" />
+<link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+<link href="~/Content/admin/assets/global/plugins/icheck/skins/minimal/_all.css" rel="stylesheet" />
+
+@section styles{
+    <style type="text/css">
+        .trim-padding {
+            padding: 3px;
+        }
+
+        #InvoiceList thead > tr > th {
+            font-size: 10px !important;
+            padding: 3px !important;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        #InvoiceList tbody > tr > td {
+            font-size: 11px !important;
+            padding: 3px !important;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        #InvoiceList thead > tr > th {
+            vertical-align: middle;
+            text-align: center !important;
+            /*padding-right: 15px!important;*/
+        }
+
+        #InvoiceList tbody > tr > td {
+            padding-top: 5px !important;
+        }
+
+        #InvoiceList thead .sorting:after, #InvoiceList thead .sorting_asc:after {
+            content: none;
+        }
+
+        .headerbox > .row {
+            margin-left: 0px !important;
+            margin-right: 0px !important;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .modal-header:hover {
+            cursor: move;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .payment-field {
+            /*width: 80px !important;*/
+        }
+
+        .demo-container {
+            width: 100%;
+            max-width: 350px;
+            margin: 10px auto;
+        }
+
+        form {
+            margin: 30px;
+        }
+
+        .input-185 {
+            width: 185px;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+            font-weight: normal;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        /*input {
+            width: 200px;
+            margin: 10px auto;
+            display: block;
+        }*/
+        .Amttext {
+            text-align: right;
+        }
+
+        .clsAmounttd {
+            text-align: right !important;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+            padding-left: 35px;
+            padding-right: 10px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        #modal_RegionModel .modal-content {
+            width: 55% !important;
+            margin-left: 30% !important;
+        }
+    </style>
+    <style type="text/css">
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        #ui-datepicker-div {
+            z-index: 99999 !important;
+        }
+
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .txtright {
+            text-align: right;
+        }
+
+        .txtCenter {
+            text-align: center;
+        }
+
+        .custom-listbox .headerbox {
+            padding: 3px 0px 3px 5px;
+            font-weight: normal;
+        }
+
+        .custom-listbox {
+            margin-top: 4px;
+            margin-bottom: 0px;
+        }
+
+        .row {
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        #modal_RegionModel .modal-content {
+            width: 55% !important;
+            margin-left: 30% !important;
+        }
+
+        .text-bottom {
+            vertical-align: bottom !important;
+        }
+
+        input[type="radio"].bigger-radio {
+            -ms-transform: scale(1.5); /* IE 9 */
+            -webkit-transform: scale(1.5); /* Chrome, Safari, Opera */
+            transform: scale(1.5);
+            margin-bottom: 10px;
+        }
+    </style>
+    <link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/admin/assets/Card/dist/card.css" rel="stylesheet" />
+    <link href="~/Content/admin/assets/global/plugins/bootstrap-sweetalert/sweetalert.css" rel="stylesheet" />
+    <link href="~/Content/admin/assets/global/plugins/wow-alert-master/css/wow-alert.css" rel="stylesheet" />
+    <style type="text/css">
+        .has-error {
+            border-color: red;
+        }
+
+        .custom-form .btn {
+            margin-bottom: 5px;
+        }
+
+        .sweet-alert {
+            z-index: 59999;
+        }
+
+        .pnd5 {
+            padding: 5px;
+        }
+
+        .control-label.text-left {
+            text-align: left;
+        }
+
+        .editvaluetext {
+            background-color: white;
+            showBillsetting border-style: inherit;
+        }
+
+        .editmode {
+            background-color: initial;
+            border-style: hidden;
+        }
+
+        .ui-autocomplete {
+            z-index: 9999 !important;
+        }
+
+        .btn-custom {
+            font-size: 11px;
+            padding: 10px 0px;
+        }
+
+        /*input:focus, textarea:focus,select:focus {
+            border-color: initial;
+        }
+
+        input.error, textarea.error,select:focus {
+            border: 1px solid red;
+        }*/
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        tr > td {
+            font-size: 11px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 10px !important;
+        }*/
+
+        /*.row {
+            margin: 0;
+            padding: 5px 0;
+        }*/
+        .modal-body .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignleft {
+            text-align: left;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .txtright {
+            text-align: right;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .modal-header:hover {
+            cursor: move;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .payment-field {
+            width: 80px !important;
+        }
+
+        .demo-container {
+            width: 100%;
+            max-width: 350px;
+            margin: 10px auto;
+        }
+
+        form {
+            margin: 30px;
+        }
+
+        .input-185 {
+            width: 146px;
+        }
+
+        #ui-datepicker-div {
+            z-index: 99999 !important;
+        }
+
+        /*input {
+            width: 200px;
+            margin: 10px auto;
+            display: block;
+        }*/
+        .Amttext {
+            text-align: right;
+        }
+
+        .clsAmounttd {
+            text-align: right !important;
+        }
+
+        .toppadding {
+            margin-top: 0px;
+        }
+
+        .text-bottom {
+            vertical-align: bottom !important;
+        }
+
+        input[type="radio"].bigger-radio {
+            -ms-transform: scale(1.5); /* IE 9 */
+            -webkit-transform: scale(1.5); /* Chrome, Safari, Opera */
+            transform: scale(1.5);
+            margin-bottom: 10px;
+        }
+    </style>
+
+}
+
+<div class="modal fade in" id="modal_RegionModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                    Select Region
+                </h4>
+            </div>
+            <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Select Region</label>
+                                @if (ViewBag.regionlist != null)
+                                {
+                                    <select class="form-control input-sm" id="selectregionlist">
+                                        <option value="">Select Region</option>
+                                        @foreach (var item in (SelectList)ViewBag.regionlist)
+                                        {
+                                            <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div class="col-md-12">
+                        <button type="button" name="SaveNew" id="btnRegion" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:0px;">Select Region</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form class="form-horizontal" role="form" id="form_applypaymentMP" action="@Url.Action("ApplyManualPayment","AccountReceivable","Portal")" method="post" style="margin: 0">
+    @Html.Hidden("hdfCustomerId")
+    @Html.Hidden("Address")
+    @Html.Hidden("CustomerNo")
+    @Html.Hidden("PaymentProfileID")
+    @Html.Hidden("Last4CC")
+
+
+    <div class="custom-form portlet light">
+        <div class="headerbox">
+            <div class="row" style="background-color: #3598DC;color: #fff;">
+                <div class="col-md-12 no-padding">
+                    <div class="alignCenter">
+                        <div class="col-md-4" style="text-align:right;">
+                        </div>
+                        <div class="col-md-4 topheader">
+                            MANUAL PAYMENT
+                        </div>
+                        <div class="col-md-4" style="padding-right:5px;">
+                            <div class="col-md-7 pull-right no-padding">
+                                @if (ViewBag.regionlist != null)
+                                {
+                                    <div style="display:table-cell;padding-right: 5px;">
+                                        Region
+                                    </div>
+                                    <div style="display:table-cell;width:100%;">
+                                        <select class="form-control input-sm" multiple="multiple" id="regionlist" style="display:none;">
+                                            @foreach (var item in (SelectList)ViewBag.regionlist)
+                                            {
+                                                <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="portlet-body form">
+            <div class="form-body" style="padding: 0px !important;">
+                <div class="form-group" style="margin: 0px !important;">
+                    <div class="row" style="background-color: #a2a2a2;color: #fff;padding-top:0px;padding-bottom:3px">
+                        <div class="col-md-12">
+                            <div class="col-md-1 control-label trim-padding">
+                                Payment Type<span style="color:#000000;">&nbsp;:</span>
+                            </div>
+                            <div class="col-md-2 trim-padding">
+                                @Html.DropDownList("slPaymentType", (SelectList)ViewBag.PaymentMethodList, new { @class = "form-control input-sm", @id = "slPaymentType" })
+                            </div>
+                            <div class="col-md-1 control-label trim-padding">
+                                Date<span style="color:#000000;">&nbsp;:</span>
+                            </div>
+                            <div class="col-md-2 trim-padding">
+                                <div class="input-group date" data-date-format="mm/dd/yyyy" style="width: 120px;">
+                                    <input type="text" name="paymentDate" id="paymentDate" value=@DateTime.Today.ToString("MM/dd/yyyy") class="form-control input-sm date-picker" />
+                                    <span class="input-group-btn" style="top:2px;">
+                                        <button class="btn default" type="button">
+                                            <i class="fa fa-calendar"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4"></div>
+                            <div class="col-md-1">
+                                @*<label class="mt-checkbox" style="margin-bottom: 0px;">
+                                        <input type="checkbox" id="chkIsOpen" class="search-field" checked>Open
+                                        <span></span>
+                                    </label>*@
+                            </div>
+                            <div class="col-md-1">
+                                @*<label class="mt-checkbox" style="margin-bottom: 0px;">
+                                        <input type="checkbox" id="chkIsClose" class="search-field">Close
+                                        <span></span>
+                                    </label>*@
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-2 trim-padding">
+                            <div class="input-group">
+                                <div class="icheck-inline">
+                                    <label class="">
+                                        <div class="iradio_minimal-grey" style="position: relative;">
+                                            <input type="radio" id="chkInvoice" name="radio2" checked="" class="icheck" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins>
+                                        </div> Invoice
+                                    </label>
+                                    <label class="">
+                                        <div class="iradio_minimal-grey" style="position: relative;">
+                                            <input type="radio" id="chkCustomer" name="radio2" class="icheck" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins>
+                                        </div> Customer
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 trim-padding" style="padding-bottom: 3px;">
+                            <div class="portlet-input">
+                                <div class="input-icon">
+                                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                                    <input type="text" placeholder="Search..." class="form-control input-sm" id="input_SearchTop" />
+                                </div>
+                                <div id="container">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-1" style="padding-top: 3px;">
+                            <input type="button" id="btnSearchInvoice" class="btn btn-primary" value="Search">
+                        </div>
+
+
+                        <div class="col-md-1 control-label  trim-padding">
+                            Reference No.<span style="color:#000000;">&nbsp;:</span>
+                        </div>
+                        <div class="col-md-1 trim-padding">
+                            <input type="text" id="referenceNo" name="referenceNo" value="" class="form-control input-sm" />
+                        </div>
+
+                        <div class="col-md-2 control-label trim-padding">
+                            Amount<span style="color:#000000;">&nbsp;:</span>
+                        </div>
+                        <div class="col-md-2 form-inline  trim-padding">
+                            <input type="text" id="paymentAmt" name="paymentAmt" class="form-control input-sm payment-field Amttext" style="width: 155px!important;" />
+                        </div>
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-1 control-label  trim-padding">
+                            Notes<span style="color:#000000;">&nbsp;:</span><span style="color:red;">*</span>
+                        </div>
+                        <div class="col-md-4 trim-padding">
+                            <input type="text" id="txtNotes" name="txtNotes" value="" class="form-control input-sm" />
+                        </div>
+
+                        <div class="col-md-2 control-label  trim-padding">
+                            Customer Credit Balance<span style="color:#000000;">&nbsp;:</span>
+                        </div>
+
+                        <div class="col-md-1 trim-padding">
+                            <input type="text" id="txtCustomerBalance" name="txtCustomerBalance" value="" class="form-control input-sm" disabled="disabled" />
+                        </div>
+                        <div class="col-md-1 trim-padding">
+
+                        </div>
+                        <div class="col-md-1  control-label  trim-padding">
+                            Credit<span style="color:#000000;">&nbsp;:</span>
+                        </div>
+                        <div class="col-md-2 form-inline trim-padding">
+                            <input type="text" id="customerCreditAmt" name="customerCreditAmt" value="0.00" class="form-control input-sm payment-field Amttext" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-2 col-md-offset-6 text-right">
+                            <div id="tdApplyCredit" style="display: none">
+                                <label class="mt-checkbox">
+                                    <input type="checkbox" id="chkApplyCredit">Apply Credit
+                                    <span></span>
+                                </label>
+                            </div>
+                            <input type="hidden" name="mp_chkApplyCredit" id="mp_chkApplyCredit" value="" />
+                            <input type="hidden" name="mp_overflowId" id="mp_overflowId" value="" />
+                            <input type="hidden" name="mp_overflowSourceId" id="mp_overflowSourceId" value="" />
+                            <input type="hidden" name="mp_overflowCheckNumber" id="mp_overflowCheckNumber" value="" />
+                            <input type="hidden" name="mp_overflowCheckAmount" id="mp_overflowCheckAmount" value="" />
+
+                        </div>
+                        <div class="col-md-1 trim-padding">
+
+                        </div>
+                        <div class="col-md-1   control-label  trim-padding">
+                            Balance<span style="color:#000000;">&nbsp;:</span>
+                        </div>
+                        <div class="col-md-2 form-inline trim-padding">
+                            <input type="text" id="balance" name="balance" value="0.00" class="form-control input-sm payment-field Amttext" readonly />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" style="margin: 0px !important;">
+                    <div class="row" style="background-color: #4b85cc;color: #fff;padding-top:8px;padding-bottom:8px">
+                        <div class="col-md-12">
+                            <div class="col-md-3">
+                                <div class="input-icon">
+                                    <i class="icon-magnifier icon-align-right" style="margin-top: 8px;"></i>
+                                    <input type="text" placeholder="Search..." class="form-control input-sm typeahead" value="" autocomplete="off" id="input_SearchMP" />
+                                </div>
+                                <div id="container">
+                                </div>
+                            </div>
+                            @*<div class="col-md-2">
+                                    <label class="mt-checkbox" style="margin-bottom: 0px;">
+                                        <input type="checkbox" id="chkConsolidatedMP" class="search-field"> Consolidated
+                                        <span></span>
+                                    </label>
+                                </div>*@
+                            <div class="col-md-1">
+                                <label class="mt-checkbox" style="margin-bottom: 0px;">
+                                    <input type="checkbox" id="chkIsOpen" class="search-field" checked>Open
+                                    <span></span>
+                                </label>
+                            </div>
+                            <div class="col-md-1">
+                                <label class="mt-checkbox" style="margin-bottom: 0px;">
+                                    <input type="checkbox" id="chkIsClose" class="search-field">Close
+                                    <span></span>
+                                </label>
+                            </div>
+                            @*<div class="col-md-7">
+                                    <div class="pull-right">
+                                        @Html.DropDownList("optionList", (SelectList)ViewBag.OptionList, new { @class = "form-control input-sm", @id = "select_dateRangeMP", style = "width: 180px;float: left;margin-right:10px" })<span style="width: 40px;float: left;padding: 5px;">From</span>
+                                        <input type="text" name="dtpfrom" value="" class="form-control input-sm search-date-field date-picker" id="dtpfromMP" onkeydown="return false" style="width: 85px;float: left;" />
+                                        <span style="width: 25px;float: left;padding: 5px;">To</span>
+                                        <input type="text" name="dtpto" value="" class="form-control input-sm search-date-field date-picker" id="dtptoMP" onkeydown="return false" style="width: 85px;float: left;" />
+                                    </div>
+                                </div>*@
+
+                            <div class="col-md-3 pull-right no-padding" style="text-align:center;">
+                                <div class="col-md-6 no-padding" style="margin-left:30px;">
+                                    <select id="select_dateRangeMP" class="form-control input-sm">
+                                        <option value="1">This Week</option>
+                                        <option value="2">This Week-to-date</option>
+                                        <option value="3">This Month</option>
+                                        <option value="4">This Month-to-date</option>
+                                        <option value="5">This Quarter</option>
+                                        <option value="6">This Quarter-to-date</option>
+                                        <option value="7" selected="selected">This Fiscal Year</option>
+                                        <option value="8">This Fiscal Year-to-date</option>
+                                        <option value="9">Today</option>
+                                        <option value="10">Yesterday</option>
+                                        <option value="11">Last Week</option>
+                                        <option value="12">Last Month</option>
+                                        <option value="13">Last Quarter</option>
+                                        <option value="14">Last Year</option>
+                                        <option value="15">Custom Date</option>
+                                        <option value="16">Period</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-5 divspandate no-padding" style="margin-top: 7px; margin-left: 0px; display: block; float: right;">
+                                    <span id="spnStartDate"></span> - <span id="spnEndtDate"></span>
+                                </div>
+                                <div class="col-md-3 no-padding" style="margin-left: 3px; width: 80px; display: none;" id="divSD">
+                                    <input type="text" name="txtStartDate" id="txtStartDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                                </div>
+                                <div class="col-md-3 no-padding" style="margin-left: 3px; width: 80px; display: none;" id="divED">
+                                    <input type="text" name="txtEndtDate" id="txtEndtDate" value="" class="form-control input-sm date-picker RemovePeriodvalidation" style="padding: 3px;" />
+                                </div>
+                                <div class="col-md-3 no-padding" style="margin-left: 3px; width: 80px; display: none;" id="divmonth">
+                                    <select id="monthlist" class="form-control input-sm">
+                                        <option value="">Month</option>
+                                        <option value="1">Jan</option>
+                                        <option value="2">Feb</option>
+                                        <option value="3">Mar</option>
+                                        <option value="4">Apr</option>
+                                        <option value="5">May</option>
+                                        <option value="6">June</option>
+                                        <option value="7">July</option>
+                                        <option value="8">Aug</option>
+                                        <option value="9">Sep</option>
+                                        <option value="10">Oct</option>
+                                        <option value="11">Nov</option>
+                                        <option value="12">Dec</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 no-padding" style="margin-left: 3px; width: 80px; display: none;" id="divyear">
+                                    <select class="form-control input-sm" id="yearlist" style="padding-left: 2px;">
+                                        <option value="">Year</option>
+                                        <option value="2018">2018</option>
+                                        <option value="2017">2017</option>
+                                        <option value="2016">2016</option>
+                                        <option value="2015">2015</option>
+                                        <option value="2014">2014</option>
+                                        <option value="2013">2013</option>
+                                        <option value="2012">2012</option>
+                                        <option value="2011">2011</option>
+                                        <option value="2010">2010</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="divResult">
+
+                    <div class="form-group" style="margin: 0px !important;">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover order-column" id="InvoiceList">
+                                        <thead>
+                                            <tr>
+                                                <th class="tblInvoice_chk" style="text-align:center; width: 30px">
+                                                    <input type="checkbox" id="chkAll" name="chkAll" />
+                                                </th>
+                                                <th class="tblInvoice_invoiceNo" style="width:75px;text-align:center;">
+                                                    Invoice No
+                                                </th>
+                                                <th class="tblInvoice_invoiceDate" style="width:80px;text-align:center;">
+                                                    Invoice Date
+                                                </th>
+                                                <th class="tblInvoice_customerNo" style="width:80px;text-align:center;">
+                                                    Customer No.
+                                                </th>
+                                                <th class="tblInvoice_customerName" style="width:190px;text-align:center;">
+                                                    Customer Name
+                                                </th>
+                                                <th class="tblInvoice_invoiceDesc" style="width:240px;text-align:center;">
+                                                    Invoice Description
+                                                </th>
+                                                <th class="tblInvoice_invoiceAmt" style="text-align:center;width:90px;">
+                                                    Inv. Amount
+                                                </th>
+                                                <th class="tblInvoice_payment" style="text-align:center;width:90px;">
+                                                    Payment Apply
+                                                </th>
+                                                <th class="tblInvoice_balance" style="text-align:center;width:90px;">
+                                                    Balance
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-12 pull-right">
+                                <div class="col-md-9"></div>
+                                <div class="col-md-3">
+                                    <input type="hidden" name="SaveMethod" id="SaveMethod" />
+                                    <button id="btnSaveAndClose" type="button" class="btn btn-primary pull-right" onclick="onClickSaveAndClose()">Save & Close</button>
+                                    <button id="btnSaveAndNew" type="button" class="btn btn-primary pull-right" onclick="onClickSaveAndNew()" style="margin-right: 4px;">Save & New</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade custom-model custom-form custom-form-design" id="modal_multiplecustomers" tabindex="-1" style="display: none;">
+        <div class="modal-dialog" style="width:500px">
+            <div class="modal-content" style="border-radius: 8px; font-size: 16px">
+                <div class="headerbox">
+                    <div class="row">
+                        &nbsp;
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12" style="padding: 20px 100px 40px 100px; text-align: center">
+                            Payment can only be applied to multiple invoices for the same customer. Please check again.
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12" style="text-align: center">
+                                <button type="button" class="btn btn-primary" onclick="hideMultipleCustomersPopup()">OK</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade custom-model custom-form custom-form-design" id="modal_gaincustomercreditprompt" tabindex="-1" style="display: none;">
+        <div class="modal-dialog" style="width:500px">
+            <div class="modal-content" style="border-radius: 8px; font-size: 16px">
+                <div class="headerbox">
+                    <div class="row">
+                        &nbsp;
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12" style="padding: 20px 100px 40px 100px; text-align: center">
+                            Payment balance of <span id="lblPromptRemainingBalance">&nbsp;</span> has not been applied and will be moved to customer credit. Do you want to continue?
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12" style="text-align: center">
+                                <button type="button" class="btn btn-primary" onclick="onClickYesGainCustomerCredit()">Yes</button>
+                                <button type="button" class="btn btn-primary" onclick="onClickNoGainCustomerCredit()">No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade custom-model custom-form custom-form-design" id="modal_applypaymentprompt" tabindex="-1" style="display: none;">
+        <div class="modal-dialog" style="width:500px">
+            <div class="modal-content" style="border-radius: 8px; font-size: 16px">
+                <div class="headerbox">
+                    <div class="row">
+                        &nbsp;
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12" style="padding: 20px 100px 40px 100px; text-align: center">
+                            Do you want to apply partial payment against Invoice No. <span id="lblPromptInvoiceNo">&nbsp;</span>?
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12" style="text-align: center">
+                                <button id="btnSaveAndClose" type="button" class="btn btn-primary" onclick="onClickYesApplyPayment()">Yes</button>
+                                <button id="btnSaveAndNew" type="button" class="btn btn-primary" onclick="onClickNoApplyPayment()">No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="div_applypaymentforms">
+
+    </div>
+
+    <div class="sweet-alert modal  showSweetAlert visible" id="swtModel" tabindex="-1" data-keyboard="false" style="display: none; margin-top: -149px; height: 250px;">
+        <div class="sa-icon sa-error" style="display: none;">
+            <span class="sa-x-mark">
+                <span class="sa-line sa-left"></span>
+                <span class="sa-line sa-right"></span>
+            </span>
+        </div><div class="sa-icon sa-warning" style="display: none;">
+            <span class="sa-body"></span>
+            <span class="sa-dot"></span>
+        </div><div class="sa-icon sa-info" style="display: none;"></div><div class="sa-icon sa-success animate" style="display: block;">
+            <span class="sa-line sa-tip animateSuccessTip"></span>
+            <span class="sa-line sa-long animateSuccessLong"></span>
+
+            <div class="sa-placeholder"></div>
+            <div class="sa-fix"></div>
+        </div><div class="sa-icon sa-custom" style="display: none;"></div><h2>Payment Approved!</h2>
+        <p class="lead text-muted " style="display: block;"></p>
+        <div class="form-group">
+            <input type="text" class="form-control" tabindex="3" placeholder="">
+            <span class="sa-input-error help-block">
+                <span class="glyphicon glyphicon-exclamation-sign"></span> <span class="sa-help-text">Not valid</span>
+            </span>
+        </div><div class="sa-button-container">
+            <button class="cancel btn btn-lg btn-default" tabindex="2" style="display: none;">Cancel</button>
+            <div class="sa-confirm-button-container">
+                <button class="confirm btn btn-lg btn-primary" tabindex="1" style="display: inline-block;" id="btnSuccessPopUp">OK</button><div class="la-ball-fall">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" style="margin: 110px auto;" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="padding: 8px;background-color: #346587 !important;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel" style="color: white;">Credit Card Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-body" id="DivCustomer">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label col-md-2" style="padding: 5px;">
+                                        Invoice For&nbsp;:
+                                    </label>
+                                    <div class="col-md-5 inline-block">
+                                        <input id="csearch-box" type="text" required name="customernumber" autocomplete="off" placeholder="Search Customer Name or Number" value="" class="form-control input-sm typeahead" />
+                                    </div>
+                                    <div class="col-md-2 inline-block">
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2" style="padding: 5px;">
+                                        Amount&nbsp;:
+                                    </label>
+                                    <div class="col-md-5 inline-block">
+                                        <input id="txtAmountToBePay" type="text" required name="txtAmountToBePay" autocomplete="off" placeholder="Amount" value="" class="form-control input-sm" />
+                                    </div>
+                                    <div class="col-md-2 inline-block">
+                                    </div>
+                                </div>
+                                <hr style="margin: 0px;" />
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="form-body" id="DivCustomerProfile" style="display:none;">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label col-md-2" style="padding: 5px;">
+                                        Previous Card &nbsp;:
+                                    </label>
+                                    <div class="col-md-5 inline-block">
+                                        <label for="ChkCustomerProfile" id="lblAccount" style="margin-top: 8px;">Text</label>
+                                        <input id="ChkCustomerProfile" type="checkbox" name="ChkCustomerProfile" onclick="CustomerChk(this)" style="width: 20px;margin-left: 60px;margin-top: -25px;" class="form-control input-sm" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <hr />
+                        <br />
+                    </div>
+
+                    <div class="demo-container" style="display:none;">
+                        <div class="card-wrapper"></div>
+                        <br />
+                        <div class="form-container active">
+                            <form action="">
+                                <input placeholder="Card number" type="tel" id="txtCard" name="number" class="form-control"><br />
+                                <input placeholder="Full name" type="text" id="txtCCName" name="name" class="form-control"><br />
+                                <input placeholder="MM/YY" type="tel" name="expiry" id="txtCCExpiry" class="form-control"><br />
+                                <input placeholder="CVC" type="number" name="cvc" id="txtCCcvc" class="form-control">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="btnCCCancle" data-dismiss="modal">Cancel</button>
+                    <button type="button" id="BtnCCPay" class="btn btn-primary">Pay</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="sweet-alert modal showSweetAlert visible" id="swtWarningAlertPopup" tabindex="-1" data-keyboard="false" style="margin-top: -149px;height: 200px;z-index: 15151;
+    display: block;box-shadow: 0px 0px 10px grey;display: none;">
+        <div class="sa-icon sa-error" style="display: none;">
+            <span class="sa-x-mark">
+                <span class="sa-line sa-left"></span>
+                <span class="sa-line sa-right"></span>
+            </span>
+        </div><div class="sa-icon sa-warning" style="display: none;">
+            <span class="sa-body"></span>
+            <span class="sa-dot"></span>
+        </div>
+        <h2 id="swtWarningAlertPopup_Title">Payment Approved!</h2>
+        <p class="lead text-muted " style="display: block;" id="swtWarningAlertPopup_Message"></p>
+        <div class="form-group">
+            <input type="text" class="form-control" tabindex="3" placeholder="">
+            <span class="sa-input-error help-block">
+                <span class="glyphicon glyphicon-exclamation-sign"></span> <span class="sa-help-text">Not valid</span>
+            </span>
+        </div><div class="sa-button-container">
+            <button class="cancel btn btn-lg btn-default" tabindex="2" style="display: none;">Cancel</button>
+            <div class="sa-confirm-button-container">
+                <button class="confirm btn btn-lg btn-primary" tabindex="1" style="display: inline-block;" id="btnswtWarningAlertOKPopup">OK</button><div class="la-ball-fall">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<div class="form-horizontal" id="form_invoicedetail"></div>
+@section pageplugins{
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+    <script src="~/Content/admin/assets/global/plugins/icheck/icheck.min.js"></script>
+}
+@section scripts{
+    <script>
+
+
+
+
+        var _monthVal = $('#monthlist').val();
+        var _yearVal = $('#yearlist').val();
+        var invoiceList;
+
+        var saveInProgress = false;
+        var currentPromptedInvoice = "";
+        var promptedInvoices = [];
+        var isLastPrompt = true;
+
+        var selectedCustomerId = null;
+
+        @*function getTableURL() {
+            var date = $('#dtpfrom').val() + '-' + $('#dtpto').val();
+            var _monthVal = $('#monthlist').val();
+            var _yearVal = $('#yearlist').val();
+            var OC_Value = "";
+            if ($('#chkIsOpen').is(":checked")) {
+                OC_Value = "4,7";
+            }
+            if ($('#chkIsClose').is(":checked")) {
+                OC_Value = OC_Value + "6";
+            }
+            var _regionId = $("#regionlist").val();
+            var _searchtextVal = "";
+            var _incClosed = "false";
+            var _consolidated = $('#chkConsolidated').prop("checked");
+            var sURL = '@Url.Action("InvoicesSearchForPaymentResultData", "AccountReceivable", new { area = "Portal" })?rgId=' + _regionId + '&date=' + date + '&st=' + _searchtextVal + '&closed=' + _incClosed + '&consolidated=' + _consolidated + '&OCValue=' + OC_Value + '&month=' + _monthVal + '&year=' + _yearVal;
+            return sURL;
+        }*@
+
+        function getSearchURL() {
+            var _searchtextVal = $('#input_SearchTop').val();
+            if ($('#chkInvoice').is(":checked")) {
+                _SearchBy = 1;
+            }
+            if ($('#chkCustomer').is(":checked")) {
+                _SearchBy = 2;
+            }
+            var OC_Value = "";
+            if ($('#chkIsOpen').is(":checked")) {
+                OC_Value = "4,7";
+            }
+            if ($('#chkIsClose').is(":checked")) {
+                if (OC_Value == "4,7")
+                    OC_Value = OC_Value + ",6";
+                else
+                    OC_Value = "6";
+            }
+            var _regionId = $("#regionlist").val();
+            //var date = $('#dtpfrom').val() + '-' + $('#dtpto').val();
+            var date = $('#spnStartDate').html() + '-' + $('#spnEndtDate').html();
+
+            //$('#spnStartDate').html(moment(firstDay).format('L'));
+            //$('#spnEndtDate').html(moment(lastDay).format('L'));
+            var _monthVal = $('#monthlist').val();
+            var _yearVal = $('#yearlist').val();
+            var _incClosed = "false";
+            var _consolidated = "false";
+
+            var sURL = '@Url.Action("InvoicesSearchForManualPayment", "AccountReceivable", new { area = "Portal" })?rgId=' + _regionId + '&date=' + date + '&st=' + _searchtextVal + '&sb=' + _SearchBy + '&closed=' + _incClosed + '&consolidated=' + _consolidated + '&OCValue=' + OC_Value + '&month=' + _monthVal + '&year=' + _yearVal;
+
+            return sURL;
+        }
+
+        function InitTable() {
+            var url = getSearchURL();
+
+            $.blockUI();//$.blockUI({ message: $('#throbberBlock'), theme: true, baseZ: 12000 });
+
+            invoiceList.ajax.url(url).load(function () {
+                
+                $('.payment-field').each(function () {
+                    if (this.id == 'balance') {
+                        applyMaskCurrencyBL('#' + this.id);
+                    }
+                    else {
+                        applyMaskCurrency('#' + this.id);
+                    }
+                    
+
+
+                    $("#divResult").show();
+                });
+                $.unblockUI();
+            });
+        }
+
+        function btnInvoicePopupClose() {
+            $("#modal_invoicedetail").modal('hide');
+        }
+
+        function refreshTable() {
+            var url = getSearchURL();
+
+            $.blockUI();//$.blockUI({ message: $('#throbberBlock'), theme: true, baseZ: 12000 });
+
+            invoiceList.ajax.url(url).load(function () {
+                $('.payment-field').each(function () {
+                    if (this.id == 'balance') {
+                        applyMaskCurrencyBL('#' + this.id);
+                    }
+                    else {
+                        applyMaskCurrency('#' + this.id);
+                    }
+                });
+                $.unblockUI();
+            });
+        }
+
+        $("#regionlist").change(function () {
+            //InitTable();
+        })
+
+        $('#chkAll').change(function () {
+            if ($(this).is(":checked")) {
+                $('input[rel="mgglchk"]').prop('checked', true);
+            }
+            else {
+                $('input[rel="mgglchk"]').prop('checked', false);
+            }
+        });
+
+        function CustomerChk(ctl) {
+            if ($(ctl).is(":checked")) {
+                $(".demo-container").hide();
+
+            }
+            else {
+                $(".demo-container").show();
+            }
+        }
+        var Mxmarchant = false;
+        function CCPAY() {
+            var sURL = '@Url.Action("PayWithCC", "AccountReceivable", new { area = "Portal" })?CardNumber=' + $("#txtCard").val().replace(/ /g, '') + '&CardHolderName=' + $("#txtCCName").val() + '&CardExpiry=' + $("#txtCCExpiry").val() + '&CardCVC=' + $("#txtCCcvc").val() + '&Amount=' + $("#txtAmountToBePay").val() + '&ClassID=' + $("#hdfCustomerId").val() + '&IsProfile=' + true + '&CustomerNo=' + $("#CustomerNo").val() + '&IsCheckedPrevCard=' + $("#ChkCustomerProfile").prop("checked") + '&PaymentProfileID=' + $("#PaymentProfileID").val() + '&regID=' + $("#selectregionlist").val();
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    if (data.aadata != null) {
+
+                        if (data.aadata.messages != null && data.aadata.messages.message[0].code == "I00001") {
+                            $("#paymentAmt").val(commaSeparateNumber($("#txtAmountToBePay").val()));
+                            $("#balance").val(commaSeparateNumber($("#txtAmountToBePay").val()));
+                            $("#referenceNo").val(data.aadata.transactionResponse.authCode);
+                            $("#txtNotes").val(data.aadata.transactionResponse.transId);
+                            $("#Last4CC").val(data.aadata.transactionResponse.accountNumber);
+                            $("#slPaymentType").prop("disabled", true);
+                            $("#referenceNo").prop("readonly", true);
+                            $("#txtNotes").prop("readonly", true);
+                            $("#paymentAmt").prop("readonly", true);
+                            $("#paymentDate").prop("readonly", true);
+                            $("#btnCCCancle").trigger("click");
+                            if (!$("#ChkCustomerProfile").prop("checked")) {
+                                $("#swtModel").show();
+                            }
+                            else {
+                                $("#swtModel").remove();
+                                swal(
+                                    'Payment Approved!',
+                                    'Transaction ID: ' + data.aadata.transactionResponse.transId,
+                                    'success'
+                                )
+                            }
+                        }
+                        else if (data.aadata.Status != null && data.aadata.Status == "Approved") {
+                            $("#paymentAmt").val(commaSeparateNumber($("#txtAmountToBePay").val()));
+                            $("#balance").val(commaSeparateNumber($("#txtAmountToBePay").val()));
+                            $("#referenceNo").val(data.aadata.AuthCode);
+                            $("#txtNotes").val(data.aadata.BatchId);
+                            $("#Last4CC").val(data.aadata.CardAccount.Last4);
+                            $("#slPaymentType").prop("readonly", true);
+                            $("#referenceNo").prop("readonly", true);
+                            $("#txtNotes").prop("readonly", true);
+                            $("#paymentAmt").prop("readonly", true);
+                            $("#paymentDate").prop("readonly", true);
+                            $("#btnCCCancle").trigger("click");
+                            document.getElementById("chkCustomer").checked = true;
+                            document.getElementById("chkInvoice").checked = false;
+                            if (!$("#ChkCustomerProfile").prop("checked")) {
+                                $("#swtModel").show();
+                                Mxmarchant = true;
+                            }
+                            else {
+                                $("#swtModel").remove();
+                                swal(
+                                    'Payment Approved!',
+                                    'Transaction ID: ' + data.aadata.BatchId,
+                                    'success'
+                                )
+                            }
+                        }
+                        else {
+                            $("#btnCCCancle").trigger("click");
+                            alert("Credit Card decline, please check Credit Card number or enter new Credit Card.", function (ctl) {
+                                if (ctl) {
+                                    location.reload();
+                                }
+                            });
+                        }
+
+                    }
+                    else {
+                        $("#btnCCCancle").trigger("click");
+                        alert("Credit Card decline, please check Credit Card number or enter new Credit Card.", function (ctl) {
+                            if (ctl) {
+                                location.reload();
+                            }
+                        });
+                    }
+                },
+                error: function () {
+                    alert("Credit Card decline, please check Credit Card number or enter new Credit Card.");
+                }
+            });
+
+            var nameParts = $('#csearch-box').val();
+            var arr = [];
+            arr = nameParts.split(' ');
+            $("#input_SearchTop").val(arr[0]);
+            document.getElementById("chkCustomer").checked = true;
+            document.getElementById("chkInvoice").checked = false;
+            $("#input_SearchTop").trigger("keyup");
+        }
+
+        $(window).load(function () {
+            if ('@ViewBag.selectedRegionId' == 0) {
+                $("#modal_RegionModel").modal({ backdrop: 'static' });
+            }
+        });
+
+
+
+        jQuery(document).ready(function () {
+            $("#divResult").hide();
+            $("#date").show();
+            $("#period").hide();
+            $("#btnRegion").click(function () {
+                if ($("#selectregionlist").val() != "") {
+                    $("#regionlist option[value='" + $("#selectregionlist").val() + "']").attr("selected", 1);
+                    $("#regionlist").multiselect("refresh");
+                    //refreshTable();
+                    $(".close").click();
+                }
+            });
+
+            $('#btnSearchInvoice').click(function () {
+                if ($('#input_SearchTop').val() != "") {
+                    $("#divResult").show();
+                    InitTable();
+
+
+                    if ($('#chkCustomer').is(":checked")){
+                        var sURL = '@Url.Action("InvoicesSearchForManualPaymentCustomerBalanceByOverPayment", "AccountReceivable", new { area = "Portal" })?customerno=' + $('#input_SearchTop').val()
+                        //var sURL = '@Url.Action("InvoicesSearchForManualPaymentCustomerBalance", "AccountReceivable", new { area = "Portal" })?customerno=' + $('#input_SearchTop').val()
+                        $.ajax({
+                            type: "GET",
+                            url: sURL,
+                            contentType: "application/json; charset=utf-8",
+                            datatype: "json",
+                            success: function (data) {
+                                debugger;
+                                console.log(data);
+                                $('#txtCustomerBalance').val(parseFloat(data.balance).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString())
+                                populateCustomerCreditBalance(parseFloat(data.balance));
+
+                                if (data.overflows.length == 1) {
+                                    $('#mp_overflowId').val(data.overflows[0].OverflowId);
+                                    $('#mp_overflowSourceId').val(data.overflows[0].SourceId);
+                                    $('#mp_overflowCheckNumber').val(data.overflows[0].CheckNumber);
+                                    $('#mp_overflowCheckAmount').val(data.overflows[0].CheckAmount);
+                                }
+
+                            },
+                            error: function () {
+
+                            }
+                        });
+                }
+
+                }
+            })
+
+            $('#monthlist').change(function () {
+                $('#dtpfrom').val('');
+                $('#dtpTo').val('');
+                if ($('#monthlist').val() != '' && $('#yearlist').val() != '')
+                    refreshTable();
+            });
+            $('#yearlist').change(function () {
+                $('#dtpfrom').val('');
+                $('#dtpTo').val('');
+                if ($('#monthlist').val() != '' && $('#yearlist').val() != '')
+                    refreshTable();
+            });
+
+
+            $(".input-group-btn").click(function () {
+                $(this).prev().trigger("focus");
+                $(this).prev().trigger("focus");
+            });
+
+            $("#regionlist").multiselect({
+                includeSelectAllOption: false,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2,
+                onChange: InitTable,
+                onSelectAll: InitTable,
+                onDeselectAll: InitTable
+            });
+
+            if ('@ViewBag.selectedRegionId' > 0) {
+
+                $("#regionlist option[value='" + '@ViewBag.selectedRegionId' + "']").attr("selected", 1);
+                $("#regionlist").multiselect("refresh");
+            }
+
+            
+            applyDurationFilterMP(7);
+
+            invoiceList = $('#InvoiceList').DataTable({
+                //"bProcessing": true,
+                "bServerSide": false,
+                "bPaginate": false,
+                "dom": '<"top">rt<"bottom"lp><"clear">'
+                //"dom": "<'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'<'table-group-actions pull-right'>>r><'table-responsive't><'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'>>", // datatable layout
+                ,
+                columnDefs: [
+                    {
+                        targets: "tblInvoice_chk",
+                        data: "",
+                        className: "dt-center",
+                        render: function (data, type, row, meta) {
+                            var s = '<input type="hidden" id="inv' + row.InvoiceId + '_customerId" name="inv' + row.InvoiceId + '_customerId" value="' + row.CustomerId + '" />';
+                            s += '<input type="hidden" id="inv' + row.InvoiceId + '_parentcustomerId" name="inv' + row.InvoiceId + '_parentcustomerId" value="' + row.ParentCustomerId + '" />';
+                            s += '<input rel="mgglchk" type="checkbox" id="inv' + row.InvoiceId + '_chk" name="inv' + row.InvoiceId + '_chk" value="' + row.ParentCustomerId + '" class="payment-checkbox" />';
+                            return s;
+                        }
+                    },
+                    {
+                        targets: "tblInvoice_invoiceNo",
+                        data: "InvoiceNo",
+                        className: "dt-center",
+                        render: function (data, type, row, meta) {
+                            var s = '<input type="hidden" id="inv' + row.InvoiceId + '_invoiceNo" value="' + data + '" />';
+                            s += '<input type="hidden" id="inv' + row.InvoiceId + '_hasMultipleItems" value="' + row.HasMultipleLineItems + '" />';
+                            s += '<a onclick="btnOpenInvoiceDetailModel(' + row.InvoiceId + ')">' + data + '</a>';
+                            return s;
+                        }
+                    },
+                    {
+                        targets: "tblInvoice_invoiceDate",
+                        data: "InvoiceDate",
+                        className: "dt-center",
+                        type: "date",
+                        render: function (data, type, row, meta) {
+                            return moment(new Date(parseInt(data.substr(6)))).format("MM/DD/YYYY");
+                        }
+                    },
+                    { targets: "tblInvoice_customerNo", data: "CustomerNo" },
+                    { targets: "tblInvoice_customerName", data: "CustomerName" },
+                    { targets: "tblInvoice_invoiceDesc", data: "Description" },
+                    {
+                        targets: "tblInvoice_invoiceAmt",
+                        data: "Balance",
+                        sClass: "clsAmounttd",
+                        render: function (data, type, row, meta) {
+                            return '<input type="text" id="inv' + row.InvoiceId + '_amount" value="' + parseFloat(data).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '" class="amount-format form-control input-sm payment-field Amttext" readonly="readonly" />';
+                        }
+                    },
+                    {
+                        targets: "tblInvoice_payment",
+                        data: "",
+                        sClass: "clsAmounttd",
+                        render: function (data, type, row, meta) {
+                            return '<input type="text" id="inv' + row.InvoiceId + '_totalPayment" name="inv' + row.InvoiceId + '_totalPayment" class="amount-format form-control input-sm payment-field payment-apply-field Amttext" />';
+                        }
+                    },
+                    {
+                        targets: "tblInvoice_balance",
+                        data: "Balance",
+                        sClass: "clsAmounttd",
+                        render: function (data, type, row, meta) {
+                            return ' <input type="text" id="inv' + row.InvoiceId + '_balance" name="inv' + row.InvoiceId + '_balance" value="' + parseFloat(data).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString() + '" class="amount-format form-control input-sm payment-field Amttext" readonly="readonly" />';
+                        }
+                    },
+                ]
+                , initComplete: function (settings, json) {
+                    $('.payment-field').each(function () {
+                        if (this.id == 'balance') {
+                            applyMaskCurrencyBL('#' + this.id);
+                        }
+                        else {
+                            applyMaskCurrency('#' + this.id);
+                        }
+                    });
+                }
+            });
+
+
+
+            //$("#input_Search").keyup(function () {
+            //    var table = $("#InvoiceList").DataTable();
+            //    table.search($(this).val()).draw();
+            //});
+
+            //$("#select_dateRange").change(function () {
+            //    var value = this.value;
+            //    setSearchTime(value);
+            //    refreshTable();
+            //});
+
+            //$(".search-date-field").on('changeDate', function (e) {
+            //    refreshTable();
+            //});
+
+
+            $(".search-field").change(function () {
+                InitTable();
+            });
+
+
+
+            $("#paymentAmt").change(function () {
+                calculateBalance();
+            });
+
+            $("#customerCreditAmt").change(function () {
+                calculateBalance();
+            });
+            $(document).on('change', ".payment-checkbox", function () {
+                var inv = getInvoiceIdChunk(this);
+
+                updateSelectedCustomer();
+
+                if (validateForMultipleCustomers()) {
+                    selectInvoice(inv);
+                }
+                else {
+                    $(this).prop("checked", false);
+                    showMultipleCustomersPopup();
+                }
+            });
+            $(document).on('change', ".payment-apply-field", function () {
+                var inv = getInvoiceIdChunk(this);
+                var invPrefix = "#" + getInvoicePrefix(inv);
+
+                var invAmount = parseFloat(removeFormatting($(invPrefix + "amount").val()));
+                var paymentAmt = parseFloat($(this).val());
+
+                if (!$.isNumeric(paymentAmt))
+                    paymentAmt = 0;
+
+                if (paymentAmt > 0) {
+                    $(invPrefix + "chk").prop("checked", true);
+                }
+                else {
+                    $(invPrefix + "chk").prop("checked", false);
+                }
+
+                setInvoicePayment(invPrefix, paymentAmt);
+                setInvoiceBalance(invPrefix, invAmount - paymentAmt);
+
+                calculateBalance();
+            });
+            applyMaskCurrency("#paymentAmt");
+            applyMaskCurrency("#txtAmount");
+            applyMaskCurrency("#txtPayment");
+            applyMaskCurrency("#txtBalance");
+            applyMaskCurrency("#txtCustomerBalance");
+
+            applyMaskCurrency("#lblPromptRemainingBalance");
+
+            $("#chkApplyCredit").change(function () {
+                $('#mp_chkApplyCredit').val(this.checked);
+                $('#customerCreditAmt').val($('#txtCustomerBalance').val());
+                toggleCustomerCreditAmtField(this.checked);
+            });
+            $('#modal_applypaymentprompt').on('hidden.bs.modal', function () {
+                if (saveInProgress) {
+                    var invId = currentPromptedInvoice;
+                    var inv = "inv" + invId;
+                    var invPrefix = getInvoicePrefix(inv);
+                    var hasMultipleItems = $("#" + invPrefix + "hasMultipleItems").val() == "true";
+
+                    if (hasMultipleItems)
+                        openApplyPaymentForm(currentPromptedInvoice);
+                    else
+                        continueToNextInvoice(invId);
+                }
+            });
+
+            $("#slPaymentType").change(function () {
+                if ($(this).val() == "2") {
+                    $('#myModal').modal('show');
+                    $("#txtAmountToBePay").val($("#paymentAmt").val().replace(',', ''));
+                }
+                else
+                    $('#myModal').modal('hide');
+
+            });
+            $("#btnSuccessPopUp").click(function () {
+                $("#swtModel").remove();
+                if (!Mxmarchant) {
+                    swal({
+                        title: "Do you want to save the card info in your profile?",
+                        text: "For future transactions, you will be able to make a payment without entering your credit card details.",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: '#DD6B55',
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: "No",
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+                    },
+                        function (isConfirm) {
+                            if (isConfirm) {
+
+                                CreateProfile();
+                                swal(
+                                    'CC Saved in Profile.',
+                                    '',
+                                    'success'
+                                )
+                            }
+                            else {
+                                swal(
+                                    'Cancelled.',
+                                    '',
+                                    'error'
+                                )
+                            }
+
+                        });
+                }
+            });
+            $("#csearch-box").keyup(function () {
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("Customerdata", "AccountReceivable", new { area = "Portal" })',
+                    data: 'keyword=' + $(this).val(),
+
+                    success: function (data) {
+                        var typeaheadSource = [];
+                        $.each(data, function (key, value) {
+                            typeaheadSource.push({ id: value.CustomerId, name: value.CustomerNo + ' ' + $.trim(value.Name), CustomerNo: value.CustomerNo })
+                        });
+
+                        $('#csearch-box').typeahead({
+                            source: typeaheadSource,
+                            updater: function (item) {
+                                console.log(item);
+                                $("#hdfCustomerId").val(item.id);
+                                $("#CustomerNo").val(item.CustomerNo);
+                                return item;
+                            }
+                        }).focus();
+                    }
+                })
+            });
+            applyMaskCurrency("#ContractDetail_Amount");
+            applyMaskCurrencyBL("#balance");
+            applyMaskCurrency("#customerCreditAmt");
+            populateCustomerCreditBalance(0);
+        });
+
+        function NextStepPayment() {
+            var sURL = '@Url.Action("GetBillingAddress", "AccountReceivable", new { area = "Portal" })?Id=' + $("#hdfCustomerId").val();
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    console.log(data.aadata);
+                    if (data.aadata != null) {
+                        if (data.aadata.AccountNumber != null) {
+                            $("#DivCustomerProfile").show();
+                            $("#DivCustomer").hide();
+                            $(".demo-container").show();
+                            $("#lblAccount").text(data.aadata.AccountNumber);
+                            $("#PaymentProfileID").val(data.aadata.Id);
+
+                        }
+                        else {
+                            $(".demo-container").show();
+                            $("#DivCustomer").hide();
+
+                        }
+                    }
+                    else {
+                        $(".demo-container").show();
+                        $("#DivCustomer").hide();
+
+
+                    }
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+        function CreateProfile() {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("CreateProfile", "AccountReceivable", new { area = "Portal" })',
+                //url: '@Url.Action("CreateProfile", "AccountReceivable", new { area = "Portal" })?response=' +@ViewBag.Response+'&paymentProfileDetail=' +@ViewBag.PaymentProfileDetail+'&PGD='+@ViewBag.PGD,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+
+        function onClickSaveAndClose() {
+            debugger
+            if ($('#txtNotes').val() == '') {
+                alertMsg("", 'Please enter requeried fields.');
+                return;
+            }
+
+            $("#SaveMethod").val("SaveClose");
+            checkRemainingBalance();
+            // go back to customer page?
+        }
+        function onClickSaveAndNew() {
+            debugger
+            if ($('#txtNotes').val() == '') {
+                alertMsg("",'Please enter requeried fields.');
+                return;
+            }
+            $("#SaveMethod").val("SaveNew");
+            checkRemainingBalance();
+            // refresh to allow new payment entry?
+        }
+        function checkRemainingBalance() {
+            debugger
+            if ($("#balance").val() > 0) {
+                //promptForGainCustomerCredit();
+                alertMsg("", 'Please apply complete amount.');
+            }
+            else if ($("#balance").val() < 0)
+            {
+                alertMsg("", 'Apply Amount not more then ' + $('#slPaymentType option:selected').text() + ' Amount.');
+
+            }
+            else
+                continueSaveProcess();
+        }
+        function promptForGainCustomerCredit() {
+            var formattedBalance = Inputmask.format($("#balance").val(), { alias: "currency", prefix: "$" });
+            $("#lblPromptRemainingBalance").text(formattedBalance);
+            $("#modal_gaincustomercreditprompt").modal({ backdrop: 'static' });
+        }
+        function onClickYesGainCustomerCredit() {
+            $("#modal_gaincustomercreditprompt").modal('hide');
+            continueSaveProcess();
+        }
+        function onClickNoGainCustomerCredit() {
+            saveInProgress = false;
+            currentPromptedInvoice = "";
+            $("#modal_gaincustomercreditprompt").modal('hide');
+        }
+        function updateSelectedCustomer() {
+            var currentCustomerId = getSelectedCustomerId();
+            if (selectedCustomerId != currentCustomerId) {
+                selectedCustomerId = currentCustomerId;
+                getCustomerCreditBalance();
+            }
+        }
+        function getSelectedCustomerId() {
+            var checked = $(".payment-checkbox:checked");
+            var customerId = null;
+            if (checked.length > 0)
+                customerId = parseInt(checked.prev().val());
+            return customerId;
+        }
+        function populateCustomerCreditBalance(balance) {
+            $("#txtCustomerBalance").val(balance);
+            if (balance != 0) {
+                $("#tdApplyCredit").show();
+                toggleCustomerCreditAmtField();
+            }
+            else {
+                $("#tdApplyCredit").hide();
+                toggleCustomerCreditAmtField(false);
+            }
+            validateCustomerCreditAmtField();
+        }
+
+        function getCustomerCreditBalance() {
+
+            if (selectedCustomerId != null) {
+
+                var sURL = '@Url.Action("GetCustomerBalanceByOverPaymentById", "AccountReceivable", new { area = "Portal" })?customerId=' + selectedCustomerId;
+                @*var sURL = '@Url.Action("GetCustomerCreditBalance", "AccountReceivable", new { area = "Portal" })?customerId=' + selectedCustomerId;*@
+                $.ajax({
+                    type: "GET",
+                    url: sURL,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (data) {
+                        debugger;
+                        console.log(data);
+                        $('#txtCustomerBalance').val(parseFloat(data.balance).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString())
+                        populateCustomerCreditBalance(parseFloat(data.balance));
+
+                        //if (data.overflows.length == 1) {
+                        //    $('#mp_overflowId').val(data.overflows[0].OverflowId);
+                        //    $('#mp_overflowSourceId').val(data.overflows[0].SourceId);
+                        //    $('#mp_overflowCheckNumber').val(data.overflows[0].CheckNumber);
+                        //    $('#mp_overflowCheckAmount').val(data.overflows[0].CheckAmount);
+                        //}
+
+                    },
+                    error: function () {
+                        alert("Content load failed.");
+                    }
+                });
+            }
+            else
+                populateCustomerCreditBalance(0);
+        }
+        function toggleCustomerCreditAmtField(enabled = null) {
+            if (enabled == null)
+                enabled = $("#chkApplyCredit").is(":checked");
+            $("#customerCreditAmt").prop("disabled", !enabled);
+            if (enabled == false) {
+                $("#customerCreditAmt").val(0);
+                calculateBalance();
+            }
+            calculateBalance();
+        }
+        function validateCustomerCreditAmtField() {
+            if ($("#chkApplyCredit").is(":checked")) {
+                $("#customerCreditAmt").val(Math.min(Math.max(0, $("#customerCreditAmt").val()), $("#txtCustomerBalance").val()));
+                $("#referenceNo").val($("#mp_overflowSourceCheckNumber").val() != '' ? $("#mp_overflowSourceCheckNumber").val() : $("#referenceNo").val());
+
+                $('#mp_chkApplyCredit').val(true);
+            } else { $('#mp_chkApplyCredit').val(false); }
+        }
+        function validateForMultipleCustomers() {
+            debugger;
+            var flg = true;
+            var Cid = "";
+            var Cid1 = "";
+            var _klp = "";
+            $(".payment-checkbox").each(function () {
+                
+                
+                if ($(this).prop("checked")) {
+
+                    if (_klp == "")
+                        _klp = $(this).val();
+
+                    if (flg) {
+                        if (_klp != $(this).val()) {
+                            flg = false;
+                        }
+                    }
+
+                    //if (Cid == "") {
+                    //    Cid = $(this).parent().next().next().next()[0].innerHTML;
+                    //    Cid1 = $(this).parent().next().next().next()[0].innerHTML;
+                    //}
+                    //else
+                    //    Cid1 = $(this).parent().next().next().next()[0].innerHTML;
+
+                }
+            });
+            //if (Cid != Cid1) {
+            //    flg = false;
+            //}
+            return flg;
+        }
+        function continueSaveProcess() {
+            debugger;
+            if (validateForMultipleCustomers()) {
+                saveInProgress = true;
+                isLastPrompt = true;
+                var nextPrompt = "";
+
+                $("[id$=totalPayment]").each(function () {
+
+                    if (!isLastPrompt)
+                        return;
+
+                    var inv = getInvoiceIdChunk(this);
+                    var invId = inv.substr(3);
+
+                    if (promptedInvoices.indexOf(invId) == -1) { // invoice not checked yet
+
+                        var invPrefix = getInvoicePrefix(inv);
+
+                        var isChecked = $("#" + invPrefix + "chk").prop("checked");
+                        var newInvBalance = parseFloat($("#" + invPrefix + "balance").val());
+                        var shouldPrompt = $.isNumeric(newInvBalance) && newInvBalance > 0 && isChecked;
+                        debugger;
+                        if (shouldPrompt) { // invoice needs to be prompted
+                            if (nextPrompt != "") {
+                                isLastPrompt = false;
+                                return;
+                            }
+                            else {
+                                nextPrompt = invId;
+                            }
+                        }
+                    }
+                });
+                if (nextPrompt != "")
+                    promptApplyPaymentForm(nextPrompt);
+                else
+                    finishSaveProcess();
+            }
+            else {
+                showMultipleCustomersPopup();
+            }
+
+        }
+        function btnOpenInvoiceDetailModel(id) {
+            var sURL = '@Url.Action("InvoiceDetail", "AccountReceivable", new { area = "Portal" })?Id=' + id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_invoicedetail').html(data);
+                    $("#modal_invoicedetail").modal({ backdrop: 'static' });
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+        function showMultipleCustomersPopup() {
+            $("#modal_multiplecustomers").modal({ backdrop: 'static' });
+        }
+        function hideMultipleCustomersPopup() {
+            $("#modal_multiplecustomers").modal('hide');
+        }
+        function finishSaveProcess() {
+
+            // disable fields for non-selected invoice to keep them out of the POST
+
+            $(".payment-checkbox").each(function () {
+                if (!$(this).prop("checked")) { // invoice checkbox is not checked, so disable fields
+                    var inv = getInvoiceIdChunk(this);
+                    var invFilter = getInvoiceFilter(inv);
+                    $(invFilter).attr("disabled", "disabled");
+                }
+            });
+
+            $.blockUI();//$.blockUI({ message: $('#throbberBlock'), theme: true, baseZ: 12000 });
+
+            $("#form_applypaymentMP").submit();
+        }
+        function promptApplyPaymentForm(invId) {
+
+            currentPromptedInvoice = invId;
+
+            var inv = "inv" + invId;
+            var invPrefix = getInvoicePrefix(inv);
+
+            var invoiceNo = $("#" + invPrefix + "invoiceNo").val();
+
+            $("#lblPromptInvoiceNo").text(invoiceNo.trim());
+            $("#modal_applypaymentprompt").modal({ backdrop: 'static' });
+        }
+        function onClickYesApplyPayment() {
+            $("#modal_applypaymentprompt").modal('hide');
+
+        }
+        function onClickNoApplyPayment() {
+            saveInProgress = false;
+            currentPromptedInvoice = "";
+            $("#modal_applypaymentprompt").modal('hide');
+        }
+        function onClickContinueToNextInvoice(invId) {
+            continueToNextInvoice(invId);
+        }
+
+        function onClickContinueToNextInvoiceSubmit(invId) {
+
+            //inv341141_bp340573_paymentAmt
+
+
+            $('#form_applypaymentMP').submit();
+        }
+
+
+        function onClickClosePaymentForm(invId) {
+            saveInProgress = false;
+        }
+        function continueToNextInvoice(invId) {
+            var invStr = invId.toString();
+
+            if (saveInProgress) { // in the middle of save process, so continue to next invoice
+
+                if (promptedInvoices.indexOf(invStr) == -1)
+                    promptedInvoices.push(invStr);
+
+                var form = $("#inv" + invStr + "_modal_applypaymentform");
+                $(form).modal('hide');
+
+                setTimeout(continueSaveProcess);
+            }
+        }
+        function setAmount(amt) {
+            var txt = '';
+            if (amt > 0)
+                txt = commaSeparateNumber((amt).toFixed(2));
+            $("#paymentAmt").val(txt);
+        }
+        function setBalance(amt) {
+            var txt = commaSeparateNumber((amt).toFixed(2));
+            $("#balance").val(txt);
+        }
+        function setInvoicePayment(invPrefix, amt) {
+            var txt = '';
+            if (amt > 0)
+                txt = commaSeparateNumber((amt).toFixed(2));
+            $(invPrefix + "totalPayment").val(txt);
+        }
+        function setInvoiceBalance(invPrefix, amt) {
+            $(invPrefix + "balance").val(commaSeparateNumber((amt).toFixed(2)));
+        }
+        function calculateBalance() {
+            validateCustomerCreditAmtField();
+
+            var paymentAmount = parseFloat(removeFormatting($("#paymentAmt").val()));
+            var creditAmount = parseFloat(removeFormatting($("#customerCreditAmt").val()));
+
+            var allocatedPayments = 0;
+            $("[id$=totalPayment]").each(function () {
+                var amt = parseFloat(removeFormatting($(this).val()));
+                if ($.isNumeric(amt))
+                    allocatedPayments += amt;
+            });
+
+            var balance = paymentAmount + creditAmount - allocatedPayments; // todo: subtract all allocated payments
+
+            setAmount(paymentAmount);
+            setBalance(balance);
+        }
+        function selectInvoice(inv) {
+            var invPrefix = "#" + getInvoicePrefix(inv);
+            var balance = parseFloat(removeFormatting($("#balance").val()));
+            var invAmount = parseFloat(removeFormatting($(invPrefix + "amount").val()));
+
+            var payment = 0.00;
+            var isChecked = $(invPrefix + "chk").prop("checked");
+
+            if (!isChecked) // currently selected, so deselect
+                setInvoicePayment(invPrefix, 0);
+            else {
+
+                if ($('#form_applypaymentMP input[rel="mgglchk"]').length == 1) {
+                    payment = balance;
+                } else {
+                    payment = Math.min(balance, invAmount); // get either the full invoice amount, or what's left in the balance
+                }
+
+
+                setInvoicePayment(invPrefix, payment);
+            }
+
+            setInvoiceBalance(invPrefix, invAmount - payment);
+
+            calculateBalance();
+
+        }
+        function btnOpenApplyPaymentForm(id) {
+
+            openApplyPaymentForm(id);
+
+        }
+
+        function openApplyPaymentForm(id) {
+
+            var form = null;
+
+            var existingForm = $("#inv" + id + "_modal_applypaymentform");
+
+            if ($(existingForm).length > 0) // already fetched form, so just display it again
+            {
+                form = existingForm;
+                var inv = getInvoiceIdChunk(form);
+                showApplyPaymentForm(inv);
+            }
+            else // first time loading form, so fetch by ajax
+            {
+                $.blockUI();
+
+                var sURL = '@Url.Action("ApplyManualPaymentForm", "AccountReceivable", new { area = "Portal" })?Id=' + id;
+                $.ajax({
+                    type: "GET",
+                    url: sURL,
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    success: function (data) {
+                        $('#div_applypaymentforms').append(data);
+                        form = $('#div_applypaymentforms').children().last();
+
+                        $(".date-picker").datepicker();
+
+                        var inv = getInvoiceIdChunk(form);
+                        initPaymentForm(inv);
+
+                        $.unblockUI();
+
+                        showApplyPaymentForm(inv);
+                    },
+                    error: function () {
+                        $.unblockUI();
+                        alert("Content load failed.");
+                    }
+                });
+            }
+        };
+
+        function showApplyPaymentForm(inv) {
+            var invPrefix = getInvoicePrefix(inv);
+            var form = $("#" + invPrefix + "modal_applypaymentform");
+            $("#" + invPrefix + "btnContinue").hide();
+            $("#" + invPrefix + "btnFinish").hide();
+            if (saveInProgress) {
+                if (isLastPrompt)
+                    $("#" + invPrefix + "btnFinish").show();
+                else
+                    $("#" + invPrefix + "btnContinue").show();
+            }
+            $(form).modal({ backdrop: 'static' });
+        }
+
+
+        $('#select_dateRangeMP').change(function () {
+            applyDurationFilterMP(parseInt($(this).val()));
+            if (parseInt($(this).val()) != 15 && parseInt($(this).val()) != 16)
+                refreshTable();
+        });
+        $('#txtStartDate').change(function () {
+            $('#spnStartDate').html($(this).val());
+            if ($('#txtStartDate').val() != '' && $('#txtEndtDate').val() != '')
+                refreshTable();
+        });
+        $('#txtEndtDate').change(function () {
+            $('#spnEndtDate').html($(this).val());
+            if ($('#txtStartDate').val() != '' && $('#txtEndtDate').val() != '')
+                refreshTable();
+        });
+        $('#monthlist').change(function () {
+            $('#spnStartDate').html('');
+            if ($('#monthlist').val() != '' && $('#yearlist').val() != '')
+                refreshTable();
+        });
+        $('#yearlist').change(function () {
+            $('#spnEndtDate').html('');
+            if ($('#monthlist').val() != '' && $('#yearlist').val() != '')
+                refreshTable();
+        });
+
+        function applyDurationFilterMP(v) {
+            $('#spnStartDate').html('');
+            $('#spnEndtDate').html('');
+            $('.divspandate').show();
+            $('#divSD').hide();
+            $('#divED').hide();
+            $('#divmonth').hide();
+            $('#divyear').hide();
+            $('#spnStartDate').html('');
+            $('#spnEndtDate').html('');
+            $('#monthlist').val('');
+            $('#yearlist').val('');
+            switch (v) {
+                case 1:
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = moment().endOf('isoWeek').toString();
+                    break;
+                case 2:
+                    //code block
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 3:
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                    break;
+                case 4:
+                    //code block
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 5:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = moment().endOf('quarter').toString();
+                    break;
+                case 6:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 7:
+                    //code block
+                    firstDay = moment().startOf('year').toString();;
+                    lastDay = moment().endOf('year').toString();
+                    break;
+                case 8:
+                    //code block
+                    firstDay = moment().startOf('year').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 9:
+                    //code block
+                    firstDay = moment().toString();
+                    lastDay = moment().toString();
+                    break;
+                case 10:
+                    //code block
+                    firstDay = moment().add(-1, 'days').toString();
+                    lastDay = moment().add(-1, 'days').toString();
+                    break;
+                case 11:
+                    //code block
+                    firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                    lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                    break;
+                case 12:
+                    //code block
+                    firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                    break;
+                case 13:
+                    //code block
+                    firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                    lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                    break;
+                case 14:
+                    //code block
+                    firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                    lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                    break;
+                case 15:
+                    //code block
+                    $('.divspandate').hide();
+                    $('#divSD').show();
+                    $('#divED').show();
+                    $('#txtStartDate').val('');
+                    $('#txtEndtDate').val('')
+                    break;
+                case 16:
+                    $('.divspandate').hide();
+                    $('#divSD').hide();
+                    $('#divED').hide();
+                    $('#divmonth').show();
+                    $('#divyear').show();
+                    break
+                default:
+                //code block
+            }
+            $('#spnStartDate').html(moment(firstDay).format('L'));
+            $('#spnEndtDate').html(moment(lastDay).format('L'));
+        }
+        function setSearchMPTime(value) {
+            $("#date").show();
+            $("#period").hide();
+            value = parseInt(value);
+            $("#select_dateRangeMP").val(value.toString());
+            var custom_enabled = false;
+            var firstDay;
+            var lastDay;
+
+            switch (parseInt(value)) {
+                case 1:
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = moment().endOf('isoWeek').toString();
+                    break;
+                case 2:
+                    //code block
+                    firstDay = moment().startOf('isoWeek').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 3:
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(0, 'month').endOf('month').toString();
+                    break;
+                case 4:
+                    //code block
+                    firstDay = moment().subtract(0, 'month').startOf('month').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 5:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = moment().endOf('quarter').toString();
+                    break;
+                case 6:
+                    //code block
+                    firstDay = moment().startOf('quarter').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 7:
+                    //code block
+                    firstDay = moment().startOf('year').toString();;
+                    lastDay = moment().endOf('year').toString();
+                    break;
+                case 8:
+                    //code block
+                    firstDay = moment().startOf('year').toString();
+                    lastDay = new Date().toString();
+                    break;
+                case 9:
+                    //code block
+                    firstDay = moment().toString();
+                    lastDay = moment().toString();
+                    break;
+                case 10:
+                    //code block
+                    firstDay = moment().add(-1, 'days').toString();
+                    lastDay = moment().add(-1, 'days').toString();
+                    break;
+                case 11:
+                    //code block
+                    firstDay = moment().subtract(1, 'week').startOf('week').toString();
+                    lastDay = moment().subtract(1, 'week').endOf('week').toString();
+                    break;
+                case 12:
+                    //code block
+                    firstDay = moment().subtract(1, 'month').startOf('month').toString();
+                    lastDay = moment().subtract(1, 'month').endOf('month').toString();
+                    break;
+                case 13:
+                    //code block
+                    firstDay = moment().subtract(1, 'quarter').startOf('quarter').toString();
+                    lastDay = moment().subtract(1, 'quarter').endOf('quarter').toString();
+                    break;
+                case 14:
+                    //code block
+                    firstDay = moment().subtract(1, 'year').startOf('year').toString();
+                    lastDay = moment().subtract(1, 'year').endOf('year').toString();
+                    break;
+                case 15:
+                    //code block
+                    custom_enabled = true;
+                    //code block
+                    $('#dtpfromMP').html(moment(firstDay).format('L'));
+                    $('#dtptoMP').html(moment(lastDay).format('L'));
+                    break;
+                case 16:
+                    $("#date").hide();
+                    $("#period").show();
+                    break
+                default:
+                    //code block
+            }
+            $('#dtpfromMP').val(moment(firstDay).format('L'));
+            $('#dtptoMP').val(moment(lastDay).format('L'));
+
+            $(".search-date-field").prop('disabled', !custom_enabled);
+        };
+        function btnOpenInvoiceDetail(id) {
+            if (id == 2) {
+                $("#modal_invoicedetailconsolidated").modal({ backdrop: 'static' });
+            }
+            else {
+                $("#modal_invoicedetail").modal({ backdrop: 'static' });
+            }
+        };
+        $(document).on('click', '#btnClosemodel', function () {
+            $("#modal_invoicedetail").modal('hide');
+        });
+        $(document).on("change", ".payment-field", function () {
+            validateCustomerCreditAmtField();
+            var inv = getInvoiceIdChunk(this);
+            var invPrefix = getInvoicePrefix(inv);
+            updateLineItemData(inv);
+            if ($("#" + invPrefix + "chkAutoApply").prop("checked") && $(this).hasClass("payment-line-item-amt-field"))
+                handleAutoApply(inv, this.name.split('_')[1]);
+            updateFranchiseeData(inv);
+        });
+        $(document).on("change", "input[type=radio][name=rdPaymentUnit]", function () {
+            var inv = getInvoiceIdChunk(this);
+            togglePaymentUnitColumns(inv);
+        });
+        function initPaymentForm(inv) {
+
+            var invPrefix = getInvoicePrefix(inv);
+
+            var totalPayment = parseFloat(removeFormatting($("#" + invPrefix + "totalPayment").val()));
+            if ($.isNumeric(totalPayment)) {
+                debugger
+                //$("#" + invPrefix + "paymentAmt").val(totalPayment.toFixed(2));
+
+                //var _taxAMT = totalPayment / (1 + parseFloat(removeFormatting($("#" + invPrefix + "TaxRate").val())))
+                //var _paymentAMT = totalPayment - _taxAMT;
+
+                var _taxAMT = (totalPayment) / (100 + parseFloat(removeFormatting($("#" + invPrefix + "TaxRate").val())))
+                var _paymentAMT = totalPayment - _taxAMT;
+
+                var _oldBalanceAMT = parseFloat(removeFormatting($("#" + invPrefix + "oldBalance").val()));
+                
+
+
+                $("#" + invPrefix + "paymentAmt").val(_paymentAMT.toFixed(2));
+                $("#" + invPrefix + "tax").val(_taxAMT.toFixed(2));
+                $("#" + invPrefix + "total").val(totalPayment.toFixed(2));
+                $("#" + invPrefix + "newBalance").val((_oldBalanceAMT - totalPayment).toFixed(2));
+                
+                
+            }
+
+            //refreshPaymentForm(inv);
+            updateFranchiseeData(inv);
+            ////showFranchiseesForLineNumber(inv, 1);
+            togglePaymentUnitColumns(inv);
+        }
+        function handleAutoApply(inv, item) {
+            debugger;
+            var invFilter = getInvoiceFilter(inv);
+            var invPrefix = getInvoicePrefix(inv);
+            var invFormFilter = getInvoiceParentFormFilter(inv);
+
+            var totalAmt = 0;
+
+            var paymentAmt = parseFloat($("#" + invPrefix + item + "_total").val());
+
+            $(invFormFilter + ".franchisee-row-item").each(function () {
+                if (this.value == item) {
+                    var key = $(this).prev().val();
+                    var prefix = "#" + invPrefix + "bp" + key;
+                    totalAmt += parseFloat($(prefix + "_oldBalance").val());
+                }
+            });
+
+            if (totalAmt == 0)
+                return;
+
+            $(invFormFilter + ".franchisee-row-item").each(function () {
+                if (this.value == item) {
+                    var key = $(this).prev().val();
+                    var prefix = "#" + invPrefix + "bp" + key;
+                    var amt = parseFloat($(prefix + "_oldBalance").val());
+                    var portion = amt / totalAmt;
+                    var franchiseePaymentPct = portion * 100.00;
+                    var franchiseePaymentAmt = portion * paymentAmt;
+
+                    $(prefix + "_paymentAmt").val(franchiseePaymentAmt.toFixed(2));
+                    $(prefix + "_paymentPct").val(franchiseePaymentPct.toFixed(2));
+                }
+            });
+        }
+        function refreshPaymentForm(inv) {
+            updateLineItemData(inv);
+            updateFranchiseeData(inv);
+        }
+        function updateLineItemData(inv) {
+            debugger;
+            var invPrefix = getInvoicePrefix(inv);
+
+            var oldBalance = $("#" + invPrefix + "oldBalance").val();
+            var paymentAmt = $("#" + invPrefix + "paymentAmt").val();
+            $("#" + invPrefix + "newBalance").val((oldBalance - paymentAmt).toFixed(2));
+
+            var itemCnt = 0;
+            while (true) {
+                var prefix = "#" + invPrefix + "item" + itemCnt;
+                if ($(prefix + "_oldBalance").length) {
+                    debugger;
+                    var item_taxRate = $(prefix + "_taxRate").val();
+                    var item_oldBalance = $(prefix + "_oldBalance").val();
+                    var item_paymentAmt = $(prefix + "_paymentAmt").val();
+                    var item_tax = (item_paymentAmt * item_taxRate).toFixed(2);
+                    var item_total = (item_paymentAmt - item_tax).toFixed(2);
+                    $(prefix + "_tax").val(item_tax);
+                    $(prefix + "_total").val(item_total);
+                    $(prefix + "_newBalance").val((item_oldBalance - item_paymentAmt).toFixed(2));
+
+                    itemCnt++;
+                }
+                else
+                    break;
+            }
+        }
+        function updateFranchiseeData(inv) {
+            debugger;
+            var invFilter = getInvoiceFilter(inv);
+            var invPrefix = getInvoicePrefix(inv);
+            var invFormFilter = getInvoiceParentFormFilter(inv);
+            var paymentUnit = $("input" + invFilter + "[type=radio][name=rdPaymentUnit]:checked").val();
+
+            var paymentAmt = parseFloat($("#" + invPrefix + "paymentAmt").val());
+            var paymentAmtTotal = parseFloat($("#" + invPrefix + "paymentAmt").val());
+
+            $(invFormFilter + ".franchisee-row-key").each(function () {
+                var prefix = "#" + invPrefix + "bp" + this.value;
+                var item = $(prefix + "_item").val();
+                var _PayAmount = 0;
+                var oldBalance = parseFloat($(prefix + "_oldBalance").val());
+             
+
+                if (oldBalance >= paymentAmt) {
+                    $(prefix + "_paymentAmt").val(paymentAmt.toFixed(2));                   
+                    _PayAmount = paymentAmt;
+                    paymentAmt = 0;
+                }
+                else {
+
+                    $(prefix + "_paymentAmt").val(oldBalance.toFixed(2));
+                    _PayAmount = oldBalance;
+                    paymentAmt = paymentAmt - oldBalance;
+                }
+
+                //var paymentAmt = parseFloat($("#" + invPrefix + item + "_total").val());
+                var franchiseePaymentAmt = parseFloat($(prefix + "_paymentAmt").val());
+                var franchiseePaymentPct = parseFloat($(prefix + "_paymentPct").val());
+                if (paymentUnit == "amt")
+                    $(prefix + "_paymentPct").val((franchiseePaymentAmt * 100 / paymentAmtTotal).toFixed(2));
+                else if (paymentUnit == "pct") {
+                    $(prefix + "_paymentAmt").val((franchiseePaymentPct * paymentAmtTotal / 100.00).toFixed(2));
+                }
+                franchiseePaymentAmt = parseFloat($(prefix + "_paymentAmt").val());
+               
+
+                $(prefix + "_newBalance").val((oldBalance - franchiseePaymentAmt).toFixed(2));
+            });
+        }
+        function showFranchiseesForLineNumber(inv, lineNo) {
+            var invFormFilter = getInvoiceParentFormFilter(inv);
+            $(invFormFilter + ".franchisee-row").hide();
+            $(invFormFilter + ".franchisee-row-line" + lineNo).show();
+        }
+        function togglePaymentUnitColumns(inv, paymentUnit) {
+            var invFilter = getInvoiceFilter(inv);
+            var invFormFilter = getInvoiceParentFormFilter(inv);
+            var paymentUnit = $("input[type=radio]" + invFilter + "[name=rdPaymentUnit]:checked").val();
+            $(invFormFilter + ".franchisee-amt-col").hide();
+            $(invFormFilter + ".franchisee-pct-col").hide();
+            $(invFormFilter + ".franchisee-" + paymentUnit + "-col").show();
+        }
+        function getInvoiceIdChunk(elem) {
+            return $(elem).attr("id").split('_')[0];
+        }
+        function getInvoiceFilter(inv) {
+            return "[id^=" + getInvoicePrefix(inv) + "]";
+        }
+        function getInvoicePrefix(inv) {
+            return inv + "_";
+        }
+        function getInvoiceParentFormFilter(inv) {
+            return "#" + getInvoicePrefix(inv) + "modal_applypaymentform ";
+        }
+        function commaSeparateNumber(val) {
+            //if (val != "") {
+            //    val =parseFloat(val).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString()
+
+            //    //while (/(\d+)(\d{3})/.test(val.toString())) {
+            //    //    val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
+            //    //}
+            //}
+            return val;
+        }
+        function removeFormatting(i) {
+            return typeof i === 'string' ?
+                i.replace(/[\$,]/g, '') * 1 :
+                typeof i === 'number' ?
+                i : 0;
+        }
+        function applyMaskCurrency(id) {
+            $(id).inputmask("currency", {
+                alias: 'currency',
+                prefix: '$ ',
+                digits: 2,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                unmaskAsNumber: true,
+                allowPlus: false,
+                allowMinus: true,
+                autoGroup: true,
+                positionCaretOnTab: false,
+                positionCaretOnClick: "select",
+                groupSeparator: ",",
+            });
+        }
+
+        function applyMaskCurrencyBL(id) {
+            $(id).inputmask("currency", {
+                alias: 'currency',
+                prefix: '$ ',
+                digits: 2,
+                autoUnmask: true,
+                removeMaskOnSubmit: true,
+                unmaskAsNumber: true,
+                allowPlus: false,
+                allowMinus: false,
+                autoGroup: true,
+                positionCaretOnTab: false,
+                positionCaretOnClick: "select",
+                groupSeparator: ",",
+            });
+        }
+        function alertMsg(title, msg) {
+            $('#swtWarningAlertPopup_Title').html(title);
+            $('#swtWarningAlertPopup_Message').html(msg);
+
+            $("#swtWarningAlertPopup").show();
+
+            $("#btnswtWarningAlertOKPopup").click(function () {
+                $("#swtWarningAlertPopup").hide();
+            });
+        }
+    </script>
+}
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="~/Content/admin/assets/Card/dist/jquery.card.js"></script>
+<script>
+    $('form').card({
+        // a selector or DOM element for the container
+        // where you want the card to appear
+        container: '.card-wrapper', // *required*
+        // all of the other options from above
+    });
+    $(function () {
+        $("#myModal").draggable();
+    });
+</script>

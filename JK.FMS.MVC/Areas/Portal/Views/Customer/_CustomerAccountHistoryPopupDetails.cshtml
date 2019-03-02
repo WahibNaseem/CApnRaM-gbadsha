@@ -1,0 +1,165 @@
+﻿
+@model JKViewModels.Customer.CustomerAccountHistoryViewModel
+
+
+                @foreach (var franchisee in Model.Franchisees)
+                {
+                    <hr style="margin-top:0px;margin-bottom:0px;" />
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="control-label col-md-6" style="text-align:center;">
+                                <span style="font-size:14px;"><b>Franchisee:</b> @franchisee.FranchiseeNo - @franchisee.FranchiseeName</span>
+                            </label>
+                        </div>
+                        <div class="col-md-5" style="text-align:center;">
+                            <button type="button" class="btn btn-primary" id="btnPrint" onclick="getAccountHistoryPrints(@Model.Customer.CustomerId)">
+                                Print
+                            </button>&nbsp;&nbsp;
+                            <button type="button" class="btn btn-primary" id="btnPrint" onclick="getAccountHistoryExportPdf(@Model.Customer.CustomerId)">
+                                Export
+                            </button>&nbsp;&nbsp;&nbsp;
+                        </div>
+                    </div>
+
+                    foreach (var invoice in franchisee.Invoices)
+                    {
+                        <hr style="margin-top:0px;margin-bottom:0px;" />
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-2" style="text-align:center;">
+                                    <label class="control-label"><b>Invoice No</b></label>
+                                    <span>@(invoice.Invoice?.TrxNumber)</span>
+                                </div>
+                                <div class="col-md-2" style="text-align:center;">
+                                    <label class="control-label"><b>Due Date</b></label>
+                                    <span>@(invoice.Invoice?.Date.ToString("MM/dd/yyyy"))</span>
+                                </div>
+                                <div class="col-md-2" style="text-align:center;">
+                                    <label class="control-label"><b>Invoice Amount</b></label>
+                                    <span>@(invoice.Invoice?.Amount.ToString("C"))</span>
+                                </div>
+                                <div class="col-md-6" style="text-align:left;">
+                                    <label class="control-label"><b>Description</b></label><br />
+                                    <span>@(invoice.Invoice?.Description)</span>
+                                </div>
+                            </div>
+                        </div>
+                        if (invoice.Payments != null && invoice.Payments.Count > 0)
+                        {
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-2" style="text-align:center;">
+                                </div>
+                                <div class="col-md-2" style="text-align:center;">
+                                    <label class="control-label"><b>Check Date</b></label>
+                                    @foreach (var trx in invoice.Payments)
+                                    {
+                                        <span>@trx.Date.ToString("MM/dd/yyyy")</span><br/>
+                                    }
+                                </div>
+                                <div class="col-md-2" style="text-align:center;">
+                                    <label class="control-label"><b>Check Amount</b></label>
+                                    @foreach (var trx in invoice.Payments)
+                                    {
+                                        <span>@trx.Amount.ToString("C")</span><br />
+                                    }
+                                </div>
+                                <div class="col-md-6" style="text-align:left;">
+                                    <label class="control-label"><b>Check No</b></label> <br />
+                                    @foreach (var trx in invoice.Payments)
+                                    {
+                                        <span>@trx.Description</span><br />
+                                    }
+                                </div>
+                                
+                            </div>
+                        </div>
+                        }
+                        if (invoice.Credits != null && invoice.Credits.Count > 0)
+                        {
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-2" style="text-align:center;">
+                                </div>
+                                <div class="col-md-2" style="text-align:center;">
+                                    <label class="control-label"><b>Credit Date</b></label>
+                                    @foreach (var trx in invoice.Credits)
+                                    {
+                                        <span>@trx.Date.ToString("MM/dd/yyyy")</span><br/>
+                                    }
+                                </div>
+                                <div class="col-md-2" style="text-align:center;">
+                                    <label class="control-label"><b>Credit Amount</b></label>
+                                    @foreach (var trx in invoice.Credits)
+                                    {
+                                        <span>@trx.Amount.ToString("C")</span><br />
+                                    }
+                                </div>
+                                <div class="col-md-6" style="text-align:left;">
+                                    <label class="control-label"><b>Reason</b></label> <br />
+                                    @foreach (var trx in invoice.Credits)
+                                    {
+                                        <span>@trx.Description</span><br />
+                                    }
+                                </div>
+                                @*<div class="col-md-4" style="text-align:center;">
+                                </div>*@
+                            </div>
+                        </div>
+                        }
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-2" style="text-align:center;">
+                                </div>
+                                <div class="col-md-2" style="text-align:center;">
+                                </div>
+                                <div class="col-md-2" style="text-align:center;">
+                                </div>
+                                <div class="col-md-2" style="text-align:left;">
+                                    <label class="control-label"><b>Balance</b></label>
+                                    <span>@invoice.Balance.ToString("C")</span>
+                                </div>
+                                <div class="col-md-4" style="text-align:center;">
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+                <hr style="margin-top:0px;margin-bottom:0px;" />
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-md-3" style="text-align:center;">
+                            <label class="control-label"><b>Invoice Totals:</b> @Model.InvoiceTotal.ToString("C")</label>
+                        </div>
+                        <div class="col-md-3" style="text-align:center;">
+                            <label class="control-label"><b>Payment Totals:</b> @Model.OtherTrxTotal.ToString("C")</label>
+                        </div>
+                        <div class="col-md-3" style="text-align:center;">
+                            <label class="control-label"><b>Tax Totals:</b> @Model.TaxTotal.ToString("C")</label>
+                        </div>
+                        <div class="col-md-3" style="text-align:center;">
+                            <label class="control-label"><b>Amount Due:</b> @Model.AmountDue.ToString("C")</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-md-3" style="text-align:center;">
+                            @*<button type="button" class="btn btn-primary  pull-right" id="btnPrint" onclick="getAccountHistoryPrints(@Model.Customer.CustomerId)">
+                                Print
+                            </button>*@
+                        </div>
+                        <div class="col-md-3" style="text-align:center;">
+                        </div>
+                        <div class="col-md-3" style="text-align:center;">
+                            <button type="button" class="btn btn-primary  pull-right" id="btnclose" data-dismiss="modal">
+                                Close
+                            </button>
+                        </div>
+                        <div class="col-md-3" style="text-align:center;">
+
+                        </div>
+                    </div>
+                </div>

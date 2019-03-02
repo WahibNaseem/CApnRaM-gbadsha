@@ -1,0 +1,459 @@
+﻿@model JKViewModels.Inspection.InspectionFormModel
+@{
+    ViewBag.Title = "InspectionDetail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+    <style type="text/css">
+        .uppercase {
+            font-size: 14px;
+        }
+
+        .lbl-p5 {
+            padding: 5px;
+        }
+
+            .lbl-p5.red {
+                color: red;
+            }
+
+
+            .lbl-p5.green {
+                color: lightgreen;
+            }
+
+        input[type="text"].txtcolon:before {
+            content: ": ";
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .credit-field {
+            width: 80px !important;
+        }
+
+        .alignRight {
+            text-align: right;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .close {
+            background-image: url(/Content/admin/assets/global/img/stick_close.png) !important;
+            height: 12px !important;
+            width: 12px !important;
+            margin-top: 0px !important;
+        }
+
+        #ui-datepicker-div {
+            z-index: 99999 !important;
+        }
+    </style>
+
+}
+<input type="text" name="InspectionFormId" value="@Model.InspectionFormId" id="InspectionFormId" style="visibility:hidden" />
+<input type="text" name="FormTemplateId" value="@Model.InspectionId" id="FormTemplateId" style="visibility:hidden" />
+<div class="form form-horizontal">
+    <div class="custom-form portlet light">
+        <div class="headerbox">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12 text-center" style="font-size:13px;">
+                            <b>Inspection Detail</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="portlet-body form form-horizontal">
+            <div class="form-body" style="padding-top:0px !important;margin-top: 0px !important;">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="control-label col-md-2">
+                                Account Type
+                                <span class="required" aria-required="true"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control input-sm" value=" @Model.AccountType" />
+                            </div>
+                            <label class="control-label col-md-2">
+                                Service Type
+                                <span class="required" aria-required="true"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control input-sm" value=" @Model.ServiceType" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="control-label col-md-2">
+                                Form Name
+                                <span class="required" aria-required="true"> * </span>
+                            </label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control input-sm" value=" @Model.FormName" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-2">
+                                <input type="button" class="btn btn-custom btn btn-primary col-md-10" onclick="AddAreaModel()" value="Add Area" style="margin-left: 35px;" />
+                            </div>
+                            @*<div class="col-md-2">
+                                    <input type="button" class="btn btn-custom btn btn-primary  col-md-10" id="btnInspection" onclick="assignInspectionclick()" value="Assign Inspection" />
+
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        @if (Model != null && Model.Sections.Count > 0)
+                        {
+                            foreach (var item in Model.Sections)
+                            {
+                                <div class="col-md-4" style="margin-top: 5px;">
+                                    <div class="mt-element-list">
+                                        <div class="mt-list-head list-simple font-white bg-red" style="padding-top: 5px;padding-bottom: 5px;">
+                                            <div class="list-head-title-container">
+                                                <a href="javascript:void(0);" onclick='BtnDeleteSection(@item.InspectionFormSectionId)' style="float: left;"><i class="fa fa-trash" style="padding-right:5px;"></i></a>
+                                                <span>@item.SectionName</span>
+                                                <input type="button" class="btn btn-custom btn btn-primary" style="float: right;padding-top: 0px;padding-bottom:0px;margin-top: -1px;" onclick="OpenAddArea(@item.InspectionFormSectionId)" value="Add Item" />
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="mt-list-container list-simple">
+                                            <ul>
+                                                @foreach (var sectionItem in item.Items.OrderBy(x=> x.FormItemValue))
+                                                {
+                                                    if (sectionItem.FormItemType == JKViewModels.FormItemType.FormItemTypeInspection)
+                                                    {
+                                                        var name = sectionItem.FormItemValue;
+                                                        string[] items = name.Split('"');
+                                                        string ItemName = items[7];
+                                                        if(ItemName == "Rating")
+                                                        {
+                                                            ItemName = items[5];
+                                                        }
+                                                    <li class="mt-list-item" style="margin-top: -8px;padding-bottom: 7px;">
+                                                        <div>
+                                                            <span>@ItemName</span>
+                                                            <a href='javascript:void(0);' onclick='BtnDeleteItem(@sectionItem.InspectionFormItemId)' style="float: right;"><i class='fa fa-trash'></i></a>
+                                                        </div>
+                                                    </li>
+                                                    }
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row" id="divArea">
+
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-10">
+                            </div>
+                            <div class="col-md-1">
+                                <input type="button" class="btn btn-custom btn btn-primary col-md-12" value="Save" />
+                            </div>
+                            <div class="col-md-1">
+                                <input type="button" id="btn" class="btn btn-custom btn btn-primary col-md-12" value="Cancel" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade in" id="modal_AddItemModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+        <div class="modal-dialog">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                        Add Item
+                    </h4>
+                </div>
+                <input type="text" name="AreaId" id="AreaId" style="visibility:hidden" />
+                <div class="modal-body" style="padding-top: 1px;margin-top: -5px;">
+                    <div class="form-body">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label class="control-label col-md-3" style="text-align: right;padding: 5px;margin-bottom:5px;font-weight:bold;">Itam:</label>
+                                    <div class="col-md-6">
+                                        @if (ViewBag.TempAreaIteam != null)
+                                        {
+                                            <select class="form-control input-sm" id="TempAreaIteam">
+                                                <option value="-1">Select Item</option>
+                                                @foreach (var item in (SelectList)ViewBag.TempAreaIteam)
+                                                {
+                                                    <option value="@item.Value">@item.Text</option>
+                                                }
+                                            </select>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-8">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="button" class="btn btn-custom btn btn-primary col-md-12" id="btnAddItem" onclick="AddItem()" value="Add" />
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="button" id="btnCancelAddModal" onclick="AddItemCancel()" class="btn btn-custom btn btn-primary" value="Cancel" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade in" id="modal_AddAreaModel" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+        <div class="modal-dialog">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                        Add Area
+                    </h4>
+                </div>
+                <input type="text" name="AreaId" id="AreaId" style="visibility:hidden" />
+                <div class="modal-body" style="margin-top: -40px;">
+                    <div class="form-body" style="padding-bottom: 0px;">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label class="control-label col-md-3" style="text-align: right;padding: 5px;margin-bottom:5px;font-weight:bold;">Area:</label>
+                                    <div class="col-md-6">
+                                        @if (ViewBag.AreaList != null)
+                                        {
+                                            <select class="form-control input-sm" id="TempArealist">
+                                                <option value="-1">Select</option>
+                                                @foreach (var item in (SelectList)ViewBag.AreaList)
+                                                {
+                                                    <option value="@item.Value">@item.Text</option>
+                                                }
+                                            </select>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-8">
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="button" class="btn btn-custom btn btn-primary col-md-12" onclick="AddArea()" id="btnAddItem" value="Add" />
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="button" id="btnCancelAddModal" onclick="AddAreaCancel()" class="btn btn-custom btn btn-primary" value="Cancel" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section pageplugins{
+
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/scripts/datatable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js")" type="text/javascript"></script>
+    @*<script src="@Url.Content("~/Content/admin/assets/global/scripts/app.min.js")" type="text/javascript" )"></script>*@
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/table-datatables-managed.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/moment.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js")" type="text/javascript"></script>
+
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+}
+
+@section scripts{
+    <script>
+        jQuery(document).ready(function () {
+
+        });
+
+        function OpenAddArea(Id) {
+            //$("#AreaId").val('');
+            $("#modal_AddItemModel").modal('show');
+            $("#AreaId").val(Id);
+        }
+
+        function AddAreaModel() {
+            $("#modal_AddAreaModel").modal('show');
+        }
+
+        function AddArea() {
+            var tempId = $('#FormTemplateId').val();
+            var InspectionFormId = $("#InspectionFormId").val();
+            var TempName = $("#TempArealist option:selected").text();
+            var Id = $("#TempArealist").val();
+            var sURL = '@Url.Action("GetInspectionSectionAdd", "Administration", new { area = "Portal" })?id=' + Id + '&InspForm=' + InspectionFormId;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    swal(
+                        'Area Added'
+                    )
+                       var pageurl = '@Url.Action("InspectionDetail", "Administration", new { area = "Portal"})?id=' + tempId;
+                    window.location.href = pageurl;
+                    //trlist = "";
+
+                    //var html = $("#divArea").html();
+
+                    //trlist += '<div class="col-md-4" style="margin-top: 5px;"><div class="mt-element-list"><div class="mt-list-head list-simple font-white bg-red" style="padding-top: 5px;padding-bottom: 5px;"><div class="list-head-title-container"><span>';
+                    //trlist += TempName;
+                    //trlist += '</span>';
+                    //trlist += '<input type="button" class="btn btn-custom btn btn-primary" onclick="OpenAddArea(' + Id +')" style="float: right;padding-top: 0px;padding-bottom:0px;margin-top: -1px;" value="Add Item" />';
+                    //trlist += '</div></div><div class="mt-list-container list-simple"><ul>';
+
+                    //for (var i = 0; i < data.aadata.length; i++) {
+                    //    trlist += '<li class="mt-list-item" style="margin-top: -8px;padding-bottom: 7px;"><div><span>' + data.aadata[i].ItemName + '</span>';
+                    //    trlist += '<a href="javascript:void(0);" onclick="BtnDeleteItem(' + data.aadata[i].TemplateAreaItemId + ')" style="float: right;"><i class="fa fa-trash"></i></a></div></li>';
+                    //}
+                    //trlist += '</ul></div></div></div>';
+                    //$('#divArea').append(trlist);
+
+                    //$("#modal_AddAreaModel").modal('hide');
+
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+        function AddItem() {
+            var Id = $("#AreaId").val();
+            var ItemId = $('#TempAreaIteam').val();
+            var tempId = $('#FormTemplateId').val();
+            var sURL = '@Url.Action("AddItemtoInspectionArea", "Administration", new { area = "Portal" })?_SectionId=' + Id + '&_SectionItemId=' + ItemId ;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $("#modal_AddItemModel").modal('hide');
+                    $.blockUI();
+                    var pageurl = '@Url.Action("InspectionDetail", "Administration", new { area = "Portal"})?id=' + tempId;
+                    window.location.href = pageurl;
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+
+        }
+
+        function AddAreaCancel() {
+            $("#modal_AddAreaModel").modal('hide');
+        }
+
+        function AddItemCancel() {
+            $("#modal_AddItemModel").modal('hide');
+        }
+
+        function BtnDeleteSection(SectionId) {
+             var tempId = $('#FormTemplateId').val();
+            var sURL = '@Url.Action("DeleteInspectionSection", "Administration", new { area = "Portal" })?SectionId=' + SectionId
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    swal(
+                        'Section Deleted!'
+                    )
+                    $.blockUI();
+                     var pageurl = '@Url.Action("InspectionDetail", "Administration", new { area = "Portal"})?id=' + tempId;
+                    window.location.href = pageurl;
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+
+
+        function BtnDeleteItem(ItemId) {
+            var tempId = $('#FormTemplateId').val();
+            var sURL = '@Url.Action("DeleteInspectionAreaItem", "Administration", new { area = "Portal" })?ItemId=' + ItemId
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    swal(
+                        'Item Deleted!'
+                    )
+                    $.blockUI();
+                     var pageurl = '@Url.Action("InspectionDetail", "Administration", new { area = "Portal"})?id=' + tempId;
+                    window.location.href = pageurl;
+                },
+                error: function () {
+                    alert("Content load failed.");
+                }
+            });
+        }
+    </script>
+}

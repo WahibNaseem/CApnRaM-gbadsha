@@ -1,0 +1,245 @@
+﻿
+@{
+    ViewBag.Title = "FranchiseeSearch";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+ 
+
+@section styles{
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/datatables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css")" rel="stylesheet" type="text/css" />
+
+    <link href="~/Content/admin/assets/global/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <style type="text/css">
+        tr > td {
+            font-size: 12px !important;
+            padding: 4px !important;
+        }
+
+        /*tr > th {
+            font-size: 11px !important;
+            text-transform: uppercase;
+        }*/
+
+        .row {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .opendiv {
+            padding: 4px;
+            background-color: gold;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .closeddiv {
+            padding: 4px;
+            background-color: limegreen;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overpaiddiv {
+            padding: 4px;
+            background-color: deepskyblue;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .overduediv {
+            padding: 4px;
+            background-color: orangered;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn {
+            padding: 3px 12px;
+            font-size: 12px;
+        }
+
+            .btn.multiselect {
+                text-align: left;
+                padding-top: 4px;
+                padding-bottom: 4px;
+                font-size: 11px;
+                color: #555;
+            }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        #modal_RegionModel .modal-content {
+            width: 55% !important;
+            margin-left: 30% !important;
+        }
+
+        .multiselect-container {
+            padding-left: 25px !important;
+            padding-top: 10px !important;
+        }
+    </style>
+}
+
+<br />
+<br />
+<div class="custom-form portlet light form-horizontal" style="max-width:735px;margin: 0px auto;padding:0;min-height: 100px;">
+    <div class="headerbox">
+        <div class="row" style="background-color: #3598DC;color: #fff;">
+            <div class="col-md-12 no-padding">
+                <div class="alignCenter">
+                    <div class="col-md-4" style="margin-left:-8px;text-align:left;">
+                    </div>
+                    <div class="col-md-4 topheader">
+                        Search Franchisee
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="custom-form portlet light form form-horizontal" style="margin: 0px auto;padding:0px !important;">
+        <div class="custom-form portlet light">
+            <div class="portlet-body form">
+                <div class="form-body" style="padding-top:0px !important;margin-top: 0px !important;">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <div class="col-md-4 control-label">
+                                Franchisee Name/Number:
+                            </div>
+                            <div class="col-md-5">
+                                <input type="text" name="txtSearchFor" id="txtSearchFor" class="form-control input-sm">
+                            </div>
+                            <div class="col-md-3" style="padding-top:11px;margin-left:-21px;">                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <div class="col-md-4 control-label">
+                                Franchisee Status:
+                            </div>
+                            <div class="col-md-4">
+                                @if (ViewBag.StatusList != null)
+                                {
+                                    <select class="form-control input-sm" multiple="multiple" id="ddlStatus" style="display:none;">
+                                        @{
+                                            foreach (var item in (SelectList)ViewBag.StatusList)
+                                            {
+                                                <option value="@item.Value"> @item.Text </option>
+                                            }
+                                        }
+                                    </select>
+                                            }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <div class="col-md-4 control-label">
+                                FASigned Date 
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" name="txtStartDate" id="txtStartDate" value="" placeholder="Date" class="form-control input-sm date-picker">
+                            </div>
+                            <div class="col-md-1 control-label"><span>To</span></div>
+                            <div class="col-md-2" style="margin-left:-20px;">
+                                <input type="text" name="txtEndtDate" id="txtEndtDate" value="" placeholder="Date" class="form-control input-sm date-picker">
+                            </div>
+                        </div>
+                    </div>                     
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <div class="col-md-4 control-label">
+                                Plan Type:
+                            </div>
+                            <div class="col-md-4">
+                                @Html.DropDownList("ddlPlanType", (SelectList)ViewBag.PlanTypeList,"Select", new { @class = "form-control input-sm", required = "required" })                                 
+                            </div>
+                        </div>
+                    </div>                    
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <div class="col-md-3"></div>
+                                <div class="col-md-1">
+                                </div>
+                                 <div class="col-md-1">
+                                    <input type="submit" class="btn btn-primary" id="btnSearchActive" value="Search" onclick="SearchResultClick()">
+                                </div>                               
+                                <div class="col-md-1">
+                                    @*<input type="button" class="btn btn-primary" id="btnSearchAll" value="Search All" onclick="SearchResultClick(2)">*@
+                                </div>
+                                <div class="col-md-3"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $('#txtAmountTo').inputmask("mask", {
+                "mask": "(999) 999-9999", removeMaskOnSubmit: true,
+            });
+            $('.date-picker').datepicker({ autoclose: true, dateFormat: 'mm/dd/yy' });
+            $('.date-picker').attr("placeholder", "mm/dd/yyyy");
+             
+
+            $("#ddlStatus").multiselect({
+                includeSelectAllOption: true,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select Franchisee Status',
+                dropRight: true,
+                numberDisplayed: 2,
+            });
+        });
+
+        function SearchResultClick() {
+            debugger;
+            var search = $("#txtSearchFor").val();           
+            var startDate = $("#txtStartDate").val();
+            var endtDate = $("#txtEndtDate").val();
+            var planTypeId = $("#ddlPlanType").val();
+            var r = $('#ddlStatus').val();
+            var statusIds = "";
+            if (r != null && r != "")
+            {
+                var statusIds = r.join(",");
+            }
+            var UrlPath = "?s=" + search + "&sdt=" + startDate + "&edt=" + endtDate + "&ptId=" + planTypeId + "&statusIds=" + statusIds;
+            window.location.href = '@Url.Action("SearchFranchiseeList", "Franchise", new { area = "Portal" })' + UrlPath;
+        }
+    </script>
+}
+
+

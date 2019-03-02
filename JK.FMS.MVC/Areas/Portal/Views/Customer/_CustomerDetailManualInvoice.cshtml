@@ -1,0 +1,338 @@
+﻿@model JKViewModels.AccountReceivable.CustomerTransactionCommonViewModel
+<div class="modal fade in" id="modal_CustomerManualInvoice" tabindex="-1" role="basic" aria-hidden="true" style="display: none; padding-right: 17px;">
+    @using (Html.BeginForm("ManualInvoice", "Customer", FormMethod.Post, new { area = "Portal", id = "form_manualinvoice_submitForm", style = "margin-top: -20px;" }))
+    {
+        <div class="modal-dialog modal-lg" style="width: 1200px;">
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;text-transform: uppercase;">
+                        MANUAL INVOICE
+                    </h4>
+                </div>
+
+                @Html.HiddenFor(m => m.CustomerId, new { id = "hdfCustomerId", name = "CustomerId", required = "required" })
+                <input type="hidden" id="hdfCFCallFrom" name="hdfCFCallFrom" value="" />
+                <input type="hidden" id="hdfCFCustomerId" name="hdfCFCustomerId" value="" />
+                <input type="hidden" id="hdftotallineno" name="hdftotallineno" />
+                <input type="hidden" id="hdfftotallineno" name="hdfftotallineno" />
+                <input type="hidden" id="hdfTaxRateId" name="hdfTaxRateId" />
+                <input type="hidden" id="hdfContractTaxRate" name="hdfContractTaxRate" />
+                <input type="hidden" id="hdfLeaseTaxRate" name="hdfLeaseTaxRate" />
+                <input type="hidden" id="hdfSupplyTaxRate" name="hdfSupplyTaxRate" />
+                <input type="hidden" id="hdfcusisTaxExcempt" name="hdfcusisTaxExcempt" />
+                <div class="modal-body form form-horizontal" style="padding-top: 1px;margin-top: -5px;">
+                    <div class="form-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Customer</label>
+                                    <label class="col-md-12"><b><span id="spncustomerno"></span></b></label>
+                                    <label class="col-md-12"><span id="spncustomername"></span></label>
+                                    <label class="col-md-12"><span id="spncustomeraddress"></span></label>
+                                    <label class="col-md-12"><span id="spncustomercity"></span>, <span id="spncustomerstate"></span>&nbsp;<span id="spncustomerpincode"></span></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                @*<div class="form-group" style="padding-top: 15px;">
+                                    <label class="col-md-4 control-label text-right">Print Invoice</label>
+                                    <div class="col-md-8">
+                                        <div class="input-group">
+                                            <div class="icheck-inline" style="margin-top: 0px;">
+                                                <label class="check-inline" style="margin-right: 5px;">
+                                                    <input type="radio" name="membership" value="1" class="i-checks" id="rdoYes" checked />
+                                                    <span>Yes</span>
+                                                </label>
+
+                                                <label class="check-inline">
+                                                    <input type="radio" name="membership" value="0" class="i-checks" id="rdoNo" />
+                                                    <span>No</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>*@
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label col-md-12" style="text-align: center;padding: 5px;background-color: #e8e8e8;margin-bottom:5px;font-weight:bold;">Billing</label>
+                                    <label class="col-md-12"><b><span id="spncustomerbname"></span></b></label>
+                                    <label class="col-md-12"><span id="spncustomeraddress1"></span></label>
+                                    <label class="col-md-12"><span id="spncustomercity1"></span>, <span id="spncustomerstate1"></span>&nbsp;<span id="spncustomerpincode1"></span></label>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="table-responsive" style="overflow-x: hidden;">
+                                        <table class="col-md-12 table" id="tblcontractdetailrows">
+                                            <thead>
+                                                <tr class="theadRow" style="background-color:#e8e8e8;">
+                                                    <td style="padding: 3px!important;">Description</td>
+                                                    <td colspan="5" style="padding: 0px!important;">
+                                                        @*<input type="text" id="txtInvoiceDescription" name="txtInvoiceDescription" value="" style="width:100%;width: 100%;padding: 4px;border-radius: 0px;" maxlength="150" />*@
+                                                        <textarea required="" id="txtInvoiceDescription" name="txtInvoiceDescription" class="form-control input-sm requiredValidation" row="1" style="width:100%;padding: 5px;border-radius: 0px;resize:vertical;max-height:100px;min-height:30px;"></textarea>
+                                                    </td>
+                                                    <td colspan="2" style="padding: 3px!important;text-align: right;padding-right: 10px!important;">Inv Date</td>
+                                                    <td style="padding: 0px!important;"><input type="text" name="txtInvoicedate" id="txtInvoicedate" placeholder="" value="@DateTime.Now.ToString("MM/dd/yyyy")" class="form-control input-sm date-picker" /></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                            <tfoot>
+                                                <tr class="theadRowH remove-padding">
+                                                    <td colspan="6" rowspan="3" style="text-align:left;vertical-align:top;padding:7px;"><a href="javascript:void(0);" onclick="addNewEntry()">+ Add</a>&nbsp;&nbsp;<a href="javascript:void(0);" style="color:red;" onclick="DeleteEntry()">- Delete</a></td>
+                                                    <td colspan="2" style="padding:4px !important"><b>Sub Total</b></td>
+                                                    <td colspan="1" style="padding:0 !important"><input readonly id="txtsubtotal" type="text" name="txtsubtotal" value="" class="form-control input-sm" style="padding: 5px;border-radius: 0px;" /></td>
+                                                </tr>
+                                                <tr class="theadRowH remove-padding">
+                                                    <td colspan="2" style="padding:4px !important"><b>Tax</b></td>
+                                                    <td colspan="1" style="padding:0 !important"><input readonly id="txttaxamount" type="text" name="txttaxamount" value="" class="form-control input-sm" style="padding: 5px;border-radius: 0px;" /></td>
+                                                </tr>
+                                                <tr class="theadRowH remove-padding">
+                                                    <td colspan="2" style="padding:4px !important"><b>Total</b></td>
+                                                    <td colspan="1" style="padding:0 !important"><input readonly id="txttotalamount" type="text" name="txttotalamount" value="" class="form-control input-sm" style="padding: 5px;border-radius: 0px;" /></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <table class="col-md-12" style="border:1px solid #e8e8e8" id="frdestributionTable">
+                                        <thead>
+                                            <tr>
+                                                <th colspan="5"><input type="text" id="fsearch-box" autocomplete="off" name="name" value="" placeholder="Search Pay To by Number or Name" class="form-control input-sm typeahead" style="padding: 5px;border-radius: 0px;margin: 0px;" /></th>
+                                            </tr>
+                                            <tr>
+                                                <th style="width:100px;padding:3px;margin: 0px;">Line No</th>
+                                                <th style="width:150px;padding:3px;margin: 0px;">Franchisee No.</th>
+                                                <th style="padding:3px;">Name</th>
+                                                <th style="width:100px;padding:3px;">Amount</th>
+                                                <th style="width:25px;padding:3px;"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <div class="col-md-12">
+                            <button type="button" id="btnCManualInvoiceSaveClose" name="SaveClose1" value="SaveClose" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:10px;">Save & Close</button>
+                            <button type="button" id="btnCManualInvoiceSaveCloseIncrease" name="SaveClose1" value="SaveClose" class="btn btn-primary button-next pull-right" onclick="" style="margin-right:10px;display:none;">Save & Close</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    }
+</div>
+<script>
+
+    var typeaheadSource = [];
+    var app = {};
+    $(document).ready(function () {
+       
+
+
+        GetFrenchiseedataSearch();
+        $(document).on('change', '.ddldetaillinenumber', function (event) {
+            var _valAMT = $(this).val();
+            var fln = $(this).attr("relLine");
+            if ($(this).attr("relLine") != "Select") {
+
+                $('#frfranchiseeamount' + fln).prop("required", true);
+            }
+            else {
+                $('#frfranchiseeamount' + fln).prop("required", false);
+            }
+            if (_valAMT == "-1") {
+                UnitData = $("#txtsubtotal").val();
+                $("#frfranchiseeamount" + fln).val(UnitData);
+            }
+            else if ($("#frfranchiseeamount" + fln).val() != "" && $("txtExtendedPrice" + _valAMT).val() != "") {
+                var UnitData;
+                var FrData;
+                //if ($("#txtExtendedPrice" + fln).val().indexOf(",") > 0)
+                //    UnitData = $("#txtExtendedPrice" + fln).val().replace("$ ", "").replace(",", "");
+                //else
+                UnitData = $("#txtExtendedPrice" + _valAMT).val();
+                $("#frfranchiseeamount" + fln).val(UnitData);
+
+                FrData = $("#frfranchiseeamount" + fln).val();
+
+
+                if (parseFloat(FrData) > parseFloat(UnitData)) {
+                    {
+                        alert("Franchisee amount should not be greater than Extended Price.");
+                        $("#frfranchiseeamount" + fln).focus();
+                        $("#frfranchiseeamount" + fln).select();
+                    }
+                }
+            }
+            else if ($("#frfranchiseeamount" + fln).val() == "" && $("txtExtendedPrice" + _valAMT).val() != "") {
+                UnitData = $("#txtExtendedPrice" + _valAMT).val();
+                $("#frfranchiseeamount" + fln).val(UnitData);
+            }
+
+
+        });
+        @*$("#fsearch-box").keyup(function () {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("Frenchiseedata", "AccountReceivable", new { area = "Portal" })',
+                data: 'keyword=' + $(this).val(),
+                success: function (data) {
+                    custlist = data;
+                    var typeaheadSource = [];
+                    $.each(custlist, function (key, value) {
+                        typeaheadSource.push({ id: value.FranchiseeId, name: value.FranchiseeNo + ' ' + $.trim(value.Name) })
+                    });
+
+                    $('#fsearch-box').typeahead({
+                        source: typeaheadSource,
+                        updater: function (item) {
+                            //$("#hdfFrenchiseeId").val(item.id);
+                            //if ($('#ddldetaillinenumber').val() != "Select" && $('#ddldetaillinenumber').val() != "0") {
+
+                            //    bindfranchiseedetail($('#ddldetaillinenumber').val(), item.id, item.name, $("#ddldetaillinenumber option[value=" + $('#ddldetaillinenumber').val() + "]").text());
+                            //}
+                            return item;
+                        }
+
+                    });
+                }
+            });
+        });*@
+
+    });
+     
+    function GetFrenchiseedataSearch()
+    {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("Frenchiseedata", "AccountReceivable", new { area = "Portal" })',
+            data: 'keyword=',
+            success: function (data) {
+                custlist = data;
+                var typeaheadSource = [];
+                $.each(custlist, function (key, value) {
+                    typeaheadSource.push({ id: value.FranchiseeId, name: value.FranchiseeNo + ' ' + $.trim(value.Name) })
+                });
+
+                $('#fsearch-box').typeahead({
+                    source: typeaheadSource,
+                    updater: function (item) {
+                
+                        $("#hdfFrenchiseeId").val(item.id);
+                        bindfranchiseedetailUpdated(item.id, $.trim(item.name.split(' ')[0]), $.trim(item.name.replace($.trim(item.name.split(' ')[0]),'')));
+                        //if ($('#ddldetaillinenumber').val() != "Select" && $('#ddldetaillinenumber').val() != "0") {
+
+                        //    bindfranchiseedetail($('#ddldetaillinenumber').val(), item.id, item.name, $("#ddldetaillinenumber option[value=" + $('#ddldetaillinenumber').val() + "]").text());
+                        //}
+                        return item;
+                    }
+
+                });
+            }
+        });
+    }
+
+
+    function bindfranchiseedetailUpdated(franchiseeid, franchiseeno, franchiseename) {
+
+        flineNo++;
+
+
+
+        var linenumber = 0;
+        var txttotal = ''
+        var lineTotalAmount = 0;
+        debugger;
+        var tempRow = '<tr id=row_' + flineNo + '><td>'
+        tempRow = tempRow + '<input relLine="' + flineNo + '" type="hidden" id="hdfFrenchiseeId' + flineNo + '" name="hdfFrenchiseeId' + flineNo + '" value="' + franchiseeid + '" />'
+        tempRow = tempRow + '<select relLine="' + flineNo + '"  relddldetaillinenum="ddldetaillinenumber" class="form-control input-sm ddldetaillinenumber" style="border-radius: 0px;" id="ddldetaillinenumber' + flineNo + '" name="ddldetaillinenumber' + flineNo + '"></select>';
+        tempRow = tempRow + '</td>'
+        tempRow = tempRow + '<td><input type="text" required relLine="' + flineNo + '" id="frfranchiseeno' + flineNo + '" name="frfranchiseeno' + flineNo + '" value="' + $.trim(franchiseeno) + '" readonly class="form-control input-sm cnumeric" style="padding: 5px;border-radius: 0px;" /></td>'
+        tempRow = tempRow + '<td><input type="text" required relLine="' + flineNo + '" id="frfranchiseename' + flineNo + '" name="frfranchiseename' + flineNo + '" value="' + $.trim(franchiseename) + '" readonly class="form-control input-sm cnumeric" style="padding: 5px;border-radius: 0px;" /></td>'
+        tempRow = tempRow + '<td><input type="text" relLine="' + flineNo + '" id="frfranchiseeamount' + flineNo + '" name="frfranchiseeamount' + flineNo + '" value="' + txttotal + '" class="form-control input-sm cnumeric requiredValidation frfranchiseeamount" style="padding: 5px;border-radius: 0px;" /></td>';
+        tempRow = tempRow + '<td><a style="font-size: 16px;padding: 3px;color: mediumvioletred;" href="javascript:deleteFrenchisee(' + flineNo + ');"><i class="fa fa-trash" aria-hidden="true"></i></a></td></tr>';
+
+
+        $('#frdestributionTable tbody').append(tempRow);
+        applyMaskCurrency('#frfranchiseeamount' + flineNo);
+        $("#hdfftotallineno").val(flineNo);
+
+        updateFranchiseeLineItemDropDowns(lineNo);
+
+        $("#frfranchiseeamount" + flineNo).change(function () {
+            var ddlLine = $(this).parent().parent().find("td")[0];
+            var Line_No = $(ddlLine).find("select option:selected").val();
+            if ($("#txtExtendedPrice" + Line_No).val() != "" && $(this).val() != "") {
+                var UnitData;
+                var FrData;
+                //if ($("#txtExtendedPrice" + Line_No).val().indexOf(",") > 0)
+                //    UnitData = $("#txtExtendedPrice" + Line_No).val().replace("$ ", "").replace(",", "");
+                //else
+                UnitData = $("#txtExtendedPrice" + Line_No).val();
+                FrData = $(this).val();
+                if (parseFloat(UnitData) < parseFloat(FrData)) {
+                    alert("Franchisee amount should not be greater than Extended Price.");
+                    $(this).focus();
+                    $(this).select();
+                }
+            }
+        });
+
+        setTimeout(function () {
+            $("#hdfFrenchiseeId").val(0);
+            $('#fsearch-box').val('');
+        }, 500);
+
+    }
+    function updateFranchiseeLineItemDropDowns(lineNo) {
+        
+        var lineitems = []; lineitems.push("<option value=''>Select</option>");
+        for (var i = 1; i <= lineNo; i++) {
+            lineitems.push("<option value=" + i + ">" + i + "</option>");
+        }
+        if (flineNo == 1) {
+            lineitems.push("<option value='-1'>All</option>");
+        }
+        //$('#ddldetaillinenumber').html(lineitems.join(' '));
+
+        $('select[relddldetaillinenum="ddldetaillinenumber" ]').each(function (item) {
+
+            var prevSelected = $(this).val();
+
+            $(this).html('');
+            $(this).html(lineitems.join(' '));
+
+            $(this).find('option[value="' + prevSelected + '"]').attr("selected", "selected");
+
+        });
+    }
+  
+
+    function deleteFrenchisee(flineNo) {
+        $("tr[id=row_" + flineNo + "]").remove();
+    }
+
+    $("select.ddldetaillinenumber").each(function () {
+        console.log($(this).val());
+        if ($(this).val() == "") {
+            $(this).addClass('error');
+            IsValidItem = false;
+        }
+        else {
+            $(this).removeClass('error');
+        }
+    });
+</script>

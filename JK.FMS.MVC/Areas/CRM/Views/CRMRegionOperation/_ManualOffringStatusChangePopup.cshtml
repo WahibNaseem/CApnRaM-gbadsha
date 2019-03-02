@@ -1,0 +1,192 @@
+﻿@{ 
+
+    var Model = ViewBag.DataModel;
+}
+<div class="custom-form portlet light" id="" style="margin-top:0px;box-shadow: none;">
+    <div class="headerbox" style="font-weight: normal;border-radius: 0;">
+        <div class="col-md-12 text-center" style="font-size:15px;">
+            <b> Manual offer response entry form</b>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 5px !important;margin-right: 12px !important;"></button>
+        </div>
+        <div class="clearfix"> </div>
+    </div>
+    <div class="row" style="padding-top:8px;padding-bottom:8px;margin-left: 0px;margin-right: 0px;min-height: 100px;">
+        <div class="col-md-12">
+            <div class="portlet box div-right portlet-bottom" style="background-color: #a3a9ad;">
+                <div class="portlet-body">
+                    <form action="#" id="form_summary" class="form-horizontal">
+                        <div class="form-body">
+                            <input type="hidden" id="hdnOfferingId" value="@ViewBag.OfferingId " />
+                            <div class="form-group">
+                                <label   class="control-label col-md-4">Response Date/Time:</label>
+                                <div class="col-md-4">
+                                    <input  id="txtResponseDate" class="form-control input-sm date-picker" value="@(Model.AcceptedDate != null ?  Convert.ToDateTime(Model.AcceptedDate).ToString("MM-dd-yyyy") : string.Empty)">
+                                </div>
+                                <div class="col-md-2">
+                                    <input id="txtResponseTime"class="form-control input-sm timepicker" value="@(Model.AcceptedDate!= null ? Convert.ToDateTime(Model.AcceptedDate).ToString("hh:mm tt"):string.Empty)">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="select_stagestatus" class="control-label col-md-4">Response Name:</label>
+                                <div class="col-md-6">
+                                    <input class="form-control input-sm" id="txtResponseName" value="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="select_stagestatus" class="control-label col-md-4">Notes:</label>
+                                <div class="col-md-6">
+                                    <textarea class="form-control input-sm" id="txtnote" style="resize: none;overflow-x:hidden;" rows="3"> @(Model.AcceptedNote != null ? Model.AcceptedNote : string.Empty)</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-4"></div>
+                                <div class="col-md-2">
+                                    <button id="" type="button" class="btn btn-primary" onclick="onClickAccepted()">ACCEPTED</button>
+                                </div>
+                            </div>
+                            <hr style="margin: 0px;" />
+                            <div class="form-group">
+                                <label for="select_stagestatus" class="control-label col-md-4">Decline Date:</label>
+                                <div class="col-md-6">
+                                    @Html.DropDownList("ddlDeclineReasonListId", (SelectList)ViewBag.DeclineReasonList,"Select", new { @class = "form-control input-sm" })                                    
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="select_stagestatus" class="control-label col-md-4">Notes:</label>
+                                <div class="col-md-6">
+                                    <textarea class="form-control input-sm" id="txtDeclineReasonNote" style="resize: none;overflow-x:hidden;" rows="3"> @(Model.DeclineReasonNote != null ? Model.DeclineReasonNote : string.Empty)</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-3"></div>
+                                <div class="col-md-3">
+                                    <button id="" type="button" class="btn red btn-primary" onclick="onClickDecline()">DECLINE</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    function onClickAccepted()
+    {
+        var OfferingId = $("#hdnOfferingId").val();
+        var ResponseDate = $("#txtResponseDate").val();
+        var ResponseTime = $("#txtResponseTime").val();
+        var ResponseName = $("#txtResponseName").val();
+        var ReasonNote = $("#txtnote").val();
+
+        var isvalid = true;
+        if ($("#txtResponseDate").val() == null || $("#txtResponseDate").val() == "") {
+            if (isvalid == true) {
+                isvalid = false;
+            }
+            $("#txtResponseDate").css('border-color', 'red');
+        }
+        else {
+            $("#txtResponseDate").css('border-color', '');
+        }
+        //if ($("#txtResponseName").val() == null || $("#txtResponseName").val() == "") {
+        //    if (isvalid == true) {
+        //        isvalid = false;
+        //    }
+        //    $("#txtResponseName").css('border-color', 'red');
+        //}
+        //else {
+        //    $("#txtResponseName").css('border-color', '');
+        //}
+
+        if ($("#txtnote").val() == null || $("#txtnote").val() == "") {
+            if (isvalid == true) {
+                isvalid = false;
+            }
+            $("#txtnote").css('border-color', 'red');
+        }
+        else {
+            $("#txtnote").css('border-color', '');
+        }
+
+
+        if (isvalid == true) {
+            var CustomerId = $("#hdnCustomerId").val();
+            var sURL = '@Url.Action("CustomerOfferAcceptedStatusSave", "CRMRegionOperation", new { area = "CRM" })';
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                data: { OfferingId: OfferingId, ResponseDate: ResponseDate, ResponseTime: ResponseTime, ResponseName: ResponseName, ReasonNote: ReasonNote },
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $("#modal_ManualEnterOffringStatusPopup").modal('hide');
+                    if (data == "1") {                         
+                        _bindOfferingList()
+                    }                    
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+    }
+
+
+    function onClickDecline() {
+
+        var OfferingId = $("#hdnOfferingId").val();
+        var DeclineReasonListId = $("#ddlDeclineReasonListId").val();
+        var DeclineReasonNote = $("#txtDeclineReasonNote").val();
+         
+        var isvalid = true;
+        if ($("#ddlDeclineReasonListId").val() == "0" || $("#ddlDeclineReasonListId").val() == "") {
+            if (isvalid == true) {
+                isvalid = false;
+            }
+            $("#ddlDeclineReasonListId").css('border-color', 'red');
+        }
+        else {
+            $("#ddlDeclineReasonListId").css('border-color', '');
+        }
+        if ($("#txtDeclineReasonNote").val() == null || $("#txtDeclineReasonNote").val() == "") {
+            if (isvalid == true) {
+                isvalid = false;
+            }
+            $("#txtDeclineReasonNote").css('border-color', 'red');
+        }
+        else {
+            $("#txtDeclineReasonNote").css('border-color', '');
+        }
+          
+        if (isvalid ==true) {
+            var CustomerId = $("#hdnCustomerId").val();
+            var sURL = '@Url.Action("CustomerOfferDeclineStatusSave", "CRMRegionOperation", new { area = "CRM" })';
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                data: { OfferingId: OfferingId, DeclineReasonListId: DeclineReasonListId, DeclineReasonNote: DeclineReasonNote },
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+
+                    $("#modal_ManualEnterOffringStatusPopup").modal('hide');
+
+                    if (data == "1")
+                    {
+                        _bindOfferingList()
+                    }                    
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+    }
+
+     
+</script>

@@ -1,0 +1,289 @@
+﻿
+@model JKViewModels.Franchisee.FullFranchiseeViewModel
+@{
+    ViewBag.Title = "Franchisee Owner";
+    Layout = null;
+}
+<style>
+    .errormsg {
+        border-color: red;
+    }
+</style>
+
+
+<div class="modal-dialog" style="max-width:800px; max-height:600px">
+
+
+
+    @using (Html.BeginForm("AddEditOwner", "Franchise", FormMethod.Post, new { @id = "add-franchiseeowner", @role = "form" }))
+    {
+
+        @Html.HiddenFor(one => one.FranchiseeIdByOwner)
+
+
+        @Html.HiddenFor(one => one.FranchiseOwnerList.FranchiseeId)
+        @Html.HiddenFor(one => one.FranchiseOwnerList.FranchiseeOwnerListId)
+
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;">
+                @*<button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>*@
+                <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">ADD/EDIT PARTNER & OFFICER</h4>
+            </div>
+            <div class="modal-body" style="padding: 15px 15px 15px 35px; min-height:310px">
+                
+                <div class="form-group col-md-12">
+                    <label class="control-label col-md-2">
+                        Name
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-5">
+                        @Html.TextBoxFor(o => o.FranchiseOwnerList.ContactName, new { @class = "form-control input-sm", required = "required" })
+                    </div>
+                    <label class="control-label col-md-1">
+                        Title
+                    </label>
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(o => o.FranchiseOwnerList.Title, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="form-group  col-md-12">
+                    <label class="control-label col-md-2">
+                        Phone
+                        <span class="required"> * </span>
+                    </label>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(o => o.FranchiseOwnerList.Phone, new { @class = "form-control input-sm", required = "required" })
+                    </div>
+
+                </div>
+                <div class="form-group  col-md-12">
+                    <label class="control-label col-md-2">
+                        Address
+                       
+                    </label>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(o => o.FranchiseOwnerList.Address, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="form-group  col-md-12">
+                    <label class="control-label col-md-2">
+                        City
+                        
+                    </label>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(o => o.FranchiseOwnerList.City, new { @class = "form-control input-sm" })
+                    </div>
+                    <label class="control-label col-md-1">
+                        State
+                        
+                    </label>
+                    <div class="col-md-3">
+                        @Html.DropDownListFor(n => n.FranchiseOwnerList.StateListId, new SelectList(ViewBag.StateList, "Value", "Text", "Select One"), new { @class = "form-control input-sm" })
+                    </div>
+                    <label class="control-label col-md-1">
+                        Zip
+                       
+                    </label>
+                    <div class="col-md-2">
+                        @Html.TextBoxFor(o => o.FranchiseOwnerList.PostalCode, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+
+
+                <div class="form-group  col-md-12">
+                    <label class="control-label col-md-2">
+                        Email
+                       
+                    </label>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(o => o.FranchiseOwnerList.Email, new { @class = "form-control input-sm", type = "email" })
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding-right: 40px;">
+                <button type="button" onclick="addEditFranchiseeOwner()" class="btn btn-primary">Save </button>
+                <button type="button" class="btn btn-primary button-next pull-right" id="btnEditOwnerCancel" style="margin-right:5px;" onclick="ClickEditOwnerCancell()">
+                    Cancel
+                </button>
+                <!-- /.modal-content -->
+            </div>
+        </div>
+    }
+</div>
+
+
+<script type="text/javascript">
+
+
+
+
+    function addEditFranchiseeOwner() {
+        var Isvalid = true;
+        //if ($("#FranchiseeOwner_OwnerIdentification_IdentifierNumer").val() == "") {
+        //    if (Isvalid == true) {Isvalid = false;}
+        //    $("#FranchiseeOwner_OwnerIdentification_IdentifierNumer").addClass("errormsg");
+        //}
+        //else { $("#FranchiseeOwner_OwnerIdentification_IdentifierNumer").removeClass("errormsg"); }
+
+        if ($("#FranchiseOwnerList_ContactName").val() == "") {
+            if (Isvalid == true) { Isvalid = false; }
+            $("#FranchiseOwnerList_ContactName").addClass("errormsg");
+        }
+        else { $("#FranchiseOwnerList_ContactName").removeClass("errormsg"); }      
+
+        if ($("#FranchiseOwnerList_Phone").val() == "") {
+            if (Isvalid == true) { Isvalid = false; }
+            $("#FranchiseOwnerList_Phone").addClass("errormsg");
+        }
+        else { $("#FranchiseOwnerList_Phone").removeClass("errormsg"); }  
+
+        if (Isvalid == true) {
+            var url = '@Url.Action("StepTwoAddEditFranchiseeOwnerTemp", "Franchise", new { area="Portal" })';
+            $.ajax({
+
+                type: "POST",
+                url: url,
+                data: $("#add-franchiseeowner").serialize(),
+                success: function (result) {
+
+                    loadOwnersTemp(result.aaData.FranchiseeIdByOwner);
+                    $('#modalAddEditOwnerData').modal('toggle');
+                },
+                error: function (result) {
+
+                    loadOwnersTemp(result.aaData.FranchiseeIdByOwner);
+                    $('#modalAddEditOwnerData').modal('toggle');
+                }
+
+            });
+        }
+    }
+
+    function loadOwnersTemp(id)
+    {
+        $.blockUI({
+            baseZ: 99999,
+            message: '<center><img height: src="/Images/loading_icon.gif" /><h3> <b>Processing....</br> Please wait! and do not refresh page.</b></h3></center>',
+            css: { backgroundColor: 'rgb{0,0,0}', border: '0', color: '#fff', "z-index": 99999 }
+        });
+
+        $.ajax({
+
+            type: "GET",
+            url: '@Url.Action("GetFranchiseeOwnerTemp", "Franchise", new { @area = "Portal" })?id=' + id,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                $('#tblFranchiseeOwner').html(response);
+                $.unblockUI();
+            },
+            error: function (xhr, textStatus, error) {
+                if (typeof console == "object") {
+
+                    $('#tblFranchiseeOwner').html(xhr.responseText);
+                    console.log(xhr.status + "," + xhr.responseText + "," + textStatus + "," + error);
+                }
+                $.unblockUI();
+            }
+        });
+
+        $.unblockUI();
+    }
+
+
+
+
+    //$("#FranchiseeOwner_OwnerInfoPhone_Phone1").focus(function () {
+
+    //    $('#FranchiseeOwner_OwnerIdentification_IdentifierNumer').inputmask("mask", {
+    //        "mask": "999-99-9999"
+    //    });
+    //    $('#FranchiseeOwner_OwnerInfoPhone_Phone1').inputmask("mask", {
+    //        "mask": "(999) 999-9999"
+    //    });
+
+    //    $('#FranchiseeOwner_OwnerInfoPhone_Cell').inputmask("mask", {
+    //        "mask": "(999) 999-9999"
+    //    });
+    //    $('#FranchiseeOwner_OwnerInfoPhone_Fax').inputmask("mask", {
+    //        "mask": "(999) 999-9999"
+    //    });
+    //});
+
+
+    //$("#FranchiseeOwner_OwnerIdentification_IdentifierNumer").focus(function () {
+
+    //    $('#FranchiseeOwner_OwnerIdentification_IdentifierNumer').inputmask("mask", {
+    //        "mask": "999-99-9999"
+    //    });
+    //    $('#FranchiseeOwner_OwnerInfoPhone_Phone1').inputmask("mask", {
+    //        "mask": "(999) 999-9999"
+    //    });
+
+    //    $('#FranchiseeOwner_OwnerInfoPhone_Cell').inputmask("mask", {
+    //        "mask": "(999) 999-9999"
+    //    });
+    //    $('#FranchiseeOwner_OwnerInfoPhone_Fax').inputmask("mask", {
+    //        "mask": "(999) 999-9999"
+    //    });
+    //});
+
+
+    //$("#FranchiseeOwner_OwnerInfoPhone_Cell").focus(function () {
+
+    //    $('#FranchiseeOwner_OwnerIdentification_IdentifierNumer').inputmask("mask", {
+    //        "mask": "999-99-9999"
+    //    });
+    //    $('#FranchiseeOwner_OwnerInfoPhone_Phone1').inputmask("mask", {
+    //        "mask": "(999) 999-9999"
+    //    });
+
+    //    $('#FranchiseeOwner_OwnerInfoPhone_Cell').inputmask("mask", {
+    //        "mask": "(999) 999-9999"
+    //    });
+    //    $('#FranchiseeOwner_OwnerInfoPhone_Fax').inputmask("mask", {
+    //        "mask": "(999) 999-9999"
+    //    });
+    //});
+
+    //$("#FranchiseeOwner_OwnerInfoPhone_Fax").focus(function () {
+
+    //    $('#FranchiseeOwner_OwnerIdentification_IdentifierNumer').inputmask("mask", {
+    //        "mask": "999-99-9999"
+    //    });
+    //    $('#FranchiseeOwner_OwnerInfoPhone_Phone1').inputmask("mask", {
+    //        "mask": "(999) 999-9999"
+    //    });
+
+    //    $('#FranchiseeOwner_OwnerInfoPhone_Cell').inputmask("mask", {
+    //        "mask": "(999) 999-9999"
+    //    });
+    //    $('#FranchiseeOwner_OwnerInfoPhone_Fax').inputmask("mask", {
+    //        "mask": "(999) 999-9999"
+    //    });
+    //});
+
+
+    function ClickEditOwnerCancell() {
+        $('#modalAddEditOwnerData').modal("hide");
+    }
+
+    $(document).ready(function () {
+        //$('#FranchiseeOwner_OwnerIdentification_IdentifierNumer').inputmask("mask", {
+        //    "mask": "999-99-9999"
+        //});
+        $('#FranchiseOwnerList_Phone').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+
+        //$('#FranchiseeOwner_OwnerInfoPhone_Cell').inputmask("mask", {
+        //    "mask": "(999) 999-9999"
+        //});
+        //$('#FranchiseeOwner_OwnerInfoPhone_Fax').inputmask("mask", {
+        //    "mask": "(999) 999-9999"
+        //});
+
+    });
+
+
+</script>

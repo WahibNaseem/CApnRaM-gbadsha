@@ -1,0 +1,186 @@
+﻿@model JKViewModels.AccountsPayable.CheckManualViewModel
+@{
+    ViewBag.Title = "checkmanual";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <style type="text/css">
+        .jkcustom-page-title {
+            font-size: 18px;
+            padding: 3px;
+            color: #fff !important;
+            background: #3598dc !important;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .jkcustom-form-table {
+            width: 100%;
+        }
+
+            .jkcustom-form-table tr {
+            }
+
+                .jkcustom-form-table tr > td {
+                    padding-bottom: 3px;
+                    padding-top: 3px;
+                }
+
+        .form-group.form-md-line-input {
+            position: relative;
+            margin: 0 0 15px;
+            padding-top: 20px;
+        }
+    </style>}
+
+@using (Html.BeginForm("checkmanual", "AccountsPayable", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-md-12">
+            <div class="jkcustom-page-title">
+                Manual Check
+            </div>
+            <div class="portlet box">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                    <div class="portlet-body">
+                        <div class="form-horizontal panel panel-default  center-body text-center">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-2">
+                                            <strong>
+                                                @Html.LabelFor(model => model.CheckTypes, new { @class = "control-label" })
+                                            </strong>
+                                        </div>
+                                        <div class="col-md-5">
+                                            @Html.DropDownListFor(model => model.CheckTypes, new List<SelectListItem> {
+                                 new SelectListItem { Text = "-Select One-", Value = "-1"},
+                                    new SelectListItem { Text = "Advance to Franchisee", Value = "1"},
+                                    new SelectListItem { Text = "Advance Repayment", Value = "2"}
+                           }, new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-md-5"></div>
+
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-2">
+                                            <strong>
+                                                @Html.LabelFor(model => model.search, new { @class = "control-label" })
+                                            </strong>
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DropDownListFor(model => model.search, new List<SelectListItem> {
+                                 new SelectListItem { Text = "-Select One-", Value = "-1"},
+                                    new SelectListItem { Text = "Customer No", Value = "1"},
+                                    new SelectListItem { Text = "Franchisee No", Value = "2"}
+                           }, new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.searchtext, new { @class = "form-control" })
+                                        </div><div class="col-md-4"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-2">
+                                            @Html.LabelFor(model => model.payto, new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-9">
+                                            @Html.TextBoxFor(model => model.payto, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.payto, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-2">
+                                            @Html.LabelFor(model => model.Address, new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-9">
+                                            @Html.TextBoxFor(model => model.Address, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-2">
+                                            @Html.LabelFor(model => model.Address2, new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-9">
+                                            @Html.TextBoxFor(model => model.Address2, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-2">
+                                            @Html.LabelFor(model => model.City, new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.TextBoxFor(model => model.City, new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-md-1">
+                                            @Html.LabelFor(model => model.State, new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.TextBoxFor(model => model.State, new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-md-1">
+                                            @Html.LabelFor(model => model.Zip, new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.TextBoxFor(model => model.Zip, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-2">
+                                            @Html.LabelFor(model => model.CheckDate, new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.CheckDate, new { @class = "form-control  date-picker", @id = "dtpDate" })
+                                            @Html.ValidationMessageFor(model => model.CheckDate, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-md-2">
+                                            @Html.LabelFor(model => model.CheckAmt, new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.TextBoxFor(model => model.CheckAmt, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.CheckAmt, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-2">
+                                            @Html.LabelFor(model => model.memo, new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-9">
+                                            @Html.TextAreaFor(model => model.memo, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row text-center"><input type="submit" value="Save" class="btn btn-default btn-info " /></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="@Url.Content("~/Content/admin/assets/pages/scripts/components-date-time-pickers.min.js")" type="text/javascript"></script>
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+

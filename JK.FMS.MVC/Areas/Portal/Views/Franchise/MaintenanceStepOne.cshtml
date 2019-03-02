@@ -1,0 +1,943 @@
+﻿@model JKViewModels.Franchisee.FullFranchiseeViewModel
+@{
+    ViewBag.Title = "MaintenanceStepOne";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <style type="text/css">
+        .modal-dialog {
+            width: 750px;
+        }
+        .portlet.light .portlet-body {
+            padding-top: 0px;  
+        }
+        .smallform {
+            width:780px !important;
+            margin-left:275px;
+        }         
+    </style>
+
+}
+ @using (Html.BeginForm("MaintenanceStepOne", "Franchise", FormMethod.Post, new { @id = "form_wizard_1", @role = "form", @class = "form form-horizontal smallform" }))
+ {
+      
+    @Html.HiddenFor(one => one.ButtonType)
+    @Html.HiddenFor(one => one.BusinessInfo.FranchiseeId) 
+    @Html.HiddenFor(one => one.BusinessInfo.IdentifierTypeList) 
+
+
+    @Html.HiddenFor(one => one.BusinessInfoEmail.ClassId)
+    @Html.HiddenFor(one => one.BusinessInfoEmail.ContactTypeListId)
+    @Html.HiddenFor(one => one.BusinessInfoEmail.TypeListId) 
+    @Html.HiddenFor(one => one.BusinessInfoEmail.EmailId)
+    @Html.HiddenFor(one => one.BusinessInfoEmail.CreatedBy) 
+    @Html.HiddenFor(one => one.BusinessInfoEmail.IsActive) 
+
+    @Html.HiddenFor(one => one.BusinessInfoPhone.ClassId)
+    @Html.HiddenFor(one => one.BusinessInfoPhone.ContactTypeListId)
+    @Html.HiddenFor(one => one.BusinessInfoPhone.TypeListId)
+    @Html.HiddenFor(one => one.BusinessInfoPhone.PhoneId)
+    @Html.HiddenFor(one => one.BusinessInfoPhone.CreatedBy) 
+    @Html.HiddenFor(one => one.BusinessInfoPhone.IsActive) 
+
+    @Html.HiddenFor(one => one.BusinessInfoAddress.AddressId)
+    @Html.HiddenFor(one => one.BusinessInfoAddress.ClassId)
+    @Html.HiddenFor(one => one.BusinessInfoAddress.ContactTypeListId)
+    @Html.HiddenFor(one => one.BusinessInfoAddress.TypeListId)
+    @Html.HiddenFor(one => one.BusinessInfoAddress.CreatedBy) 
+    @Html.HiddenFor(one => one.BusinessInfoAddress.IsActive)
+
+
+
+
+    @Html.HiddenFor(one => one.Status.StatusId)
+    @Html.HiddenFor(one => one.Status.ClassId)
+    @Html.HiddenFor(one => one.Status.StatusListId)
+    @Html.HiddenFor(one => one.Status.ReasonListId)
+    @Html.HiddenFor(one => one.Status.TypeListId)
+    @Html.HiddenFor(one => one.Status.CreatedBy)
+    @Html.HiddenFor(one => one.Status.IsActive)
+    @Html.HiddenFor(one => one.Status.ResumeDate)
+    @Html.HiddenFor(one => one.Status.LastServiceDate)
+    @Html.HiddenFor(one => one.Status.CreatedDate)
+    @Html.HiddenFor(one => one.Status.StatusNotes)
+
+
+    @Html.HiddenFor(one => one.BusinessInfo.RegionId, new { @id = "hdnRegionId" })
+
+    <link href="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css")" rel="stylesheet" />
+    <style type="text/css">
+        table.detailbillrunList thead > tr > td, table.detailbillrunList tbody > tr > td {
+            font-size: 12px;
+        }
+
+        .table td, .table th {
+            font-size: 12px;
+        }
+
+        .btn.multiselect {
+            text-align: left;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .multiselect .caret {
+            right: 0;
+            position: absolute;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .multiselect-container.dropdown-menu {
+            text-transform: none;
+            font-size: 14px;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .row {
+            margin: 0;
+        }
+
+        .alignCenter {
+            text-align: center;
+        }
+
+        .topheader {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFF !important;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .custom-form .headerbox {
+            padding: 3px 0px 3px 5px;
+            font-weight: normal;
+        }
+
+        .error {
+            border-color: red;
+        }
+    </style>
+
+<div class="col-md-12 page-custom-header"><h5>Franchise Maintenance</h5></div>
+<div class="custom-form portlet light" id="">
+    <div class="portlet-body">
+    <div class="tab-pane active" id="tb_fr_page1">
+
+
+        @*<h4 class="blocktop">Business Info</h4>*@
+        <div class="headerbox">
+            <div class="row" style="background-color: #3598DC;color: #fff;">
+                <div class="col-md-12 no-padding">
+                    <div class="alignCenter">
+                        <div class="col-md-8" style="text-align:left;    font-size: 15px;">
+                            Business Info
+                        </div>
+                        <div class="col-md-4" style="padding-right:5px;">
+                            <div class="col-md-7 pull-right no-padding">
+                                <div style="display:table-cell;padding-right: 5px;text-transform:none">
+                                    Region
+                                </div>
+                                <div style="display:table-cell;width:100%;">
+                                    @if (ViewBag.regionlist != null)
+                                    {
+                                        <select class="form-control input-sm" id="regionlist" SectionMode="Single" style="display:none;">
+                                            @foreach (var item in (SelectList)ViewBag.regionlist)
+                                            {
+                                                <option @(item.Selected ? "selected" : "") value="@item.Value">@item.Text</option>
+                                            }
+                                        </select>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-right:60px !important;">
+            <label class="control-label col-md-2">
+                Name
+                <span class="required"> * </span>
+            </label>
+            <div class="col-md-10">
+                @Html.TextBoxFor(o => o.BusinessInfo.Name, new { @class = "form-control input-sm", required = "required" })
+            </div>
+        </div>
+        <div class="form-group" style="margin-right:60px !important;">
+            <label class="control-label col-md-2">
+                Address
+                <span class="required"> * </span>
+            </label>
+            <div class="col-md-5">
+                @Html.TextBoxFor(o => o.BusinessInfoAddress.Address1, new { @class = "form-control input-sm", required = "required" })
+            </div>
+            <div class="col-md-5">
+                @Html.TextBoxFor(o => o.BusinessInfoAddress.Address2, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+        <div class="form-group" style="margin-right:60px !important;">
+            <label class="control-label col-md-2">
+                City
+                <span class="required"> * </span>
+            </label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(o => o.BusinessInfoAddress.City, new { @class = "form-control input-sm", required = "required" })
+            </div>
+            <label class="control-label col-md-1">
+                State
+                <span class="required"> * </span>
+            </label>
+            <div class="col-md-2">
+                @Html.DropDownList("BusinessInfoAddress_State", null, "Select", new { @class = "form-control input-sm", required = "required", @id = "BusinessInfoAddress_State", name = "BusinessInfoAddress_State" })
+            </div>
+            <label class="control-label col-md-1">
+                Zip
+                <span class="required"> * </span>
+            </label>
+            <div class="col-md-2">
+                @Html.TextBoxFor(o => o.BusinessInfoAddress.PostalCode, new { @class = "form-control input-sm", required = "required" })
+            </div>
+            <label class="control-label col-md-2">
+                Phone
+                <span class="required"> * </span>
+            </label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(o => o.BusinessInfoPhone.Phone, new { @class = "form-control input-sm", required = "required" })
+            </div>
+            <label class="control-label col-md-1">
+                Email
+            </label>
+            <div class="col-md-5">
+                @Html.TextBoxFor(o => o.BusinessInfoEmail.EmailAddress, new { @class = "form-control input-sm", type = "email" })
+            </div>
+        </div>
+        <h4 class="block"> Contact</h4>
+        <div class="form-group">
+            <label class="control-label col-md-2">
+            </label>
+            <div class="col-md-6">
+                <label class="mt-checkbox">
+                    <input type="checkbox" id="chkcopyaddresstocontact">Same as Main
+                    <span></span>
+                </label>
+            </div>
+        </div>
+        <div class="form-group" style="margin-right:60px !important;">
+            <label class="control-label col-md-2">
+                Name
+                <span class="required"> * </span>
+            </label>
+            <div class="col-md-10">
+                @Html.TextBoxFor(o => o.ContactInfo.Name, new { @class = "form-control input-sm", required = "required" })
+            </div>
+            @*<label class="control-label col-md-1">
+                Last Name
+                <span class="required"> * </span>
+            </label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(o => o.ContactInfo.Name, new { @class = "form-control input-sm", required = "required" })
+            </div>*@
+        </div>
+        <div class="form-group" style="margin-right:60px !important;">
+            <label class="control-label col-md-2">
+                Address
+                <span class="required"> * </span>
+            </label>
+            <div class="col-md-5">
+                @Html.TextBoxFor(o => o.ContactInfoAddress.Address1, new { @class = "form-control input-sm", required = "required" })
+            </div>
+            <div class="col-md-5">
+                @Html.TextBoxFor(o => o.ContactInfoAddress.Address2, new { @class = "form-control input-sm" })
+                <span class="text-danger field-validation-valid"
+                        data-valmsg-for="ContactInfoAddress_City" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="form-group" style="margin-right:60px !important;">
+            <label class="control-label col-md-2">
+                City
+                <span class="required"> * </span>
+            </label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(o => o.ContactInfoAddress.City, new { @class = "form-control input-sm", required = "required" })
+                <span class="text-danger field-validation-valid"
+                      data-valmsg-for="ContactInfoAddress_City" data-valmsg-replace="true"></span>
+            </div>
+            <label class="control-label col-md-1">
+                State
+                <span class="required"> * </span>
+            </label>
+            <div class="col-md-2">
+                @Html.DropDownList("ContactInfoAddress_State", null, "Select", new { @class = "form-control input-sm", required = "required", @id = "ContactInfoAddress_State"})
+            </div>
+            <label class="control-label col-md-1">
+                Zip
+                <span class="required"> * </span>
+            </label>
+            <div class="col-md-2">
+                @Html.TextBoxFor(o => o.ContactInfoAddress.PostalCode, new { @class = "form-control input-sm", required = "required" })
+            </div>
+        </div>
+        <div class="form-group" style="margin-right:60px !important;">
+            <label class="control-label col-md-2">
+                Phone
+                <span class="required"> * </span>
+            </label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(o => o.ContactInfoPhone.Phone, new { @class = "form-control input-sm", required = "required" })
+            </div>
+            <label class="control-label col-md-1">
+                Ext
+            </label>
+            <div class="col-md-1">
+                @Html.TextBoxFor(o => o.ContactInfoPhone.PhoneExt, new { @class = "form-control input-sm" })
+            </div>
+            <label class="control-label col-md-1">
+                Cell
+            </label>
+            <div class="col-md-3">
+                @Html.TextBoxFor(o => o.ContactInfoPhone.Cell, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+        <div class="form-group" style="margin-right:60px !important;">
+            <label class="control-label col-md-2">
+                Email
+            </label>
+            <div class="col-md-10">
+                @Html.TextBoxFor(o => o.ContactInfoEmail.EmailAddress, new { @class = "form-control input-sm", type = "email" })
+            </div>
+        </div>
+         
+        <!-- /.modal-dialog -->
+        <div class="form-actions">
+            <div class="col-md-12" style="padding-right: 60px;">
+                <button type="submit" class="btn btn-primary button-next  pull-right" id="btnContinue" style="margin-left: 10px;">
+                    Continue
+                    <i class="fa fa-angle-right"></i>
+                </button>&nbsp;&nbsp;&nbsp;&nbsp;
+                @*<button type="submit" class="btn btn-primary  pull-right" id="btnSave" style="margin-left: 10px;">
+                    Save
+                    <i class="fa fa-check"></i>
+                </button>*@
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+ }
+
+@section pageplugins{
+
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/select2/js/select2.full.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-validation/js/additional-methods.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js")" type="text/javascript"></script>
+
+    <script src="@Url.Content("~/Content/admin/assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js")" type="text/javascript"></script>
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    @*<script src="@Url.Content("~/Content/admin/assets/pages/scripts/form-wizard.min.js")" type="text/javascript"></script>*@
+    <!-- END PAGE LEVEL SCRIPTS -->
+    @*<script src="@Url.Content("~/Content/admin/assets/pages/scripts/form-validation.min.js")" type="text/javascript"></script>*@
+
+}
+@section scripts{
+    <script>
+
+        $(document).ready(function () {
+            $("#regionlist").multiselect({
+                includeSelectAllOption: false,
+                selectAllText: 'Select all',
+                buttonWidth: '100%',
+                nonSelectedText: 'Select region..',
+                dropRight: true,
+                numberDisplayed: 2
+            });
+            $("#BusinessInfo_Name").val('@ViewBag.FranchiseeName');
+            $("#BusinessInfoPhone_Phone").val('@ViewBag.FranchiseePhone');
+        });
+
+
+
+        var MaintenanceFormWizard = function () {
+
+
+            return {
+                //main function to initiate the module
+                init: function () {
+                    if (!jQuery().bootstrapWizard) {
+                        return;
+                    }
+
+                    function format(state) {
+                        if (!state.id) return state.text; // optgroup
+                        return "<img class='flag' src='../../assets/global/img/flags/" + state.id.toLowerCase() + ".png'/>&nbsp;&nbsp;" + state.text;
+                    }
+
+                    //$("#country_list").select2({
+                    //    placeholder: "Select",
+                    //    allowClear: true,
+                    //    formatResult: format,
+                    //    width: 'auto',
+                    //    formatSelection: format,
+                    //    escapeMarkup: function (m) {
+                    //        return m;
+                    //    }
+                    //});
+
+                    var form = $('#submit_form');
+                    var error = $('.alert-danger', form);
+                    var success = $('.alert-success', form);
+
+                    form.validate({
+                        doNotHideMessage: true, //this option enables to show the error/success messages on tab switch.
+                        errorElement: 'span', //default input error message container
+                        errorClass: 'help-block help-block-error', // default input error message class
+                        focusInvalid: false, // do not focus the last invalid input
+                        rules: {  },
+                        messages: { // custom messages for radio buttons and checkboxes
+                            'payment[]': {
+                                required: "Please select at least one option",
+                                minlength: jQuery.validator.format("Please select at least one option")
+                            }
+                        },
+
+                        errorPlacement: function (error, element) { // render error placement for each input type
+                        },
+
+                        invalidHandler: function (event, validator) { //display error alert on form submit
+                            success.hide();
+                            error.show();
+                            App.scrollTo(error, -200);
+                        },
+
+                        highlight: function (element) { // hightlight error inputs
+                            $(element)
+                                .closest('.form-group').removeClass('has-success').addClass('has-error'); // set error class to the control group
+                        },
+
+                        unhighlight: function (element) { // revert the change done by hightlight
+                            $(element)
+                                .closest('.form-group').removeClass('has-error'); // set error class to the control group
+                        },
+
+                        success: function (label) {
+                            if (label.attr("for") == "gender" || label.attr("for") == "payment[]") { // for checkboxes and radio buttons, no need to show OK icon
+                                label
+                                    .closest('.form-group').removeClass('has-error').addClass('has-success');
+                                label.remove(); // remove error label here
+                            } else { // display success icon for other inputs
+                                label
+                                    .addClass('valid') // mark the current input as valid and display OK icon
+                                .closest('.form-group').removeClass('has-error').addClass('has-success'); // set success class to the control group
+                            }
+                        },
+
+                        submitHandler: function (form) {
+                            success.show();
+                            error.hide();
+                            form.submit();
+                            //add here some ajax code to submit your form or just call form.submit() if you want to submit the form without ajax
+                        }
+
+                    });
+
+
+
+
+
+
+                }
+
+            };
+
+        }();
+
+
+        var MaintenanceFormWizardOwner = function () {
+
+
+            return {
+                //main function to initiate the module
+                init: function () {
+                    if (!jQuery().bootstrapWizard) {
+                        //  return;
+                    }
+
+                    function format(state) {
+                        if (!state.id) return state.text; // optgroup
+                        return "<img class='flag' src='../../assets/global/img/flags/" + state.id.toLowerCase() + ".png'/>&nbsp;&nbsp;" + state.text;
+                    }
+
+                    //$("#country_list").select2({
+                    //    placeholder: "Select",
+                    //    allowClear: true,
+                    //    formatResult: format,
+                    //    width: 'auto',
+                    //    formatSelection: format,
+                    //    escapeMarkup: function (m) {
+                    //        return m;
+                    //    }
+                    //});
+
+                    var form = $('#submit_form_owner');
+                    var error = $('.alert-danger', form);
+                    var success = $('.alert-success', form);
+
+                    form.validate({
+                        doNotHideMessage: true, //this option enables to show the error/success messages on tab switch.
+                        errorElement: 'span', //default input error message container
+                        errorClass: 'help-block help-block-error', // default input error message class
+                        focusInvalid: false, // do not focus the last invalid input
+                        rules: {},
+                        messages: { // custom messages for radio buttons and checkboxes
+                            'payment[]': {
+                                required: "Please select at least one option",
+                                minlength: jQuery.validator.format("Please select at least one option")
+                            }
+                        },
+
+                        errorPlacement: function (error, element) { // render error placement for each input type
+                        },
+
+                        invalidHandler: function (event, validator) { //display error alert on form submit
+                            success.hide();
+                            error.show();
+                            App.scrollTo(error, -200);
+                        },
+
+                        highlight: function (element) { // hightlight error inputs
+                            $(element)
+                                .closest('.form-group').removeClass('has-success').addClass('has-error'); // set error class to the control group
+                        },
+
+                        unhighlight: function (element) { // revert the change done by hightlight
+                            $(element)
+                                .closest('.form-group').removeClass('has-error'); // set error class to the control group
+                        },
+
+                        success: function (label) {
+                            if (label.attr("for") == "gender" || label.attr("for") == "payment[]") { // for checkboxes and radio buttons, no need to show OK icon
+                                label
+                                    .closest('.form-group').removeClass('has-error').addClass('has-success');
+                                label.remove(); // remove error label here
+                            } else { // display success icon for other inputs
+                                label
+                                    .addClass('valid') // mark the current input as valid and display OK icon
+                                .closest('.form-group').removeClass('has-error').addClass('has-success'); // set success class to the control group
+                            }
+                        },
+
+                        submitHandler: function (form) {
+                            success.show();
+                            error.hide();
+                            form.submit();
+                            //add here some ajax code to submit your form or just call form.submit() if you want to submit the form without ajax
+                        }
+
+                    });
+
+                    var displayConfirm = function () {
+                        //$('#tab4 .form-control-static', form).each(function () {
+                        //    var input = $('[name="' + $(this).attr("data-display") + '"]', form);
+                        //    if (input.is(":radio")) {
+                        //        input = $('[name="' + $(this).attr("data-display") + '"]:checked', form);
+                        //    }
+                        //    if (input.is(":text") || input.is("textarea")) {
+                        //        $(this).html(input.val());
+                        //    } else if (input.is("select")) {
+                        //        $(this).html(input.find('option:selected').text());
+                        //    } else if (input.is(":radio") && input.is(":checked")) {
+                        //        $(this).html(input.attr("data-title"));
+                        //    } else if ($(this).attr("data-display") == 'payment[]') {
+                        //        var payment = [];
+                        //        $('[name="payment[]"]:checked', form).each(function () {
+                        //            payment.push($(this).attr('data-title'));
+                        //        });
+                        //        $(this).html(payment.join("<br>"));
+                        //    }
+                        //});
+                    }
+
+                    var handleTitle = function (tab, navigation, index) {
+                        var total = navigation.find('li').length;
+                        var current = index + 1;
+                        // set wizard title
+                        $('.step-title', $('#form_wizard_1')).text('Step ' + (index + 1) + ' of ' + total);
+                        // set done steps
+                        jQuery('li', $('#form_wizard_1')).removeClass("done");
+                        var li_list = navigation.find('li');
+                        for (var i = 0; i < index; i++) {
+                            jQuery(li_list[i]).addClass("done");
+                        }
+
+                        if (current == 1) {
+                            $('#form_wizard_1').find('.button-previous').hide();
+                        } else {
+                            $('#form_wizard_1').find('.button-previous').show();
+                        }
+
+                        if (current >= total) {
+                            $('#form_wizard_1').find('.button-next').hide();
+                            $('#form_wizard_1').find('.button-submit').show();
+                            displayConfirm();
+                        } else {
+                            $('#form_wizard_1').find('.button-next').show();
+                            $('#form_wizard_1').find('.button-submit').hide();
+                        }
+                        App.scrollTo($('.page-title'));
+                    }
+
+
+                    //apply validation on select2 dropdown value change, this only needed for chosen dropdown integration.
+                    $('#country_list', form).change(function () {
+                        form.validate().element($(this)); //revalidate the chosen dropdown value and show error or success message for the input
+                    });
+
+
+
+
+                }
+
+            };
+
+        }();
+        jQuery(document).ready(function () {
+
+            if(@ViewBag.IsExist == "1")
+            {
+                swal('Oops...!', 'Franchisee name already exists.', 'info');
+            }
+
+            //  MaintenanceFormWizard.init();
+            //   MaintenanceFormWizardOwner.init();
+
+            $('#divachsubsection').hide();
+            $('#chkcopyaddresstocontact').change(function () {
+                
+                var ContactInfo_Name = $('#ContactInfo_Name');
+                var ContactInfoAddress_Address1 = $('#ContactInfoAddress_Address1');
+                var ContactInfoAddress_Address2 = $('#ContactInfoAddress_Address2');
+                var ContactInfoAddress_City = $('#ContactInfoAddress_City');
+                var ContactInfoAddress_State = $('#ContactInfoAddress_State');
+                var ContactInfoAddress_PostalCode = $('#ContactInfoAddress_PostalCode');
+                var ContactInfoPhone_Phone = $('#ContactInfoPhone_Phone');
+                var ContactInfoEmail_EmailAddress = $('#ContactInfoEmail_EmailAddress');
+
+
+
+                if ($(this).prop('checked')) { //3rd radiobutton
+                    ContactInfo_Name.val($('#BusinessInfo_Name').val());
+                    ContactInfoAddress_Address1.val($('#BusinessInfoAddress_Address1').val());
+                    ContactInfoAddress_Address2.val($('#BusinessInfoAddress_Address2').val());
+                    ContactInfoAddress_City.val($('#BusinessInfoAddress_City').val());
+                    ContactInfoAddress_State.val($('#BusinessInfoAddress_State').val());
+                    ContactInfoAddress_PostalCode.val($('#BusinessInfoAddress_PostalCode').val());
+                    ContactInfoPhone_Phone.val($('#BusinessInfoPhone_Phone').val());
+                    ContactInfoEmail_EmailAddress.val($('#BusinessInfoEmail_EmailAddress').val());
+
+                    ContactInfo_Name.attr("readonly", "readonly");
+                    ContactInfoAddress_Address1.attr("readonly", "readonly");
+                    ContactInfoAddress_Address2.attr("readonly", "readonly");
+                    ContactInfoAddress_City.attr("readonly", "readonly");
+                    ContactInfoAddress_State.attr("readonly", "readonly");
+                    ContactInfoAddress_PostalCode.attr("readonly", "readonly");
+                    ContactInfoPhone_Phone.attr("readonly", "readonly");
+                    ContactInfoEmail_EmailAddress.attr("readonly", "readonly");
+                    var form = $('#form_wizard_1');
+                    var error = $('.alert-danger', form);
+                    var success = $('.alert-success', form);
+                    success.hide();
+                    error.hide();
+                }
+                else {
+                    ContactInfo_Name.val('');
+                    ContactInfoAddress_Address1.val('');
+                    ContactInfoAddress_Address2.val('');
+                    ContactInfoAddress_City.val('');
+                    ContactInfoAddress_State.val('');
+                    ContactInfoAddress_PostalCode.val('');
+                    ContactInfoPhone_Phone.val('');
+                    ContactInfoEmail_EmailAddress.val('');
+
+                    ContactInfo_Name.removeAttr("readonly");
+                    ContactInfoAddress_Address1.removeAttr("readonly");
+                    ContactInfoAddress_Address2.removeAttr("readonly");
+                    ContactInfoAddress_City.removeAttr("readonly");
+                    ContactInfoAddress_State.removeAttr("readonly");
+                    ContactInfoAddress_PostalCode.removeAttr("readonly");
+                    ContactInfoPhone_Phone.removeAttr("readonly");
+                    ContactInfoEmail_EmailAddress.removeAttr("readonly");
+
+                }
+
+
+            });
+            $('#chkcopyaddresstopayee').change(function () {
+                var PayeeInfo_PayeeName = $('#PayeeInfo_PayeeName');
+                var PayeeInfoAddress_Address1 = $('#PayeeInfoAddress_Address1');
+                var PayeeInfoAddress_City = $('#PayeeInfoAddress_City');
+                var PayeeInfoAddress_State = $('#PayeeInfoAddress_State');
+                var PayeeInfoAddress_PostalCode = $('#PayeeInfoAddress_PostalCode');
+
+
+                if ($(this).prop('checked')) { //3rd radiobutton
+                    PayeeInfo_PayeeName.val($('#BusinessInfo_Name').val());
+                    PayeeInfoAddress_Address1.val($('#BusinessInfoAddress_Address1').val());
+                    PayeeInfoAddress_City.val($('#BusinessInfoAddress_City').val());
+                    PayeeInfoAddress_State.val($('#BusinessInfoAddress_State').val());
+                    PayeeInfoAddress_PostalCode.val($('#BusinessInfoAddress_PostalCode').val());
+
+                    PayeeInfo_PayeeName.attr("readonly", "readonly");
+                    PayeeInfoAddress_Address1.attr("readonly", "readonly");
+                    PayeeInfoAddress_City.attr("readonly", "readonly");
+                    PayeeInfoAddress_State.attr("readonly", "readonly");
+                    PayeeInfoAddress_PostalCode.attr("readonly", "readonly");
+                }
+                else {
+                    PayeeInfo_PayeeName.val('');
+                    PayeeInfoAddress_Address1.val('');
+                    PayeeInfoAddress_City.val('');
+                    PayeeInfoAddress_State.val('');
+                    PayeeInfoAddress_PostalCode.val('');
+
+                    PayeeInfo_PayeeName.removeAttr("readonly");
+                    PayeeInfoAddress_Address1.removeAttr("readonly");
+                    PayeeInfoAddress_City.removeAttr("readonly");
+                    PayeeInfoAddress_State.removeAttr("readonly");
+                    PayeeInfoAddress_PostalCode.removeAttr("readonly");
+
+                }
+
+
+            });
+            $('#chkachsectionenable').change(function () {
+
+                var ACHBankInfo_Name = $('#ACHBankInfo_Name');
+                var ACHBankInfo_RoutingNumber = $('#ACHBankInfo_RoutingNumber');
+                var ACHBankInfo_AccountNumber = $('#ACHBankInfo_AccountNumber');
+                var ACHBankInfo_Descrption = $('#ACHBankInfo_Descrption');
+                var ACHBankInfo_RemittanceNotes = $('#ACHBankInfo_RemittanceNotes');
+
+                ACHBankInfo_Name.val('');
+                ACHBankInfo_RoutingNumber.val('');
+                ACHBankInfo_AccountNumber.val('');
+                ACHBankInfo_Descrption.val('');
+                ACHBankInfo_RemittanceNotes.val('');
+
+
+                if ($(this).prop('checked')) {
+                    ACHBankInfo_Name.removeAttr("readonly");
+                    ACHBankInfo_RoutingNumber.removeAttr("readonly");
+                    ACHBankInfo_AccountNumber.removeAttr("readonly");
+                    ACHBankInfo_Descrption.removeAttr("readonly");
+                    ACHBankInfo_RemittanceNotes.removeAttr("readonly");
+
+
+                    ACHBankInfo_Name.attr("required", "required");
+                    ACHBankInfo_RoutingNumber.attr("required", "required");
+                    ACHBankInfo_AccountNumber.attr("required", "required");
+                    ACHBankInfo_Descrption.attr("required", "required");
+                    ACHBankInfo_RemittanceNotes.attr("required", "required");
+
+                    $('#divachsubsection').show();
+
+
+                }
+                else {
+                    ACHBankInfo_Name.attr("readonly", "readonly");
+                    ACHBankInfo_RoutingNumber.attr("readonly", "readonly");
+                    ACHBankInfo_AccountNumber.attr("readonly", "readonly");
+                    ACHBankInfo_Descrption.attr("readonly", "readonly");
+                    ACHBankInfo_RemittanceNotes.attr("readonly", "readonly");
+
+                    ACHBankInfo_Name.removeAttr("required");
+                    ACHBankInfo_RoutingNumber.removeAttr("required");
+                    ACHBankInfo_AccountNumber.removeAttr("required");
+                    ACHBankInfo_Descrption.removeAttr("required");
+                    ACHBankInfo_RemittanceNotes.removeAttr("required");
+                    $('#divachsubsection').hide();
+                }
+
+
+            })
+
+            function saveFranchiseeData(inputData) {
+                
+                var sURL = '@Url.Action("Maintenance", "Franchise", new { area = "Portal" })'
+                var dataString = new FormData(formData);
+                $.ajax({
+                    type: "POST",
+                    url: sURL,
+                    data: $("form").serialize(),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data, status) {
+                        alert(data);
+                    },
+                    error: function (e) {
+                        alert(e);
+                    }
+                });
+            }
+
+            $("#ContractInfo_MonthlyPaymentAmount").inputmask();
+            $("#ContractInfo_IBAmount").inputmask();
+            $("#ContractInfo_DownPaymentAmount").inputmask();
+            $("#ContractInfo_Interest").inputmask();
+            $("#ContractInfo_Amount").inputmask();
+            $("#ContractInfo_TotalPayments").inputmask();
+            $("#ContractInfo_CurrentPayment").inputmask();
+            $("#ContractInfo_TriggerAmount").inputmask();
+            $('#ContactInfoPhone_Phone').inputmask("mask", {
+                "mask": "(999) 999-9999"
+            });
+            $('#ContactInfoPhone_Cell').inputmask("mask", {
+                "mask": "(999) 999-9999"
+            });
+            $('#BusinessInfoPhone_Phone').inputmask("mask", {
+                "mask": "(999) 999-9999"
+            });
+            $('#ownerssn').inputmask("mask", {
+                "mask": "aaa-aa-aaaa"
+            });
+            $('#OwnerInfoPhone_Phone').inputmask("mask", {
+                "mask": "(999) 999-9999"
+            });
+
+            $('#OwnerInfoPhone_Cell').inputmask("mask", {
+                "mask": "(999) 999-9999"
+            });
+            $('#OwnerInfoPhone_Fax').inputmask("mask", {
+                "mask": "(999) 999-9999"
+            });
+            $('.date-picker').datepicker({ autoclose: true ,dateFormat: 'mm/dd/yyyy'});
+            $('.date-picker').attr("placeholder","mm/dd/yyyy");
+
+        });
+
+
+
+
+        // Prevent the form to be submitted on ENTER
+        $('#form_wizard_1').submit(function (e) {
+            //  e.preventDefault();
+        });
+
+        // Controll data
+        $('#btnContinue').click(function () {
+            
+            var btnCount = @Convert.ToInt32(JKApi.Business.Enumeration.ButtonType.Continue)
+            $("#ButtonType").val(btnCount);
+            checkMandatoryFields(btnCount);
+        });
+
+        // Controll data
+        $('#btnSave').click(function () {
+            
+            var btnCount = @Convert.ToInt32(JKApi.Business.Enumeration.ButtonType.Save)
+
+            $("#ButtonType").val(btnCount);
+            checkMandatoryFields(btnCount);
+        });
+
+
+
+        // Check mandatory fields before subitting:
+        function checkMandatoryFields(count) {
+            var form = $('#form_wizard_1');
+            var error = $('.alert-danger', form);
+            var success = $('.alert-success', form);
+            if ($('#BusinessInfoAddress_Address1').val() == '') { $('#BusinessInfoAddress_Address1').css('border-color', 'red'); } else { $('#BusinessInfoAddress_Address1').css('border-color', ''); }
+            if ($('#BusinessInfoAddress_City').val() == '') { $('#BusinessInfoAddress_City').css('border-color', 'red'); } else { $('#BusinessInfoAddress_City').css('border-color', ''); }
+            if ($('#BusinessInfoAddress_State').val() == '') { $('#BusinessInfoAddress_State').css('border-color', 'red'); } else { $('#BusinessInfoAddress_State').css('border-color', ''); }
+            if ($('#BusinessInfoAddress_City').val() == '') { $('#BusinessInfoAddress_City').css('border-color', 'red'); } else { $('#BusinessInfoAddress_City').css('border-color', ''); }
+            if ($('#BusinessInfoAddress_PostalCode').val() == '') { $('#BusinessInfoAddress_PostalCode').css('border-color', 'red'); } else { $('#BusinessInfoAddress_PostalCode').css('border-color', ''); }
+            if ($('#BusinessInfoPhone_Phone').val() == '') { $('#BusinessInfoPhone_Phone').css('border-color', 'red'); } else { $('#BusinessInfoPhone_Phone').css('border-color', ''); }
+
+            if ($('#ContactInfo_FirstName').val() == '') { $('#ContactInfo_FirstName').css('border-color', 'red'); } else { $('#ContactInfo_FirstName').css('border-color', ''); }
+            if ($('#ContactInfo_LastName').val() == '') { $('#ContactInfo_LastName').css('border-color', 'red'); } else { $('#ContactInfo_LastName').css('border-color', ''); }
+            if ($('#ContactInfoAddress_Address1').val() == '') { $('#ContactInfoAddress_Address1').css('border-color', 'red'); } else { $('#ContactInfoAddress_Address1').css('border-color', ''); }
+            if ($('#ContactInfoAddress_City').val() == '') { $('#ContactInfoAddress_City').css('border-color', 'red'); } else { $('#ContactInfoAddress_City').css('border-color', ''); }
+            if ($('#ContactInfoAddress_State').val() == '') { $('#ContactInfoAddress_State').css('border-color', 'red'); } else { $('#ContactInfoAddress_State').css('border-color', ''); }
+            if ($('#ContactInfoAddress_PostalCode').val() == '') { $('#ContactInfoAddress_PostalCode').css('border-color', 'red'); } else { $('#ContactInfoAddress_PostalCode').css('border-color', ''); }
+            if ($('#ContactInfoPhone_Phone').val() == '') { $('#ContactInfoPhone_Phone').css('border-color', 'red'); } else { $('#ContactInfoPhone_Phone').css('border-color', ''); }
+
+            if ($('#regionlist').val() == '')
+            {
+                $('#regionlist').css('border-color', 'red');
+            } else {
+                $('#regionlist').css('border-color', '');
+            }
+            $("#hdnRegionId").val($('#regionlist').val());
+
+            form.validate({
+                doNotHideMessage: true, //this option enables to show the error/success messages on tab switch.
+                errorElement: 'span', //default input error message container
+                errorClass: 'help-block help-block-error', // default input error message class
+                focusInvalid: false, // do not focus the last invalid input
+                rules: {},
+                messages: { // custom messages for radio buttons and checkboxes
+                    'payment[]': {
+                        required: "Please select at least one option",
+                        minlength: jQuery.validator.format("Please select at least one option")
+                    }
+                },
+
+                errorPlacement: function (error, element) { // render error placement for each input type
+                },
+
+                invalidHandler: function (event, validator) { //display error alert on form submit
+                    success.hide();
+                    error.show();
+                    App.scrollTo(error, -200);
+                },
+
+                highlight: function (element) { // hightlight error inputs
+                    $(element)
+                        .closest('.form-group').removeClass('has-success').addClass('has-error'); // set error class to the control group
+                },
+
+                unhighlight: function (element) { // revert the change done by hightlight
+                    $(element)
+                        .closest('.form-group').removeClass('has-error'); // set error class to the control group
+                },
+
+                success: function (label) {
+                    if (label.attr("for") == "gender" || label.attr("for") == "payment[]") { // for checkboxes and radio buttons, no need to show OK icon
+                        label
+                            .closest('.form-group').removeClass('has-error').addClass('has-success');
+                        label.remove(); // remove error label here
+                    } else { // display success icon for other inputs
+                        label
+                            .addClass('valid') // mark the current input as valid and display OK icon
+                        .closest('.form-group').removeClass('has-error').addClass('has-success'); // set success class to the control group
+                    }
+                },
+
+                submitHandler: function (form) {
+                    success.show();
+                    error.hide();
+                    form.submit();
+                    if (count > 0) {
+                        $('#form_wizard_1')[0].submit();
+                        //$('#form_wizard_1').submit();
+                    }
+                    //add here some ajax code to submit your form or just call form.submit() if you want to submit the form without ajax
+                }
+
+            });
+
+        }
+    </script>
+}

@@ -1,0 +1,252 @@
+﻿@using JKViewModels.Common
+@model JKApi.Service.AccountReceivable.CreditDetailViewModel
+@{
+
+    int _InvId = Model.Invoice.InvoiceDetail.InvoiceId;
+
+    bool isUpdate = Model.CreditId > 0;
+
+    var IsApprove = false;
+    var IsReject = false;
+    JKApi.Core.Common.ClaimView _claim = JKApi.Core.Common.ClaimView.Instance;
+    var getPermission = _claim.GETCLAIM_AR_PERMISSION();
+    if (getPermission != null)
+    {
+        string enumName = ARPermission.Account_Credit_Pending.ToString();
+        var validIsApprove = getPermission.Where(x => x.EnumName == enumName && x.IsApprove).FirstOrDefault();
+        if (validIsApprove != null && validIsApprove.IsApprove)
+        {
+            IsApprove = true;
+        }
+        var validIsReject = getPermission.Where(x => x.EnumName == enumName && x.IsReject).FirstOrDefault();
+        if (validIsReject != null && validIsReject.IsReject)
+        {
+            IsReject = true;
+        }
+    }
+
+
+    var IsEdit = false;
+    var getEDPermission = _claim.GETCLAIM_ED_PERMISSION();
+    if (getEDPermission != null)
+    {
+        string enumName = EDPermission.Credit_Pending_Approval_Detail_Popup.ToString();
+        var validIsApprove = getEDPermission.Where(x => x.EnumName == enumName && x.IsEdit).FirstOrDefault();
+        if (validIsApprove != null && validIsApprove.IsEdit)
+        {
+            IsEdit = true;
+        }
+
+    }
+
+}
+
+<div class="form-horizontal" id="@("form_applycredittaxform_"+_InvId)">
+    <div class="modal fade custom-model custom-form-design" id="@("modal_applycredittaxform")" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+@*<form class="form-horizontal" role="form" id="form_applycreditform">
+    <div class="modal fade custom-model custom-form-design" id="modal_applycreditform" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">*@
+  
+              @Html.Hidden("updateCreditId", Model.CreditId)
+        <div class="modal-dialog" style="width:1000px">
+            <div class="modal-content" style="border-radius: 8px;">
+                <!-- Header -->
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold; background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                        Tax Credit
+                    </h4>
+                </div>
+                <div class="modal-body" style="padding: 0px 30px 15px 30px;">
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-2 text-right"><b>Customer No:</b></div>
+                            <div class="col-md-4">@Html.DisplayFor(one => one.Invoice.InvoiceDetail.CustomerNo)</div>
+                            <div class="col-md-1 text-right"></div>
+                            <div class="col-md-1 text-right"><b>Address:</b></div>
+                            <div class="col-md-3">@Html.DisplayFor(one => one.Invoice.InvoiceDetail.Address1)</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 text-right"><b>Customer Name:</b></div>
+                            <div class="col-md-4">@Html.DisplayFor(one => one.Invoice.InvoiceDetail.Customer)</div>
+                            <div class="col-md-1 text-right"></div>
+                            <div class="col-md-1 text-right"></div>
+                            <div class="col-md-3">@Html.DisplayFor(one => one.Invoice.InvoiceDetail.City), @Html.DisplayFor(one => one.Invoice.InvoiceDetail.State) @Html.DisplayFor(one => one.Invoice.InvoiceDetail.PostalCode)</div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-2 text-right"><b>Reason:</b></div>
+                            <div class="col-md-3">
+                                @Html.DropDownList("slReasonList_" + _InvId, (SelectList)ViewBag.ReasonList, "-Select-", new { @class = "form-control input-sm", @id = "select_ReasonList_" + _InvId, @required = "required" })
+                            </div>
+                            <div class="col-md-3 text-right"><b>Date: </b></div>
+                            <div class="col-md-2">
+                                <div class="input-group" data-date-format="mm/dd/yyyy">
+                                    <input type="text" value="@(DateTime.Now.ToString("MM/dd/yyyy"))"
+                                           class="form-control input-sm date-picker AddPeriodvalidation" style="margin-top: 0px;" id="@("txtcreditDate_" + _InvId)" name="@("txtcreditDate_" + _InvId)" />
+                                    <span class="input-group-btn">
+                                        <button class="btn default" type="button">
+                                            <i class="fa fa-calendar"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 text-right"><b>Description:</b></div>
+                            <div class="col-md-8">
+                                @Html.TextBox("creditDesc_" + _InvId, isUpdate ? Model.Credit.CreditDescription : "", new { @class = "form-control input-sm", @required = "required" })
+                            </div>
+
+                        </div>
+
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover" style="width: 100%">
+                                        <tr>
+                                            <th>Invoice No</th>
+                                            <th>Invoice Date</th>
+                                            <th>Description</th>
+                                            <th>Tax Amount</th>
+                                            <th>Tax Balance</th>
+                                            <th>Credit Amount</th>
+                                        </tr>
+
+                                        <tr>
+                                            <td>@Html.DisplayFor(one => one.Invoice.InvoiceDetail.InvoiceNo)</td>
+                                            <td>@(Model.Invoice.InvoiceDetail.InvoiceDate?.ToShortDateString())</td>
+                                            <td>Monthly Contract Billing May 2018</td>
+                                            <td>
+                                                <input type="text" class="form-control input-sm" readonly style="text-align:right" value="$@(Math.Round(Model.Invoice.InvoiceDetailItems.Sum(g => g.TAXAmount), 2))" />
+                                                <input type="hidden" name="@("hdfINv_TAXAmount_" + _InvId)" id="@("hdfINv_TAXAmount_" + _InvId)" value="@(Math.Round(Model.Invoice.InvoiceDetailItems.Sum(g => g.TAXAmount), 2))" />
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control input-sm" readonly style="text-align:right" value="$@(Math.Round((decimal)Model.Invoice.InvoiceDetailItems.Sum(g => g.Balance), 2))" />
+                                                <input type="hidden" name="@("hdfINv_TAXAmountBAL_" + _InvId)" id="@("hdfINv_TAXAmountBAL_" + _InvId)" value="@(Math.Round((decimal)Model.Invoice.InvoiceDetailItems.Sum(g => g.Balance), 2))" />
+                                            </td>
+                                            <td>
+                                                @*<input type="text" name="@("hdfInv_CRAmount_"+_InvId)" id="@("hdfInv_CRAmount_"+_InvId)" class="form-control input-sm" style="text-align:right" value="@(isUpdate ? Model.UnappliedCreditAmount : '0.00')" />*@
+                                                @Html.TextBox("hdfInv_CRAmount_" + _InvId, isUpdate ? Model.UnappliedCreditAmount.ToString() : "", new { @class = "form-control input-sm", @required = "required" })
+                                            </td>
+                                        </tr>
+
+
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+
+                                @{
+                                    if (Model.CreditId < 1)
+                                    {
+                                        <div class="col-md-10"></div>
+                                        <div class="col-md-2 control-label">
+                                            <button type="button" class="btn btn-primary" id="@("btnSaveContinue_" + _InvId)" name="SaveContinue" onclick="saveTaxCredit(@_InvId)">Save</button>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-md-8"></div>
+                                        if (IsReject)
+                                        {
+                                            <div class="col-md-2 control-label" style="margin-top: 30px;">
+                                                <input type="button" id="btnReject" class="btn btn-primary col-md-11 submit-button-no-prompt-reject" name="SaveReject" value="REJECTED" style="margin-bottom:3px;font-size:11px;margin-top:3px;margin-left:5px !important;width: 100px;    height: 25px;" />
+                                            </div>
+                                        }
+                                        if (IsApprove)
+                                        {
+                                            <div class="col-md-2 control-label" style="margin-top: 30px;">
+                                                <input type="button" id="btnApprove" class="btn btn-primary col-md-11 submit-button-no-prompt-approve" name="SaveApprove" value="APPROVED" style="font-size:11px;padding-left:0px !important;padding-right:0px !important;margin-top:3px;margin-left:0px !important;width: 100px;    height: 25px;" />
+                                            </div>
+                                        }
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+
+    function saveTaxCredit(_InvId) {
+        var _CRAmount = $('#hdfInv_CRAmount_' + _InvId).val();
+        var _TrxDate = $('#txtcreditDate_' + _InvId).val();
+        var _TrxDesc = $('#creditDesc_' + _InvId).val();
+        var _ReasonlistId = $('#select_ReasonList_' + _InvId).children("option:selected").val();
+
+        var sURL = '@Url.Action("ApplyCreditTaxFormPost", "AccountReceivable", new { area = "Portal" })?id=' + _InvId + "&cramt=" + _CRAmount + "&trxdate=" + _TrxDate + "&trxdesc=" + _TrxDesc + "&reasonListId=" + _ReasonlistId;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                document.location.href = '@Url.Action("CustomerCredits", "AccountReceivable","Portal")';
+            },
+            error: function (err) {
+                alert("Content load failed.");
+            }
+        });
+    }
+
+    $("#btnApprove").click(function () {
+        debugger;
+        var id = $('#updateCreditId').val();
+        var txtCraditStatusNote = "";//$('#txtCraditStatusNote').val();
+        var sURL = '@Url.Action("ApproveRejectTempCredits", "AccountReceivable", new { area = "Portal" })?creditId=' + id + "&creditStatusNote=" + txtCraditStatusNote + "&isApprove=" + true;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $("#modal_applycreditform").modal({ backdrop: 'hide' });
+                window.location.href = '@Url.Action("PendingCreditList", "AccountReceivable", new { area = "Portal" })';
+            },
+            error: function () {
+
+                alert("Content load failed.");
+            }
+        });
+    });
+
+    $("#btnReject").click(function () {
+        var id = $('#updateCreditId').val();
+        var txtCraditStatusNote = "";//$('#txtCraditStatusNote').val();
+        var sURL = '@Url.Action("ApproveRejectTempCredits", "AccountReceivable", new { area = "Portal" })?creditId=' + id + "&creditStatusNote=" + txtCraditStatusNote + "&isApprove=" + false;
+        $.ajax({
+            type: "GET",
+            url: sURL,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $("#modal_applycreditform").modal({ backdrop: 'hide' });
+                window.location.href = '@Url.Action("PendingCreditList", "AccountReceivable", new { area = "Portal" })';
+            },
+            error: function () {
+
+                alert("Content load failed.");
+            }
+        });
+    });
+
+
+
+    function UpdateDateValidation() {
+        @*var month = parseInt('@JKApi.Core.Common.ClaimView.Instance.GetCLAIM_PeriodAccess().Where(x=>x.PeriodId== JKApi.Core.Common.ClaimView.Instance.GetCLAIM_SELECTED_PERIOD_ID()).FirstOrDefault().Month');
+            var year = parseInt('@JKApi.Core.Common.ClaimView.Instance.GetCLAIM_PeriodAccess().Where(x=>x.PeriodId== JKApi.Core.Common.ClaimView.Instance.GetCLAIM_SELECTED_PERIOD_ID()).FirstOrDefault().Year');
+            $('#creditDate').datepicker("option", {
+                minDate: new Date(year, month - 1, 1),
+                maxDate: new Date(year, month, 0)
+            });*@
+    }
+
+</script>

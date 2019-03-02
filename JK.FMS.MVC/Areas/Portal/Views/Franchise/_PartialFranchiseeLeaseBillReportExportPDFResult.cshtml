@@ -1,0 +1,103 @@
+﻿@model  List<JKApi.Data.DAL.portal_spGet_F_LeaseBillReportList_Result>
+<style>
+    .tblFranchiseeRevenues thead th,
+    .tblFranchiseeRevenues thead td {
+        padding: 3px 5px !important;
+        font-size: 12px !important;
+        /*background-color: #95A5A6 !important;
+        color: #fff;*/
+    }
+
+    .tblFranchiseeRevenues tbody td {
+        padding: 3px 5px !important;
+        font-size: 12px !important;
+    }
+
+    .tblFranchiseeRevenues thead th {
+        vertical-align: middle;
+        font-weight: bold;
+    }
+</style>
+
+<table cellspacing="0" class="tblFranchiseeRevenues" style="margin-bottom:10px !important;">
+    <tr>
+        <th style="text-align:center;font-size: 16px !important;">
+            <b style="text-align:center;">LEASE BILL REPORT</b>
+            @*Jani-King of @Model.Where(o => o.RegionId == Regionid).FirstOrDefault().RegionName, Inc<br />
+                For the month of @ViewBag.PeriodTtitle*@
+        </th>
+    </tr>
+</table><br />
+<table class="tblFranchiseeRevenues" style="width:100%;">
+    <thead>
+        <tr>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:75px!important;">
+                <b>Region</b>
+            </th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:110px !important;">
+                <b>Transaction #</b>
+            </th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;">
+                Date
+            </th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;">
+                Lease No
+            </th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:140px!important;">
+                Description
+            </th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:90px!important;">
+                Franchise No
+            </th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:145px!important;">
+                Franchise Name
+            </th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;">
+                Payment #
+            </th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;">
+                Amount
+            </th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;">
+                Tax
+            </th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:80px!important;">
+                Total Payment
+            </th>
+            <th style="text-align:center;border-bottom:1px solid #000000 !important;padding-bottom:3px;width:70px!important;">
+                Status
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                <tr>
+                    <td style="text-align:center">@item.RegionName</td>
+                    <td style="text-align:left">@item.TransactionNumber</td>
+                    <td style="text-align:center">@string.Format("{0:MM/dd/yyyy}", item.TransactionDate)</td>
+                    <td style="text-align:center">@item.LeaseBillNo</td>
+                    <td style="text-align:left"> @item.Description</td>
+                    <td style="text-align:center;">@item.FranchiseeNo</td>
+                    <td style="text-align:left;">@item.FranchiseeName</td>
+                    <td style="text-align:center;">@item.PaymentNumber</td>
+                    <td style="text-align:right;">$ @string.Format("{0:n}", item.PaymentAmount)</td>
+                    <td style="text-align:right;">$ @string.Format("{0:n}", item.TaxAmount)</td>
+                    <td style="text-align:right;">$ @string.Format("{0:n}", item.Total)</td>
+                    <td style="text-align:center;">@item.TransactionStatus</td>
+
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="12" style="text-align:center;border-top:1px solid #000000 !important">No record found</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div style="page-break-before:always"></div>
+

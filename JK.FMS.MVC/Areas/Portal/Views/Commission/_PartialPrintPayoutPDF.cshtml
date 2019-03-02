@@ -1,0 +1,60 @@
+﻿@model List<JKViewModels.Commission.CurrentPaymentHistoryCommissionViewModel>
+@{
+    var request = HttpContext.Current.Request;
+    var _siteUrl = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Authority);
+    string imgpath = _siteUrl + "/Content/admin/assets/layouts/layout2/img/lg_jklogo.jpg";
+}
+
+
+<div id="printDiv" class="form-body" style="padding-top: 10px;">
+
+    <table width="100%">
+        <tr>
+            <td style="width:200px;" rowspan="6"> <img src="@imgpath" style="height: 80px" /></td>
+            <td><strong> @ViewBag.SelectedPeriod Commissions Report</strong> </td>
+        </tr>
+        <tr><td><strong>@Model.FirstOrDefault().SalePersonName</strong></td></tr>
+        <tr><td><strong>Title: </strong>@Model.FirstOrDefault().SalePersonRoleName</td></tr>
+        <tr><td><strong>Total Sales: </strong>@String.Format("{0:c}", Model.Sum(o => o.ContractAmount))</td></tr>
+        <tr><td><strong>Commission P: </strong>@Model.FirstOrDefault().CommissionPercentage %</td></tr>
+        <tr><td><strong>Printed: </strong>@DateTime.Now</td></tr>
+    </table>
+    <table style="width:100%" border="1">
+
+        @{
+            int LastCompensationTypeListId = 0;
+        }
+        @foreach (var item in Model.OrderBy(o => o.CompensationTypeListId))
+        {
+            if (LastCompensationTypeListId != @item.CompensationTypeListId)
+            {
+                <tr>
+                    <td colspan="6" style="padding:3px;font-weight:bold">@item.CompensationTypeListDescription Payouts</td>
+                </tr>
+                <tr>
+                    <td style="text-align:center;padding:3px;font-weight:bold;">Cust No<span style="display:none">@(LastCompensationTypeListId = item.CompensationTypeListId)</span></td>
+                    <td style="text-align:center;padding:3px;font-weight:bold;">Customer Name</td>
+                    <td style="text-align:center;padding:3px;font-weight:bold;">Contract Amount</td>
+                    <td style="text-align:center;padding:3px;font-weight:bold;">Start Date</td>
+                    <td style="text-align:center;padding:3px;font-weight:bold;">Payment</td>
+                    <td style="text-align:center;padding:3px;font-weight:bold;">Amount</td>
+
+                </tr>
+            }
+            <tr>
+                <td style="text-align:center;padding:3px;">@item.CustomerNo</td>
+                <td style="text-align:left;padding:3px;">@item.CustomerName</td>
+                <td style="text-align:right;padding:3px;">@String.Format("{0:c}", item.ContractAmount)</td>
+                <td style="text-align:center;padding:3px;">@String.Format("{0:MM/dd/yyyy}", item.ContractStartDate)</td>
+                <td style="text-align:center;padding:3px;">@item.PaymentNumber of @item.TotalPaymentNumber</td>
+                <td style="text-align:right;padding:3px;">@String.Format("{0:c}", item.CommissionAmount)</td>
+            </tr>
+        }
+
+
+
+    </table>
+
+
+
+</div>

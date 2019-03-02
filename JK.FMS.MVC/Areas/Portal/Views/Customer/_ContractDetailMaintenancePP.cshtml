@@ -1,0 +1,358 @@
+﻿@model JKViewModels.Customer.CustomerContractDetailViewModel
+<div class="modal fade custom-model custom-form-design" id="@("modalDataCusContractPopup"+ Model.LineNumber)" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="form-horizontal" id="@("form_service_ContractDetail"+ Model.LineNumber)">
+
+            <input type="hidden" name="@("ContractDetailId"+Model.LineNumber)" id="@("ContractDetailId"+Model.LineNumber)" value="@Model.ContractDetailId" />
+            <input type="hidden" name="@("ContractId"+Model.LineNumber)" id="@("ContractId"+Model.LineNumber)" value="@Model.ContractId" />
+            <input type="hidden" name="@("CreatedDate"+Model.LineNumber)" id="@("CreatedDate"+Model.LineNumber)" value="@Model.CreatedDate" />
+            <input type="hidden" name="@("CreatedBy"+Model.LineNumber)" id="@("CreatedBy"+Model.LineNumber)" value="@Model.CreatedBy" />
+
+            @*
+                @Html.HiddenFor(one => one.ContractDetailId)
+                @Html.HiddenFor(one => one.ContractId)  
+                @Html.HiddenFor(one => one.LineNumber)
+                @Html.HiddenFor(one => one.CreatedDate)
+                @Html.HiddenFor(one => one.CreatedBy)
+            *@
+
+            <div class="modal-content" style="border-radius: 8px;">
+                <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                    <button type="button" class="close" id="btnclose" onclick="ClickEditContractDetailCancel(@Model.LineNumber)" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                    <h4 class="modal-title" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                        Customer Contract Detail
+                    </h4>
+                </div>
+                <div class="modal-body" style="padding: 0px 30px 15px 30px;">
+                    <div class="form-group" id="@("diverrmsg"+Model.LineNumber)" style="display:none;">
+                        <span style="color:red;font-size:14px;">Contract detail amount should not be higher than contract amount!</span>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label class="control-label col-md-4 text-right">
+                                Service Type<span class="required"> * </span>
+                            </label>
+                            <div class="col-md-5">
+                                @Html.DropDownList("ServiceTypeListId" + Model.LineNumber, (SelectList)ViewBag.ServiceTypeListModel, "Select", new { @class = "form-control input-sm clsContractview", @id = "ServiceTypeListModel" + Model.LineNumber })
+                                @*@Html.DropDownListFor(one => one.ServiceTypeListId, (SelectList)ViewBag.ServiceTypeListModel, "Select", new { @class = "form-control input-sm clsContractview", required = "required", @id = "ServiceTypeListModel" })*@
+                            </div>
+                            <div class="col-md-4"></div>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+
+                        <div class="col-md-12">
+                            <label class="control-label col-md-4 text-right">
+                                Billing Frequency
+                            </label>
+                            <div class="col-md-5">
+                                @Html.DropDownList("BillingFrequencyListId" + Model.LineNumber, (SelectList)ViewBag.FrequencyListModel, null, new { @class = "form-control input-sm clsContractview", required = "required", @id = "FrequencyListModel" + Model.LineNumber })
+                                @*@Html.DropDownListFor(one => one.BillingFrequencyListId, (SelectList)ViewBag.FrequencyListModel, null, new { @class = "form-control input-sm clsContractview", required = "required", @id = "FrequencyListModel" })*@
+                            </div>
+                            <div class="col-md-4"></div>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label col-md-4 text-right">
+                            Square Footage
+                        </label>
+                        <div class="col-md-5">
+                            @Html.TextBox("ContractDetail_SquareFootage" + Model.LineNumber, Model.SquareFootage, new { @class = "form-control input-sm clsContractview", id = "ContractDetail_SquareFootage" + Model.LineNumber })
+                            @*
+                                @Html.TextBoxFor(one => one.SquareFootage, new { @class = "form-control input-sm clsContractview", id = "ContractDetail_SquareFootage" })
+                                @Html.ValidationMessageFor(one => one.SquareFootage, "", new { @class = "text-danger" })
+                            *@
+                        </div>
+                        <div class="col-md-4"></div>
+
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label col-md-4">
+                            Amount <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-5">
+                            @Html.TextBox("ContractDetail_Amount" + Model.LineNumber, Model.Amount, new { @class = "form-control input-sm clsContractview", id = "ContractDetail_Amount" + Model.LineNumber })
+                            @*
+                                @Html.TextBoxFor(one => one.Amount, new { @class = "form-control input-sm clsContractview", id = "ContractDetail_Amount" })
+                                @Html.ValidationMessageFor(one => one.Amount, "", new { @class = "text-danger" })
+                            *@
+                        </div>
+                        <div class="col-md-4"></div>
+                        <input type="hidden" id="@("hdnContractDetailAmount"+Model.LineNumber)" value="@(Model.Amount)" />
+
+
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label col-md-4">
+                            Start Time
+                        </label>
+                        <div class="col-md-5">
+                            <div class="input-group timepicker timepicker-default">
+                                <input type="hidden" value="@Convert.ToDateTime(Model.StartTime).ToShortTimeString()" id="@("hdnStartTime" + Model.LineNumber)" />
+                                @*@Html.TextBoxFor(one => one.StartTime, new { @class = "form-control input-sm timepicker timepicker-default clsContractview", id = "Contract_StartTime" })*@
+                                @Html.TextBox("Contract_StartTime" + Model.LineNumber, Model.StartTime, new { @class = "form-control input-sm timepicker timepicker-default clsContractview", id = "Contract_StartTime" + Model.LineNumber })
+                                <span class="input-group-btn cal-btn">
+                                    <button class="btn default cal-btn" type="button">
+                                        <i class="fa fa-clock-o"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-4"></div>
+
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label col-md-4">
+                            End Time
+                        </label>
+                        <div class="col-md-5">
+                            <div class="input-group timepicker timepicker-default">
+
+                                <input type="hidden" value="@Convert.ToDateTime(Model.EndTime).ToShortTimeString()" id="@("hdnEndTime" + Model.LineNumber)" />
+                                @Html.TextBox("Contract_EndTime" + Model.LineNumber, Model.EndTime, new { @class = "form-control input-sm timepicker timepicker-default clsContractview", id = "Contract_EndTime" + Model.LineNumber })
+
+                                @*
+                                    <input type="hidden" value="@Convert.ToDateTime(Model.EndTime).ToShortTimeString()" id="hdnEndTime" />
+                                    @Html.TextBoxFor(one => one.EndTime, new { @class = "form-control input-sm timepicker timepicker-default clsContractview", id = "Contract_EndTime" })
+                                *@
+
+                                <span class="input-group-btn cal-btn">
+                                    <button class="btn default cal-btn" type="button">
+                                        <i class="fa fa-clock-o"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-4"></div>
+
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label col-md-4 text-right">
+                            Clean Times <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-1">
+                            @Html.TextBox("ContractDetail_CleanTimes" + Model.LineNumber, Model.CleanTimes, new { @class = "form-control input-sm clsContractview", id = "ContractDetail_CleanTimes" + Model.LineNumber })
+
+
+                            @*@Html.TextBoxFor(one => one.CleanTimes, new { @class = "form-control input-sm clsContractview", required = "required", id = "ContractDetail_CleanTimes", maxlength = "2", @style = "width:40px;" })
+                                @Html.ValidationMessageFor(one => one.CleanTimes, "", new { @class = "text-danger" })*@
+                        </div>
+
+                        <label class="control-label col-md-3 text-right" style="width:125px;">
+                            Clean Frequency <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-3">
+                            @Html.DropDownList("ContractDetail_CleanFrequency" + Model.LineNumber, (SelectList)ViewBag.CleanFrequencyListModel, null, new { @class = "form-control input-sm clsContractview", required = "required", @id = "ContractDetail_CleanFrequency" + Model.LineNumber })
+                            @*@Html.DropDownListFor(one => one.CleanFrequencyListId, (SelectList)ViewBag.CleanFrequencyListModel, null, new { @class = "form-control input-sm clsContractview", required = "required", @id = "ContractDetail_CleanFrequency" })
+                                @Html.ValidationMessageFor(one => one.BillingFrequencyListId, "", new { @class = "text-danger" })*@
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row" id="divweek">
+                            <label class="checkbox-inline">
+                                @Html.CheckBox("ContractDetail_Mon" + Model.LineNumber, Model.Mon, new { @class = "i-checks clsContractview", @id = "ContractDetail_Mon" + Model.LineNumber, @checked = "true" }) Mon
+                                @*@Html.CheckBoxFor(one => one.Mon, new { @class = "i-checks clsContractview", @checked = "true", id = "ContractDetail_Mon" }) Mon*@
+                                <span></span>
+                            </label>
+                            <label class="checkbox-inline">
+                                @Html.CheckBox("ContractDetail_Tues" + Model.LineNumber, Model.Tues, new { @class = "i-checks clsContractview", @id = "ContractDetail_Tues" + Model.LineNumber, @checked = "true" }) Tues
+                                @*@Html.CheckBoxFor(one => one.Tues, new { @class = "i-checks clsContractview", @checked = "true", id = "ContractDetail_Tues" }) Tue*@
+                                <span></span>
+                            </label>
+                            <label class="checkbox-inline">
+                                @Html.CheckBox("ContractDetail_Wed" + Model.LineNumber, Model.Wed, new { @class = "i-checks clsContractview", @id = "ContractDetail_Wed" + Model.LineNumber, @checked = "true" }) Wed
+                                @*@Html.CheckBoxFor(one => one.Wed, new { @class = "i-checks clsContractview", @checked = "true", id = "ContractDetail_Wed" }) Wed*@
+                                <span></span>
+                            </label>
+                            <label class="checkbox-inline">
+                                @Html.CheckBox("ContractDetail_Thur" + Model.LineNumber, Model.Thur, new { @class = "i-checks clsContractview", @id = "ContractDetail_Thur" + Model.LineNumber, @checked = "true" }) Thur
+                                @*@Html.CheckBoxFor(one => one.Thur, new { @class = "i-checks clsContractview", @checked = "true", id = "ContractDetail_Thur" }) Thu*@
+                                <span></span>
+                            </label>
+                            <label class="checkbox-inline">
+                                @Html.CheckBox("ContractDetail_Fri" + Model.LineNumber, Model.Fri, new { @class = "i-checks clsContractview", @id = "ContractDetail_Fri" + Model.LineNumber, @checked = "true" }) Fri
+                                @*@Html.CheckBoxFor(one => one.Fri, new { @class = "i-checks clsContractview", @checked = "true", id = "ContractDetail_Fr" }) Fri*@
+                                <span></span>
+                            </label>
+                            <label class="checkbox-inline">
+                                @Html.CheckBox("ContractDetail_Sat" + Model.LineNumber, Model.Sat, new { @class = "i-checks clsContractview", @id = "ContractDetail_Sat" + Model.LineNumber, @checked = "true" }) Sat
+                                @*@Html.CheckBoxFor(one => one.Sat, new { @class = "i-checks clsContractview", @checked = "true", id = "ContractDetail_Sat" }) Sat*@
+                                <span></span>
+                            </label>
+                            <label class="checkbox-inline">
+                                @Html.CheckBox("ContractDetail_Sun" + Model.LineNumber, Model.Sun, new { @class = "i-checks clsContractview", @id = "ContractDetail_Sun" + Model.LineNumber, @checked = "true" }) Sun
+
+                                @*@Html.CheckBoxFor(one => one.Sun, new { @class = "i-checks clsContractview", @checked = "true", id = "ContractDetail_Sun" }) Sun*@
+                                <span></span>
+                            </label>
+                            <label class="checkbox-inline">
+                                @Html.CheckBox("ContractDetail_WeekEnd" + Model.LineNumber, Model.WeekEnd, new { @class = "i-checks clsContractview", @id = "ContractDetail_WeekEnd" + Model.LineNumber, @checked = "true" }) Weekend
+                                @*@Html.CheckBoxFor(one => one.WeekEnd, new { @class = "i-checks clsContractview", @checked = "true", id = "ContractDetail_WeekEnd" }) Weekend*@
+                                <span></span>
+                            </label>
+                        </div>
+                        <span id="@("spndayerr"+Model.LineNumber)" style="display:none;color:red;padding-left:75px;font-size:12px;">At least one checkbox required</span>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <div class="col-md-1">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="mt-checkbox">
+                                @Html.CheckBox("ContractDetail_CPIIncrease" + Model.LineNumber, Model.TaxExcempt, new { @class = "i-checks input-sm clsContractview", @id = "ContractDetail_CPIIncrease" + Model.LineNumber, @checked = "true" }) CPI Increase
+                                @*@Html.CheckBoxFor(one => one.CPIIncrease, new { @class = "i-checks input-sm clsContractview", @checked = "true" }) CPI Increase*@
+                                <span></span>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="mt-checkbox">
+                                @Html.CheckBox("ContractDetail_SeparateInvoice" + Model.LineNumber, Model.TaxExcempt, new { @class = "i-checks input-sm clsContractview", @checked = "true" }) Separate Invoice
+                                @*@Html.CheckBoxFor(one => one.SeparateInvoice, new { @class = "i-checks input-sm clsContractview", @checked = "true" }) Separate Invoice*@
+                                <span></span>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="mt-checkbox">
+                                @Html.CheckBox("ContractDetail_TaxExcempt" + Model.LineNumber, Model.TaxExcempt, new { @class = "i-checks input-sm clsContractview", @checked = "true" }) TaxExcempt
+                                @*@Html.CheckBoxFor(one => one.TaxExcempt, new { @class = "i-checks input-sm clsContractview", @checked = "true" }) TaxExcempt*@
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="control-label col-md-4 text-right">
+                            Description
+                        </div>
+                        <div class="col-md-6">
+                            @Html.TextArea("ContractDetail_Description" + Model.LineNumber, Model.Description, new { @class = "form-control input-sm clsContractview", id = "ContractDetail_Description" + Model.LineNumber })
+                            @*@Html.TextAreaFor(one => one.Description, new { @class = "form-control input-sm clsContractview", id = "ContractDetail_Description" })*@
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-5">
+                            <button type="button" class="btn btn-primary" id="@("btnEditContractDetails"+Model.LineNumber)" onclick="EditContractDetailsClick(@Model.LineNumber)" style="margin-left: 10px;display:none;">
+                                Edit
+                                <i class="fa fa-edit"></i>
+                            </button>
+                        </div>
+                        <div class="col-md-5">
+                            <button type="button" class="btn btn-primary button-next pull-right btnContractviewsave" id="@("CancelContractDetailsClick"+Model.LineNumber)" style="margin-right:5px;display:none;" onclick="CancelContractDetailsClickEvent(@Model.LineNumber)">
+                                Cancel
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button type="button" onclick="addEditContractDetail(@Model.LineNumber)" class="btn btn-primary pull-right btnContractviewsave" id="@("btnSubmit"+Model.LineNumber)" style="margin-right:15px;">
+                                Submit
+                                <i class="fa fa-check"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+     $(document).ready(function () {
+        if ($("#hdncallfrom") != null && $("#hdncallfrom").val() != "0" && $("#hdncallfrom").val() == "1")
+        {
+            $("#form_service_ContractDetail" + @Model.LineNumber +" .clsContractview").attr("disabled", "disabled");
+            $("#form_service_ContractDetail" + @Model.LineNumber +" .btnContractviewsave").hide();
+            $("#btnEditContractDetails"+@Model.LineNumber).show();
+        }
+        $("#ContractDetail_CleanTimes"+@Model.LineNumber).keypress(function (e) {
+            if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+                return false;
+            }
+        });
+        if ($("#ContractDetailId"+@Model.LineNumber).val() == 0 || $("#ContractDetailId"+@Model.LineNumber).val() == "") {
+
+            var ContractAmount = parseFloat($("#hdnAmount").val()) - parseFloat($("#hdnTotAmount").val());
+            if (ContractAmount > 0) {
+                $("#ContractDetail_Amount"+@Model.LineNumber).val(ContractAmount);
+            }
+            else {
+                $("#ContractDetail_Amount"+@Model.LineNumber).val("0")
+            }
+
+            //$("#CPIIncrease").prop("checked", true);
+            if ($("#hdnAgreementTypeCPI"+@Model.LineNumber).val() == 1) {
+                $("#ContractDetail_CPIIncrease"+@Model.LineNumber).prop("checked", true);
+                $("#ContractDetail_CPIIncrease"+@Model.LineNumber).bind("click", false);
+            }
+            else {
+                //$("#CPIIncrease").prop("checked", true);
+                $("#ContractDetail_CPIIncrease"+@Model.LineNumber).bind("click", true);
+            }
+        }
+        else {
+            if ('@Convert.ToBoolean(Model.CPIIncrease)' == 'True') {
+                //$("#CPIIncrease").bind("click", false);
+            }
+        }
+
+        $("#ContractDetail_Amount"+@Model.LineNumber).inputmask("numeric", {
+            decimal: ".",
+            negative: false,
+            scale: 2,
+            groupSeparator: ",",
+            digits: 2,
+            autoGroup: true,
+            prefix: "$",
+            rightAlign: false,
+            autoUnmask: true,
+            removeMaskOnSubmit: true,
+        });
+        if ($("#ContractDetailId"+@Model.LineNumber).val() != "0" && $("#ContractDetailId"+@Model.LineNumber).val() != "")
+        {
+            $("#Contract_StartTime"+@Model.LineNumber).val($("#hdnStartTime"+@Model.LineNumber).val());
+            $("#Contract_EndTime"+@Model.LineNumber).val($("#hdnEndTime"+@Model.LineNumber).val());
+        }
+        if ($('#ContractDetail_CleanFrequency'+@Model.LineNumber).val() == '1' || $('#ContractDetail_CleanFrequency'+@Model.LineNumber).val() == '')
+        {
+            $("#divweek"+@Model.LineNumber).show();
+        }
+        else {
+            $("#divweek"+@Model.LineNumber).hide();
+
+        }
+
+        $('#Contract_StartTime'+@Model.LineNumber).timepicker({ timeFormat: 'h:mm:ss p' });
+        $('#Contract_EndTime'+@Model.LineNumber).timepicker({ timeFormat: 'h:mm:ss p' });
+        $('#ContractDetail_CleanFrequency'+@Model.LineNumber).on('change', function () {
+            if (this.value == '1') {
+                $('#ContractDetail_Mon'+@Model.LineNumber).removeAttr('checked');
+                $('#ContractDetail_Tues'+@Model.LineNumber).removeAttr('checked');
+                $('#ContractDetail_Wed'+@Model.LineNumber).removeAttr('checked');
+                $('#ContractDetail_Thur'+@Model.LineNumber).removeAttr('checked');
+                $('#ContractDetail_Fr'+@Model.LineNumber).removeAttr('checked');
+                $("#divweek"+@Model.LineNumber).show();
+            }
+            else if (this.value == '7') {
+                $('#ContractDetail_Mon'+@Model.LineNumber).removeAttr('checked');
+                $('#ContractDetail_Tues'+@Model.LineNumber).removeAttr('checked');
+                $('#ContractDetail_Wed'+@Model.LineNumber).removeAttr('checked');
+                $('#ContractDetail_Thur'+@Model.LineNumber).removeAttr('checked');
+                $('#ContractDetail_Fr'+@Model.LineNumber).removeAttr('checked');
+                $("#divweek"+@Model.LineNumber).show();
+            }
+            else {
+                $("#divweek"+@Model.LineNumber).hide();
+            }
+        });
+
+    });
+
+</script>
+

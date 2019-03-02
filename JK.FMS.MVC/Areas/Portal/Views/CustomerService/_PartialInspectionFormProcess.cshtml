@@ -1,0 +1,121 @@
+﻿@model JKViewModels.Inspection.InspectionFormModel
+@{
+    var request = HttpContext.Current.Request;
+    var address = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Authority);
+}
+
+<div class="modal fade custom-model custom-form-design" id="modal_ShowInspection" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 8px;">
+            <div class="modal-header headerbox list" style="padding:0px!important;border-bottom: none;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 12px !important;margin-right: 12px !important;"></button>
+                <h4 class="modal-title text-center" style="margin-top: 0px; margin-bottom: 4px;  padding: 7px!important;font-size: 12px;font-weight: bold;background: #3598DC !important;color: #FFF !important;border: 1px solid #3598DC !important;padding: 0px;border-radius: 8px 8px 0 0;text-transform: uppercase;">
+                    Customer Inspection Form
+                </h4>
+            </div>
+            <div class="modal-body" style="padding: 0px 30px 15px 30px;">
+                <div class="custom-form portlet light" style="padding:0px;margin:0px;">
+                    <div class="portlet-body form form-horizontal">
+
+                        <div class="form-group" style="padding-bottom:5px;">
+                            <div class="row">
+                                <div class="col-md-2 control-label">
+                                    <b>Account:</b>
+                                </div>
+                                <div class="col-md-5" style="padding-top: 7px;">
+                                    @ViewBag.CustomerDetail.CustomerName
+                                </div>
+                                <div class="col-md-2 control-label">
+                                    <b>Contact:</b>
+                                </div>
+                                <div class="col-md-3" style="padding-top: 7px;">
+                                   @ViewBag.CustomerDetail.ContactName
+                                </div>
+                                </div>
+                            <div class="row">
+                                <div class="col-md-2 control-label">
+                                    <b>Address:</b>
+                                </div>
+                                <div class="col-md-5" style="padding-top: 7px;">
+                                    @ViewBag.CustomerDetail.Address
+                                </div>
+                                <div class="col-md-2 control-label">
+                                    <b>Phone:</b>
+                                </div>
+                                <div class="col-md-3" style="padding-top: 7px;">
+                                    @ViewBag.CustomerDetail.Phone
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2">
+                                </div>
+                                <div class="col-md-5" style="padding-top: 7px;">
+                                    @ViewBag.CustomerDetail.Address2
+                                </div>
+                                <div class="col-md-2 control-label">
+                                    <b>Acct Type:</b>
+                                </div>
+                                <div class="col-md-3" style="padding-top: 7px;">
+                                    @Model.AccountType
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        @if (Model.Sections.Count() > 0)
+                        {
+                            <div class="form-group" style="padding-bottom: 5px;padding-top: 5px;">
+                                @foreach (var item in Model.Sections)
+                                {
+                                <div class="col-md-3" style="padding-top: 5px;">
+                                    <span>@Html.DisplayFor(modelItem => item.SectionName)</span>
+                                </div>
+                                <div class="col-md-3" style="padding-top: 5px;">
+                                    <button type="button" class="btn btn-circle btn-primary" onclick="getInspectionItem(@item.InspectionFormSectionId)" id="btn_'@item.SectionName'" value="Select">Select</button>
+                                </div>
+
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-10"></div>
+                        <div class="col-md-2">
+                            <input type="button" class="btn btn-custom btn btn-primary" onclick="btnInspectionClose();" Id="btnClose" value="Close" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function getInspectionItem(Id) {
+        $.blockUI();
+            //var CustomerId = $("#hdnCustomerId").val();
+            var sURL = '@Url.Action("ProcessInspectionFormItem", "CustomerService", new { area = "Portal" })?Id=' + Id;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#form_InspectionItems').html(data);
+                    $("#modal_ShowInspectionItems").modal({ backdrop: 'static' });
+                    $('.modal-dialog').draggable();
+
+                    $.unblockUI();
+                },
+                error: function () {
+                    $.unblockUI();
+                    alert("Content load failed.");
+                }
+            });
+    }
+</script>
+
+
+

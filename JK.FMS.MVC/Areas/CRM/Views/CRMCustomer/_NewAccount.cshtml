@@ -1,0 +1,868 @@
+﻿@*@model List<JKApi.Service.AccountPayable.FranchiseeReportDetailsViewModel>*@
+@model  List<JKViewModels.Customer.CustomerFranchiseeDistribution>
+
+@*@section styles{
+        <link rel="stylesheet" href="@Url.Content("~/Content/FranchiseeReport.css")" />
+    }*@
+
+
+@*@if (ViewBag.IsPrintView == true)
+    {
+        <div class="print-container no-print">
+            <input type="button" class="print-button" value="Create PDF" onclick="createPDF()" />
+            <input type="button" class="print-button" value="Back to Portal" onclick="backToPortal()" />
+        </div>
+    }*@
+
+@{
+    var request = HttpContext.Current.Request;
+    var _siteUrl = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Authority);
+    string imgpath = _siteUrl + "/Content/admin/assets/layouts/layout2/img/lg_jklogo.jpg";
+
+    List<JKApi.Data.DAL.CSAccountWalkThursFormFieldDetail> dataList = new List<JKApi.Data.DAL.CSAccountWalkThursFormFieldDetail>();
+
+    if (ViewBag.FormFieldDetail != null)
+    {
+        dataList = (List<JKApi.Data.DAL.CSAccountWalkThursFormFieldDetail>)ViewBag.FormFieldDetail;
+    }
+}
+
+
+<div class="headerbox" style="font-weight: normal;">
+    <div class="col-md-12 text-center" style="font-size:15px;">
+        <b>New Account Form</b>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top: 5px !important;margin-right: 12px !important;"></button>
+    </div>
+    <div class="clearfix"> </div>
+</div>
+<div class="form-actions">
+    <div class="col-md-9">
+    </div>
+    <div class="col-md-3">
+        <button type="button" class="btn btn-primary button-next" style="margin-left:10px;" onclick="CreateExportPDF(@ViewBag.CustomerId)">Export <i class="fa fa-download"></i></button>
+        <button type="button" class="btn btn-primary button-next" style="margin-left:10px;" onclick="CreatePrint(@ViewBag.CustomerId)">Print <i class="fa fa-print"></i></button>
+    </div>
+</div>
+
+@if (Model != null && Model.Count > 0)
+{
+    foreach (var item in Model)
+    {
+        <div class="portlet-body" style="padding:14px;">
+            <input type="hidden" id="hdnFranchiseeId"  value="@item.FranchiseeId"/> 
+            <table class="header" style="margin-bottom:0px;">
+                <tr>
+                    <td width="25%">
+                        <img src="@imgpath" style="height: 80px" />
+                    </td>
+                    <td> <h2 style="font-weight: 600;"> NEW ACCOUNT START UP / SET UP</h2></td>
+                </tr>
+
+            </table>
+
+            <div class="form-class row">
+                <div class="form-wrapper">
+                    <form class="registeration-form">
+                        <div class="form-header col-md-12">
+                            <div class="group-form div-25">
+                                <label>Date:</label>
+                                <input type="text" value="@System.DateTime.Now.ToString("MM-dd-yyyy")" />
+                            </div>
+                            <div class="group-form div-49" style="width: 34%;">
+                                <label style="width: 40%;">Walk through Date:</label>
+                                <input type="text" style="width: 58%;" />
+                            </div>
+                            <div class="group-form div-25" style="width: 35%;">
+                                <label style="width: 32%;">Start Date:</label>
+                                <input type="text" value="@(item.StartDate != null ? Convert.ToDateTime(item.StartDate).ToString("MM-dd-yyyy") : string.Empty )" />
+                            </div>
+                        </div>
+                        <div class="body-content">
+                            <div class="account-name">
+                                <div class="group-form div-49">
+                                    <label>Account Name:</label>
+                                    <input type="text" value="@item.CustomerName" />
+                                </div>
+                                <div class="group-form div-49">
+                                    <label>Franchise Name</label>
+                                    <input type="text" value="@item.FranchiseeName" />
+                                </div>
+                            </div>
+                            <div class="account-name">
+                                <div class="group-form div-49">
+                                    <label>Address:</label>
+                                    <input type="text" value="@item.Address1" />
+                                </div>
+                                <div class="group-form div-49">
+                                    <label>Contact Name</label>
+                                    <input type="text" value="@item.FranchiseeContactName" />
+                                </div>
+                            </div>
+                            <div class="account-name">
+                                <div class="group-form div-49">
+                                    <label></label>
+                                    <input type="text" value="@item.City@((item.City != null && item.City != "") ? ", " : string.Empty)@item.StateName@(item.StateName != null && item.StateName != "" ? ", " : string.Empty)@item.PostalCode" />
+                                </div>
+                                <div class="group-form div-49">
+                                    <label style="float:left;">Days Cleaned</label>
+                                    <div style="width:32px;float:left;">
+                                        <input type="checkbox" @(item.Mon == true ? "checked=checked" : string.Empty) />M
+                                    </div>
+                                    <div style="width:32px;float:left;">
+                                        <input type="checkbox" @(item.Tues == true ? "checked=checked" : string.Empty) />T
+                                    </div>
+                                    <div style="width:32px;float:left;">
+                                        <input type="checkbox" @(item.Wed == true ? "checked=checked" : string.Empty) />W
+                                    </div>
+                                    <div style="width:32px;float:left;">
+                                        <input type="checkbox" @(item.Thur == true ? "checked=checked" : string.Empty) />T
+                                    </div>
+                                    <div style="width:32px;float:left;">
+                                        <input type="checkbox" @(item.Fri == true ? "checked=checked" : string.Empty) />F
+                                    </div>
+                                    <div style="width:32px;float:left;">
+                                        <input type="checkbox" @(item.Sat == true ? "checked=checked" : string.Empty) />S
+                                    </div>
+                                    <div style="width:35px;float:left;">
+                                        <input type="checkbox" @(item.Sun == true ? "checked=checked" : string.Empty) />S
+                                    </div>
+                                    <div style="width:15px;float:left;">
+                                        <input type="checkbox" />
+                                    </div>
+                                    <div style="width:20px;float:left;">
+                                        WE
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="account-name">
+                                <div class="group-form div-49">
+                                    <label>Contact Phone:</label>
+                                    <input type="text" value="@((item.Phone != null && item.Phone != null && item.Phone != "") ? string.Format("{0:(###) ###-####}", Convert.ToDecimal(item.Phone.Trim().Replace(" ", "").Replace("-", "").Replace(")", "").Replace("(", ""))) : string.Empty)" />
+                                </div>
+                                <div class="group-form div-49">
+                                    <label>Time Cleaned</label>
+                                    <input type="text" value="@item.CleanTimes" />
+                                </div>
+                            </div>
+                            <div class="account-name">
+                                <div class="group-form div-49">
+                                    <label>Contact Email:</label>
+                                    <input type="text" value="@item.EmailAddress" />
+                                </div>
+                                <div class="group-form div-49">
+                                    <label>Office Phone</label>
+                                    <input type="text" value="@((item.FranchiseePhone != null && item.FranchiseePhone != null && item.FranchiseePhone != "") ? string.Format("{0:(###) ###-####}", Convert.ToDecimal(item.FranchiseePhone.Trim().Replace(" ", "").Replace("-", "").Replace(")", "").Replace("(", ""))) : string.Empty)" />
+                                </div>
+                            </div>
+                            <div class="account-name">
+                                <div class="group-form div-49">
+                                    <label>Billing Address:</label>
+                                    <input type="text" value="@item.BAddress1" />
+                                </div>
+                                <div class="group-form div-49">
+                                    <label>Office Email</label>
+                                    <input type="text" value="@item.FranchiseeEmail" />
+                                </div>
+                                @*<div class="group-form div-49">
+                                        <label>Office Fax</label>
+                                        <input type="text" />
+                                    </div>*@
+                            </div>
+                            <div class="account-name">
+                                <div class="group-form div-49">
+                                    <label></label>
+                                    <input type="text" value="@item.BCity@((item.BCity != null && item.BCity != "") ? ", " : string.Empty)@item.BStateName@((item.BStateName != null && item.BStateName != "") ? ", " : string.Empty) @item.BPostalCode" />
+                                </div>
+                                <div class="group-form div-49">
+                                    <div class="div-70">
+                                        <label style="width: 39%;">Mo. Billing Amount $</label>
+                                        <input type="text" style="width:55%" value="@string.Format("{0:c}", item.Amount)" />
+                                    </div>
+                                    <div class="div-25" style="width: 22%;">
+                                        <label style="padding-right: 20px;">P.O#</label>
+                                        <input type="text" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="account-name">
+                                <div class="group-form div-49" style="width: 45%;">
+                                    <label style="width :28%;">A.P Contact Name:</label>
+                                    <input style="width: 70%;" type="text"  value="@item.ContactName" />
+                                </div>
+                                <div class="group-form div-49">
+                                    <label style="width:34%;">Partial Billing Amount $</label>
+                                    <input type="text" style="width:64.5%;" />
+                                </div>
+                            </div>
+                            <div class="account-name">
+                                <div class="group-form div-49">
+                                    <label>A.P Contact Email:</label>
+                                    <input type="text" />
+                                </div>
+                                <div class="group-form div-49">
+                                    <div class="div-70">
+                                        <label style="width:37%;">I.C Amount: $</label>
+                                        <input style="width: 57%;" type="text" value="@string.Format("{0:c}", item.InitialCleanAmount)" />
+                                    </div>
+                                    <div class="div-25" style="width:22%;">
+                                        <label>P.O#</label>
+                                        <input type="text" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="location-checklist">
+                            <div class="wrapper-class-location">
+                                <h5 class="text-uppercase location-heading" style="margin-top:15px !important;">Location Checklist</h5>
+                            </div>
+                            @{ 
+                                var Field_1 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 1).FirstOrDefault();
+                                var Field_2 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 2).FirstOrDefault();
+                                var Field_3 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 3).FirstOrDefault();
+                                var Field_4 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 4).FirstOrDefault();
+                                var Field_5 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 5).FirstOrDefault();
+                                var Field_6 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 6).FirstOrDefault();
+                                var Field_7 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 7).FirstOrDefault();
+                                var Field_8 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 8).FirstOrDefault();
+                                var Field_9 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 9).FirstOrDefault();
+                                var Field_10 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 10).FirstOrDefault();
+                                var Field_11 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 11).FirstOrDefault();
+                                var Field_12 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 12).FirstOrDefault();
+                                var Field_13 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 13).FirstOrDefault();
+                                var Field_14 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 14).FirstOrDefault();
+                                var Field_15= dataList.Where(w => w.CSAccountWalkThursFormFieldId == 15).FirstOrDefault();
+                                var Field_16 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 16).FirstOrDefault();
+                                var Field_17 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 17).FirstOrDefault();
+                                var Field_18 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 18).FirstOrDefault();
+                                var Field_19 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 19).FirstOrDefault();
+                                var Field_20 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 20).FirstOrDefault();
+                                var Field_21 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 21).FirstOrDefault();
+                                var Field_22 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 22).FirstOrDefault();
+                                var Field_23 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 23).FirstOrDefault();
+                                var Field_24 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 24).FirstOrDefault();
+                                var Field_25 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 25).FirstOrDefault();
+                                var Field_26 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 26).FirstOrDefault();
+                                var Field_27 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 27).FirstOrDefault();
+                                var Field_28 = dataList.Where(w => w.CSAccountWalkThursFormFieldId == 28).FirstOrDefault();
+
+
+                            }
+                            <div class="location-questions">
+                                <div class="display-inline pr-20" style="width:196px;">
+                                    <label style="width:105px;">Light Switches?</label>
+                                    <label for="Y" style="padding-right: 10px;">
+                                        <input type="radio" name="Light" style="width:12px;" id="hdnField_1_y" value="1" @(Field_1 != null ? Field_1.FieldValue == true ? "checked=checked":string.Empty :string.Empty ) > Y
+                                    </label>
+                                    <label for="N">
+                                        <input type="radio" name="Light" style="width:12px;" id="hdnField_1_n" value="0"  @(Field_1 != null ? Field_1.FieldValue == false ? "checked=checked":string.Empty :string.Empty ) > N
+                                    </label>
+                                    @*<span>Y/N</span>*@
+                                </div>
+                                <div class="display-inline pr-20" style="width:201px;">
+                                    <label style="width:110px;">Breaker's Panel?</label>
+                                    <label for="Y" style="padding-right: 10px;">
+                                        <input type="radio" name="Breaker" style="width:12px;" id="hdnField_2_y" value="1"  @(Field_2 != null ? Field_2.FieldValue == true ? "checked=checked":string.Empty :string.Empty ) > Y
+                                    </label>
+
+                                    <label for="N">
+                                        <input type="radio" name="Breaker" style="width:12px;" id="hdnField_2_n" value="0"  @(Field_2 != null ? Field_2.FieldValue == false ? "checked=checked":string.Empty :string.Empty ) > N
+                                    </label>
+                                </div>
+                                <div class="display-inline pr-20" style="width:204px;">
+                                    <label style="width:113px;">Contact's Office?</label>
+                                    <label for="Y" style="padding-right: 10px;">
+                                        <input type="radio" name="Contact" style="width:12px;" id="hdnField_3_y" value="1"  @(Field_3 != null ? Field_3.FieldValue == true ? "checked=checked":string.Empty :string.Empty ) > Y
+                                    </label>
+
+                                    <label for="N">
+                                        <input type="radio" name="Contact" style="width:12px;" id="hdnField_3_n" value="0"  @(Field_3 != null ? Field_3.FieldValue == false ? "checked=checked":string.Empty :string.Empty ) > N
+                                    </label>
+                                </div>
+                                <div class="display-inline pr-20" style="width:229px;">
+                                    <label>Storage Areas?</label>
+                                    <label for="Y" style="padding-right: 10px;">
+                                        <input type="radio" name="Storage" style="width:12px;" id="hdnField_4_y" value="1" @(Field_4 != null ? Field_4.FieldValue == true ? "checked=checked":string.Empty :string.Empty )> Y
+                                    </label>
+
+                                    <label for="N">
+                                        <input type="radio" name="Storage" style="width:12px;" id="hdnField_4_n" value="0" @(Field_4 != null ? Field_4.FieldValue == false ? "checked=checked":string.Empty :string.Empty )> N
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="location-questions">
+                                <div class="display-inline pr-20" style="width: 196px;">
+                                    <label style="width:105px;">Water Source?</label>
+                                    <label for="Y" style="padding-right: 10px;">
+                                        <input type="radio" name="Water" style="width:12px;" id="hdnField_5_y" value="1" @(Field_5 != null ? Field_5.FieldValue == true ? "checked=checked":string.Empty :string.Empty )> Y
+                                    </label>
+
+                                    <label for="N">
+                                        <input type="radio" name="Water" style="width:12px;" id="hdnField_5_n" value="0" @(Field_5 != null ? Field_5.FieldValue == false ? "checked=checked":string.Empty :string.Empty )> N
+                                    </label>
+                                </div>
+                                <div class="display-inline pr-20" style="width: 201px;">
+                                    <label style="width:110px;">Trash Disposal?</label>
+                                    <label for="Y" style="padding-right: 10px;">
+                                        <input type="radio" name="Trash" style="width:12px;" id="hdnField_6_y" value="1" @(Field_6 != null ? Field_6.FieldValue == true ? "checked=checked":string.Empty :string.Empty )> Y
+                                    </label>
+
+                                    <label for="N">
+                                        <input type="radio" name="Trash" style="width:12px;" id="hdnField_6_n" value="0" @(Field_6 != null ? Field_6.FieldValue == false ? "checked=checked":string.Empty :string.Empty )> N
+                                    </label>
+                                </div>
+                                <div class="display-inline pr-45" style="width: 204px;">
+                                    <label style="width:78px;">Recycling?</label>
+                                    <label for="Y" style="padding-right: 10px;">
+                                        <input type="radio" name="Recycling" style="width:12px;" id="hdnField_7_y" value="1" @(Field_7 != null ? Field_7.FieldValue == true ? "checked=checked":string.Empty :string.Empty )> Y
+                                    </label>
+
+                                    <label for="N">
+                                        <input type="radio" name="Recycling" style="width:12px;" id="hdnField_7_n" value="0" @(Field_7 != null ? Field_7.FieldValue == false ? "checked=checked":string.Empty :string.Empty )> N
+                                    </label>
+                                </div>
+                                <div class="display-inline pr-20" style="width: 228px;">
+                                    <label>Account supplies?</label>
+                                    <label for="Y" style="padding-right: 10px;">
+                                        <input type="radio" name="Account" style="width:12px;" id="hdnField_8_y" value="1" @(Field_8 != null ? Field_8.FieldValue == true ? "checked=checked":string.Empty :string.Empty )> Y
+                                    </label>
+
+                                    <label for="N">
+                                        <input type="radio" name="Account" style="width:12px;" id="hdnField_8_n" value="0" @(Field_8 != null ? Field_8.FieldValue == false ? "checked=checked":string.Empty :string.Empty )> N
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="location-checklist">
+                            <div class="wrapper-class-location">
+                                <h5 class="text-uppercase location-heading" style="margin-top:15px !important;">Security Checklist</h5>
+                            </div>
+                            <div class="location-questions">
+
+                                <div class="display-inline" style="width:6%">
+                                    <label>Key?:</label>
+                                </div>
+                                <div class="display-inline" style="width:23%">
+                                    <label>Entry:</label>
+                                    <label for="Y" style="padding-right: 10px;">
+                                        <input type="radio" name="Entry" style="width:12px;" id="hdnField_9_y" value="1" @(Field_9 != null ? Field_9.FieldValue == true ? "checked=checked":string.Empty :string.Empty )> Y
+                                    </label>
+
+                                    <label for="N">
+                                        <input type="radio" name="Entry" style="width:12px;" id="hdnField_9_n" value="0" @(Field_9 != null ? Field_9.FieldValue == false ? "checked=checked":string.Empty :string.Empty )> N
+                                    </label>
+                                </div>
+                                <div class="display-inline" style="width:25%;">
+                                    <label>Alarm System:</label>
+                                    <label for="Y" style="padding-right:10px;">
+                                        <input type="radio" name="Alarm" style="width:12px;" id="hdnField_10_y" value="1" @(Field_10 != null ? Field_10.FieldValue == true ? "checked=checked":string.Empty :string.Empty )> Y
+                                    </label>
+
+                                    <label for="N">
+                                        <input type="radio" name="Alarm" style="width:12px;" id="hdnField_10_n" value="0" @(Field_10 != null ? Field_10.FieldValue == false ? "checked=checked":string.Empty :string.Empty )> N
+                                    </label>
+                                </div>
+                                <div class="display-inline" style="width:40%">
+                                    <label>Restroom paper dispensers:</label>
+                                    <label for="Y" style="padding-right: 10px;">
+                                        <input type="radio" name="Restroom" style="width:12px;" id="hdnField_11_y" value="1" @(Field_11 != null ? Field_11.FieldValue == true ? "checked=checked":string.Empty :string.Empty )> Y
+                                    </label>
+
+                                    <label for="N">
+                                        <input type="radio" name="Restroom" style="width:12px;" id="hdnField_11_n" value="0" @(Field_11 != null ? Field_11.FieldValue == false ? "checked=checked":string.Empty :string.Empty )> N
+                                    </label>
+                                </div>
+                                <div class="display-inline" style="visibility:hidden;">
+                                    <label>Alarm System?</label>
+                                    <label for="Y" style="padding-right: 10px;">
+                                        <input type="radio" name="System" style="width:12px;"> Y
+                                    </label>
+
+                                    <label for="N">
+                                        <input type="radio" name="System" style="width:12px;"> N
+                                    </label>
+                                </div>
+                                <div class="group-form div-75">
+                                    <label style="width:24%;padding:0;">Security Procedures?</label>
+                                    <input type="text" style="width:68.5%" id="hdnField_12"  value="@(Field_12 != null ? (Field_12.FieldText  != null && Field_12.FieldText != "") ? Field_12.FieldText : string.Empty :string.Empty )"/>
+                                </div>
+                                <div class="group-form div-100">
+                                    <label style="width:41%;padding:0;">Emergency names and telephone numbers:</label>
+                                    1:<input type="text" style="width:51.5%" id="hdnField_13" value="@(Field_13 != null ? (Field_13.FieldText  != null && Field_13.FieldText != "") ? Field_13.FieldText : string.Empty :string.Empty )"/>
+                                </div>
+                                <div class="group-form div-100">
+                                    <label style="width:41%;padding:0;"></label>
+                                    2:<input type="text" style="width:51.5%" id="hdnField_14" value="@(Field_14 != null ? (Field_14.FieldText  != null && Field_14.FieldText != "") ? Field_14.FieldText : string.Empty :string.Empty )"/>
+                                </div>
+                                <div class="group-form div-100">
+                                    <label style="width:56%;padding:0;">Problem, conncerns, areas needing improvement and general comments?</label>
+                                    <input type="text" style="width:37.5%" id="hdnField_15"  value="@(Field_15 != null ? (Field_15.FieldText  != null && Field_15.FieldText != "") ? Field_15.FieldText : string.Empty :string.Empty )" />
+                                </div>
+                                <div class="group-form div-100">
+                                    @*<label style="width:80%;padding:0;">Problem, conncerns, areas needing improvement and general comments?</label>*@
+                                    <input type="text" style="width:94%"  id="hdnField_15_2"  />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="location-checklist">
+                            <div class="wrapper-class-location" style="width:60%;display:inline-block">
+                                <h5 class="text-uppercase location-heading" style="margin-top:15px !important;">Paperwork Checklist</h5>
+                            </div>
+                            <div class="wrapper-class-location" style="display:inline-block">
+                                <h5 class="text-uppercase location-heading" style="margin-top:15px !important;">signatures</h5>
+                            </div><br />
+                            <div class="display-inline" style="width:53%">
+                                <label class="rdcls" style="width:215px;">1. Signed Maintenance Agreement?</label>
+                                <label for="Y" style="padding-right: 10px;">
+                                    <input type="radio" name="Signed" style="width:12px;" id="hdnField_16_y" value="1" @(Field_16 != null ? Field_16.FieldValue == true ? "checked=checked":string.Empty :string.Empty )> Y
+                                </label>
+
+                                <label for="N">
+                                    <input type="radio" name="Signed" style="width:12px;"  id="hdnField_16_n" value="0" @(Field_16 != null ? Field_16.FieldValue == false ? "checked=checked":string.Empty :string.Empty )> N
+                                </label>
+                            </div>
+                            <div class="display-inline">
+                                <label>A.E.</label>
+                                <input type="text"  id="hdnField_25" value="@(Field_25 != null ? (Field_25.FieldText  != null && Field_25.FieldText != "") ? Field_25.FieldText : string.Empty :string.Empty )" />
+                            </div>
+
+                            <div class="display-inline" style="width:53%">
+                                <label class="rdcls" style="width:215px;">2. Signed Price Page?</label>
+                                <label for="Y" style="padding-right: 10px;">
+                                    <input type="radio" name="SignedPrice" style="width:12px;" id="hdnField_17_y"  value="1" @(Field_17 != null ? Field_17.FieldValue == true ? "checked=checked":string.Empty :string.Empty )> Y
+                                </label>
+
+                                <label for="N">
+                                    <input type="radio" name="SignedPrice" style="width:12px;" id="hdnField_17_n" value="0" @(Field_17 != null ? Field_17.FieldValue == false ? "checked=checked":string.Empty :string.Empty )> N
+                                </label>
+                            </div>
+                            <div class="display-inline">
+                                <label>OPS</label>
+                                <input type="text"  id="hdnField_26"  value="@(Field_26 != null ? (Field_26.FieldText  != null && Field_26.FieldText != "") ? Field_26.FieldText : string.Empty :string.Empty )"/>
+                            </div>
+                            <div class="display-inline" style="width:53%">
+                                <label class="rdcls" style="width:215px;">3. Signed Cleaning Schedule?</label>
+                                <label for="Y" style="padding-right: 10px;">
+                                    <input type="radio" name="SignedCleaning" style="width:12px;" id="hdnField_18_y" value="1" @(Field_18 != null ? Field_18.FieldValue == true ? "checked=checked":string.Empty :string.Empty )> Y
+                                </label>
+
+                                <label for="N">
+                                    <input type="radio" name="SignedCleaning" style="width:12px;" id="hdnField_18_n" value="0" @(Field_18 != null ? Field_18.FieldValue == false ? "checked=checked":string.Empty :string.Empty )> N
+                                </label>
+                            </div>
+                            <div class="display-inline">
+                                <label>R.D.</label>
+                                <input type="text" id="hdnField_27"  value="@(Field_27 != null ? (Field_27.FieldText  != null && Field_27.FieldText != "") ? Field_27.FieldText : string.Empty :string.Empty )"/>
+                            </div>
+
+                            <div class="display-inline" style="width:53%">
+                                <label class="rdcls" style="width:215px;">4. Analysis of Account?</label>
+                                <label for="Y" style="padding-right: 10px;">
+                                    <input type="radio" name="Analysis" style="width:12px;" id="hdnField_19_y" value="1" @(Field_19 != null ? Field_19.FieldValue == true ? "checked=checked":string.Empty :string.Empty )> Y
+                                </label>
+
+                                <label for="N">
+                                    <input type="radio" name="Analysis" style="width:12px;" id="hdnField_19_n" value="0" @(Field_19 != null ? Field_19.FieldValue == false ? "checked=checked":string.Empty :string.Empty )> N
+                                </label>
+                            </div>
+                            <div class="display-inline">
+                                <label>F.O.</label>
+                                
+                                <input type="text"  id="hdnField_28"  value="@(Field_28 != null ? (Field_28.FieldText  != null && Field_28.FieldText != "") ? Field_28.FieldText : string.Empty :string.Empty )" />
+                            </div>
+                            <div class="display-inline" style="width:53%">
+                                <label class="rdcls" style="width:215px;">5. Account Bid Sheet?</label>
+                                <label for="Y" style="padding-right:10px;">
+                                    <input type="radio" name="AccountBid" style="width:12px;"  id="hdnField_20_y" value="1" @(Field_20 != null ? Field_20.FieldValue == true ? "checked=checked":string.Empty :string.Empty )> Y
+                                </label>
+
+                                <label for="N">
+                                    <input type="radio" name="AccountBid" style="width:12px;"  id="hdnField_20_n"  value="0" @(Field_20 != null ? Field_20.FieldValue == false ? "checked=checked":string.Empty :string.Empty )> N
+                                </label>
+                            </div>
+                            <div class="display-inline">
+                                @*<label>A.E.</label>
+                                    <input type="text" />*@
+                            </div>
+                            <br />
+                            <div class="display-inline pr-20" style="width:33%">
+                                <label class="rdcls">Uploaded Documents?</label>
+                                <label for="Y" style="padding-right: 10px;">
+                                    <input type="radio" name="Uploaded" style="width:12px;"  id="hdnField_21_y" value="1"  @(Field_21 != null ? Field_21.FieldValue == true ? "checked=checked":string.Empty :string.Empty )> Y
+                                </label>
+
+                                <label for="N">
+                                    <input type="radio" name="Uploaded" style="width:12px;" id="hdnField_21_n" value="0"  @(Field_21 != null ? Field_21.FieldValue == false ? "checked=checked":string.Empty :string.Empty )> N
+                                </label>
+                            </div>
+
+                            <div class="display-inline pr-20" style="width:36%">
+                                <label class="rdcls">E-mailed to Customer Service?</label>
+                                <label for="Y" style="padding-right:10px;">
+                                    <input type="radio" name="Emailed" style="width:12px;" id="hdnField_22_y"  value="1"  @(Field_22 != null ? Field_22.FieldValue == true ? "checked=checked":string.Empty :string.Empty )> Y
+                                </label>
+
+                                <label for="N">
+                                    <input type="radio" name="Emailed" style="width:12px;" id="hdnField_22_y" value="0"  @(Field_22 != null ? Field_22.FieldValue == false ? "checked=checked":string.Empty :string.Empty )> N
+                                </label>
+                            </div>
+
+                            <div class="display-inline pr-20">
+                                <label class="rdcls">Business Card Attached?</label>
+                                <label for="Y" style="padding-right:10px;">
+                                    <input type="radio" name="Business" style="width:12px;" id="hdnField_23_y" value="1"  @(Field_23 != null ? Field_23.FieldValue == true ? "checked=checked":string.Empty :string.Empty )> Y
+                                </label>
+
+                                <label for="N">
+                                    <input type="radio" name="Business" style="width:12px;" id="hdnField_23_y" value="0"  @(Field_23 != null ? Field_23.FieldValue == false ? "checked=checked":string.Empty :string.Empty )> N
+                                </label>
+                            </div>
+
+                            <div class="display-inline pr-20" style="margin-left:20%">
+                                <label>Transaction A Completed and Sent to Franchise Accounting?</label>
+                                <label for="Y" style="padding-right:10px;">
+                                    <input type="radio" name="Transaction" style="width:12px;" id="hdnField_24_y" value="1"  @(Field_24 != null ? Field_24.FieldValue == true ? "checked=checked":string.Empty :string.Empty )> Y
+                                </label>
+
+                                <label for="N">
+                                    <input type="radio" name="Transaction" style="width:12px;" id="hdnField_24_y" value="0"  @(Field_24 != null ? Field_24.FieldValue == false ? "checked=checked":string.Empty :string.Empty )> N
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    }
+}
+<div class="form-actions">
+    <div class="col-md-9">
+    </div>
+    <div class="col-md-3">
+        <button type="button" class="btn btn-primary button-next" style="margin-left:10px;" onclick="SaveNewAccountForm(@ViewBag.CustomerId)"> Save </button>
+        <button type="button" class="btn btn-primary button-next" style="margin-left:10px;" data-dismiss="modal">Cancel</button>
+    </div>
+</div>
+<br />
+<br />
+
+
+@section scripts{
+    <script>
+        @*function createPDF() {
+            window.open('@Url.Action("FranchiseeReportExportToPDF", "AccountsPayable", new { area = "Portal" })?ids=@(Request.QueryString["ids"])', '_blank');
+        }
+        function backToPortal() {
+            window.location.href = '@Url.Action("FranchiseePay", "AccountsPayable", new { area = "Portal" })';
+        }*@
+    </script>
+}
+<script>
+    function CreatePrint(CustomerId) {
+        if (CustomerId != "") {
+            var sURL = '@Url.Action("NewAccountFormPrint", "CRMCustomer", new { area = "CRM" })?CustomerId=' + CustomerId;
+            $.ajax({
+                type: "GET",
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    var tUrl = data;
+                    printJS({ printable: document.location.origin + tUrl, type: 'pdf', showModal: false });
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+        else {
+            alert('Please select payment no to print.')
+        }
+
+    }
+    function CreateExportPDF(CustomerId) {
+
+        window.location.href = '@Url.Action("NewAccountFormExport", "CRMCustomer", new { area = "CRM" })' + "?CustomerId=" + CustomerId;
+
+    }
+
+    function SaveNewAccountForm(CustomerId) {
+        if (CustomerId != "") {
+
+            var _ArrDataList = [];
+
+            var hdnField_1 = -1;
+            if ($('input[name="Light"]:checked').val() != undefined) {
+                hdnField_1 = $('input[name="Light"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 1, FieldValue: hdnField_1 });
+
+            var hdnField_2 = -1;
+            if ($('input[name="Breaker"]:checked').val() != undefined) {
+                hdnField_2 = $('input[name="Breaker"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 2, FieldValue: hdnField_2 });
+
+            var hdnField_3 = -1;
+            if ($('input[name="Contact"]:checked').val() != undefined) {
+                hdnField_3 = $('input[name="Contact"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 3, FieldValue: hdnField_3 });
+
+            var hdnField_4 = -1;
+            if ($('input[name="Storage"]:checked').val() != undefined) {
+                hdnField_4 = $('input[name="Storage"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 4, FieldValue: hdnField_4 });
+
+
+            var hdnField_5 = -1;
+            if ($('input[name="Water"]:checked').val() != undefined) {
+                hdnField_5 = $('input[name="Water"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 5, FieldValue: hdnField_5 });
+
+            var hdnField_6 = -1;
+            if ($('input[name="Trash"]:checked').val() != undefined) {
+                hdnField_6 = $('input[name="Trash"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 6, FieldValue: hdnField_6 });
+
+            var hdnField_7 = -1;
+            if ($('input[name="Recycling"]:checked').val() != undefined) {
+                hdnField_7 = $('input[name="Recycling"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 7, FieldValue: hdnField_7 });
+
+            var hdnField_8 = -1;
+            if ($('input[name="Account"]:checked').val() != undefined) {
+                hdnField_8 = $('input[name="Account"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 8, FieldValue: hdnField_8 });
+
+            var hdnField_9 = -1;
+            if ($('input[name="Entry"]:checked').val() != undefined) {
+                hdnField_9 = $('input[name="Entry"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 9, FieldValue: hdnField_9 });
+
+            var hdnField_10 = -1;
+            if ($('input[name="Alarm"]:checked').val() != undefined) {
+                hdnField_10 = $('input[name="Alarm"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 10, FieldValue: hdnField_10 });
+            
+            var hdnField_11 = -1;
+            if ($('input[name="Restroom"]:checked').val() != undefined) {
+                hdnField_11 = $('input[name="Restroom"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 11, FieldValue: hdnField_11 });
+
+            var hdnField_12 = $('#hdnField_12').val();                
+            _ArrDataList.push({ Id: 12, FieldText: hdnField_12 });
+
+            var hdnField_13 = $('#hdnField_13').val();
+            _ArrDataList.push({ Id: 13, FieldText: hdnField_13 });
+
+            var hdnField_14 = $('#hdnField_14').val();
+            _ArrDataList.push({ Id: 14, FieldText: hdnField_14 });
+
+            var hdnField_15 = $('#hdnField_15').val();
+            _ArrDataList.push({ Id: 15, FieldText: hdnField_15 });
+
+            var hdnField_16 = -1;
+            if ($('input[name="Signed"]:checked').val() != undefined) {
+                hdnField_16 = $('input[name="Signed"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 16, FieldValue: hdnField_16 });
+
+            var hdnField_17 = -1;
+            if ($('input[name="SignedPrice"]:checked').val() != undefined) {
+                hdnField_17 = $('input[name="SignedPrice"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 17, FieldValue: hdnField_17 });
+
+            var hdnField_18 = -1;
+            if ($('input[name="SignedCleaning"]:checked').val() != undefined) {
+                hdnField_18 = $('input[name="SignedCleaning"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 18, FieldValue: hdnField_18 });
+
+            var hdnField_19 = -1;
+            if ($('input[name="Analysis"]:checked').val() != undefined) {
+                hdnField_19 = $('input[name="Analysis"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 19, FieldValue: hdnField_19 });
+
+            var hdnField_20 = -1;
+            if ($('input[name="AccountBid"]:checked').val() != undefined) {
+                hdnField_20 = $('input[name="AccountBid"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 20, FieldValue: hdnField_20 });
+
+            var hdnField_21 = -1;
+            if ($('input[name="Uploaded"]:checked').val() != undefined) {
+                hdnField_21 = $('input[name="Uploaded"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 21, FieldValue: hdnField_21 });
+
+            var hdnField_22 = -1;
+            if ($('input[name="Emailed"]:checked').val() != undefined) {
+                hdnField_22 = $('input[name="Emailed"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 22, FieldValue: hdnField_22 });
+
+            var hdnField_23 = -1;
+            if ($('input[name="Business"]:checked').val() != undefined) {
+                hdnField_23 = $('input[name="Business"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 23, FieldValue: hdnField_23 });
+
+            var hdnField_24 = -1;
+            if ($('input[name="Transaction"]:checked').val() != undefined) {
+                hdnField_24 = $('input[name="Transaction"]:checked').val();
+            }
+            _ArrDataList.push({ Id: 24, FieldValue: hdnField_24 });
+
+
+            var hdnField_25 = $('#hdnField_25').val();
+            _ArrDataList.push({ Id: 25, FieldText: hdnField_25 });
+
+            var hdnField_26 = $('#hdnField_26').val();
+            _ArrDataList.push({ Id: 26, FieldText: hdnField_26 });
+
+            var hdnField_27 = $('#hdnField_27').val();
+            _ArrDataList.push({ Id: 27, FieldText: hdnField_27 });
+
+            var hdnField_28 = $('#hdnField_28').val();
+            _ArrDataList.push({ Id: 28, FieldText: hdnField_28 });
+  
+            var FranchiseeId = 0;
+            if ($("#hdnFranchiseeId").val() != null && $("#hdnFranchiseeId").val() != "")
+            {
+                FranchiseeId = $("#hdnFranchiseeId").val();
+            }
+
+            var sURL = '@Url.Action("SaveNewAccountForm", "CRMCustomer", new { area = "CRM" })?CustomerId=' + CustomerId + "&FranchiseeId=" + FranchiseeId;
+            $.ajax({
+                type: "GET",
+                data: { arrdata: JSON.stringify(_ArrDataList) },
+                url: sURL,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    if (data != null && data != "") {
+                        alert("New account form sumit successfully");
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+        else {
+            alert('Please select payment no to print.')
+        }
+
+    }
+</script>
+
+
+<style>
+    .rdcls {
+        padding-right: 5px;
+    }
+
+    .registeration-form input {
+        border: 0 none;
+        border-bottom: 1px solid #444;
+        background: aliceblue;
+    }
+
+    .div-100 {
+        width: 100%;
+        display: inline-block;
+    }
+
+    .div-75 {
+        width: 75%;
+        display: inline-block;
+    }
+
+    .div-70 {
+        width: 70%;
+        display: inline-block;
+    }
+
+    .div-30 {
+        width: 30%;
+        display: inline-block;
+    }
+
+    .div-25 {
+        width: 25%;
+        display: inline-block;
+    }
+
+    .div-49 {
+        width: 49%;
+        display: inline-block;
+    }
+
+    .group-form input {
+        width: 65%;
+        display: inline-block;
+    }
+
+    .group-form label {
+        width: 25%;
+        display: inline-block;
+        text-align: right;
+    }
+
+    .location-checklist .location-heading {
+        font-weight: 600;
+        margin-top: 40px;
+        text-decoration: underline;
+    }
+
+    .location-questions label, .location-questions span {
+        padding-right: 3px;
+        /*font-size: 14px;*/
+    }
+
+    .display-inline {
+        display: inline-block;
+    }
+
+    .pr-20 {
+        padding-right: 20px;
+    }
+
+    .pr-10 {
+        padding-right: 10px;
+    }
+
+    .pr-45 {
+        padding-right: 45px;
+    }
+
+    .location-questions .display-inline {
+        width: 24%;
+    }
+
+        .location-questions .display-inline:last-child {
+            text-align: right;
+        }
+
+    input[type=radio] {
+        border-width: 0 0 1px 0;
+        border-style: solid;
+        border-color: black;
+        background-color: #f1f4ff;
+    }
+</style>
